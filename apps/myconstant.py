@@ -1,5 +1,5 @@
 MDB_USERNAME = "root"
-MDB_PASSWORD = "mmg"
+MDB_PASSWORD = "Technology_100"
 MYOB_KEY = "client_id,client_secret,company_file_uri,company_file_id,refresh_token,access_token,redirect_uri"
 QBO_KEY = "client_id,client_secret,base_url,company_id,minor_version,User_Agent,access_token,refresh_token"
 XERO_KEY = "client_id,client_secret,refresh_token,access_token,xero-tenant-id,re_directURI,scopes,state"
