@@ -1,0 +1,115 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Datatables {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="ajax-alert" class=""></div>
+        <div class="card mt-5">
+            <div class="card-header">
+                <span>Tasks</span>
+                <button id='start_job' value="{{job_id}}" class="btn btn-primary pull-right">Start</button>
+                <a href="/job_execution_status/{{job_id}}" class="btn btn-primary pull-right">job execution status</a>
+                {% if msg %}
+                <span class="text-success">{{ request.args.get('msg') }}</span>
+                {% endif %}
+            </div>
+
+            <div class="table-responsive">
+                <table id="basic-datatables" class="display table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Task ID</th>
+                        <th>Function Name</th>
+                        <th>Read Task Status</th>
+                        <th>Write Task Status</th>
+                        <th>Execution Details</th>
+                        <th>Records</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in data %}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.function_name}}</td>
+                        {% if item.read == 3 %}
+                        <td>Not started</td>
+                        {% elif item.read == 2 %}
+                        <td>In Progress</td>
+                        {% elif item.read == 1 %}
+                        <td>Successful</td>
+                        {% else %}
+                        <td>Failed</td>
+                        {% endif %}
+
+                        {% if item.write == 3 %}
+                        <td>Not started</td>
+                        {% elif item.write == 2 %}
+                        <td>In Progress</td>
+                        {% elif item.write == 1 %}
+                        <td>Successful</td>
+                        {% else %}
+                        <td>Failed</td>
+                        {% endif %}
+                        <td><a href="/task_execution_details/{{item.id}}">View Details</a></td>
+                        <td><a href="/records/{{item.id}}/{{item.function_name}}">View Details</a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+		$(document).ready(function() {
+		
+        $('#start_job').click(function() {
+            var job_id =  $("#start_job").val();
+            $.ajax({
+            type: 'POST',
+            url: "/startJobByID",
+            data: {job_id: job_id},
+                success: function(data){
+                            var result = $.parseJSON(data);
+                            if(result.status=='success'){
+                                    $("#ajax-alert").addClass("alert alert-success").text('Job has been started successfully!!');
+                                    $("#ajax-alert").alert();
+                                    $("#ajax-alert").fadeTo(5000, 5000).slideUp(5000, function(){
+                                    });
+                            }else{
+                                $("#ajax-alert").addClass("alert alert-danger").text('Something went wrong!!');
+                                $("#ajax-alert").alert();
+                                $("#ajax-alert").fadeTo(5000, 5000).slideUp(5000, function(){
+                                });
+                            }
+                        },
+                // error:function(xhr,status,error){
+                //     alert("job failed due to invalid access token")
+
+                // }
+                });
+		});
+
+
+    });
+
+
+
+</script>
+
+{% endblock javascripts %}

@@ -1,0 +1,115 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h4 class="page-title">Tool</h4>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="/tool">Tool</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Tool</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row" >
+    <div class="col-md-12" style="height: 100vh;">
+        <div class="card">
+            <div class="card-header" style="background-color: #6495ED;">
+                <div class="card-title" style="color: white;">Create Tool</div>
+            </div>
+            <form action="" method="post">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="name">Tool Name</label>
+                                <input type="text" class="form-control" id="tool_name" name="tool_name"
+                                       value="{{tool.tool_name}}" placeholder="Enter Tool Name">
+                                <input type="hidden" class="form-control" id="id" name="id" value="{{tool.id}}">
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="keys">Keys</label>
+                                <input type="text" class="form-control" id="keys" name="keys"
+                                       value="{{tool.keys}}" placeholder="Enter keys" readonly>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group mt-3">
+                                <label for="account_type">Select Account Type</label>
+                                <select class="form-control form-select js-select2 input-solid" name="account_type"
+                                        single="single">
+
+                                    <label for="account_type">Select Account Type</label>
+
+                                    <option value="Myob" data-badge="" {% if tool.account_type==
+                                    'Myob' %}selected{% endif %}>Myob</option>
+                                    <option value="Qbo" data-badge="" {% if tool.account_type==
+                                    'Qbo' %}selected{% endif %}>Qbo</option>
+                                    <option value="Xero" data-badge="" {% if tool.account_type==
+                                    'Xero' %}selected{% endif %}>Xero</option>
+                                    <option value="Reckon" data-badge="" {% if tool.account_type==
+                                        'Reckon' %}selected{% endif %}>Reckon</option>
+                                    <option value="Excel" data-badge="" {% if tool.account_type==
+                                        'Excel' %}selected{% endif %}>Excel</option>
+                                    <option value="Delete" data-badge="" {% if tool.account_type==
+                                        'Delete' %}selected{% endif %}>Delete</option>
+                                    <option value="Myobledger" data-badge="" {% if tool.account_type==
+                                    'Myobledger' %}selected{% endif %}>Myob-Ledger</option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group mt-3">
+                                <label for="tool_type">Select Tool Type</label>
+                                <select class="form-control form-select js-select2 input-solid" name="tool_type"
+                                        single="single">
+
+                                    <label for="tool_type">Select Tool Type</label>
+                                    <option value="Input" data-badge="" {% if tool.tool_type==
+                                    'Input' %}selected{% endif %}>Input</option>
+                                    <option value="Output" data-badge="" {% if tool.tool_type==
+                                    'Output' %}selected{% endif %}>Output</option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="card-action">
+                    <button class="btn btn-success ms-3 mb-3" type="submit">Submit</button>
+                    <!-- <button class="btn btn-danger">Cancel</button> -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE -->
+{% block javascripts %}
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/Tool-demo2.js"></script>
+
+{% endblock javascripts %}

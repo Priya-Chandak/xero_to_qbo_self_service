@@ -1,0 +1,145 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Datatables {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mt-5">
+            <div class="card-header">
+                <a href="jobs/create" class="btn btn-primary pull-right">Create Job</a>
+                {% if msg %}
+                <span class="text-success">{{ request.args.get('msg') }}</span>
+                {% endif %}
+            </div>
+            <div class="table-responsive">
+                <table id="basic-datatables" class="display table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Input Tool</th>
+                        <th>Output Tool</th>
+                        <th>View Tasks</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in jobs.items|reverse %}
+                    <tr>
+                        <td>{{item[0].name}}</td>
+                        <td>{{item[0].description}}</td>
+                        <td>{{item[1]}}</td>
+                        <td>{{item[2]}}</td>
+                       
+                        <td><a href="tasks/{{item[0].id}}">View Tasks</a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination Links-->
+                <div class="text-right">
+                    <a href="{{ url_for('home_blueprint.jobs', page=jobs.prev_num) }}"
+                       class="btn btn-outline-dark
+       {% if jobs.page == 1 %}disabled{% endif %}">
+                        &laquo;
+                    </a>
+                    <!-- Loop through the number of pages to display a link for each-->
+                    {% for page_num in jobs.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                    <!-- Check for the active page and set the link to "Active"-->
+                    {% if jobs.page == page_num %}
+                    <a href="{{ url_for('home_blueprint.jobs', page=page_num) }}"
+                       class="btn btn-dark">
+                        {{ page_num }}
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('home_blueprint.jobs', page=page_num) }}"
+                       class="btn btn-outline-dark">
+                        {{ page_num }}
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    ...
+                    {% endif %}
+                    {% endfor %}
+                    <a href="{{ url_for('home_blueprint.jobs', page=jobs.next_num) }}"
+                       class="btn btn-outline-dark
+       {% if jobs.page == jobs.pages %}disabled{% endif %}">
+                        &raquo;
+                    </a>
+                </div>
+                <p class="text-right mt-3">
+                    Showing page {{ jobs.page }} of {{ jobs.pages }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+
+<script>
+		$(document).ready(function() {
+			$('#basic-datatables').DataTable({
+			});
+
+			$('#multi-filter-select').DataTable( {
+				"pageLength": 5,
+				initComplete: function () {
+					this.api().columns().every( function () {
+						var column = this;
+						var select = $('<select class="form-control"><option value=""></option></select>')
+						.appendTo( $(column.footer()).empty() )
+						.on( 'change', function () {
+							var val = $.fn.dataTable.util.escapeRegex(
+								$(this).val()
+								);
+
+							column
+							.search( val ? '^'+val+'$' : '', true, false )
+							.draw();
+						} );
+
+						column.data().unique().sort().each( function ( d, j ) {
+							select.append( '<option value="'+d+'">'+d+'</option>' )
+						} );
+					} );
+				}
+			});
+
+			// Add Row
+			$('#add-row').DataTable({
+				"pageLength": 5,
+			});
+
+			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+			$('#addRowButton').click(function() {
+				$('#add-row').dataTable().fnAddData([
+					$("#addName").val(),
+					$("#addPosition").val(),
+					$("#addOffice").val(),
+					action
+					]);
+				$('#addRowModal').modal('hide');
+
+			});
+		});
+
+
+
+
+</script>
+
+{% endblock javascripts %}

@@ -1,0 +1,10 @@
+{% if current_user.is_authenticated %}
+<header class="navbar navbar-light sticky-top  flex-md-nowrap p-0 shadow" style="height: 50px; background-color: #563d7c;">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#" style="color: white;">MMC Convert</a>
+  <div class="navbar-nav">
+    <div class="nav-item text-nowrap">
+      <a class="nav-link px-3" href="{{ url_for('authentication_blueprint.logout') }}" style="color: white;">Sign out</a>
+    </div>
+  </div>
+</header>
+{% endif %}

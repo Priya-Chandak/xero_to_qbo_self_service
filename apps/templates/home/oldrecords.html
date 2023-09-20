@@ -1,0 +1,128 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Datatables {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card mt-5">
+            <div class="card-header">
+                <span>Records</span>
+                <p style="margin-left:920px">Successful : {{ successful_count }}/{{ total_records }}</p>
+                <p style="margin-left:920px">Failed : {{ error_count }}/{{ total_records }}</p>
+				{% if msg %}
+                <span class="text-success">{{ request.args.get('msg') }}</span>
+                {% endif %}
+            </div>
+            <div>
+
+            </div>
+            <div class="table-responsive">
+
+
+                <table id="basic-datatables" class="display table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th> ID</th>
+						<th> Is Pushed</th>
+						<th> Error</th>
+
+						<!-- <th> Payload</th> -->
+						<th> Push</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+					{% for item in data1 %}
+					<tr>
+                        <td>{{item._id}}</td>
+						<td>False</td>
+						<td>{{item.error}}</td>
+
+						<!-- <td>{{item}}</td> -->
+						<td><button type="button" class="btn btn-success">Retry</button></td>
+					</tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+            <p>
+            {% if page > 1 %}
+                <a href="?page={{ page - 1 }}" class="btn btn-dark">Previous</a>
+			{% endif %}
+            {% if (page * per_page) < total_records %}
+				<a href="?page={{ page + 1 }}" class="btn btn-outline-dark">Next</a>
+			{% endif %}
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+
+<script>
+		$(document).ready(function() {
+			$('#basic-datatables').DataTable({
+			});
+
+			$('#multi-filter-select').DataTable( {
+				"pageLength": 5,
+				initComplete: function () {
+					this.api().columns().every( function () {
+						var column = this;
+						var select = $('<select class="form-control"><option value=""></option></select>')
+						.appendTo( $(column.footer()).empty() )
+						.on( 'change', function () {
+							var val = $.fn.dataTable.util.escapeRegex(
+								$(this).val()
+								);
+
+							column
+							.search( val ? '^'+val+'$' : '', true, false )
+							.draw();
+						} );
+
+						column.data().unique().sort().each( function ( d, j ) {
+							select.append( '<option value="'+d+'">'+d+'</option>' )
+						} );
+					} );
+				}
+			});
+
+			// Add Row
+			$('#add-row').DataTable({
+				"pageLength": 5,
+			});
+
+			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+			$('#addRowButton').click(function() {
+				$('#add-row').dataTable().fnAddData([
+					$("#addName").val(),
+					$("#addPosition").val(),
+					$("#addOffice").val(),
+					action
+					]);
+				$('#addRowModal').modal('hide');
+
+			});
+		});
+
+
+</script>
+
+{% endblock javascripts %}

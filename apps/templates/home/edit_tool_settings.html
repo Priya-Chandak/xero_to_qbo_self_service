@@ -1,0 +1,66 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h4 class="page-title">Tool Settings</h4>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="/tool">Tool</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Tool Settings</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #6495ED;">
+                <div class="card-title" style="color: white;">Create Tool Setting</div>
+            </div>
+            <form action="" method="post">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group mt-3">
+                                <label for="name">Tool ID</label>
+                                <input type="text" class="form-control" id="tool_id" name="tool_id"
+                                       value="{{tool_settings.tool_id}}" placeholder="Enter Tool ID">
+                                <input type="hidden" class="form-control" id="id" name="id"
+                                       value="{{tool_settings.id}}">
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="keys">Keys</label>
+                                <input type="text" class="form-control" id="keys" name="keys"
+                                       value="{{tool_settings.keys}}" placeholder="Enter keys">
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="values">Values</label>
+                                <input type="text" class="form-control" id="values" name="values"
+                                       value="{{tool_settings.values}}" placeholder="Enter Values">
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-action">
+                    <button class="btn btn-success ms-3 mb-3" type="submit">Submit</button>
+                    <!-- <button class="btn btn-danger">Cancel</button> -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE -->
+{% block javascripts %}
+{% endblock javascripts %}

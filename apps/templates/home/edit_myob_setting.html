@@ -1,0 +1,125 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+	<div class="content">
+		<div class="page-inner">
+			<div class="page-header">
+				<h4 class="page-title">Settings</h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="#">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="#">Setting</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="#">Create Setting</a>
+					</li>
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header" style="background-color: #6495ED;">
+							<div class="card-title" style="color:white;">Create Setting</div>
+						</div>
+						<form action="" method="post">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6 col-lg-4">
+									<div class="form-group mt-1">
+										<label for="name">Name</label>
+										<input type="text" class="form-control" id="name" name="name" value="{{myob.name}}" placeholder="Enter Name">
+										<input type="hidden" class="form-control" id="id" name="id" value="{{myob.id}}">
+									</div>
+									<div class="form-group mt-1">
+										<label for="client_id">Client ID</label>
+										<input type="text" class="form-control" id="client_id" name="client_id" value="{{myob.client_id}}" placeholder="Enter Client ID">
+									</div>
+									<div class="form-group mt-1">
+										<label for="company_file_id">Company File ID</label>
+										<input type="text" class="form-control" id="company_file_id" name="company_file_id" value="{{myob.company_file_id}}" placeholder="Enter Company File ID">
+									</div>
+									
+
+								</div>
+								<div class="col-md-6 col-lg-4">
+									<div class="form-group mt-1">
+										<label for="username">Username</label>
+										<input type="text" class="form-control" id="username" name="username" value="{{myob.username}}" placeholder="Enter UserName">
+									</div>
+
+									<div class="form-group mt-1">
+										<label for="client_secret">Client Secret</label>
+										<input type="text" class="form-control" id="client_secret" name="client_secret" value="{{myob.client_secret}}" placeholder="Enter Client Secret Key ">
+									</div>
+									<div class="form-group mt-1">
+										<label for="access_token">Access Token</label>
+										<input type="text" class="form-control" id="access_token" name="access_token" value="{{myob.access_token}}" placeholder="Enter Access Token ">
+									</div>
+<!--								<div class="form-group">
+										<label for="api_version">API Version</label>
+										<input type="text" class="form-control" id="api_version" name="api_version" placeholder="Enter API Version">
+									</div>
+									<div class="form-group form-floating-label">-->
+<!--										<label for="is_active">Status</label>-->
+<!--										<select class="form-control input-solid" id="is_active" name="is_active" required>-->
+<!--											<option value="True">Active</option>-->
+<!--											<option value="False">Inactive</option>-->
+<!--										</select>-->
+<!--									</div>-->
+								</div>
+								<div class="col-md-6 col-lg-4">
+									<div class="form-group mt-1">
+										<label for="password">Password</label>
+										<input type="password" class="form-control" id="password" name="password" value="{{myob.password}}" placeholder="Enter Password">
+									</div>
+									<div class="form-group mt-1">
+										<label for="company_file_uri">Company File URI</label>
+										<input type="text" class="form-control" id="company_file_uri" name="company_file_uri" value="{{myob.company_file_uri}}" placeholder="Enter Company File URI">
+									</div>
+									<div class="form-group mt-1">
+										<label for="refresh_token">Refresh Token</label>
+										<input type="text" class="form-control" id="refresh_token" name="refresh_token" value="{{myob.refresh_token}}" placeholder="Enter Refresh Token ">
+									</div>
+
+
+								</div>
+
+
+							</div>
+						</div>
+						<div class="card-action">
+							<button class="btn btn-success ms-3 mb-3" type="submit">Submit</button>
+							<!-- <button class="btn btn-danger">Cancel</button> -->
+						</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE -->
+{% block javascripts %}
+
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="/static/assets/js/setting-demo2.js"></script>
+
+{% endblock javascripts %}	

@@ -1,0 +1,132 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Datatables {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+    .retry-popup {
+        position: relative;
+        display: inline-block;
+    }
+
+    .retry-popup-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        width: 80%;
+        min-width: 200px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        z-index: 1;
+        margin-top: 5px;
+    }
+
+    .retry-popup.open .retry-popup-content {
+        display: block;
+    }
+
+    .card {
+        height: 80vh;
+        overflow: hidden;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mt-5">
+            <div class="card-header">
+                <span>Records</span>
+                <p style="margin-left: 80%;">Successful : {{ successful_count }}/{{ total_records }}</p>
+                <p style="margin-left: 80%;">Failed : {{ error_count }}/{{ total_records }}</p>
+                {% if msg %}
+                <span class="text-success">{{ request.args.get('msg') }}</span>
+                {% endif %}
+            </div>
+            <div class="table-responsive">
+                <table id="basic-datatables" class="display table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Is Pushed</th>
+                        <th>Error</th>
+						<th>Payload</th>
+                        <th>Push</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in data1 %}
+                    <tr>
+                        <td>{{item._id}}</td>
+                        <td>False</td>
+                        <td>{{item.error}}</td>
+						<td><textarea name="" id="text_{{item._id}}" cols="30" rows="10">{{item.payload}}</textarea></td>
+                        <td>
+                            <div class="retry-popup">
+                                <button type="button" class="btn btn-success" onclick="togglePopup('{{ item.task_id }}','{{item._id}}')" >Retry</button>
+                                
+								<div class="retry-popup-content">
+                                    <!-- Popup content goes here -->
+                                    {{item}}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p>
+            {% if page > 1 %}
+                <a href="?page={{ page - 1 }}" class="btn btn-dark">Previous</a>
+            {% endif %}
+            {% if (page * per_page) < total_records %}
+                <a href="?page={{ page + 1 }}" class="btn btn-outline-dark">Next</a>
+            {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    function togglePopup(task_id,id) {
+		var payload=$("#text_"+id).val();
+		console.log(payload);
+		var payloadData=JSON.stringify(payload);
+        console.log(payloadData);
+
+		$.ajax({
+            type: 'POST',
+            url: "/retryPayload",
+            data: {task_id: task_id,payload:payloadData,_id:id},
+                success: function(data){
+                            var result = $.parseJSON(data);
+                            if(result.status=='success'){
+								alert("Record Pushed Successfully")
+                                    $("#ajax-alert").addClass("alert alert-success").text('Record added successfully!!');
+                                    $("#ajax-alert").alert();
+                                    $("#ajax-alert").fadeTo(5000, 5000).slideUp(5000, function(){
+                                    });
+									location.reload();
+                                }else{
+									alert("Something went wrong")
+                                
+                                    $("#ajax-alert").addClass("alert alert-danger").text('Something went wrong!!');
+                                    $("#ajax-alert").alert();
+                                    $("#ajax-alert").fadeTo(5000, 5000).slideUp(5000, function(){
+                                    });
+                                }
+                        }
+                });
+    }
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,81 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h4 class="page-title">Create/Update Tool Settings</h4>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="/tool">Tool</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create/Update Tool Settings</li>
+        </ol>
+    </nav>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #6495ED;">
+                <div class="card-title" style="color: white;">Create/Update Tool Setting</div>
+            </div>
+            <form action="" method="post">
+                <div class="card-body">
+                    <!-- <div class="row"> -->
+                        <div class="col-md-6 col-lg-4">
+
+                            {% if len(toolsettings)!=0: %}
+
+                            {% for key, value in zip(data, toolsettings): %}
+                            <div class="form-group mt-1">
+                                <label for="client_id"> {{key}}</label>
+                                <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                       placeholder="Enter {{key}}" value="{{value.values}}">
+                            </div>
+
+                            {% endfor %}
+                            {% else: %}
+                            {% for key in data %}
+                            <div class="form-group">
+                            <div class="col-xs-6 ms-3 mt-2" style="display: flex;">
+                                <label for="client_id" style="min-width: 150px; font-weight: bold;"> {{key}} </label>
+                                <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                       placeholder="Enter {{key}}" style="margin-left: 30px; width: 250px;">
+                            </div>
+                        </div>
+                           
+
+                            {% endfor %}
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                    <!-- </div> -->
+                </div>
+                <div class="card-action">
+                    <button class="btn btn-success ms-4 mb-3" type="submit">Submit</button>
+                    <!-- <button class="btn btn-danger">Cancel</button> -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE -->
+{% block javascripts %}
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/Tool-demo2.js"></script>
+
+{% endblock javascripts %}

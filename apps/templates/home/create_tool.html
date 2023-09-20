@@ -1,0 +1,132 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+			<h4 class="page-title">Tools</h4>
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="#">Home</a></li>
+					<li class="breadcrumb-item"><a href="/tool">Tools</a></li>
+					<li class="breadcrumb-item active" aria-current="page">Add New Tool</li>
+				</ol>
+			</nav>
+		</div>
+<div class="row">
+	<div class="col-md-12" style="height: 100vh;">
+		<div class="card">
+			<div class="card-header" style="background-color:  #6495ED;">
+				<div class="card-title" style="color: white;">Create Tool</div>
+			</div>
+			<form action="" method="post">
+				<div class="card-body">
+					<div class="row">
+								<div class="col-md-6 col-lg-4">
+									<div class="form-group mt-2">
+										<label for="name">Account Name</label>
+										<input type="text" class="form-control" id="tool_name" name="tool_name"
+											placeholder="Enter account Name">
+									</div>
+
+									<div class="form-group mt-2">
+										<label for="description">Select Account Type</label>
+										<select class="form-control form-select js-select2 input-solid" id="account_type" name="account_type"
+											single="single">
+
+											<label for="description">Select Account Type</label>
+											<option value="Myob" data-badge="">Myob</option>
+											<option value="Qbo" data-badge="">Qbo</option>
+											<option value="Xero" data-badge="">Xero</option>
+											<option value="Myobledger" data-badge="">Myob-Ledger</option>
+											<option value="Excel" data-badge="">Excel</option>
+											<option value="Delete" data-badge="">Delete</option>
+											<option value="Reckon" data-badge="">Reckon</option>
+										</select>
+
+									</div>
+
+								</div>
+
+
+							</div>
+							<div class="row">
+								<div class="col-md-6 col-lg-4">
+									<div class="form-group mt-2">
+										<label for="client_id">Keys</label>
+										<input type="text" class="form-control" id="keys" name="keys" size="150"
+											placeholder="Enter Keys">
+									</div>
+								</div>
+
+
+							</div>
+							<div class="row">
+								<div class="col-md-6 col-lg-4">
+									<div class="form-group mt-2">
+										<label for="description">Select Tool Type</label>
+										<select class="form-control js-select2 input-solid" name="tool_type"
+											single="single">
+
+											<label for="description">Select Tool Type</label>
+											<option value="Input" data-badge="">Input</option>
+											<option value="Output" data-badge="">Output</option>
+										</select>
+
+									</div>
+
+								</div>
+
+
+							</div>
+						</div>
+						<div class="card-action">
+							<button class="btn btn-success ms-3 mb-3" type="submit">Submit</button>
+							<!-- <button class="btn btn-danger">Cancel</button> -->
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE -->
+{% block javascripts %}
+
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script src="/static/assets/js/Tool-demo2.js"></script>
+<script>
+ 	$('#keys').val('{{ MYOB_KEY }}')
+	$("#account_type").change(function () {
+        var tool = this.value;
+        var myVariable;
+        if(tool=='Myob'){
+       	 myVariable = '{{ MYOB_KEY }}';
+        }else if(tool=='Qbo'){
+       	 myVariable = '{{ QBO_KEY }}';
+      }else if(tool=='Xero'){
+      	myVariable = '{{ XERO_KEY }}';
+      }else if(tool=='Myobledger'){
+      	myVariable = '{{ MYOBLEDGER_KEY }}';
+	  }else if(tool=='Excel'){
+      	myVariable = '{{ EXCEL_KEY }}';
+	  }else if(tool=='Delete'){
+      	myVariable = '{{ DELETE_KEY }}';
+	  }else if(tool=='Reckon'){
+      	myVariable = '{{ RECKON_KEY }}';
+	
+	
+      }else{
+      	myVariable = '';
+      }
+        $('#keys').val(myVariable)
+    });
+</script>
+{% endblock javascripts %}

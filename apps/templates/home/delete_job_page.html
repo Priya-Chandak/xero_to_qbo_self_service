@@ -1,0 +1,242 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet"/>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h4 class="page-title">Delete Functions</h4>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="/jobs">Delete_Jobs</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add New Job</li>
+        </ol>
+    </nav>
+</div>
+<div class="card">
+    <div class="card-header" style="background-color: #6495ED;">
+        <div class="card-title" style="color: white;">Create Job</div>
+        {% if request.args.get('msg') %}
+        <span class="text-danger">{{ request.args.get('msg') }}</span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <form action="" enctype="multipart/form-data" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mt-6">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" name="name" id="name"
+                               placeholder="Enter Name" required>
+                    </div>
+                    <div class="form-group form-floating-label mt-3">
+                        <label for="input_account_id">Input Account</label>
+                        <select class="form-control form-select input-solid" id="input_account_id"
+                                name="input_account_id">
+                            <option value='None'>Select Input Account</option>
+
+                            {% for item in input_settings %}
+                            <option value={{item.id}}>{{item.tool_name}}</option>
+                        
+                            {% endfor %}
+                        </select>
+
+                    </div>     
+                    <div class="form-group mt-3">
+                        <label for="start_date" id="label_start">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" id="start_date"
+                            placeholder="01-01-2022">
+                    </div>
+
+                    <!--									<div class="form-group form-floating-label">-->
+                    <!--										<label for="is_active">Status</label>-->
+                    <!--										<select class="form-control input-solid" id="is_active" name="is_active" required>-->
+                    <!--											<option value="True">Active</option>-->
+                    <!--											<option value="False">Inactive</option>-->
+                    <!--										</select>-->
+
+                    <!--									</div>-->
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mt-6">
+                        <label for="description">Description</label>
+                        <input type="text" class="form-control" name="description" id="description"
+                               placeholder="Enter description">
+                    </div>
+                    <div class="form-group form-floating-label mt-3">
+                        <label for="output_account_id">Output Account</label>
+                        <select class="form-control form-select input-solid" id="output_account_id"
+                                name="output_account_id">
+                            <option value='None'>Select Output Account</option>
+                            {% for item in output_settings %}
+                            <option value={{item.id}}>{{item.tool_name}}</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="end_date" id="label_end">End Date</label>
+                        <input type="date" class="form-control" name="end_date" id="end_date"
+                               placeholder="01-01-2022">
+                    </div>
+
+                </div>
+             
+                <div class="row">
+                    <h5 id="lable_function">Functions</h5>
+                    <hr/>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table" id="function_table">
+                            <thead>
+                            <tr style="background-color: #dddddd">
+                                <th scope="col">Function Name</th>
+                                <th scope="col">Transfer data</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                           
+                            <tr>
+                                <td>Chart of account</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Chart of account"/></td>
+                            </tr>
+                           
+                            <tr>
+                                <td>Job</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Job"/></td>
+                            </tr>
+                            
+                            <tr>
+                                <td>Customer</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Customer"/></td>
+                            </tr>
+                            <tr>
+                                <td>Supplier</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Supplier"/></td>
+                            </tr>
+                            <tr>
+                                <td>Employee</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Employee"/></td>
+                            </tr>
+                            <tr>
+                                <td>Item</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Item"/></td>
+                            </tr>
+                            <tr>
+                                <td>Spend Money</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Spend Money"/></td>
+                            </tr>
+                            <tr>
+                                <td>Receive Money</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Receive Money"/></td>
+                            </tr>
+                            <tr>
+                                <td>Bank Transfer</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Bank Transfer"/></td>
+                            </tr>
+                            <tr>
+                                <td>Journal</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Journal"/></td>
+                            </tr>
+                            <tr>
+                                <td>Invoice</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Invoice"/></td>
+                            </tr>
+                            <tr>
+                                <td>Invoice CreditNote</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Invoice CreditNote"/></td>
+                            </tr>
+                            <tr>
+                                <td>Bill</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Bill"/></td>
+                            </tr>
+                            <tr>
+                                <td>Bill VendorCredit</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Bill VendorCredit"/></td>
+                            </tr>
+                            <tr>
+                                <td>Invoice Payment</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Invoice Payment"/></td>
+                            </tr>
+                            <tr>
+                                <td>Bill Payment</td>
+                                <td><input type="checkbox" name="mycheckbox" value="Bill Payment"/></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <button type="submit" class="btn btn-success ms-3 mb-3" id="submit_button">Submit</button>
+            
+            
+            <!-- <button class="btn btn-danger">Cancel</button> -->
+        </form>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script>
+	$(".js-select2").select2({
+		closeOnSelect: false,
+		placeholder: "Select functions",
+		allowHtml: true,
+		allowClear: true,
+		tags: true
+	});
+
+    $("#input_account_id").change(function () {
+        var input_type =  $("#input_account_id option:selected").val();
+        $.ajax({
+            type: 'POST',
+            url: "/getInputAccountType",
+            data: {input_type: input_type},
+            success: function(data){
+                var result = $.parseJSON(data);
+                        if(result.account_type=='Excel'){
+                            $('#start_date').hide();
+                            $('#end_date').hide();
+                            $('#label_start').hide();
+                            $('#label_end').hide();
+                            $('#function_table').hide();
+                            $('#function_table').prop('disabled', 'disabled');
+
+                            $('#lable_function').hide();
+                            //$('#submit_button').hide();
+                            $('#upload_button').show();
+                            $('#lable_upload1').show();
+
+                            
+                        }else{
+                            $('#start_date').show();
+                            $('#end_date').show();
+                            $('#label_start').show();
+                            $('#label_end').show();
+                            $('#function_table').show();
+                            $('#lable_function').show();
+                            //$('#submit_button').show();
+                            $('#upload_button').hide();
+                            $('#lable_upload1').hide();
+                        }
+                        
+                    
+                    }
+            });
+        });
+</script>
+{% endblock javascripts %}
