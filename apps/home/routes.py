@@ -2210,3 +2210,21 @@ def upload_file(request):
     # file1.close()
     # print("file created")
     # return send_from_directory(app.config['UPLOAD_PATH'],filename)
+
+
+@blueprint.route("/connect_to_xero", methods=["GET", "POST"])
+def connect_to_xero():
+    if request.method == "GET":
+        return render_template("home/connect_to_xero.html")
+    if request.method == "POST":
+        return redirect(
+                url_for(
+                    ".xero_task_execution", msg="User added successfully!!!!."
+                )
+            )
+
+@blueprint.route("/xero_task_execution", methods=["GET", "POST"])
+def xero_task_execution():
+    if request.method == "GET":
+        return render_template("home/xero_task_execution.html")
+

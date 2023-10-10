@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Switching Data</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="text-brown">Switching Data</h1>
+                    </div>
+                    <div class="card-body">
+                        <form enctype="multipart/form-data" method="post">
+                            <div class="form-group">
+                                <label for="selectTool" class="text-black">Switching from</label>
+                                <select class="form-control form-control-lg mb-3" id="selectTool">
+                                    <option selected>Select Tool</option>
+                                    <option value="1">Xero</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="selectEmail" class="text-black">Enter your email</label>
+                              <input type="email" class="form-control form-control-lg mb-3" placeholder="enter your email id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="selectEmail" class="text-black">Enter your company</label>
+                              <input type="text" class="form-control form-control-lg mb-3" placeholder="enter your company" required>
+                            </div>
+                            <div>
+                               <a href="/xero_task_execution" class="btn btn-success ms-3 mb-3">Lets Go</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS CDN links -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Your JavaScript code can be placed here -->
+</body>
+</html>
+
+
+
