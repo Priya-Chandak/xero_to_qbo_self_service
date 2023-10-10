@@ -32,7 +32,7 @@
                               <input type="text" class="form-control form-control-lg mb-3" placeholder="enter your company" required>
                             </div>
                             <div>
-                               <a href="/xero_task_execution" class="btn btn-success ms-3 mb-3">Lets Go</a>
+                               <button class="btn btn-success ms-3 mb-3">Let's Go</button>
                             </div>
                         </form>
                     </div>
@@ -46,6 +46,29 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- Your JavaScript code can be placed here -->
+
+<script>
+    $(document).ready(function() {
+      $('#myButton').click(function() {
+        debugger
+        $.ajax({
+          type: "POST",
+          url: "/xero-connect",
+        });
+      });
+    });
+	$(document).ready(function() {
+      $('#button11').click(function() {
+        var x = $("input:text").val();
+        $.ajax({
+          type: "POST",
+          url: "/getcompanyid",
+          data:{url1:x}
+        });
+        });
+      });
+</script>
+
 </body>
 </html>
 

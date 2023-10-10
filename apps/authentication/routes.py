@@ -10,7 +10,8 @@ from apps.authentication.util import verify_pass
 
 @blueprint.route("/")
 def route_default():
-    return redirect(url_for("home_blueprint.connect_to_xero"))
+    return redirect(url_for("home_blueprint.connect_input_tool"))
+
 
 # Login & Registration
 @blueprint.route("/login", methods=["GET", "POST"])
@@ -22,7 +23,7 @@ def login():
         password = request.form["password"]
         # Locate user
         user = Users.query.filter_by(email=username).first()
-       
+
         # Check the password
         if user and verify_pass(password, user.password):
             login_user(user)
@@ -35,7 +36,7 @@ def login():
 
     if not current_user.is_authenticated:
         return render_template("accounts/login.html", form=login_form)
-    return redirect(url_for("home_blueprint.connect_to_xero"))
+    return redirect(url_for("home_blueprint.connect_input_tool"))
 
 
 @blueprint.route("/logout")
@@ -43,18 +44,22 @@ def logout():
     logout_user()
     return redirect(url_for("authentication_blueprint.login"))
 
+
 # Errors
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return redirect(url_for("authentication_blueprint.login"))
 
+
 @blueprint.errorhandler(403)
 def access_forbidden(error):
     return render_template("home/page-403.html"), 403
 
+
 @blueprint.errorhandler(404)
 def not_found_error(error):
     return render_template("home/page-404.html"), 404
+
 
 @blueprint.errorhandler(500)
 def internal_error(error):
