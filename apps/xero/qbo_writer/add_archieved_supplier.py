@@ -1,7 +1,6 @@
 import json
 import logging
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
@@ -9,27 +8,26 @@ from apps.util.qbo_util import post_data_in_qbo
 logger = logging.getLogger(__name__)
 
 
-def get_used_archived_suppliers(job_id,task_id):
+def get_used_archived_suppliers(job_id, task_id):
     try:
         logger.info("Started executing xero -> qbowriter ->  get_used_archived_suppliers")
         dbname = get_mongodb_database()
         xero_archived_supplier_in_bill1 = dbname['xero_archived_supplier_in_bill']
-        
-        contacts1 = set([doc["ContactName"] for doc in dbname['xero_bill_suppliers'].find({'job_id': job_id}, {"ContactName": 1})])
+
+        contacts1 = set(
+            [doc["ContactName"] for doc in dbname['xero_bill_suppliers'].find({'job_id': job_id}, {"ContactName": 1})])
         contacts2 = list(dbname['xero_archived_supplier'].find({'job_id': job_id}))
 
         filtered_contacts2 = [doc for doc in contacts2 if any(doc['Name'].startswith(contact) for contact in contacts1)]
         result = filtered_contacts2
-        if len(result)>0:
+        if len(result) > 0:
             xero_archived_supplier_in_bill1.insert_many(result)
-        
+
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> get_used_archived_customers", ex)
 
-    
 
-
-def add_xero_archieved_supplier(job_id,task_id):
+def add_xero_archieved_supplier(job_id, task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_archived_supplier")
 
@@ -39,7 +37,7 @@ def add_xero_archieved_supplier(job_id,task_id):
 
         supplier_data = dbname["xero_archived_supplier_in_bill"]
 
-        suppliers = supplier_data.find({"job_id":job_id})
+        suppliers = supplier_data.find({"job_id": job_id})
 
         for supplier in suppliers:
             _id = supplier.get('_id')
@@ -58,8 +56,10 @@ def add_xero_archieved_supplier(job_id,task_id):
 
             QuerySet2["TaxIdentifier"] = supplier.get("TaxNumber")
 
-            QuerySet2["GivenName"] = supplier.get("FirstName").replace(":","-") if supplier.get("FirstName")!=None else None
-            QuerySet2["FamilyName"] = supplier.get("LastName").replace(":","-") if supplier.get("LasttName")!=None else None
+            QuerySet2["GivenName"] = supplier.get("FirstName").replace(":", "-") if supplier.get(
+                "FirstName") != None else None
+            QuerySet2["FamilyName"] = supplier.get("LastName").replace(":", "-") if supplier.get(
+                "LasttName") != None else None
             if len(supplier.get("Address")) != 0:
                 supplier_address = supplier.get("Address")
                 QuerySet3["Line1"] = supplier_address[0].get("Region")
@@ -71,8 +71,7 @@ def add_xero_archieved_supplier(job_id,task_id):
                 QuerySet8["FreeFormNumber"] = supplier_phone[2].get("PhoneNumber")
                 QuerySet7["FreeFormNumber"] = supplier_phone[3].get("PhoneNumber")
 
-
-            QuerySet2["DisplayName"] = supplier.get("Name").replace(":", "-") if supplier.get("Name")!=None else None
+            QuerySet2["DisplayName"] = supplier.get("Name").replace(":", "-") if supplier.get("Name") != None else None
             QuerySet2["PrintOnCheckName"] = QuerySet2["DisplayName"][0:110]
 
             QuerySet10["URI"] = supplier.get("Website")
@@ -87,29 +86,28 @@ def add_xero_archieved_supplier(job_id,task_id):
             QuerySet2["WebAddr"] = QuerySet10
 
             QuerySet9["BankAccountName"] = supplier.get("BankAccName")
-            
+
             if supplier.get("BankAccNumber") is not None and supplier.get("BankAccNumber") is not "":
                 QuerySet9["BankBranchIdentifier"] = (
-                    supplier.get("BankAccNumber")[0:3]
-                    + "-"
-                    + supplier.get("BankAccNumber")[3:6]
+                        supplier.get("BankAccNumber")[0:3]
+                        + "-"
+                        + supplier.get("BankAccNumber")[3:6]
                 )
 
             if supplier.get("BankAccNumber") is not None and supplier.get("BankAccNumber") is not "":
                 QuerySet9["BankAccountNumber"] = supplier.get("BankAccNumber")[6:16]
-            
+
             QuerySet9["StatementText"] = supplier.get("Details")
-            
+
             if len(QuerySet9) == 0:
                 pass
             elif len(QuerySet9) == 4:
                 QuerySet2["VendorPaymentBankDetail"] = QuerySet9
-        
+
             payload = json.dumps(QuerySet2)
-            
-            post_data_in_qbo(url, headers, payload,supplier_data,_id, job_id,task_id, supplier.get("Name"))
+
+            post_data_in_qbo(url, headers, payload, supplier_data, _id, job_id, task_id, supplier.get("Name"))
 
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_supplier -> add_xero_archived_supplier", ex)
-        

@@ -43,18 +43,18 @@
                                 <thead>
                                 <tr>
                                     {% for item in columns %}
-                                        <th>{{item}}</th>
+                                    <th>{{item}}</th>
                                     {% endfor %}
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    {% for dict_item in data %}
-                                        <tr>
-                                            {% for key, value in dict_item.items() %}
-                                                <td>{{value}}</td>
-                                            {% endfor %}
-                                        </tr>
+                                {% for dict_item in data %}
+                                <tr>
+                                    {% for key, value in dict_item.items() %}
+                                    <td>{{value}}</td>
                                     {% endfor %}
+                                </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -120,6 +120,7 @@
 
 			});
 		});
+
 
 </script>
 

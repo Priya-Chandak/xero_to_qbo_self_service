@@ -1,12 +1,8 @@
-import traceback
-
 import requests
 
 from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-import sys
 
 
 def get_xero_bank_transfer(job_id, task_id):
@@ -43,14 +39,15 @@ def get_xero_bank_transfer(job_id, task_id):
                         url = f"{base_url}/BankTransfers?page={pages}"
                     else:
                         url = f"{base_url}/BankTransfers?page={pages}&where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})%20AND%20Date%3C%3DDateTime({y2}%2C{m2}%2C{d2})"
-                    
+
                     print(url)
                     response = requests.request("GET", url, headers=headers, data=payload)
                     JsonResponse = response.json()
                     JsonResponse1 = JsonResponse["BankTransfers"]
-                    
+
                     for i in range(0, len(JsonResponse1)):
-                        QuerySet = {"job_id": job_id, "task_id": task_id, "is_pushed": 0, "error": None,"payload": None,
+                        QuerySet = {"job_id": job_id, "task_id": task_id, "is_pushed": 0, "error": None,
+                                    "payload": None,
                                     "table_name": "xero_bank_transfer",
                                     "FromAccountName": JsonResponse1[i]["FromBankAccount"]["Name"]}
 
@@ -69,12 +66,11 @@ def get_xero_bank_transfer(job_id, task_id):
 
                         arr.append(QuerySet)
                         print(len(arr))
-                   
+
                     Collection.insert_many(arr)
                     print("Added")
 
-                
+
     except Exception as ex:
         import traceback
         traceback.print_exc()
-        

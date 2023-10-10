@@ -1,40 +1,33 @@
+import asyncio
+import base64
 import json
 import os
+import webbrowser
 from pathlib import Path
-from apps.util.qbo_util import post_data_in_myob, post_data_in_qbo,retry_payload_for_xero_to_myob,retry_payload_for_qbo_to_myob,retry_payload_for_excel_to_myob,retry_payload_for_xero_to_qbo,retry_payload_for_myob_to_qbo,retry_payload_for_excel_to_reckon
-import asyncio
-import ast
 
 import openpyxl
-from flask import render_template, redirect, request, url_for,jsonify
+from flask import render_template, redirect, request, url_for
 from flask.helpers import get_root_path
 from flask_login import login_required
 from jinja2 import TemplateNotFound
-from sqlalchemy.orm import aliased
 from werkzeug.utils import secure_filename
-from flask import Flask
 
-import json 
-import requests
-import webbrowser
-import base64
-
-
-
-
-from apps import db
 from apps.authentication.forms import CreateAccountForm
-from apps.authentication.forms import CreateJobForm, CreateSettingForm,CreateSelectidForm,CreateIdNameForm,CreateEmailForm,CreateauthcodeForm
+from apps.authentication.forms import CreateJobForm, CreateSettingForm, CreateIdNameForm, \
+    CreateEmailForm, CreateauthcodeForm
 from apps.authentication.models import Users
 from apps.home import blueprint
 from apps.home.models import EntityDataReadDetails
-from apps.home.models import Jobs, JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep,ToolId
-from apps.home.models import MyobSettings, QboSettings, XeroSettings, Tool, ToolSettings
-from apps.myconstant import *
+from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep, ToolId
+from apps.home.models import MyobSettings, QboSettings, XeroSettings, ToolSettings
+from apps.mmc_settings.all_settings import *
 from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import get_pagination_for_records
-from apps.mmc_settings.all_settings import *
+from apps.util.qbo_util import retry_payload_for_xero_to_myob, \
+    retry_payload_for_qbo_to_myob, retry_payload_for_excel_to_myob, retry_payload_for_xero_to_qbo, \
+    retry_payload_for_myob_to_qbo, retry_payload_for_excel_to_reckon
+
 
 @blueprint.route("/index")
 @login_required
@@ -160,7 +153,7 @@ def startJobByID():
     asyncio.run(read_myob_write_qbo_task(job_id))
     return json.dumps({'status': 'success'})
 
-import requests
+
 @blueprint.route("/retryPayload", methods=["POST"])
 @login_required
 def retryPayload():
@@ -170,7 +163,7 @@ def retryPayload():
     _id = request.form['_id']
     payload1 = request.form['payload']
     payload = json.loads(payload1)
-    
+
     tool1 = aliased(Tool)
     tool2 = aliased(Tool)
     task_details = db.session.query(Task).get(task_id)
@@ -181,71 +174,67 @@ def retryPayload():
                                                      ).join(tool1, Jobs.input_account_id == tool1.id
                                                             ).join(tool2, Jobs.output_account_id == tool2.id
                                                                    ).filter(Jobs.id == job_id).first()
-    
+
     function_name = task_details.function_name
-   
+
     if output_tool == MYOB:
         if input_tool == EXCEL:
             payload1, base_url, headers = get_settings_myob(job_id)
-            status = retry_payload_for_excel_to_myob(job_id,payload,_id,task_id,function_name)
-            
+            status = retry_payload_for_excel_to_myob(job_id, payload, _id, task_id, function_name)
+
             if status == 'success':
                 return json.dumps({'status': 'success'})
             else:
                 return json.dumps({'status': 'error'})
-        
+
         if input_tool == XERO:
             payload1, base_url, headers = get_settings_myob(job_id)
-            status = retry_payload_for_xero_to_myob(job_id,payload,_id,task_id,function_name)
-            
+            status = retry_payload_for_xero_to_myob(job_id, payload, _id, task_id, function_name)
+
             if status == 'success':
                 return json.dumps({'status': 'success'})
             else:
                 return json.dumps({'status': 'error'})
-        
-        
+
         if input_tool == QBO:
             payload1, base_url, headers = get_settings_myob(job_id)
-            status = retry_payload_for_qbo_to_myob(job_id,payload,_id,task_id,function_name)
-            
+            status = retry_payload_for_qbo_to_myob(job_id, payload, _id, task_id, function_name)
+
             if status == 'success':
                 return json.dumps({'status': 'success'})
             else:
                 return json.dumps({'status': 'error'})
-        
-            
+
     if output_tool == QBO:
         if input_tool == XERO:
-            base_url, headers, company_id, minorversion, get_data_header,report_headers = get_settings_qbo(job_id)
-            status = retry_payload_for_xero_to_qbo(job_id,payload,_id,task_id,function_name)
-            
+            base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+            status = retry_payload_for_xero_to_qbo(job_id, payload, _id, task_id, function_name)
+
             if status == 'success':
                 return json.dumps({'status': 'success'})
             else:
                 return json.dumps({'status': 'error'})
 
         if input_tool == MYOB:
-            base_url, headers, company_id, minorversion, get_data_header,report_headers = get_settings_qbo(job_id)
-            status = retry_payload_for_myob_to_qbo(job_id,payload,_id,task_id)
-            
+            base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+            status = retry_payload_for_myob_to_qbo(job_id, payload, _id, task_id)
+
             if status == 'success':
                 return json.dumps({'status': 'success'})
             else:
                 return json.dumps({'status': 'error'})
-            
-    
+
     if output_tool == RECKON:
         if input_tool == EXCEL:
-            payload,base_url, headers,book,post_headers,get_headers = get_settings_reckon(job_id)
-            status = retry_payload_for_excel_to_reckon(job_id,payload,_id,task_id,function_name)
-            
+            payload, base_url, headers, book, post_headers, get_headers = get_settings_reckon(job_id)
+            status = retry_payload_for_excel_to_reckon(job_id, payload, _id, task_id, function_name)
+
             if status == 'success':
                 return json.dumps({'status': 'success'})
             else:
                 return json.dumps({'status': 'error'})
-        
-                    
-           
+
+
 @blueprint.route("/task_execution_details/<int:task_id>")
 @login_required
 def task_execution_details(task_id):
@@ -260,7 +249,7 @@ def task_execution_details(task_id):
 def records(task_id, function_name):
     dbname = get_mongodb_database()
     page = request.args.get('page', 1, type=int)
-    
+
     tool1 = aliased(Tool)
     tool2 = aliased(Tool)
     task_details = db.session.query(Task).get(task_id)
@@ -273,192 +262,288 @@ def records(task_id, function_name):
                                                                    ).filter(Jobs.id == job_id).first()
 
     print(input_tool, '===================')
-    
+
     if input_tool == XERO:
         if function_name == 'Archieved Chart of account':
             if output_tool == QBO:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_classified_archived_coa"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "xero_classified_archived_coa"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
             if output_tool == MYOB:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_archived_coa"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "xero_archived_coa"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
+
         if function_name == 'Chart of account':
             if output_tool == QBO:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_classified_coa"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "xero_classified_coa"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
+
             if output_tool == MYOB:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_coa"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "xero_coa"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
+
         if function_name == 'Existing Chart of account':
             if output_tool == MYOB:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["existing_coa_myob"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "existing_coa_myob"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
+
             if output_tool == QBO:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["existing_coa"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "existing_coa"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
+
         if function_name == 'Deleted Chart Of account':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_deleted_coa"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_deleted_coa"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Archieved Customer':
             if output_tool == MYOB:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_archived_customer"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "xero_archived_customer"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
 
             if output_tool == QBO:
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_archived_customer_in_invoice"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "xero_archived_customer_in_invoice"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
 
-               
         if function_name == 'Archieved Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_archived_supplier"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_archived_supplier"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Customer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_customer"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_customer"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_supplier"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_supplier"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Item':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_items"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_items"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Job':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_job"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_job"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Spend Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_spend_money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_spend_money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Receive Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_receive_money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_receive_money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Invoice':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_invoice"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_invoice"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Invoice CreditNote':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_creditnote"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_creditnote"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-                
-           
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bill':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_bill"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_bill"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
 
         if function_name == 'Bill VendorCredit':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_vendorcredit"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_vendorcredit"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
 
         if function_name == 'Invoice Credit Memo Refund':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_credit_memo_refund_payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_credit_memo_refund_payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bill Credit Memo Refund':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_supplier_credit_cash_refund"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_supplier_credit_cash_refund"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Journal':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_manual_journal"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_manual_journal"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Invoice Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_invoice_payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_invoice_payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bill Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_bill_payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_bill_payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
             # bill_payment = dbname["xero_bill_payment"].find(
             #     {"task_id": task_id})
             # data = []
@@ -466,556 +551,827 @@ def records(task_id, function_name):
             #     data.append(i)
             # return render_template("home/records.html", data=data)
 
-
         if function_name == 'Bank Transfer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_bank_transfer"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "xero_bank_transfer"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
     if input_tool == QBO:
         if output_tool == MYOB:
             if function_name == 'Chart of account':
-                page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_COA"])
+                page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                                dbname[
+                                                                                                                    "QBO_COA"])
                 data1 = []
                 for i in data:
                     data1.append(i)
-                return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-                 
+                return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                       total_records=total_records, successful_count=successful_count,
+                                       error_count=error_count)
+
         if function_name == 'Existing Chart of account':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["existing_coa_myob"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "existing_coa_myob"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Archieved Chart of account':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_ARCHIVED_COA"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_ARCHIVED_COA"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Archieved Customer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_ARCHIVED_CUSTOMER"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_ARCHIVED_CUSTOMER"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
 
         if function_name == 'Archieved Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_ARCHIVED_VENDOR"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_ARCHIVED_VENDOR"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Customer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Customer"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Customer"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Supplier"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Supplier"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Item':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Item"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Item"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Job':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Class"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Class"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Spend Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Spend_Money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Spend_Money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Receive Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Received_Money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Received_Money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Invoice':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Invoice"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Invoice"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bill':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Bill"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Bill"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Journal':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Journal"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Journal"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bill Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Bill_Payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Bill_Payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Invoice Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Bank Transfer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["QBO_Bank_Transfer"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-    if input_tool == MYOB:
-        if function_name == 'Chart of account':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["classified_coa"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Employee':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["employee"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Customer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["customer"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["supplier"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-          
-        if function_name == 'Item':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["items"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Job':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["job"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Spend Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["myob_spend_money"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Receive Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["received_money"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Invoice':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["service_invoice"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Bill':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["final_bill"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Journal':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["journal"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Invoice Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["invoice_payment"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
-        if function_name == 'Bill Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["bill_payment"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Bank Transfer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["bank_transfer"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
-    if input_tool == DELETE:
-        if function_name == 'Chart of account':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["chart_of_account"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
-            
-        if function_name == 'Customer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["customer"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["supplier"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Item':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["item"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Job':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["job"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Spend Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["myob_spend_money"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Receive Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["received_money"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Invoice':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["service_invoice"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-                
-           
-        if function_name == 'Bill':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["all_bill"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
-            
-        if function_name == 'Journal':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["journal"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Invoice Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["invoice_payment"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-        if function_name == 'Bill Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["bill_payment"])
-            data1 = []
-            for i in data:
-                data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
 
         if function_name == 'Bank Transfer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["bank_transfer"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "QBO_Bank_Transfer"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+    if input_tool == MYOB:
+        if function_name == 'Chart of account':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "classified_coa"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Employee':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "employee"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Customer':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "customer"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Supplier':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "supplier"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Item':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "items"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Job':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "job"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Spend Money':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "myob_spend_money"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Receive Money':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "received_money"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Invoice':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "service_invoice"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Bill':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "final_bill"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Journal':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "journal"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Invoice Payment':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "invoice_payment"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Bill Payment':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "bill_payment"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Bank Transfer':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "bank_transfer"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+    if input_tool == DELETE:
+        if function_name == 'Chart of account':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "chart_of_account"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Customer':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "customer"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Supplier':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "supplier"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Item':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "item"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Job':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "job"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Spend Money':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "myob_spend_money"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Receive Money':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "received_money"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Invoice':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "service_invoice"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Bill':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "all_bill"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Journal':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "journal"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Invoice Payment':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "invoice_payment"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Bill Payment':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "bill_payment"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
+        if function_name == 'Bank Transfer':
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "bank_transfer"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
     if input_tool == EXCEL and output_tool == MYOB:
 
         if function_name == 'COA':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_chart_of_account"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_chart_of_account"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_supplier"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_supplier"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Customer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_customer"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_customer"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Item':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_item"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_item"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Job':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_job"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_job"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Invoice':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_invoice"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_invoice"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-             
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bills':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_bill"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_bill"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Customer return':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_creditnote"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_creditnote"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Supplier return':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_vendorcredit"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_vendorcredit"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Spend Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_spend_money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_spend_money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Receive Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_receive_money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_receive_money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bank Transfer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_bank_transfer"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_bank_transfer"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Journals':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_journal"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_journal"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Customer payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_invoice_payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_invoice_payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Supplier Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_bill_payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_bill_payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
 
     if input_tool == EXCEL and output_tool == RECKON:
         if function_name == 'account':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_chart_of_account"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_chart_of_account"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
 
         if function_name == 'Customer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_contact"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_contact"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Supplier':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_contact"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_contact"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Employee':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_employee"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_employee"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-            
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Item':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_item"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_item"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Invoice':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_invoice"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_invoice"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bills':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_bill"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_bill"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Customer payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_invoice_payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_invoice_payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Supplier Payment':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_bill_payment"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_bill_payment"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Journals':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_journal"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_journal"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Bank Transfer':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_bank_transfer"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_bank_transfer"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Spend Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_spend_money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_spend_money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-        
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
         if function_name == 'Receive Money':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_receive_money"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_receive_money"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
 
         if function_name == 'Credit Memo':
-            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_creditnote"])
+            page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(task_id,
+                                                                                                            dbname[
+                                                                                                                "excel_reckon_creditnote"])
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
-    
-    
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page,
+                                   total_records=total_records, successful_count=successful_count,
+                                   error_count=error_count)
+
     records_data = jobs.paginate(page=page, per_page=50)
     return render_template("home/records.html", segment="records", records=records_data)
 
@@ -1045,12 +1401,13 @@ def Task_Execution_Status(task_id):
         data=task_execution_status,
     )
 
+
 @blueprint.route("/delete_job_page", methods=["GET", "POST"])
 @login_required
 def delete_job_page():
     create_job_form = CreateJobForm(request.form)
     if request.method == "GET":
-        input_settings = Tool.query.filter(Tool.tool_type == "Input",Tool.account_type == "Delete")
+        input_settings = Tool.query.filter(Tool.tool_type == "Input", Tool.account_type == "Delete")
         # qbo_settings = QboSeCreateJobFormttings.query.all()
         output_settings = Tool.query.filter(Tool.tool_type == "Output")
         return render_template(
@@ -1062,8 +1419,7 @@ def delete_job_page():
         )
 
     if request.method == "POST":
-        input_type ='delete'
-
+        input_type = 'delete'
 
         # if account_type != EXCEL:
         if (
@@ -1083,8 +1439,6 @@ def delete_job_page():
                     ".delete_job_page",
                     msg="Please select atleast one function!!!!.",
                     success=True,
-
-
 
                 )
             )
@@ -1117,14 +1471,14 @@ def delete_job_page():
                 success=True,
             )
         )
-    
+
 
 @blueprint.route("/create_id_name_page", methods=["GET", "POST"])
 @login_required
 def create_id_name_page():
     create_id_name_form = CreateIdNameForm(request.form)
     if request.method == "GET":
-                return render_template(
+        return render_template(
             "home/create_id_name.html",
             segment="jobs",
             form=create_id_name_form,
@@ -1146,14 +1500,15 @@ def create_id_name_page():
             )
         )
 
+
 @blueprint.route("/Reckon_job_page", methods=["GET", "POST"])
 @login_required
 def Reckon_job_page():
     create_job_form = CreateJobForm(request.form)
     if request.method == "GET":
-        input_settings = Tool.query.filter(Tool.tool_type == "Input",Tool.account_type == "Excel")
+        input_settings = Tool.query.filter(Tool.tool_type == "Input", Tool.account_type == "Excel")
         # qbo_settings = QboSeCreateJobFormttings.query.all()
-        output_settings = Tool.query.filter(Tool.tool_type == "Output",Tool.account_type == "Reckon")
+        output_settings = Tool.query.filter(Tool.tool_type == "Output", Tool.account_type == "Reckon")
         return render_template(
             "home/create_job.html",
             segment="jobs",
@@ -1163,8 +1518,8 @@ def Reckon_job_page():
         )
 
     if request.method == "POST":
-        input_type ='Excel'
-            
+        input_type = 'Excel'
+
         job_id = upload_file(request)
         return redirect(
             url_for(
@@ -1175,12 +1530,13 @@ def Reckon_job_page():
             )
         )
 
+
 @blueprint.route("/create_auth_code", methods=["GET", "POST"])
 @login_required
 def create_auth_code():
     create_auth_code_form = CreateauthcodeForm(request.form)
     if request.method == "GET":
-                return render_template(
+        return render_template(
             "home/create_auth_token.html",
             segment="jobs",
             form=create_auth_code_form,
@@ -1188,7 +1544,7 @@ def create_auth_code():
 
     if request.method == "POST":
         toolId = ToolId()
-    
+
         return redirect(
             url_for(
                 ".create_auth_code",
@@ -1203,31 +1559,30 @@ def create_auth_code():
 @login_required
 def onclickauth():
     client_id = "BDDDE967BCF943098B8A44E164AE1A74"
-    client_secret= "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
-    redirect_uri= "https://www.mmcconvert.com"
-    scope="offline_access accounting.transactions"
+    client_secret = "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
+    redirect_uri = "https://www.mmcconvert.com"
+    scope = "offline_access accounting.transactions"
 
     CLIENT_ID = f"{client_id}"
-    CLIENT_SECRET=f"{client_secret}"
+    CLIENT_SECRET = f"{client_secret}"
     clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
     encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
     auth_code = "%s" % encoded_u
 
-   
-    auth_url =('''https://login.xero.com/identity/connect/authorize?'''+
-            '''response_type=code'''+
-            '''&client_id=''' + client_id +
-            '''&client_secret=''' +client_secret +
-            '''&redirect_uri=''' + redirect_uri +
-            '''&scope='''+ scope +
-            '''&state=123456''')
-    
+    auth_url = ('''https://login.xero.com/identity/connect/authorize?''' +
+                '''response_type=code''' +
+                '''&client_id=''' + client_id +
+                '''&client_secret=''' + client_secret +
+                '''&redirect_uri=''' + redirect_uri +
+                '''&scope=''' + scope +
+                '''&state=123456''')
+
     webbrowser.open_new(auth_url)
     return redirect(
-            url_for(
-                ".create_auth_code"
-            )
+        url_for(
+            ".create_auth_code"
         )
+    )
 
 
 @blueprint.route("/choice_email_page", methods=["GET", "POST"])
@@ -1235,10 +1590,9 @@ def onclickauth():
 def choice_email_page():
     choice_email_page_form = CreateEmailForm(request.form)
     if request.method == "GET":
-            
-            email_settings = ToolId.query.all()
-                
-            return render_template(
+        email_settings = ToolId.query.all()
+
+        return render_template(
             "home/choice_email_name.html",
             segment="jobs",
             email_settings=email_settings,
@@ -1251,12 +1605,10 @@ def choice_email_page():
             url_for(
                 ".create_auth_code",
                 client_id=toolId.client_id,
-                client_secret= toolId.client_secret,
-                
-                
+                client_secret=toolId.client_secret,
+
             )
         )
-
 
 
 # @blueprint.route("/id_select_page", methods=["GET", "POST"])
@@ -1264,7 +1616,7 @@ def choice_email_page():
 # def id_select_page():
 #     create_idselect_form = CreateSelectidForm(request.form)
 #     if request.method == "GET":
-        
+
 #         return render_template(
 #             "home/delete_job_page.html",
 #             segment="jobs",
@@ -1272,15 +1624,14 @@ def choice_email_page():
 #         )
 
 #     if request.method == "POST":
-        
-       
+
 
 @blueprint.route("/jobs/create", methods=["GET", "POST"])
 @login_required
 def create_job():
     create_job_form = CreateJobForm(request.form)
     if request.method == "GET":
-        input_settings = Tool.query.filter(Tool.tool_type == "Input",Tool.account_type != "Delete")
+        input_settings = Tool.query.filter(Tool.tool_type == "Input", Tool.account_type != "Delete")
         # qbo_settings = QboSeCreateJobFormttings.query.all()
         output_settings = Tool.query.filter(Tool.tool_type == "Output")
         return render_template(
@@ -1455,7 +1806,7 @@ def create_tool_settings(id):
     create_setting_form = CreateSettingForm(request.form)
     if request.method == "GET":
         tool = Tool.query.filter(Tool.id == id).first()
-        tool_xero_type= Tool.query.filter(Tool.account_type == "Xero" ).first()
+        tool_xero_type = Tool.query.filter(Tool.account_type == "Xero").first()
         tool_settings = ToolSettings.query.filter(
             ToolSettings.tool_id == id).all()
         key_list = tool.keys.split(",")
@@ -1803,6 +2154,7 @@ def getInputAccountType():
     return json.dumps({'account_type': input_type.account_type})
     # return jsonify(input_type)
 
+
 @blueprint.route("/getToolType", methods=["POST"])
 @login_required
 def getToolType():
@@ -1858,4 +2210,3 @@ def upload_file(request):
     # file1.close()
     # print("file created")
     # return send_from_directory(app.config['UPLOAD_PATH'],filename)
-

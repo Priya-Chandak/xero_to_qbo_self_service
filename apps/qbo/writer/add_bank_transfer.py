@@ -1,14 +1,3 @@
-import json
-import traceback
-from datetime import datetime
-
-from apps.home.data_util import add_job_status
-from apps.mmc_settings.all_settings import get_settings_qbo
-from apps.util.db_mongo import get_mongodb_database
-from apps.util.qbo_util import post_data_in_qbo, get_start_end_dates_of_job
-from time import sleep
-
-
 def add_bank_transfer1(job_id, task_id):
     try:
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
@@ -27,8 +16,7 @@ def add_bank_transfer1(job_id, task_id):
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-
-        QuerySet1=QuerySet1
+        QuerySet1 = QuerySet1
         for i in range(0, len(QuerySet1)):
             print(i)
             FromAccountRef = {}
@@ -48,9 +36,9 @@ def add_bank_transfer1(job_id, task_id):
                     ToAccountRef["name"] = QBO_coa[j1]["Name"]
                     ToAccountRef["value"] = QBO_coa[j1]["Id"]
 
-            _id=QuerySet1[i]['_id']
-            task_id=QuerySet1[i]['task_id']
-                
+            _id = QuerySet1[i]['_id']
+            task_id = QuerySet1[i]['task_id']
+
             QuerySet2 = {"Amount": QuerySet1[i]["Amount"],
                          "PrivateNote": QuerySet1[i]["Memo"] + "-" + QuerySet1[i]["TransferNumber"]
                          if QuerySet1[i]["Memo"] is not None else
@@ -60,7 +48,7 @@ def add_bank_transfer1(job_id, task_id):
             bank_transfer_date = QuerySet1[i]["Date"][0:10]
             bank_transfer_date1 = datetime.strptime(
                 bank_transfer_date, "%Y-%m-%d")
-            
+
             id_or_name_value_for_error = (
                 QuerySet1[i]["TransferNumber"]
                 if QuerySet1[i]["TransferNumber"] is not None
@@ -71,13 +59,15 @@ def add_bank_transfer1(job_id, task_id):
                         bank_transfer_date1 <= end_date1
                 ):
                     post_data_in_qbo(
-                        url, headers, payload,mongo_database["bank_transfer"],_id, job_id,task_id, id_or_name_value_for_error
+                        url, headers, payload, mongo_database["bank_transfer"], _id, job_id, task_id,
+                        id_or_name_value_for_error
                     )
             else:
                 post_data_in_qbo(
-                        url, headers, payload,mongo_database["bank_transfer"],_id, job_id,task_id, id_or_name_value_for_error
-                    )
-        
+                    url, headers, payload, mongo_database["bank_transfer"], _id, job_id, task_id,
+                    id_or_name_value_for_error
+                )
+
     except Exception as ex:
         traceback.print_exc()
 
@@ -85,11 +75,10 @@ def add_bank_transfer1(job_id, task_id):
 import json
 import traceback
 from datetime import datetime
-from apps.home.data_util import add_job_status
+
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo, get_start_end_dates_of_job
-from time import sleep
 
 
 def add_bank_transfer(job_id, task_id):
@@ -139,13 +128,16 @@ def add_bank_transfer(job_id, task_id):
             bank_transfer_date = bank_transfer["Date"][0:10]
             bank_transfer_date1 = datetime.strptime(bank_transfer_date, "%Y-%m-%d")
 
-            id_or_name_value_for_error = bank_transfer["TransferNumber"] if bank_transfer["TransferNumber"] is not None else ""
+            id_or_name_value_for_error = bank_transfer["TransferNumber"] if bank_transfer[
+                                                                                "TransferNumber"] is not None else ""
 
             if start_date1 != "" and end_date1 != "":
                 if bank_transfer_date1 >= start_date1 and bank_transfer_date1 <= end_date1:
-                    post_data_in_qbo(url, headers, payload, mongo_database["bank_transfer"], _id, job_id, task_id, id_or_name_value_for_error)
+                    post_data_in_qbo(url, headers, payload, mongo_database["bank_transfer"], _id, job_id, task_id,
+                                     id_or_name_value_for_error)
             else:
-                post_data_in_qbo(url, headers, payload, mongo_database["bank_transfer"], _id, job_id, task_id, id_or_name_value_for_error)
+                post_data_in_qbo(url, headers, payload, mongo_database["bank_transfer"], _id, job_id, task_id,
+                                 id_or_name_value_for_error)
 
     except Exception as ex:
         traceback.print_exc()

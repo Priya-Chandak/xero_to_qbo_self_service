@@ -1,6 +1,5 @@
 import traceback
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.qbo_util import get_data_from_qbo
 
@@ -27,7 +26,7 @@ def read_qbo_data(job_id, task_id, read_data_from_object):
                                    "qbo_object_name": "CreditMemo",
                                    "url": url,
                                    "header": get_data_header})
-            
+
         if read_data_from_object == "Chart of account" or read_data_from_object == "Chart of account":
             configurations.append({"job_id": job_id,
                                    "table_name": "QBO_COA",
@@ -44,7 +43,7 @@ def read_qbo_data(job_id, task_id, read_data_from_object):
                                    "qbo_object_name": "BillPayment",
                                    "url": url,
                                    "header": get_data_header})
-            
+
         if read_data_from_object == "Invoice Payment":
             configurations.append({"job_id": job_id,
                                    "table_name": "QBO_Payment",
@@ -168,7 +167,6 @@ def read_qbo_data(job_id, task_id, read_data_from_object):
             get_data_from_qbo(config.get("job_id"), config.get("task_id"), config.get("table_name"),
                               config.get("json_object_key"),
                               config.get("qbo_object_name"), config.get("url"), config.get("header"))
-    
+
     except Exception as ex:
         traceback.print_exc()
-        

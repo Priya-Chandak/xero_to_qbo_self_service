@@ -14,7 +14,7 @@ def add_single_service_invoice(job_id):
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         db = get_mongodb_database()
         url1 = f"{base_url}/invoice?minorversion={minorversion}"
-        single_service_invoice = db["single_service_invoice"].find({"job_id":job_id})
+        single_service_invoice = db["single_service_invoice"].find({"job_id": job_id})
 
         single = []
         for p1 in single_service_invoice:
@@ -22,32 +22,32 @@ def add_single_service_invoice(job_id):
 
         Q1 = single
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p1 in QBO_Item:
             QBO_item.append(p1)
 
-        Myob_Job = db["job"].find({"job_id":job_id})
+        Myob_Job = db["job"].find({"job_id": job_id})
         Myob_Job1 = []
         for n in range(0, db["job"].count_documents({})):
             Myob_Job1.append(Myob_Job[n])
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p2 in QBO_Class:
             QBO_class.append(p2)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p3 in QBO_Tax:
             QBO_tax.append(p3)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p4 in QBO_COA:
             QBO_coa.append(p4)
 
-        QBO_Customer = db["QBO_Customer"].find({"job_id":job_id})
+        QBO_Customer = db["QBO_Customer"].find({"job_id": job_id})
         QBO_customer = []
         for p5 in QBO_Customer:
             QBO_customer.append(p5)
@@ -522,4 +522,3 @@ def add_single_service_invoice(job_id):
                 )
     except Exception as ex:
         traceback.print_exc()
-        

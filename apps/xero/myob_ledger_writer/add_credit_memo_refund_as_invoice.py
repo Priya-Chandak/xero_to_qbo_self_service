@@ -1,6 +1,5 @@
 import asyncio
 import json
-from datetime import datetime
 
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
@@ -53,16 +52,15 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
         for p5 in xero_tax1:
             xero_tax.append(p5)
 
-        supplier1 = dbname['supplier'].find({"job_id":job_id})
+        supplier1 = dbname['supplier'].find({"job_id": job_id})
         supplier = []
-        for k5 in range(0, dbname['supplier'].count_documents({"job_id":job_id})):
+        for k5 in range(0, dbname['supplier'].count_documents({"job_id": job_id})):
             supplier.append(supplier1[k5])
 
-        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id":job_id})
+        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id": job_id})
         xero_archived_coa = []
-        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id":job_id})):
+        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id": job_id})):
             xero_archived_coa.append(xero_archived_coa1[k4])
-            
 
         xero_item1 = dbname['xero_items'].find({"job_id": job_id})
         xero_item = []
@@ -70,7 +68,7 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
             xero_item.append(p51)
 
         credit_memo_refund = credit_memo_refund_payment
-        for i in range(0, len(credit_memo_refund)): 
+        for i in range(0, len(credit_memo_refund)):
             # for a in range(0, len(xero_account)):
             #     if credit_memo_refund[i]["AccountCode"] == xero_account[a]["AccountID"]:
             #             for b in range(0, len(chart_of_account)):
@@ -86,7 +84,7 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
             QuerySet1["Number"] = credit_memo_refund[i]["InvoiceNumber"][-13:]
             QuerySet1["Date"] = credit_memo_refund[i]["Date"]
             QuerySet1['CustomerPurchaseOrderNumber'] = credit_memo_refund[i]['InvoiceID']
-        
+
             # terms['PaymentIsDue'] = "OnADayOfTheMonth"
             # duedate = datetime.strptime(credit_memo_refund[i]["DueDate"][0:10], '%Y-%m-%d')
             # terms['BalanceDueDate'] = duedate.day
@@ -101,7 +99,6 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
                             myob_customer[c1]["Company_Name"].endswith("- C"):
                         contact['UID'] = myob_customer[c1]["UID"]
 
-
             for c01 in range(0, len(supplier)):
                 if supplier[c01]["CompanyName"] != None and supplier[c01]["CompanyName"] != "":
                     if supplier[c01]["CompanyName"][0:50] == credit_memo_refund[i]['Contact'][0:50]:
@@ -109,12 +106,12 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
                     elif supplier[c01]["CompanyName"].startswith(credit_memo_refund[i]['Contact']) and \
                             supplier[c01]["CompanyName"].endswith("- S"):
                         contact['UID'] = supplier[c01]["UID"]
-            if contact  != {} and contact != None:          
-                QuerySet1["Customer"] = contact  
+            if contact != {} and contact != None:
+                QuerySet1["Customer"] = contact
             QuerySet1['IsTaxInclusive'] = True
 
             if 'AccountCode' in credit_memo_refund[i]:
-                
+
                 QuerySet3 = {}
                 Item = {}
                 Account = {}
@@ -129,7 +126,6 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
                 QuerySet2['TaxCode'] = taxcode
                 QuerySet3['TaxCode'] = taxcode
 
-                        
                 if 'Quantity' in credit_memo_refund[i]:
                     QuerySet3['UnitCount'] = credit_memo_refund[i]["Quantity"]
                     QuerySet3["UnitPrice"] = abs(credit_memo_refund[i]["Amount"])
@@ -147,7 +143,6 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
 
                     QuerySet3["Total"] = abs(credit_memo_refund[i]["Amount"])
 
-
                 for j9 in range(0, len(xero_account)):
                     if credit_memo_refund[i]["AccountCode"] == xero_account[j9]["AccountID"]:
                         for j5 in range(0, len(chart_of_account)):
@@ -155,26 +150,22 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
                                 Account["UID"] = chart_of_account[j5]["UID"]
                             else:
                                 pass
-                for n in range(0,len(xero_archived_coa)):    
-                    for p1 in range(0,len(chart_of_account)):
+                for n in range(0, len(xero_archived_coa)):
+                    for p1 in range(0, len(chart_of_account)):
                         if credit_memo_refund[i]["AccountCode"] == xero_archived_coa[n]['AccountID']:
                             if xero_archived_coa[n]['Name'] == chart_of_account[p1]["Name"]:
                                 Account["UID"] = chart_of_account[p1]["UID"]
 
                 if Account != {} and Account != None:
                     QuerySet3['account'] = Account
-                    
 
                 QuerySet3['TaxCode'] = taxcode
                 QuerySet3['Type'] = "Transaction"
-                
 
                 QuerySet1["Lines"].append(QuerySet3)
 
-        
-
             if (credit_memo_refund[i]["Status"] != 'SUBMITTED') and (credit_memo_refund[i]['Status'] != "DRAFT") and (
-                        credit_memo_refund[i]['Status'] != "VOIDED") and (credit_memo_refund[i]['Status'] != "DELETED"):                                  
+                    credit_memo_refund[i]['Status'] != "VOIDED") and (credit_memo_refund[i]['Status'] != "DELETED"):
                 payload = json.dumps(QuerySet1)
                 print(payload)
 
@@ -185,10 +176,11 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
 
                 payload1, base_url, headers = get_settings_myob(job_id)
                 url1 = f"{base_url}/Sale/Invoice/Item"
-                if credit_memo_refund[i]['is_pushed']==0:
+                if credit_memo_refund[i]['is_pushed'] == 0:
                     asyncio.run(
-                        post_data_in_myob(url1, headers, payload, dbname['xero_credit_memo_refund_payment'], _id, job_id, task_id,
-                                        id_or_name_value_for_error))
+                        post_data_in_myob(url1, headers, payload, dbname['xero_credit_memo_refund_payment'], _id,
+                                          job_id, task_id,
+                                          id_or_name_value_for_error))
                 else:
                     pass
 

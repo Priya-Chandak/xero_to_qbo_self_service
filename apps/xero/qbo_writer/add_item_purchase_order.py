@@ -12,7 +12,6 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 logger = logging.getLogger(__name__)
 
 
-
 def add_xero_item_purchase_order(job_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_item_purchase_order -> add_xero_item_purchase_order")
@@ -20,7 +19,7 @@ def add_xero_item_purchase_order(job_id):
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        xero_purchase_orders = db["xero_purchase_order"].find({"job_id":job_id})
+        xero_purchase_orders = db["xero_purchase_order"].find({"job_id": job_id})
 
         xero_purchase_order = []
         for p1 in xero_purchase_orders:
@@ -28,32 +27,32 @@ def add_xero_item_purchase_order(job_id):
 
         xero_purchase_order = xero_purchase_order[0:4]
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p1 in QBO_Item:
             QBO_item.append(p1)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p2 in QBO_Class:
             QBO_class.append(p2)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p3 in QBO_Tax:
             QBO_tax.append(p3)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p4 in QBO_COA:
             QBO_coa.append(p4)
 
-        QBO_Supplier = db["QBO_Supplier"].find({"job_id":job_id})
+        QBO_Supplier = db["QBO_Supplier"].find({"job_id": job_id})
         QBO_supplier = []
         for p5 in QBO_Supplier:
             QBO_supplier.append(p5)
 
-        Xero_COA = db["xero_coa"].find({"job_id":job_id})
+        Xero_COA = db["xero_coa"].find({"job_id": job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
@@ -74,8 +73,8 @@ def add_xero_item_purchase_order(job_id):
             for p1 in range(0, len(QBO_supplier)):
                 if "Supplier" in xero_purchase_order[i]:
                     if (
-                        xero_purchase_order[i]["Supplier"]
-                        == QBO_supplier[p1]["DisplayName"]
+                            xero_purchase_order[i]["Supplier"]
+                            == QBO_supplier[p1]["DisplayName"]
                     ):
                         VendorRef["value"] = QBO_supplier[p1]["Id"]
                         VendorRef["name"] = QBO_supplier[p1]["DisplayName"]
@@ -112,8 +111,8 @@ def add_xero_item_purchase_order(job_id):
                 for p3 in range(0, len(QBO_item)):
                     if "Item_Name" in xero_purchase_order[i]["Line"][j]:
                         if (
-                            xero_purchase_order[i]["Line"][j]["Item_Name"]
-                            == QBO_item[p3]["Name"]
+                                xero_purchase_order[i]["Line"][j]["Item_Name"]
+                                == QBO_item[p3]["Name"]
                         ):
                             ItemRef["name"] = QBO_item[p3]["Name"]
                             ItemRef["value"] = QBO_item[p3]["Id"]
@@ -122,8 +121,8 @@ def add_xero_item_purchase_order(job_id):
                     else:
                         if "Acc_Name" in xero_purchase_order[i]["Line"][j]:
                             if (
-                                xero_purchase_order[i]["Line"][j]["Acc_Name"]
-                                == QBO_item[p3]["Name"]
+                                    xero_purchase_order[i]["Line"][j]["Acc_Name"]
+                                    == QBO_item[p3]["Name"]
                             ):
                                 ItemRef["name"] = QBO_item[p3]["Name"]
                                 ItemRef["value"] = QBO_item[p3]["Id"]
@@ -149,8 +148,8 @@ def add_xero_item_purchase_order(job_id):
                     for p51 in range(0, len(xero_coa)):
                         if "Code" in xero_coa[p51]:
                             if (
-                                xero_purchase_order[i]["Line"][j]["Acc_Name"]
-                                == xero_coa[p51]["Code"]
+                                    xero_purchase_order[i]["Line"][j]["Acc_Name"]
+                                    == xero_coa[p51]["Code"]
                             ):
                                 if xero_coa[p51]["Name"] == QBO_coa[p5]["Name"]:
                                     ItemAccountRef["name"] = QBO_coa[p5]["Name"]
@@ -169,10 +168,10 @@ def add_xero_item_purchase_order(job_id):
                                 TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                 taxrate1 = taxrate
                                 total_val = (
-                                    total_val
-                                    + xero_purchase_order[i]["Line"][j]["Total"]
-                                    / (100 + taxrate1)
-                                    * 100
+                                        total_val
+                                        + xero_purchase_order[i]["Line"][j]["Total"]
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
 
                     elif xero_purchase_order[i]["Line"][j]["taxcode"] == "CAP":
@@ -183,16 +182,16 @@ def add_xero_item_purchase_order(job_id):
                             TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                             taxrate1 = taxrate
                             total_val += (
-                                xero_purchase_order[i]["Line"][j]["Total"]
-                                / (100 + taxrate1)
-                                * 100
+                                    xero_purchase_order[i]["Line"][j]["Total"]
+                                    / (100 + taxrate1)
+                                    * 100
                             )
 
                     elif xero_purchase_order[i]["Line"][j]["taxcode"] == "FRE":
                         if "taxrate_name" in QBO_tax[p6]:
                             if (
-                                "GST-free (purchases)"
-                                in QBO_tax[p6]["taxrate_name"]
+                                    "GST-free (purchases)"
+                                    in QBO_tax[p6]["taxrate_name"]
                             ):
                                 TaxCodeRef["value"] = QBO_tax[p6]["taxcode_id"]
                                 taxrate = QBO_tax[p6]["Rate"]
@@ -200,9 +199,9 @@ def add_xero_item_purchase_order(job_id):
                                 TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                 taxrate1 = taxrate
                                 total_val += (
-                                    xero_purchase_order[i]["Line"][j]["Total"]
-                                    / (100 + taxrate1)
-                                    * 100
+                                        xero_purchase_order[i]["Line"][j]["Total"]
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
 
                     elif xero_purchase_order[i]["Line"][j]["taxcode"] == "N-T":
@@ -213,14 +212,14 @@ def add_xero_item_purchase_order(job_id):
                             TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                             taxrate1 = taxrate
                             total_val += (
-                                xero_purchase_order[i]["Line"][j]["Total"]
-                                / (100 + taxrate1)
-                                * 100
+                                    xero_purchase_order[i]["Line"][j]["Total"]
+                                    / (100 + taxrate1)
+                                    * 100
                             )
 
                     elif (
-                        xero_purchase_order[i]["Line"][j]["taxcode"]
-                        == QBO_tax[p6]["taxcode_name"]
+                            xero_purchase_order[i]["Line"][j]["taxcode"]
+                            == QBO_tax[p6]["taxcode_name"]
                     ):
                         TaxCodeRef["value"] = QBO_tax[p6]["taxcode_id"]
                         taxrate = QBO_tax[p6]["Rate"]
@@ -228,9 +227,9 @@ def add_xero_item_purchase_order(job_id):
                         TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                         taxrate1 = taxrate
                         total_val += (
-                            xero_purchase_order[i]["Line"][j]["Total"]
-                            / (100 + taxrate1)
-                            * 100
+                                xero_purchase_order[i]["Line"][j]["Total"]
+                                / (100 + taxrate1)
+                                * 100
                         )
                     else:
                         pass
@@ -256,26 +255,26 @@ def add_xero_item_purchase_order(job_id):
                         discount_SalesItemLineDetail["Qty"] = 1
                         discount_SalesItemLineDetail["UnitPrice"] = -round(
                             (
-                                xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                                * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                                * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_purchase_order[i]["Line"][j]["BillQuantity"]
+                                    * xero_purchase_order[i]["Line"][j]["UnitPrice"]
+                                    * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
                         DiscountPercent["Amount"] = -round(
                             (
-                                xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                                * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                                * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_purchase_order[i]["Line"][j]["BillQuantity"]
+                                    * xero_purchase_order[i]["Line"][j]["UnitPrice"]
+                                    * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
 
                         if (
-                            xero_purchase_order[i]["Line"][j]["taxcode"]
-                            == "BASEXCLUDED"
+                                xero_purchase_order[i]["Line"][j]["taxcode"]
+                                == "BASEXCLUDED"
                         ):
                             TaxDetail["Amount"] = xero_purchase_order[i]["TotalTax"]
                             TaxLineDetail["NetAmountTaxable"] = round(
@@ -325,19 +324,19 @@ def add_xero_item_purchase_order(job_id):
                         discount_SalesItemLineDetail["Qty"] = -1
                         discount_SalesItemLineDetail["UnitPrice"] = round(
                             (
-                                xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                                * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                                * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_purchase_order[i]["Line"][j]["BillQuantity"]
+                                    * xero_purchase_order[i]["Line"][j]["UnitPrice"]
+                                    * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
                         DiscountPercent["Amount"] = round(
                             (
-                                xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                                * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                                * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_purchase_order[i]["Line"][j]["BillQuantity"]
+                                    * xero_purchase_order[i]["Line"][j]["UnitPrice"]
+                                    * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
@@ -345,7 +344,7 @@ def add_xero_item_purchase_order(job_id):
                         if xero_purchase_order[i]["Line"][j]["taxcode"] == "GST":
                             TaxDetail["Amount"] = -xero_purchase_order[i]["TotalTax"]
                             TaxLineDetail["NetAmountTaxable"] = (
-                                TaxDetail["Amount"] * taxrate1
+                                    TaxDetail["Amount"] * taxrate1
                             )
                         elif xero_purchase_order[i]["Line"][j]["taxcode"] == "FRE":
                             TaxDetail["Amount"] = 0
@@ -408,27 +407,27 @@ def add_xero_item_purchase_order(job_id):
                         TxnTaxDetail["TotalTax"] = xero_purchase_order[i]["TotalTax"]
                         discount_SalesItemLineDetail["Qty"] = 1
                         discount_SalesItemLineDetail["UnitPrice"] = (
-                            -(
-                                xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                                * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                                * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                            )
-                            / 100
+                                -(
+                                        xero_purchase_order[i]["Line"][j]["BillQuantity"]
+                                        * xero_purchase_order[i]["Line"][j]["UnitPrice"]
+                                        * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
+                                )
+                                / 100
                         )
                         DiscountPercent["Amount"] = (
-                            -(
-                                xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                                * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                                * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                            )
-                            / 100
+                                -(
+                                        xero_purchase_order[i]["Line"][j]["BillQuantity"]
+                                        * xero_purchase_order[i]["Line"][j]["UnitPrice"]
+                                        * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
+                                )
+                                / 100
                         )
 
                         if taxrate1 != 0:
                             TaxDetail["Amount"] = xero_purchase_order[i]["TotalTax"]
                             TaxLineDetail["NetAmountTaxable"] = (
-                                xero_purchase_order[i]["Subtotal"]
-                                - xero_purchase_order[i]["TotalTax"]
+                                    xero_purchase_order[i]["Subtotal"]
+                                    - xero_purchase_order[i]["TotalTax"]
                             )
                         else:
                             TaxDetail["Amount"] = 0
@@ -437,15 +436,18 @@ def add_xero_item_purchase_order(job_id):
                     else:
                         discount_SalesItemLineDetail["Qty"] = -1
                         discount_SalesItemLineDetail["UnitPrice"] = (
-                            xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                            * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                            * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                        ) / 100
+                                                                            xero_purchase_order[i]["Line"][j][
+                                                                                "BillQuantity"]
+                                                                            * xero_purchase_order[i]["Line"][j][
+                                                                                "UnitPrice"]
+                                                                            * xero_purchase_order[i]["Line"][j][
+                                                                                "DiscountPercent"]
+                                                                    ) / 100
                         DiscountPercent["Amount"] = (
-                            xero_purchase_order[i]["Line"][j]["BillQuantity"]
-                            * xero_purchase_order[i]["Line"][j]["UnitPrice"]
-                            * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
-                        ) / 100
+                                                            xero_purchase_order[i]["Line"][j]["BillQuantity"]
+                                                            * xero_purchase_order[i]["Line"][j]["UnitPrice"]
+                                                            * xero_purchase_order[i]["Line"][j]["DiscountPercent"]
+                                                    ) / 100
 
                         ItemBasedExpenseLineDetail["Qty"] = -xero_purchase_order[i][
                             "Line"
@@ -464,8 +466,8 @@ def add_xero_item_purchase_order(job_id):
                         if taxrate1 != 0:
                             TaxDetail["Amount"] = xero_purchase_order[i]["TotalTax"]
                             TaxLineDetail["NetAmountTaxable"] = (
-                                xero_purchase_order[i]["Subtotal"]
-                                - xero_purchase_order[i]["TotalTax"]
+                                    xero_purchase_order[i]["Subtotal"]
+                                    - xero_purchase_order[i]["TotalTax"]
                             )
                         else:
                             if xero_purchase_order[i]["Line"][j]["taxcode"] == "GST":
@@ -473,9 +475,9 @@ def add_xero_item_purchase_order(job_id):
                                     "TotalTax"
                                 ]
                                 TaxLineDetail["NetAmountTaxable"] = (
-                                    -xero_purchase_order[i]["Line"][j]["Total"]
-                                    / (100 + taxrate1)
-                                    * 100
+                                        -xero_purchase_order[i]["Line"][j]["Total"]
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
                             elif xero_purchase_order[i]["Line"][j]["taxcode"] == "FRE":
                                 TaxDetail["Amount"] = 0
@@ -521,7 +523,7 @@ def add_xero_item_purchase_order(job_id):
                     purchase_order["Line"].append(DiscountPercent)
 
                 line_amount = (
-                    line_amount + salesitemline["Amount"] + DiscountPercent["Amount"]
+                        line_amount + salesitemline["Amount"] + DiscountPercent["Amount"]
                 )
                 line_amount1 = line_amount + xero_purchase_order[i]["TotalTax"]
 
@@ -603,9 +605,9 @@ def add_xero_item_purchase_order(job_id):
 
                 else:
                     if (
-                        line_amount1
-                        == xero_purchase_order[i]["TotalAmount"]
-                        + xero_purchase_order[i]["TotalTax"]
+                            line_amount1
+                            == xero_purchase_order[i]["TotalAmount"]
+                            + xero_purchase_order[i]["TotalTax"]
                     ):
                         pass
                     else:
@@ -622,17 +624,17 @@ def add_xero_item_purchase_order(job_id):
                             rounding_SalesItemLineDetail["Qty"] = 1
                             if xero_purchase_order[i]["Subtotal"] > 0:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    xero_purchase_order[i]["TotalAmount"] - line_amount1
+                                        xero_purchase_order[i]["TotalAmount"] - line_amount1
                                 )
                                 rounding["Amount"] = (
-                                    xero_purchase_order[i]["TotalAmount"] - line_amount1
+                                        xero_purchase_order[i]["TotalAmount"] - line_amount1
                                 )
                             else:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    xero_purchase_order[i]["TotalAmount"] + line_amount1
+                                        xero_purchase_order[i]["TotalAmount"] + line_amount1
                                 )
                                 rounding["Amount"] = (
-                                    xero_purchase_order[i]["TotalAmount"] + line_amount1
+                                        xero_purchase_order[i]["TotalAmount"] + line_amount1
                                 )
 
                             rounding["DetailType"] = "ItemBasedExpenseLineDetail"
@@ -712,4 +714,3 @@ def add_xero_item_purchase_order(job_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_item_purchase_order -> add_xero_item_purchase_order", ex)
-        

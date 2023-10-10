@@ -1,11 +1,11 @@
 import asyncio
 import json
+import sys
 
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import get_settings_myob
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import update_data_in_myob
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-import sys
 
 
 def get_duplicate_chart_of_account_myob(job_id, task_id):
@@ -36,7 +36,7 @@ def get_duplicate_chart_of_account_myob(job_id, task_id):
                     a1 = {}
                     if chart_of_account[j]['Name'].lower().strip() == xero_coa1[j1]['Name'].lower().strip():
                         a1 = {"job_id": job_id, "task_id": task_id, "is_pushed": 0, "table_name": "chart_of_account",
-                            "error": None}
+                              "error": None}
                         a1['UID'] = chart_of_account[j]['UID']
                         a1['Name'] = chart_of_account[j]['Name']
                         a1['IsHeader'] = chart_of_account[j]['IsHeader']
@@ -48,7 +48,8 @@ def get_duplicate_chart_of_account_myob(job_id, task_id):
                         # a1['Classification'] = xero_coa1[j1]['Classification']
                         a1['Type'] = chart_of_account[j]['Account_Type']
 
-                        if a1['Type'] in ["Bank", "account receivable", "Other current asset", "Fixed asset", "OtherAsset"]:
+                        if a1['Type'] in ["Bank", "account receivable", "Other current asset", "Fixed asset",
+                                          "OtherAsset"]:
                             main_acc = "1-"
                         elif a1['Type'] in ["Credit card", "account payable", "Other current liability",
                                             "Long term liability", "Other liability"]:
@@ -91,7 +92,7 @@ def get_duplicate_chart_of_account_myob(job_id, task_id):
     except Exception as ex:
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)
@@ -106,7 +107,7 @@ def update_existing_chart_account_xero_myob(job_id, task_id):
         payload = {}
         existing_coa = dbname['existing_coa_myob']
 
-        existing_coa_myob = existing_coa.find({"job_id":job_id})
+        existing_coa_myob = existing_coa.find({"job_id": job_id})
         existing_coa_myob1 = []
         for k in existing_coa_myob:
             existing_coa_myob1.append(k)

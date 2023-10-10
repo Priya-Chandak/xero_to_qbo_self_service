@@ -10,7 +10,6 @@ from apps.util.db_mongo import get_mongodb_database
 logger = logging.getLogger(__name__)
 
 
-
 def add_xero_item_from_inv_bill(job_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_item_from_bill -> add_xero_item_from_inv_bill")
@@ -20,24 +19,24 @@ def add_xero_item_from_inv_bill(job_id):
         Collection = db["xero_bill"]
         # Collection = db['xero_item_bill']
 
-        x = Collection.find({"job_id":job_id})
+        x = Collection.find({"job_id": job_id})
         data1 = []
         for p1 in x:
             data1.append(p1)
 
         QuerySet = data1
 
-        qbo_coa1 = db["QBO_COA"].find({"job_id":job_id})
+        qbo_coa1 = db["QBO_COA"].find({"job_id": job_id})
         qbo_coa = []
         for p1 in qbo_coa1:
             qbo_coa.append(p1)
 
-        xero_coa1 = db["xero_coa"].find({"job_id":job_id})
+        xero_coa1 = db["xero_coa"].find({"job_id": job_id})
         xero_coa = []
         for p2 in xero_coa1:
             xero_coa.append(p2)
 
-        xero_item1 = db["xero_items"].find({"job_id":job_id})
+        xero_item1 = db["xero_items"].find({"job_id": job_id})
         xero_item = []
         for p2 in xero_item1:
             xero_item.append(p2)
@@ -86,7 +85,7 @@ def add_xero_item_from_inv_bill(job_id):
                     for k2 in range(0, len(xero_item)):
                         if QuerySet[i]["ItemCode"] == xero_item[k2]["Code"]:
                             QuerySet1["Name"] = (
-                                xero_item[k2]["Name"] + "-" + QuerySet[i]["AccountCode"]
+                                    xero_item[k2]["Name"] + "-" + QuerySet[i]["AccountCode"]
                             )
                             QuerySet1["Sku"] = QuerySet[i]["ItemCode"]
                             QuerySet1["Type"] = "NonInventory"
@@ -97,8 +96,8 @@ def add_xero_item_from_inv_bill(job_id):
                         if ("Code" in xero_coa[j11]) and ("AccountCode" in QuerySet[i]):
                             if QuerySet[i]["AccountCode"] == xero_coa[j11]["Code"]:
                                 if (
-                                    xero_coa[j11]["Name"]
-                                    == qbo_coa[j]["FullyQualifiedName"]
+                                        xero_coa[j11]["Name"]
+                                        == qbo_coa[j]["FullyQualifiedName"]
                                 ):
                                     QuerySet3["value"] = qbo_coa[j]["Id"]
                                     QuerySet3["name"] = qbo_coa[j]["Name"]
@@ -120,4 +119,3 @@ def add_xero_item_from_inv_bill(job_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_item_from_bill -> add_xero_item_from_inv_bill", ex)
-        

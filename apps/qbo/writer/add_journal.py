@@ -2,16 +2,13 @@ import json
 import traceback
 from datetime import datetime
 
-import requests
-
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
-from apps.util.qbo_util import post_data_in_qbo
 from apps.util.qbo_util import get_start_end_dates_of_job
+from apps.util.qbo_util import post_data_in_qbo
 
 
-def add_journal(job_id,task_id):
+def add_journal(job_id, task_id):
     try:
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
 
@@ -22,30 +19,30 @@ def add_journal(job_id,task_id):
         journal_data = db["journal"]
 
         journal1 = []
-        for p1 in db["journal"].find({'job_id':job_id}):
+        for p1 in db["journal"].find({'job_id': job_id}):
             journal1.append(p1)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p3 in QBO_Class:
             QBO_class.append(p3)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p4 in QBO_Tax:
             QBO_tax.append(p4)
 
-        QBO_Customer = db["QBO_Customer"].find({"job_id":job_id})
+        QBO_Customer = db["QBO_Customer"].find({"job_id": job_id})
         QBO_Customer1 = []
         for p5 in QBO_Customer:
             QBO_Customer1.append(p5)
 
-        QBO_Supplier = db["QBO_Supplier"].find({"job_id":job_id})
+        QBO_Supplier = db["QBO_Supplier"].find({"job_id": job_id})
         QBO_Supplier1 = []
         for p6 in QBO_Supplier:
             QBO_Supplier1.append(p6)
@@ -53,9 +50,9 @@ def add_journal(job_id,task_id):
         QuerySet1 = journal1
 
         for i in range(0, len(QuerySet1)):
-            _id=QuerySet1[i]['_id']
-            task_id=QuerySet1[i]['task_id']
-            
+            _id = QuerySet1[i]['_id']
+            task_id = QuerySet1[i]['task_id']
+
             try:
                 journal_date = QuerySet1[i]["Date"]
                 journal_date11 = journal_date[0:10]
@@ -246,12 +243,11 @@ def add_journal(job_id,task_id):
                             QuerySet4["Entity"] = Entity
 
                         if 'AcctNum' in QBO_coa[k]:
-                            if QuerySet1[i]["is_credit_debit"][j]["DisplayID"]== QBO_coa[k]["AcctNum"]:
+                            if QuerySet1[i]["is_credit_debit"][j]["DisplayID"] == QBO_coa[k]["AcctNum"]:
                                 QuerySet5["value"] = QBO_coa[k]["Id"]
                                 QuerySet5["name"] = QBO_coa[k]["Name"]
                                 break
-                        
-                        
+
                     for m1 in range(0, len(QBO_class)):
                         if "Job" in QuerySet1[i]["is_credit_debit"][j]:
                             if (
@@ -300,7 +296,7 @@ def add_journal(job_id,task_id):
 
                     QuerySet6["JournalEntryLineDetail"] = QuerySet7
                     for p in range(0, len(QBO_coa)):
-                        
+
                         if (
                                 QuerySet1[i]["is_credit_debit"][j]["Account_Name"]
                                 == QBO_coa[p]["FullyQualifiedName"]
@@ -334,11 +330,11 @@ def add_journal(job_id,task_id):
                             QuerySet7["Entity"] = Entity
 
                         if 'AcctNum' in QBO_coa[p]:
-                            if QuerySet1[i]["is_credit_debit"][j]["DisplayID"]== QBO_coa[p]["AcctNum"]:
+                            if QuerySet1[i]["is_credit_debit"][j]["DisplayID"] == QBO_coa[p]["AcctNum"]:
                                 QuerySet8["value"] = QBO_coa[p]["Id"]
                                 QuerySet8["name"] = QBO_coa[p]["Name"]
                                 break
-                        
+
                     QuerySet7["AccountRef"] = QuerySet8
                     QuerySet7["TaxCodeRef"] = QuerySet15
 
@@ -418,7 +414,7 @@ def add_journal(job_id,task_id):
 
             b = []
             for i2 in range(0, len(arr)):
-                if 'value' in arr[i2]["TaxLineDetail"]["TaxRateRef"]: 
+                if 'value' in arr[i2]["TaxLineDetail"]["TaxRateRef"]:
                     b.append(arr[i2]["TaxLineDetail"]["TaxRateRef"]["value"])
 
             e = {}
@@ -442,7 +438,7 @@ def add_journal(job_id,task_id):
                 net_amt = 0
 
                 for i4 in range(0, len(arr)):
-                    if 'value' in arr[i4]["TaxLineDetail"]["TaxRateRef"]: 
+                    if 'value' in arr[i4]["TaxLineDetail"]["TaxRateRef"]:
                         if arr[i4]["TaxLineDetail"]["TaxRateRef"]["value"] == e1[k]:
                             e["DetailType"] = "TaxLineDetail"
                             TaxLineDetail["TaxRateRef"] = TaxRateRef
@@ -460,7 +456,7 @@ def add_journal(job_id,task_id):
                 new_arr.append(e)
 
             for k3 in range(0, len(arr)):
-                if 'value' in arr[k3]["TaxLineDetail"]["TaxRateRef"]: 
+                if 'value' in arr[k3]["TaxLineDetail"]["TaxRateRef"]:
                     if arr[k3]["TaxLineDetail"]["TaxRateRef"]["value"] in single:
                         new_arr.append(arr[k3])
 
@@ -474,14 +470,15 @@ def add_journal(job_id,task_id):
 
             if start_date1 is not None and end_date1 is not None:
                 if (journal_date1 >= start_date1) and (journal_date1 <= end_date1):
-                    post_data_in_qbo(url, headers, payload,journal_data,_id,job_id,task_id, QuerySet1[i]["Referrence_No"])
+                    post_data_in_qbo(url, headers, payload, journal_data, _id, job_id, task_id,
+                                     QuerySet1[i]["Referrence_No"])
                 else:
                     print("No Journal Avaialble within this date")
-        
+
             else:
-                post_data_in_qbo(url, headers, payload,journal_data,_id,job_id,task_id, QuerySet1[i]["Referrence_No"])
-                                        
-                    
+                post_data_in_qbo(url, headers, payload, journal_data, _id, job_id, task_id,
+                                 QuerySet1[i]["Referrence_No"])
+
+
     except Exception as ex:
         traceback.print_exc()
-        

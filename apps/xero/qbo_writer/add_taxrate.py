@@ -10,7 +10,6 @@ from apps.util.db_mongo import get_mongodb_database
 logger = logging.getLogger(__name__)
 
 
-
 def add_xero_tax(job_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_taxrate -> add_xero_tax")
@@ -21,7 +20,7 @@ def add_xero_tax(job_id):
 
         xero_tax = db["xero_tax"]
 
-        x = xero_tax.find({"job_id":job_id})
+        x = xero_tax.find({"job_id": job_id})
 
         data = []
         for k in x:
@@ -59,4 +58,3 @@ def add_xero_tax(job_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_taxrate -> add_xero_tax", ex)
-        

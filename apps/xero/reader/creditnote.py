@@ -1,17 +1,14 @@
-import traceback
+import sys
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.home.data_util import get_job_details
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-import sys
 
 
-
-def get_creditnote(job_id,task_id):
+def get_creditnote(job_id, task_id):
     print("inside creditenote")
     try:
         start_date, end_date = get_job_details(job_id)
@@ -34,12 +31,12 @@ def get_creditnote(job_id,task_id):
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["CreditNotes"]
-            if len(r2)>0:  
+            if len(r2) > 0:
                 no_of_records = len(r2)
                 no_of_pages = (no_of_records // 100) + 1
 
                 creditnote = []
-                
+
                 for pages in range(1, no_of_pages + 1):
                     if start_date == "" and end_date == "":
                         url = f"{base_url}/CreditNotes?page={pages}&unitdp=4"
@@ -52,17 +49,17 @@ def get_creditnote(job_id,task_id):
 
                     for i in range(0, len(JsonResponse1)):
                         if (
-                            JsonResponse1[i]["Status"] != "DELETED"
-                            and JsonResponse1[i]["Status"] != "VOIDED"
-                            and JsonResponse1[i]["Status"] != "DRAFT"
+                                JsonResponse1[i]["Status"] != "DELETED"
+                                and JsonResponse1[i]["Status"] != "VOIDED"
+                                and JsonResponse1[i]["Status"] != "DRAFT"
                         ):
                             QuerySet = {"Line": []}
                             QuerySet["job_id"] = job_id
                             QuerySet["task_id"] = task_id
                             QuerySet["is_pushed"] = 0
-                            QuerySet["table_name"] = "xero_creditnote" 
-                            QuerySet["error"] = None 
-                            QuerySet["payload"] = None 
+                            QuerySet["table_name"] = "xero_creditnote"
+                            QuerySet["error"] = None
+                            QuerySet["payload"] = None
 
                             QuerySet["Inv_No"] = JsonResponse1[i]["CreditNoteNumber"]
                             QuerySet["Inv_ID"] = JsonResponse1[i]["CreditNoteID"]
@@ -102,15 +99,16 @@ def get_creditnote(job_id,task_id):
                                         "AccountCode"
                                     ]
 
-                                if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
+                                if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(
+                                        JsonResponse1[i]['LineItems'][j]['Tracking']):
                                     QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
-                                    
+
                                 if "Quantity" in JsonResponse1[i]["LineItems"][j]:
                                     QuerySet1["Quantity"] = JsonResponse1[i]["LineItems"][j][
                                         "Quantity"
                                     ]
-                                
-                                if JsonResponse1[i]["LineItems"][j] != None and  JsonResponse1[i]["LineItems"][j] !=[]:
+
+                                if JsonResponse1[i]["LineItems"][j] != None and JsonResponse1[i]["LineItems"][j] != []:
                                     if "Item" in JsonResponse1[i]["LineItems"][j]:
                                         QuerySet1["ItemCode"] = JsonResponse1[i]["LineItems"][j]["Item"]["Code"]
                                         QuerySet1["ItemID"] = JsonResponse1[i]["LineItems"][j]["Item"]["ItemID"]
@@ -138,13 +136,12 @@ def get_creditnote(job_id,task_id):
 
                 step_name = "Reading data from xero creditnote"
                 write_task_execution_step(task_id, status=1, step=step_name)
-                
+
     except Exception as ex:
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)
         sys.exit(0)
-        

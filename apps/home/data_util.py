@@ -93,6 +93,7 @@ def get_job_details(job_id):
     end_date = job_details.end_date
     return start_date, end_date
 
+
 # job_id
 def update_task_execution_status(task_id, status, task_type):
     task = Task.query.filter(
@@ -105,6 +106,7 @@ def update_task_execution_status(task_id, status, task_type):
         task.write = status
     db.session.add(task)
     db.session.commit()
+
 
 # job_id
 def write_task_execution_step(task_id, status, step, error=None):

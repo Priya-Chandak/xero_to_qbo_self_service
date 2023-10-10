@@ -30,6 +30,7 @@
         height: 80vh;
         overflow: hidden;
     }
+
 </style>
 {% endblock stylesheets %}
 
@@ -53,7 +54,7 @@
                         <th>ID</th>
                         <th>Is Pushed</th>
                         <th>Error</th>
-						<th>Payload</th>
+                        <th>Payload</th>
                         <th>Push</th>
                     </tr>
                     </thead>
@@ -63,12 +64,15 @@
                         <td>{{item._id}}</td>
                         <td>False</td>
                         <td>{{item.error}}</td>
-						<td><textarea name="" id="text_{{item._id}}" cols="30" rows="10">{{item.payload}}</textarea></td>
+                        <td><textarea name="" id="text_{{item._id}}" cols="30" rows="10">{{item.payload}}</textarea>
+                        </td>
                         <td>
                             <div class="retry-popup">
-                                <button type="button" class="btn btn-success" onclick="togglePopup('{{ item.task_id }}','{{item._id}}')" >Retry</button>
-                                
-								<div class="retry-popup-content">
+                                <button type="button" class="btn btn-success"
+                                        onclick="togglePopup('{{ item.task_id }}','{{item._id}}')">Retry
+                                </button>
+
+                                <div class="retry-popup-content">
                                     <!-- Popup content goes here -->
                                     {{item}}
                                 </div>
@@ -80,12 +84,12 @@
                 </table>
             </div>
             <p>
-            {% if page > 1 %}
+                {% if page > 1 %}
                 <a href="?page={{ page - 1 }}" class="btn btn-dark">Previous</a>
-            {% endif %}
-            {% if (page * per_page) < total_records %}
+                {% endif %}
+                {% if (page * per_page) < total_records %}
                 <a href="?page={{ page + 1 }}" class="btn btn-outline-dark">Next</a>
-            {% endif %}
+                {% endif %}
             </p>
         </div>
     </div>
@@ -95,7 +99,9 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+        integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
     function togglePopup(task_id,id) {
@@ -128,5 +134,6 @@
                         }
                 });
     }
+
 </script>
 {% endblock javascripts %}

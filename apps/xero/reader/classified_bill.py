@@ -1,9 +1,10 @@
 # from apps.xero.reader.get_static import get_xero_settings
-from apps.util.db_mongo import get_mongodb_database
 import traceback
 
+from apps.util.db_mongo import get_mongodb_database
 
-def get_classified_bill(job_id,task_id):
+
+def get_classified_bill(job_id, task_id):
     try:
         db = get_mongodb_database()
         xero_bill = db["xero_bill"].find()
@@ -38,4 +39,3 @@ def get_classified_bill(job_id,task_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

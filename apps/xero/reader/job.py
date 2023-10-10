@@ -1,12 +1,11 @@
-import traceback
-
-import requests
 import sys
 
+import requests
+
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
+from apps.myconstant import JOB_STATUS_FAILED
 from apps.util.db_mongo import get_mongodb_database
-from apps.myconstant import JOB_STATUS_SUCCESSFUL, JOB_STATUS_IN_PROGRESS, JOB_STATUS_FAILED, JOB_STATUS_NOT_STARTED
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
 
 
 def get_xero_job(job_id, task_id):
@@ -33,7 +32,7 @@ def get_xero_job(job_id, task_id):
                     arr = []
                     for i in range(0, len(JsonResponse1)):
                         QuerySet = {"job_id": job_id, "task_id": task_id, "is_pushed": 0, "table_name": "xero_job",
-                                    'error': None,'payload': None,
+                                    'error': None, 'payload': None,
                                     "UID": JsonResponse1[i]["TrackingOptionID"], "Name": JsonResponse1[i]["Name"]}
                         arr.append(QuerySet)
                     xero_job.insert_many(arr)
@@ -48,7 +47,7 @@ def get_xero_job(job_id, task_id):
         print("------------------------------")
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)

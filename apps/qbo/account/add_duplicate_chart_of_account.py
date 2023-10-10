@@ -1,13 +1,12 @@
 import json
 import traceback
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
 
-def add_duplicate_chart_account(job_id,task_id):
+def add_duplicate_chart_account(job_id, task_id):
     try:
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -61,9 +60,9 @@ def add_duplicate_chart_account(job_id,task_id):
 
         for j in range(0, len(QuerySet1)):
             try:
-                _id=QuerySet1[j]['_id']
-                task_id=QuerySet1[j]['task_id']
-                    
+                _id = QuerySet1[j]['_id']
+                task_id = QuerySet1[j]['task_id']
+
                 QuerySet1[j].pop('job_id')
                 QuerySet1[j].pop('_id')
                 QuerySet1[j].pop('task_id')
@@ -71,14 +70,14 @@ def add_duplicate_chart_account(job_id,task_id):
                 QuerySet1[j].pop('is_pushed')
                 payload = json.dumps(QuerySet1[j])
                 print(payload)
-                post_data_in_qbo(url, headers, json.dumps(QuerySet1[j]),Collection,_id, job_id,task_id, QuerySet1[j]["Name"])
-            
+                post_data_in_qbo(url, headers, json.dumps(QuerySet1[j]), Collection, _id, job_id, task_id,
+                                 QuerySet1[j]["Name"])
+
             except Exception as ex:
                 print(ex)
 
     except Exception as ex:
         traceback.print_exc()
-        
 
 
 def add_xero_duplicate_chart_account(job_id):
@@ -111,9 +110,9 @@ def add_xero_duplicate_chart_account(job_id):
 
         for j in range(0, len(b)):
             for i in range(0, len(a)):
-                _id=a[i]['_id']
-                task_id=a[i]['task_id']
-                    
+                _id = a[i]['_id']
+                task_id = a[i]['task_id']
+
                 if (a[i]["AcctNum"] is not None) and (a[i]["AcctNum"] != ""):
                     if "AccountType" in a[i]:
                         e = {}
@@ -136,15 +135,15 @@ def add_xero_duplicate_chart_account(job_id):
         for j in range(0, len(QuerySet1)):
             try:
                 QuerySet1[j].pop("_id")
-                post_data_in_qbo(url, headers, json.dumps(QuerySet1[j]),Collection,_id, job_id,task_id, QuerySet1[j]["Name"])
+                post_data_in_qbo(url, headers, json.dumps(QuerySet1[j]), Collection, _id, job_id, task_id,
+                                 QuerySet1[j]["Name"])
             except Exception as ex:
                 pass
     except Exception as ex:
         traceback.print_exc()
-        
 
 
-def update_qbo_existing_chart_account(job_id,task_id):
+def update_qbo_existing_chart_account(job_id, task_id):
     try:
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -174,8 +173,8 @@ def update_qbo_existing_chart_account(job_id,task_id):
                         classified_coa1[j]["Name"].lower().strip()
                         == qbo_coa1[j1]["FullyQualifiedName"].lower().strip()
                 ):
-                    _id=classified_coa1[j]['_id']
-                    task_id=classified_coa1[j]['task_id']
+                    _id = classified_coa1[j]['_id']
+                    task_id = classified_coa1[j]['task_id']
                     a1["Name"] = classified_coa1[j]["Name"]
                     a1["AcctNum"] = classified_coa1[j]["AcctNum"]
                     a1["AccountType"] = classified_coa1[j]["AccountType"]
@@ -195,9 +194,9 @@ def update_qbo_existing_chart_account(job_id,task_id):
         for j3 in range(0, len(QuerySet1)):
             try:
                 QuerySet1[j3].pop("_id")
-                post_data_in_qbo(url, headers, json.dumps(QuerySet1[j3]),existing_coa,_id, job_id,task_id, QuerySet1[j3]["Name"])
+                post_data_in_qbo(url, headers, json.dumps(QuerySet1[j3]), existing_coa, _id, job_id, task_id,
+                                 QuerySet1[j3]["Name"])
             except Exception as ex:
                 pass
     except Exception as ex:
         traceback.print_exc()
-        

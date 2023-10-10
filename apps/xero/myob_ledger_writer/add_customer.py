@@ -23,11 +23,10 @@ def add_xero_customer_to_myobledger(job_id, task_id):
         for p2 in taxcode:
             taxcode1.append(p2)
 
-        data=data
+        data = data
 
         for i in range(0, len(data)):
-           
-            
+
             _id = data[i]['_id']
             task_id = data[i]['task_id']
             Queryset = {'Addresses': []}
@@ -65,7 +64,8 @@ def add_xero_customer_to_myobledger(job_id, task_id):
                     Queryset2['Website'] = data[i]['Website']
 
                 Queryset2["ContactName"] = data[i]["Name"][0:25]
-                if ('AddressLine2' in data[i]['Address'][j]) and ('AddressLine3' in data[i]['Address'][j]) and ('AddressLine1' in data[i]['Address'][j]):
+                if ('AddressLine2' in data[i]['Address'][j]) and ('AddressLine3' in data[i]['Address'][j]) and (
+                        'AddressLine1' in data[i]['Address'][j]):
                     Queryset2['Street'] = data[i]['Address'][j]['AddressLine1'] + "," + data[i]['Address'][j][
                         'AddressLine2'] + "," + data[i]['Address'][j]['AddressLine3']
                 elif ('AddressLine2' in data[i]['Address'][j]) and ('AddressLine1' in data[i]['Address'][j]):
@@ -111,10 +111,10 @@ def add_xero_customer_to_myobledger(job_id, task_id):
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/Contact/Customer"
 
-            if  data[i]['is_pushed']==0:
+            if data[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, xero_customer, _id, job_id, task_id,
-                                    id_or_name_value_for_error))  
+                                      id_or_name_value_for_error))
             else:
                 pass
 

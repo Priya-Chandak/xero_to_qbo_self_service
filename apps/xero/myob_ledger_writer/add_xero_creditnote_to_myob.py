@@ -69,10 +69,9 @@ def add_xero_creditnote_to_myob(job_id, task_id):
             QuerySet1["Number"] = multiple_invoice[i]["Inv_No"][-13:]
             QuerySet1["Date"] = multiple_invoice[i]["TxnDate"]
             QuerySet1['SupplierInvoiceNumber'] = multiple_invoice[i]['Inv_ID']
-            
 
             for c1 in range(0, len(myob_customer)):
-                if myob_customer[c1]["Company_Name"] !=None and myob_customer[c1]["Company_Name"] !="":
+                if myob_customer[c1]["Company_Name"] != None and myob_customer[c1]["Company_Name"] != "":
                     if myob_customer[c1]["Company_Name"] == multiple_invoice[i]['ContactName'][0:50]:
                         Customer['UID'] = myob_customer[c1]["UID"]
                     elif myob_customer[c1]["Company_Name"].startswith(multiple_invoice[i]['ContactName']) and \
@@ -92,12 +91,13 @@ def add_xero_creditnote_to_myob(job_id, task_id):
                         for k1 in range(0, len(xero_tax)):
                             if 'TaxType' in multiple_invoice[i]["Line"][j]:
                                 if multiple_invoice[i]["Line"][j]["TaxType"] == xero_tax[k1]['TaxType']:
-                                    if xero_tax[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT', 'OUTPUT2', 'INPUT2']:
+                                    if xero_tax[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT', 'OUTPUT2',
+                                                                   'INPUT2']:
                                         if taxcode_myob1[j3]['Code'] == 'GST' or taxcode_myob1[j3]['Code'] == 'S15':
                                             taxcode['UID'] = taxcode_myob1[j3]['UID']
                                             taxrate1 = taxcode_myob1[j3]['Rate']
                                     elif xero_tax[k1]['TaxType'] in ["EXEMPTCAPITAL", 'EXEMPTEXPENSES', 'EXEMPTOUTPUT',
-                                                                    'EXEMPTEXPORT']:
+                                                                     'EXEMPTEXPORT']:
                                         if taxcode_myob1[j3]['Code'] == 'FRE':
                                             taxcode['UID'] = taxcode_myob1[j3]['UID']
                                             taxrate1 = taxcode_myob1[j3]['Rate']
@@ -123,8 +123,8 @@ def add_xero_creditnote_to_myob(job_id, task_id):
                     else:
                         QuerySet3['DiscountPercent'] = 0
 
-                    
-                    if 'ItemCode' in multiple_invoice[i]["Line"][j] and multiple_invoice[i]["Line"][j]['ItemCode']!= None:
+                    if 'ItemCode' in multiple_invoice[i]["Line"][j] and multiple_invoice[i]["Line"][j][
+                        'ItemCode'] != None:
                         if 'UnitAmount' in multiple_invoice[i]["Line"][j]:
                             if multiple_invoice[i]["Line"][j]["UnitAmount"] < 0:
                                 if 'Quantity' in multiple_invoice[i]["Line"][j]:
@@ -136,8 +136,8 @@ def add_xero_creditnote_to_myob(job_id, task_id):
                                     QuerySet3['ShipQuantity'] = -1
                                     QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Line"][j]["UnitAmount"])
                                     QuerySet3['UnitCount'] = -multiple_invoice[i]["Line"][j]["Quantity"]
-                                    QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
-                                    
+                                    QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
+
 
 
                             else:
@@ -145,14 +145,14 @@ def add_xero_creditnote_to_myob(job_id, task_id):
                                     QuerySet3['ShipQuantity'] = -multiple_invoice[i]["Line"][j]["Quantity"]
                                     QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Line"][j]["UnitAmount"])
                                     QuerySet3['UnitCount'] = -multiple_invoice[i]["Line"][j]["Quantity"]
-                                    QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
-                                    
+                                    QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
+
                                 else:
                                     QuerySet3['ShipQuantity'] = -1
                                     QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Line"][j]["UnitAmount"])
                                     QuerySet3['UnitCount'] = -multiple_invoice[i]["Line"][j]["Quantity"]
-                                    QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
-                                    
+                                    QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
+
 
                     else:
                         if 'UnitAmount' in multiple_invoice[i]["Line"][j]:
@@ -160,31 +160,30 @@ def add_xero_creditnote_to_myob(job_id, task_id):
                                 if 'Quantity' in multiple_invoice[i]["Line"][j]:
                                     QuerySet3['UnitCount'] = -multiple_invoice[i]["Line"][j]["Quantity"]
                                     QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Line"][j]["UnitAmount"])
-                                    QuerySet3['ShipQuantity'] =0
+                                    QuerySet3['ShipQuantity'] = 0
                                     QuerySet3['CostOfGoodsSold'] = 0
-                                    QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
+                                    QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
                                 else:
                                     QuerySet3['UnitCount'] = -1
                                     QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Line"][j]["UnitAmount"])
-                                    QuerySet3['ShipQuantity']=0
+                                    QuerySet3['ShipQuantity'] = 0
                                     QuerySet3['CostOfGoodsSold'] = 0
-                                    QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
+                                    QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
 
 
                             else:
                                 if 'Quantity' in multiple_invoice[i]["Line"][j]:
                                     QuerySet3['UnitCount'] = -multiple_invoice[i]["Line"][j]["Quantity"]
                                     QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Line"][j]["UnitAmount"])
-                                    QuerySet3['ShipQuantity']=0
+                                    QuerySet3['ShipQuantity'] = 0
                                     QuerySet3['CostOfGoodsSold'] = 0
-                                    QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
+                                    QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
                                 else:
                                     QuerySet3['UnitCount'] = -1
                                     QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Line"][j]["UnitAmount"])
-                                    QuerySet3['ShipQuantity']=0
+                                    QuerySet3['ShipQuantity'] = 0
                                     QuerySet3['CostOfGoodsSold'] = 0
-                                    QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
-
+                                    QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
 
                     if multiple_invoice[i]['LineAmountTypes'] == 'Exclusive' or multiple_invoice[i][
                         'LineAmountTypes'] == 'NoTax':
@@ -192,12 +191,11 @@ def add_xero_creditnote_to_myob(job_id, task_id):
                     else:
                         QuerySet1['IsTaxInclusive'] = True
                     for j4 in range(0, len(myob_item)):
-                        if 'ItemCode' in multiple_invoice[i]["Line"][j]:    
+                        if 'ItemCode' in multiple_invoice[i]["Line"][j]:
                             if multiple_invoice[i]["Line"][j]["ItemCode"] == myob_item[j4]["Number"]:
                                 Item["UID"] = myob_item[j4]["UID"]
                         else:
                             if multiple_invoice[i]["Line"][j]["Name"] == myob_item[j4]['Name']:
-
                                 Item["UID"] = myob_item[j4]["UID"]
 
                     if 'ClassRef' in multiple_invoice[i]["Line"][j]:
@@ -247,9 +245,10 @@ def add_xero_creditnote_to_myob(job_id, task_id):
                 # else:
                 #     url1 = f"{base_url}//Sale/Invoice/Service"
 
-                if multiple_invoice[i]['is_pushed']==0:
-                    asyncio.run(post_data_in_myob(url1, headers, payload, dbname['xero_creditnote'], _id, job_id, task_id,
-                                                id_or_name_value_for_error))
+                if multiple_invoice[i]['is_pushed'] == 0:
+                    asyncio.run(
+                        post_data_in_myob(url1, headers, payload, dbname['xero_creditnote'], _id, job_id, task_id,
+                                          id_or_name_value_for_error))
                 else:
                     pass
 

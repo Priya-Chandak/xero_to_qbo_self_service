@@ -1,11 +1,8 @@
 import json
 import logging
+from collections import Counter
 from datetime import datetime
 
-import requests
-from collections import Counter
-
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import get_start_end_dates_of_job
@@ -14,15 +11,14 @@ from apps.util.qbo_util import post_data_in_qbo
 logger = logging.getLogger(__name__)
 
 
-
-def add_xero_credit_note(job_id,task_id):
+def add_xero_credit_note(job_id, task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        xero_creditnote = db["xero_creditnote"].find({"job_id":job_id})
+        xero_creditnote = db["xero_creditnote"].find({"job_id": job_id})
         multiple_invoice = []
         for p1 in xero_creditnote:
             multiple_invoice.append(p1)
@@ -36,44 +32,44 @@ def add_xero_credit_note(job_id,task_id):
 
         # multiple_invoice = m1
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p1 in QBO_Item:
             QBO_item.append(p1)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p2 in QBO_Class:
             QBO_class.append(p2)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p3 in QBO_Tax:
             QBO_tax.append(p3)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p4 in QBO_COA:
             QBO_coa.append(p4)
 
-        QBO_Customer = db["QBO_Customer"].find({"job_id":job_id})
+        QBO_Customer = db["QBO_Customer"].find({"job_id": job_id})
         QBO_customer = []
         for p5 in QBO_Customer:
             QBO_customer.append(p5)
 
         multiple_invoice = multiple_invoice
 
-        bill_bumbers=[]
-        for b1 in range(0,len(multiple_invoice)):
+        bill_bumbers = []
+        for b1 in range(0, len(multiple_invoice)):
             bill_bumbers.append(multiple_invoice[b1]['Inv_No'])
 
-        data1=[]
+        data1 = []
 
         frequency_counter = Counter(bill_bumbers)
         for number, count in frequency_counter.items():
-            if count>1:
-                data1.append({number:count})
-        
+            if count > 1:
+                data1.append({number: count})
+
         key_list = []
 
         non_items = []
@@ -83,23 +79,24 @@ def add_xero_credit_note(job_id,task_id):
             print(multiple_invoice[i]['Inv_No'])
             _id = multiple_invoice[i]['_id']
             task_id = multiple_invoice[i]['task_id']
-            
+
             invoice = {"Line": []}
             CustomerRef = {}
             BillEmail = {}
             TxnTaxDetail = {"TaxLine": []}
             invoice["TxnDate"] = multiple_invoice[i]["TxnDate"]
             # invoice["DueDate"] = multiple_invoice[i]["DueDate"]
-            
+
             if multiple_invoice[i]["Inv_No"] in key_list:
-                invoice["DocNumber"] = multiple_invoice[i]["Inv_No"][0:14]+"-"+multiple_invoice[i]["Inv_ID"][-6:]
+                invoice["DocNumber"] = multiple_invoice[i]["Inv_No"][0:14] + "-" + multiple_invoice[i]["Inv_ID"][-6:]
                 break
             else:
-                if len(str(multiple_invoice[i]["Inv_No"]))>21:
-                    invoice["DocNumber"] = multiple_invoice[i]["Inv_No"][0:14]+"-"+multiple_invoice[i]["Inv_ID"][-6:]
+                if len(str(multiple_invoice[i]["Inv_No"])) > 21:
+                    invoice["DocNumber"] = multiple_invoice[i]["Inv_No"][0:14] + "-" + multiple_invoice[i]["Inv_ID"][
+                                                                                       -6:]
                 else:
                     invoice["DocNumber"] = multiple_invoice[i]["Inv_No"][0:21]
-            
+
             invoice["TotalAmt"] = abs(multiple_invoice[i]["TotalAmount"])
             invoice["HomeTotalAmt"] = abs(multiple_invoice[i]["TotalAmount"])
             subtotal = {}
@@ -107,20 +104,20 @@ def add_xero_credit_note(job_id,task_id):
             for p1 in range(0, len(QBO_customer)):
                 if "ContactName" in multiple_invoice[i]:
                     if (
-                        multiple_invoice[i]["ContactName"].strip()
-                        == QBO_customer[p1]["DisplayName"].strip()
+                            multiple_invoice[i]["ContactName"].strip()
+                            == QBO_customer[p1]["DisplayName"].strip()
                     ):
                         CustomerRef["value"] = QBO_customer[p1]["Id"]
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
                     elif (QBO_customer[p1]["DisplayName"]).startswith(
-                        multiple_invoice[i]["ContactName"]
+                            multiple_invoice[i]["ContactName"]
                     ) and ((QBO_customer[p1]["DisplayName"]).endswith("- C")):
                         CustomerRef["value"] = QBO_customer[p1]["Id"]
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
 
             if (
-                multiple_invoice[i]["LineAmountTypes"] == "Exclusive"
-                or multiple_invoice[i]["LineAmountTypes"] == "NoTax"
+                    multiple_invoice[i]["LineAmountTypes"] == "Exclusive"
+                    or multiple_invoice[i]["LineAmountTypes"] == "NoTax"
             ):
                 invoice["GlobalTaxCalculation"] = "TaxExcluded"
             else:
@@ -133,7 +130,7 @@ def add_xero_credit_note(job_id,task_id):
             for j in range(len(multiple_invoice[i]["Line"])):
 
                 if (
-                    "AccountCode" in multiple_invoice[i]["Line"][j]
+                        "AccountCode" in multiple_invoice[i]["Line"][j]
                 ):
                     TaxLineDetail = {}
                     CustomerMemo = {}
@@ -170,30 +167,31 @@ def add_xero_credit_note(job_id,task_id):
                             "Description"
                         ]
 
-                        if "ItemCode" in multiple_invoice[i]["Line"][j] and multiple_invoice[i]["Line"][j]['ItemCode']!=None:
+                        if "ItemCode" in multiple_invoice[i]["Line"][j] and multiple_invoice[i]["Line"][j][
+                            'ItemCode'] != None:
                             if "Sku" in QBO_item[p3]:
                                 if "AccountCode" in multiple_invoice[i]["Line"][j]:
                                     if (
-                                        multiple_invoice[i]["Line"][j]["ItemCode"].replace(":","-")
-                                        + "-"
-                                        + multiple_invoice[i]["Line"][j]["AccountCode"]
-                                        == QBO_item[p3]["Sku"]
+                                            multiple_invoice[i]["Line"][j]["ItemCode"].replace(":", "-")
+                                            + "-"
+                                            + multiple_invoice[i]["Line"][j]["AccountCode"]
+                                            == QBO_item[p3]["Sku"]
                                     ):
                                         ItemRef["name"] = QBO_item[p3]["Name"]
                                         ItemRef["value"] = QBO_item[p3]["Id"]
                                         break
 
                                     elif (
-                                        multiple_invoice[i]["Line"][j]["ItemCode"].replace(":","-")
-                                        == QBO_item[p3]["Sku"]
+                                            multiple_invoice[i]["Line"][j]["ItemCode"].replace(":", "-")
+                                            == QBO_item[p3]["Sku"]
                                     ):
                                         ItemRef["name"] = QBO_item[p3]["Name"]
                                         ItemRef["value"] = QBO_item[p3]["Id"]
                                         break
 
                                 elif (
-                                    multiple_invoice[i]["Line"][j]["ItemCode"].replace(":","-")
-                                    == QBO_item[p3]["Sku"]
+                                        multiple_invoice[i]["Line"][j]["ItemCode"].replace(":", "-")
+                                        == QBO_item[p3]["Sku"]
                                 ):
                                     ItemRef["name"] = QBO_item[p3]["Name"]
                                     ItemRef["value"] = QBO_item[p3]["Id"]
@@ -202,8 +200,8 @@ def add_xero_credit_note(job_id,task_id):
                         elif "AccountCode" in multiple_invoice[i]["Line"][j]:
                             if "Sku" in QBO_item[p3]:
                                 if (
-                                    multiple_invoice[i]["Line"][j]["AccountCode"]
-                                    == QBO_item[p3]["Sku"]
+                                        multiple_invoice[i]["Line"][j]["AccountCode"]
+                                        == QBO_item[p3]["Sku"]
                                 ):
                                     ItemRef["name"] = QBO_item[p3]["Name"]
                                     ItemRef["value"] = QBO_item[p3]["Id"]
@@ -212,27 +210,25 @@ def add_xero_credit_note(job_id,task_id):
                                 for p5 in range(0, len(QBO_coa)):
                                     if "AcctNum" in QBO_coa[p5]:
                                         if (
-                                            multiple_invoice[i]["Line"][j][
-                                                "AccountCode"
-                                            ]
-                                            == QBO_coa[p5]["AcctNum"]
+                                                multiple_invoice[i]["Line"][j][
+                                                    "AccountCode"
+                                                ]
+                                                == QBO_coa[p5]["AcctNum"]
                                         ):
                                             if (
-                                                QBO_coa[p5]["Name"]
-                                                == QBO_item[p3]["Name"]
+                                                    QBO_coa[p5]["Name"]
+                                                    == QBO_item[p3]["Name"]
                                             ):
                                                 ItemRef["name"] = QBO_item[p3]["Name"]
                                                 ItemRef["value"] = QBO_item[p3]["Id"]
                                                 break
 
-                        
-                        
                     for p4 in range(0, len(QBO_class)):
-                        if "job" in multiple_invoice[i]["Line"][j]: 
+                        if "job" in multiple_invoice[i]["Line"][j]:
                             if multiple_invoice[i]["Line"][j]["job"] is not None:
                                 if (
-                                    multiple_invoice[i]["Line"][j]["job"]
-                                    == QBO_class[p4]["Name"]
+                                        multiple_invoice[i]["Line"][j]["job"]
+                                        == QBO_class[p4]["Name"]
                                 ):
                                     ClassRef["name"] = QBO_class[p4]["Name"]
                                     ClassRef["value"] = QBO_class[p4]["Id"]
@@ -243,8 +239,8 @@ def add_xero_credit_note(job_id,task_id):
                         if "AccountCode" in multiple_invoice[i]["Line"][j]:
                             if "AcctNum" in QBO_coa[p5]:
                                 if (
-                                    multiple_invoice[i]["Line"][j]["AccountCode"]
-                                    == QBO_coa[p5]["AcctNum"]
+                                        multiple_invoice[i]["Line"][j]["AccountCode"]
+                                        == QBO_coa[p5]["AcctNum"]
                                 ):
                                     ItemAccountRef["name"] = QBO_coa[p5]["Name"]
                                     ItemAccountRef["value"] = QBO_coa[p5]["Id"]
@@ -252,9 +248,9 @@ def add_xero_credit_note(job_id,task_id):
                     for p6 in range(0, len(QBO_tax)):
                         if "TaxType" in multiple_invoice[i]["Line"][j]:
                             if (
-                                multiple_invoice[i]["Line"][j]["TaxType"] == "OUTPUT"
-                                or multiple_invoice[i]["Line"][j]["TaxType"] == "GST"
-                                or multiple_invoice[i]["Line"][j]["TaxType"] == "INPUT"
+                                    multiple_invoice[i]["Line"][j]["TaxType"] == "OUTPUT"
+                                    or multiple_invoice[i]["Line"][j]["TaxType"] == "GST"
+                                    or multiple_invoice[i]["Line"][j]["TaxType"] == "INPUT"
                             ):
                                 if "taxrate_name" in QBO_tax[p6]:
                                     if "GST (sales)" in QBO_tax[p6]["taxrate_name"]:
@@ -266,12 +262,12 @@ def add_xero_credit_note(job_id,task_id):
                                         TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                         taxrate1 = taxrate
                                         total_val = (
-                                            total_val
-                                            + multiple_invoice[i]["Line"][j][
-                                                "LineAmount"
-                                            ]
-                                            / (100 + taxrate1)
-                                            * 100
+                                                total_val
+                                                + multiple_invoice[i]["Line"][j][
+                                                    "LineAmount"
+                                                ]
+                                                / (100 + taxrate1)
+                                                * 100
                                         )
 
                             elif multiple_invoice[i]["Line"][j]["TaxType"] == "CAP":
@@ -282,16 +278,16 @@ def add_xero_credit_note(job_id,task_id):
                                     TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                     taxrate1 = taxrate
                                     total_val += (
-                                        multiple_invoice[i]["Line"][j]["amount"]
-                                        / (100 + taxrate1)
-                                        * 100
+                                            multiple_invoice[i]["Line"][j]["amount"]
+                                            / (100 + taxrate1)
+                                            * 100
                                     )
 
-                            elif multiple_invoice[i]["Line"][j]["TaxType"] in ['FRE','EXEMPTEXPENSES','EXEMPTOUTPUT']:
+                            elif multiple_invoice[i]["Line"][j]["TaxType"] in ['FRE', 'EXEMPTEXPENSES', 'EXEMPTOUTPUT']:
                                 if "taxrate_name" in QBO_tax[p6]:
                                     if (
-                                        "GST free (sales)"
-                                        in QBO_tax[p6]["taxrate_name"]
+                                            "GST free (sales)"
+                                            in QBO_tax[p6]["taxrate_name"]
                                     ):
                                         TaxCodeRef["value"] = QBO_tax[p6]["taxcode_id"]
                                         taxrate = QBO_tax[p6]["Rate"]
@@ -301,17 +297,17 @@ def add_xero_credit_note(job_id,task_id):
                                         TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                         taxrate1 = taxrate
                                         total_val += (
-                                            multiple_invoice[i]["Line"][j]["LineAmount"]
-                                            / (100 + taxrate1)
-                                            * 100
+                                                multiple_invoice[i]["Line"][j]["LineAmount"]
+                                                / (100 + taxrate1)
+                                                * 100
                                         )
 
                             elif (
-                                multiple_invoice[i]["Line"][j]["TaxType"] == "N-T"
-                                or multiple_invoice[i]["Line"][j]["TaxType"]
-                                == "BASEXCLUDED"
-                                or multiple_invoice[i]["Line"][j]["TaxType"] == None
-                                or multiple_invoice[i]["Line"][j]["TaxType"] == "NONE"
+                                    multiple_invoice[i]["Line"][j]["TaxType"] == "N-T"
+                                    or multiple_invoice[i]["Line"][j]["TaxType"]
+                                    == "BASEXCLUDED"
+                                    or multiple_invoice[i]["Line"][j]["TaxType"] == None
+                                    or multiple_invoice[i]["Line"][j]["TaxType"] == "NONE"
                             ):
                                 if "taxrate_name" in QBO_tax[p6]:
                                     if "NOTAXS" in QBO_tax[p6]["taxrate_name"]:
@@ -323,14 +319,14 @@ def add_xero_credit_note(job_id,task_id):
                                         TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                         taxrate1 = taxrate
                                         total_val += (
-                                            multiple_invoice[i]["Line"][j]["LineAmount"]
-                                            / (100 + taxrate1)
-                                            * 100
+                                                multiple_invoice[i]["Line"][j]["LineAmount"]
+                                                / (100 + taxrate1)
+                                                * 100
                                         )
 
                             elif (
-                                multiple_invoice[i]["Line"][j]["TaxType"]
-                                == QBO_tax[p6]["taxcode_name"]
+                                    multiple_invoice[i]["Line"][j]["TaxType"]
+                                    == QBO_tax[p6]["taxcode_name"]
                             ):
                                 TaxCodeRef["value"] = QBO_tax[p6]["taxcode_id"]
                                 taxrate = QBO_tax[p6]["Rate"]
@@ -338,16 +334,16 @@ def add_xero_credit_note(job_id,task_id):
                                 TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                 taxrate1 = taxrate
                                 total_val += (
-                                    multiple_invoice[i]["Line"][j]["LineAmount"]
-                                    / (100 + taxrate1)
-                                    * 100
+                                        multiple_invoice[i]["Line"][j]["LineAmount"]
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
                             else:
                                 pass
 
                             if (
-                                multiple_invoice[i]["LineAmountTypes"] == "Exclusive"
-                                or multiple_invoice[i]["LineAmountTypes"] == "NoTax"
+                                    multiple_invoice[i]["LineAmountTypes"] == "Exclusive"
+                                    or multiple_invoice[i]["LineAmountTypes"] == "NoTax"
                             ):
                                 if multiple_invoice[i]["SubTotal"] >= 0:
                                     SalesItemLineDetail["Qty"] = multiple_invoice[i][
@@ -362,7 +358,7 @@ def add_xero_credit_note(job_id,task_id):
                                         2,
                                     )
                                     SalesItemLineDetail["TaxInclusiveAmt"] = (
-                                        salesitemline["Amount"] * (100 + taxrate1) / 100
+                                            salesitemline["Amount"] * (100 + taxrate1) / 100
                                     )
 
                                     subtotal["Amount"] = multiple_invoice[i]["SubTotal"]
@@ -373,32 +369,32 @@ def add_xero_credit_note(job_id,task_id):
                                     if "Discount" in multiple_invoice[i]["Line"][j]:
                                         discount_SalesItemLineDetail["Qty"] = 1
                                         discount_SalesItemLineDetail["UnitPrice"] = (
-                                            -(
-                                                multiple_invoice[i]["Line"][j][
-                                                    "Quantity"
-                                                ]
-                                                * multiple_invoice[i]["Line"][j][
-                                                    "UnitAmount"
-                                                ]
-                                                * multiple_invoice[i]["Line"][j][
-                                                    "Discount"
-                                                ]
-                                            )
-                                            / 100
+                                                -(
+                                                        multiple_invoice[i]["Line"][j][
+                                                            "Quantity"
+                                                        ]
+                                                        * multiple_invoice[i]["Line"][j][
+                                                            "UnitAmount"
+                                                        ]
+                                                        * multiple_invoice[i]["Line"][j][
+                                                            "Discount"
+                                                        ]
+                                                )
+                                                / 100
                                         )
                                         discount["Amount"] = (
-                                            -(
-                                                multiple_invoice[i]["Line"][j][
-                                                    "Quantity"
-                                                ]
-                                                * multiple_invoice[i]["Line"][j][
-                                                    "UnitAmount"
-                                                ]
-                                                * multiple_invoice[i]["Line"][j][
-                                                    "Discount"
-                                                ]
-                                            )
-                                            / 100
+                                                -(
+                                                        multiple_invoice[i]["Line"][j][
+                                                            "Quantity"
+                                                        ]
+                                                        * multiple_invoice[i]["Line"][j][
+                                                            "UnitAmount"
+                                                        ]
+                                                        * multiple_invoice[i]["Line"][j][
+                                                            "Discount"
+                                                        ]
+                                                )
+                                                / 100
                                         )
 
                                     if taxrate1 != 0:
@@ -418,19 +414,24 @@ def add_xero_credit_note(job_id,task_id):
                                     if "Discount" in multiple_invoice[i]["Line"][j]:
                                         discount_SalesItemLineDetail["Qty"] = -1
                                         discount_SalesItemLineDetail["UnitPrice"] = (
-                                            multiple_invoice[i]["Line"][j]["Quantity"]
-                                            * multiple_invoice[i]["Line"][j][
-                                                "UnitAmount"
-                                            ]
-                                            * multiple_invoice[i]["Line"][j]["Discount"]
-                                        ) / 100
+                                                                                            multiple_invoice[i]["Line"][
+                                                                                                j]["Quantity"]
+                                                                                            *
+                                                                                            multiple_invoice[i]["Line"][
+                                                                                                j][
+                                                                                                "UnitAmount"
+                                                                                            ]
+                                                                                            *
+                                                                                            multiple_invoice[i]["Line"][
+                                                                                                j]["Discount"]
+                                                                                    ) / 100
                                         discount["Amount"] = (
-                                            multiple_invoice[i]["Line"][j]["Quantity"]
-                                            * multiple_invoice[i]["Line"][j][
-                                                "UnitAmount"
-                                            ]
-                                            * multiple_invoice[i]["Line"][j]["Discount"]
-                                        ) / 100
+                                                                     multiple_invoice[i]["Line"][j]["Quantity"]
+                                                                     * multiple_invoice[i]["Line"][j][
+                                                                         "UnitAmount"
+                                                                     ]
+                                                                     * multiple_invoice[i]["Line"][j]["Discount"]
+                                                             ) / 100
 
                                     SalesItemLineDetail["Qty"] = -multiple_invoice[i][
                                         "Line"
@@ -444,7 +445,7 @@ def add_xero_credit_note(job_id,task_id):
                                         2,
                                     )
                                     SalesItemLineDetail["TaxInclusiveAmt"] = (
-                                        salesitemline["Amount"] * (100 + taxrate1) / 100
+                                            salesitemline["Amount"] * (100 + taxrate1) / 100
                                     )
 
                                     subtotal["Amount"] = -multiple_invoice[i][
@@ -459,17 +460,17 @@ def add_xero_credit_note(job_id,task_id):
                                             "TotalTax"
                                         ]
                                         TaxLineDetail["NetAmountTaxable"] = (
-                                            multiple_invoice[i]["SubTotal"]
-                                            - multiple_invoice[i]["TotalTax"]
+                                                multiple_invoice[i]["SubTotal"]
+                                                - multiple_invoice[i]["TotalTax"]
                                         )
                                     else:
                                         if (
-                                            multiple_invoice[i]["Line"][j]["TaxType"]
-                                            == "GST"
-                                            or multiple_invoice[i]["Line"][j]["TaxType"]
-                                            == "INPUT"
-                                            or multiple_invoice[i]["Line"][j]["TaxType"]
-                                            == "OUTPUT"
+                                                multiple_invoice[i]["Line"][j]["TaxType"]
+                                                == "GST"
+                                                or multiple_invoice[i]["Line"][j]["TaxType"]
+                                                == "INPUT"
+                                                or multiple_invoice[i]["Line"][j]["TaxType"]
+                                                == "OUTPUT"
                                         ):
                                             TaxDetail["Amount"] = -multiple_invoice[i][
                                                 "TotalTax"
@@ -483,8 +484,8 @@ def add_xero_credit_note(job_id,task_id):
                                                 2,
                                             )
                                         elif (
-                                            multiple_invoice[i]["Line"][j]["TaxType"]
-                                            in ['FRE','EXEMPTEXPENSES','EXEMPTOUTPUT']
+                                                multiple_invoice[i]["Line"][j]["TaxType"]
+                                                in ['FRE', 'EXEMPTEXPENSES', 'EXEMPTOUTPUT']
                                         ):
                                             TaxDetail["Amount"] = 0
                                             TaxLineDetail["NetAmountTaxable"] = -round(
@@ -494,8 +495,8 @@ def add_xero_credit_note(job_id,task_id):
                                                 2,
                                             )
                                         elif (
-                                            multiple_invoice[i]["Line"][j]["TaxType"]
-                                            == "N-T"
+                                                multiple_invoice[i]["Line"][j]["TaxType"]
+                                                == "N-T"
                                         ):
                                             TaxDetail["Amount"] = 0
                                             TaxLineDetail["NetAmountTaxable"] = -round(
@@ -528,9 +529,9 @@ def add_xero_credit_note(job_id,task_id):
                                     ][j]["Quantity"]
                                     #                 SalesItemLineDetail['UnitPrice'] = abs(multiple_invoice[i]['Line'][j]['UnitAmount'])
                                     SalesItemLineDetail["UnitPrice"] = (
-                                        multiple_invoice[i]["Line"][j]["UnitAmount"]
-                                        / (100 + taxrate1)
-                                        * 100
+                                            multiple_invoice[i]["Line"][j]["UnitAmount"]
+                                            / (100 + taxrate1)
+                                            * 100
                                     )
                                     salesitemline["Amount"] = round(
                                         SalesItemLineDetail["Qty"]
@@ -538,12 +539,12 @@ def add_xero_credit_note(job_id,task_id):
                                         2,
                                     )
                                     SalesItemLineDetail["TaxInclusiveAmt"] = (
-                                        salesitemline["Amount"] * (100 + taxrate1) / 100
+                                            salesitemline["Amount"] * (100 + taxrate1) / 100
                                     )
 
                                     subtotal["Amount"] = (
-                                        multiple_invoice[i]["SubTotal"]
-                                        - multiple_invoice[i]["TotalTax"]
+                                            multiple_invoice[i]["SubTotal"]
+                                            - multiple_invoice[i]["TotalTax"]
                                     )
                                     TxnTaxDetail["TotalTax"] = multiple_invoice[i][
                                         "TotalTax"
@@ -567,9 +568,9 @@ def add_xero_credit_note(job_id,task_id):
                                     ][j]["Quantity"]
                                     #                 SalesItemLineDetail['UnitPrice'] = abs(multiple_invoice[i]['Line'][j]['UnitAmount'])
                                     SalesItemLineDetail["UnitPrice"] = (
-                                        multiple_invoice[i]["Line"][j]["UnitAmount"]
-                                        / (100 + taxrate1)
-                                        * 100
+                                            multiple_invoice[i]["Line"][j]["UnitAmount"]
+                                            / (100 + taxrate1)
+                                            * 100
                                     )
                                     salesitemline["Amount"] = round(
                                         SalesItemLineDetail["Qty"]
@@ -577,12 +578,12 @@ def add_xero_credit_note(job_id,task_id):
                                         2,
                                     )
                                     SalesItemLineDetail["TaxInclusiveAmt"] = (
-                                        salesitemline["Amount"] * (100 + taxrate1) / 100
+                                            salesitemline["Amount"] * (100 + taxrate1) / 100
                                     )
 
                                     subtotal["Amount"] = -(
-                                        multiple_invoice[i]["SubTotal"]
-                                        - multiple_invoice[i]["TotalTax"]
+                                            multiple_invoice[i]["SubTotal"]
+                                            - multiple_invoice[i]["TotalTax"]
                                     )
                                     TxnTaxDetail["TotalTax"] = -multiple_invoice[i][
                                         "TotalTax"
@@ -622,11 +623,11 @@ def add_xero_credit_note(job_id,task_id):
 
                             if multiple_invoice[i]["SubTotal"] >= 0:
                                 if (
-                                    multiple_invoice[i]["Line"][j]["TaxType"] == "GST"
-                                    or multiple_invoice[i]["Line"][j]["TaxType"]
-                                    == "INPUT"
-                                    or multiple_invoice[i]["Line"][j]["TaxType"]
-                                    == "OUTPUT"
+                                        multiple_invoice[i]["Line"][j]["TaxType"] == "GST"
+                                        or multiple_invoice[i]["Line"][j]["TaxType"]
+                                        == "INPUT"
+                                        or multiple_invoice[i]["Line"][j]["TaxType"]
+                                        == "OUTPUT"
                                 ):
                                     TaxDetail["Amount"] = multiple_invoice[i][
                                         "TotalTax"
@@ -637,7 +638,8 @@ def add_xero_credit_note(job_id,task_id):
                                         * 100,
                                         2,
                                     )
-                                elif multiple_invoice[i]["Line"][j]["TaxType"] in ['FRE','EXEMPTEXPENSES','EXEMPTOUTPUT']:
+                                elif multiple_invoice[i]["Line"][j]["TaxType"] in ['FRE', 'EXEMPTEXPENSES',
+                                                                                   'EXEMPTOUTPUT']:
                                     TaxDetail["Amount"] = 0
                                     TaxLineDetail["NetAmountTaxable"] = round(
                                         multiple_invoice[i]["Line"][j]["LineAmount"], 2
@@ -651,11 +653,11 @@ def add_xero_credit_note(job_id,task_id):
                                     pass
                             else:
                                 if (
-                                    multiple_invoice[i]["Line"][j]["TaxType"] == "GST"
-                                    or multiple_invoice[i]["Line"][j]["TaxType"]
-                                    == "INPUT"
-                                    or multiple_invoice[i]["Line"][j]["TaxType"]
-                                    == "OUTPUT"
+                                        multiple_invoice[i]["Line"][j]["TaxType"] == "GST"
+                                        or multiple_invoice[i]["Line"][j]["TaxType"]
+                                        == "INPUT"
+                                        or multiple_invoice[i]["Line"][j]["TaxType"]
+                                        == "OUTPUT"
                                 ):
                                     TaxDetail["Amount"] = -multiple_invoice[i][
                                         "TotalTax"
@@ -663,7 +665,8 @@ def add_xero_credit_note(job_id,task_id):
                                     TaxLineDetail["NetAmountTaxable"] = round(
                                         TaxDetail["Amount"] * taxrate1, 2
                                     )
-                                elif multiple_invoice[i]["Line"][j]["TaxType"] in ['FRE','EXEMPTEXPENSES','EXEMPTOUTPUT']:
+                                elif multiple_invoice[i]["Line"][j]["TaxType"] in ['FRE', 'EXEMPTEXPENSES',
+                                                                                   'EXEMPTOUTPUT']:
                                     TaxDetail["Amount"] = 0
                                     TaxLineDetail["NetAmountTaxable"] = -round(
                                         multiple_invoice[i]["Line"][j]["LineAmount"], 2
@@ -709,12 +712,12 @@ def add_xero_credit_note(job_id,task_id):
 
                     TxnTaxDetail["TaxLine"].append(TaxDetail)
                     if (
-                        (discount != {} or discount is not None)
-                        and ("Amount" in discount)
-                        and ("Amount" in salesitemline)
+                            (discount != {} or discount is not None)
+                            and ("Amount" in discount)
+                            and ("Amount" in salesitemline)
                     ):
                         line_amount = (
-                            line_amount + salesitemline["Amount"] + discount["Amount"]
+                                line_amount + salesitemline["Amount"] + discount["Amount"]
                         )
                     else:
                         line_amount = line_amount  # + salesitemline["Amount"]
@@ -747,8 +750,8 @@ def add_xero_credit_note(job_id,task_id):
 
                             if multiple_invoice[i]["SubTotal"] >= 0:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    abs(multiple_invoice[i]["TotalAmount"])
-                                    - line_amount1
+                                        abs(multiple_invoice[i]["TotalAmount"])
+                                        - line_amount1
                                 )
                                 rounding["Amount"] = round(
                                     abs(multiple_invoice[i]["TotalAmount"])
@@ -757,11 +760,11 @@ def add_xero_credit_note(job_id,task_id):
                                 )
                             else:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    abs(
-                                        multiple_invoice[i]["TotalAmount"]
-                                        - multiple_invoice[i]["TotalTax"]
-                                    )
-                                    - line_amount
+                                        abs(
+                                            multiple_invoice[i]["TotalAmount"]
+                                            - multiple_invoice[i]["TotalTax"]
+                                        )
+                                        - line_amount
                                 )
                                 rounding["Amount"] = round(
                                     abs(
@@ -826,17 +829,17 @@ def add_xero_credit_note(job_id,task_id):
                             rounding_SalesItemLineDetail["Qty"] = 1
                             if multiple_invoice[i]["SubTotal"] >= 0:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    multiple_invoice[i]["TotalAmount"] - line_amount1
+                                        multiple_invoice[i]["TotalAmount"] - line_amount1
                                 )
                                 rounding["Amount"] = (
-                                    multiple_invoice[i]["TotalAmount"] - line_amount1
+                                        multiple_invoice[i]["TotalAmount"] - line_amount1
                                 )
                             else:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    multiple_invoice[i]["TotalAmount"] + line_amount1
+                                        multiple_invoice[i]["TotalAmount"] + line_amount1
                                 )
                                 rounding["Amount"] = (
-                                    multiple_invoice[i]["TotalAmount"] + line_amount1
+                                        multiple_invoice[i]["TotalAmount"] + line_amount1
                                 )
 
                             rounding["DetailType"] = "SalesItemLineDetail"
@@ -935,22 +938,23 @@ def add_xero_credit_note(job_id,task_id):
             invoice["Line"].append(subtotal)
             # invoice["Line"].append(salesitemline)
 
-            if multiple_invoice[i]["Status"] not in ["VOIDED","DELETED","SUBMITTED"]:
+            if multiple_invoice[i]["Status"] not in ["VOIDED", "DELETED", "SUBMITTED"]:
                 url2 = "{}/creditmemo?minorversion=14".format(base_url)
                 payload = json.dumps(invoice)
                 inv_date = multiple_invoice[i]["TxnDate"][0:10]
                 inv_date1 = datetime.strptime(inv_date, "%Y-%m-%d")
                 if start_date1 is not None and end_date1 is not None:
                     if (inv_date1 >= start_date1) and (inv_date1 <= end_date1):
-                        post_data_in_qbo(url2, headers, payload,db['xero_creditnote'],_id, job_id,task_id, multiple_invoice[i]['Inv_No'])
-                
+                        post_data_in_qbo(url2, headers, payload, db['xero_creditnote'], _id, job_id, task_id,
+                                         multiple_invoice[i]['Inv_No'])
+
                     else:
                         pass
 
                 else:
-                    post_data_in_qbo(url2, headers, payload,db['xero_creditnote'],_id, job_id,task_id, multiple_invoice[i]['Inv_No'])
-                
-        
+                    post_data_in_qbo(url2, headers, payload, db['xero_creditnote'], _id, job_id, task_id,
+                                     multiple_invoice[i]['Inv_No'])
+
+
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note", ex)
-        

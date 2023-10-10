@@ -1,7 +1,6 @@
 import json
 import traceback
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
@@ -14,7 +13,7 @@ def add_employee_as_supplier(job_id):
         url = f"{base_url}/vendor?minorversion=40"
         employee_data = db["employee"]
 
-        x = employee_data.find({"job_id":job_id})
+        x = employee_data.find({"job_id": job_id})
 
         data = []
         for k in x:
@@ -107,4 +106,3 @@ def add_employee_as_supplier(job_id):
             )
     except Exception as ex:
         traceback.print_exc()
-        

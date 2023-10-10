@@ -72,4 +72,3 @@ def get_xero_settings(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

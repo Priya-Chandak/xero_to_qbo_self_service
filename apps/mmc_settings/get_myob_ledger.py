@@ -5,6 +5,8 @@ import requests
 from apps import db
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings
+
+
 # from apps.util.qbo_util import add_job_status
 
 
@@ -13,10 +15,10 @@ def get_myobledger_settings(job_id):
         url = "https://secure.myob.com/oauth2/v1/authorize/"
         keys = (
             db.session.query(Jobs, ToolSettings.keys, ToolSettings.values)
-                .join(Tool, Jobs.input_account_id == Tool.id)
-                .join(ToolSettings, ToolSettings.tool_id == Tool.id)
-                .filter(Jobs.id == job_id)
-                .all()
+            .join(Tool, Jobs.input_account_id == Tool.id)
+            .join(ToolSettings, ToolSettings.tool_id == Tool.id)
+            .filter(Jobs.id == job_id)
+            .all()
         )
         for row in keys:
             if row[1] == "client_id":
@@ -58,4 +60,3 @@ def get_myobledger_settings(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

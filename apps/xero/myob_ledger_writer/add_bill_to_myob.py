@@ -7,8 +7,7 @@ from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_myob
 
 
-
-def add_xero_bill_to_myob(job_id,task_id):
+def add_xero_bill_to_myob(job_id, task_id):
     try:
         dbname = get_mongodb_database()
         # payload, base_url, headers = get_settings_myob(job_id)
@@ -29,7 +28,6 @@ def add_xero_bill_to_myob(job_id,task_id):
         #     if bills[m]["Inv_No"] in ['490','39']:
         #         bill.append(bills[m])
 
-        
         myob_item1 = dbname['item'].find({"job_id": job_id})
         myob_item = []
         for k4 in range(0, dbname['item'].count_documents({"job_id": job_id})):
@@ -45,9 +43,9 @@ def add_xero_bill_to_myob(job_id,task_id):
         for k5 in range(0, dbname['customer'].count_documents({"job_id": job_id})):
             myob_customer.append(myob_customer1[k5])
 
-        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id":job_id})
+        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id": job_id})
         xero_archived_coa = []
-        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id":job_id})):
+        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id": job_id})):
             xero_archived_coa.append(xero_archived_coa1[k4])
 
         taxcode_myob1 = dbname['taxcode_myob'].find({"job_id": job_id})
@@ -70,16 +68,15 @@ def add_xero_bill_to_myob(job_id,task_id):
         for k9 in range(0, dbname['xero_coa'].count_documents({"job_id": job_id})):
             xero_account.append(xero_account1[k9])
 
-        job11 = dbname['job'].find({"job_id":job_id})
+        job11 = dbname['job'].find({"job_id": job_id})
         job = []
-        for k8 in range(0, dbname['job'].count_documents({"job_id":job_id})):
+        for k8 in range(0, dbname['job'].count_documents({"job_id": job_id})):
             job.append(job11[k8])
 
-        
         for i in range(0, len(bill)):
             print(bill[i])
             print("-----------")
-            
+
             _id = bill[i]['_id']
             task_id = bill[i]['task_id']
             QuerySet1 = {"Lines": []}
@@ -109,16 +106,16 @@ def add_xero_bill_to_myob(job_id,task_id):
 
                 if myob_supplier[k1]["CompanyName"] == bill[i]["ContactName"][0:50]:
                     Supplier['UID'] = myob_supplier[k1]["UID"]
-                    
-                elif 'CompanyName' in myob_supplier[k1] and myob_supplier[k1]["CompanyName"]!= None:
-                    if myob_supplier[k1]["CompanyName"].startswith(bill[i]["ContactName"]) and myob_supplier[k1]["CompanyName"].endswith("- S"):
+
+                elif 'CompanyName' in myob_supplier[k1] and myob_supplier[k1]["CompanyName"] != None:
+                    if myob_supplier[k1]["CompanyName"].startswith(bill[i]["ContactName"]) and myob_supplier[k1][
+                        "CompanyName"].endswith("- S"):
                         Supplier['UID'] = myob_supplier[k1]["UID"]
-                        
 
             QuerySet1["Supplier"] = Supplier
 
             for j in range(0, len(bill[i]["Line"])):
-                
+
                 if 'AccountCode' in bill[i]['Line'][j]:
                     Item = {}
                     Account = {}
@@ -126,50 +123,43 @@ def add_xero_bill_to_myob(job_id,task_id):
                     line_job = {}
                     taxcode = {}
 
-                    for j3 in range(0,len(job)):
+                    for j3 in range(0, len(job)):
                         if 'TrackingID' in bill[i]["Line"][j]:
                             if job[j3]['Name'] == bill[i]["Line"][j]["TrackingID"]:
-                                line_job['UID']=job[j3]['UID']
+                                line_job['UID'] = job[j3]['UID']
 
-                    if line_job=={}:
-                        QuerySet3['Job']=None
+                    if line_job == {}:
+                        QuerySet3['Job'] = None
                     else:
-                        QuerySet3['Job']=line_job
-
+                        QuerySet3['Job'] = line_job
 
                     if 'ItemCode' in bill[i]["Line"][j]:
                         for j5 in range(0, len(myob_item)):
                             if bill[i]["Line"][j]["ItemCode"] == myob_item[j5]["Number"]:
                                 Item["UID"] = myob_item[j5]["UID"]
                     else:
-                        Item =None                        
+                        Item = None
 
-                    
                     for j5 in range(0, len(chart_of_account)):
                         for j51 in range(0, len(xero_account)):
                             if chart_of_account[j5]['IsHeader'] != True:
                                 if bill[i]["Line"][j]["AccountCode"] == xero_account[j51]['Code']:
                                     if xero_account[j51]['Name'].lower().strip() == chart_of_account[j5][
                                         "Name"].lower().strip():
-                                        
                                         Account["UID"] = chart_of_account[j5]["UID"]
 
-                    for n in range(0,len(xero_archived_coa)):    
-                        for p1 in range(0,len(chart_of_account)):
+                    for n in range(0, len(xero_archived_coa)):
+                        for p1 in range(0, len(chart_of_account)):
                             if chart_of_account[p1]['IsHeader'] != True:
                                 if bill[i]["Line"][j]["AccountCode"] == xero_archived_coa[n]['Code']:
                                     if xero_archived_coa[n]['Name'] == chart_of_account[p1]["Name"]:
-                                    
                                         Account["UID"] = chart_of_account[p1]["UID"]
 
                     if Account != {} and Account != None:
                         QuerySet3['account'] = Account
 
-                    
-
-                    if "Discount" in  bill[i]["Line"][j]:
-                        QuerySet3['DiscountPercent']= bill[i]["Line"][j]["Discount"]
-                    
+                    if "Discount" in bill[i]["Line"][j]:
+                        QuerySet3['DiscountPercent'] = bill[i]["Line"][j]["Discount"]
 
                     for j3 in range(0, len(taxcode_myob)):
                         for k1 in range(0, len(xero_tax_data)):
@@ -177,7 +167,8 @@ def add_xero_bill_to_myob(job_id,task_id):
                                 if bill[i]["Line"][j]["TaxType"] != None and bill[i]["Line"][j][
                                     "TaxType"] != 'NONE':
                                     if bill[i]["Line"][j]["TaxType"] == xero_tax_data[k1]['TaxType']:
-                                        if xero_tax_data[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT',"TAX008", 'OUTPUT2', 'INPUT2']:
+                                        if xero_tax_data[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT', "TAX008",
+                                                                            'OUTPUT2', 'INPUT2']:
                                             if taxcode_myob[j3]['Code'] == 'GST' or taxcode_myob1[j3]['Code'] == 'S15':
                                                 taxcode['UID'] = taxcode_myob[j3]['UID']
                                                 taxrate1 = taxcode_myob[j3]['Rate']
@@ -194,11 +185,12 @@ def add_xero_bill_to_myob(job_id,task_id):
                                             if taxcode_myob[j3]['Code'] == 'INP':
                                                 taxcode['UID'] = taxcode_myob[j3]['UID']
                                                 taxrate1 = taxcode_myob[j3]['Rate']
-                                        elif xero_tax_data[k1]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2",None,"NONE"]:
+                                        elif xero_tax_data[k1]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2", None,
+                                                                              "NONE"]:
                                             if taxcode_myob[j3]['Code'] == 'N-T':
                                                 taxcode['UID'] = taxcode_myob[j3]['UID']
                                                 taxrate1 = taxcode_myob[j3]['Rate']
-                 
+
                                 else:
                                     if taxcode_myob[j3]['Code'] == 'N-T':
                                         taxcode['UID'] = taxcode_myob[j3]['UID']
@@ -207,8 +199,7 @@ def add_xero_bill_to_myob(job_id,task_id):
                     QuerySet3['TaxCode'] = taxcode
 
                     QuerySet1["Lines"].append(QuerySet3)
-                    QuerySet3["Type"] ="Transaction"
-                                    
+                    QuerySet3["Type"] = "Transaction"
 
                     if Item != {}:
                         QuerySet3["Item"] = Item
@@ -216,25 +207,27 @@ def add_xero_bill_to_myob(job_id,task_id):
                     if "Description" in bill[i]["Line"][j]:
                         QuerySet3["Description"] = bill[i]["Line"][j]["Description"][0:1000]
 
-                    calculate_discount=0
-                    if "Discount" in  bill[i]["Line"][j]:
+                    calculate_discount = 0
+                    if "Discount" in bill[i]["Line"][j]:
                         if "Quantity" in bill[i]["Line"][j]:
                             if bill[i]["Line"][j]["LineAmount"] < 0:
-                                quantity=-bill[i]["Line"][j]["Quantity"]
-                                calculate_discount=(bill[i]["Line"][j]["Discount"] * (bill[i]["Line"][j]["UnitAmount"]*quantity))/100
+                                quantity = -bill[i]["Line"][j]["Quantity"]
+                                calculate_discount = (bill[i]["Line"][j]["Discount"] * (
+                                            bill[i]["Line"][j]["UnitAmount"] * quantity)) / 100
                             else:
-                                calculate_discount=(bill[i]["Line"][j]["Discount"] * (bill[i]["Line"][j]["UnitAmount"]*bill[i]["Line"][j]["Quantity"]))/100
+                                calculate_discount = (bill[i]["Line"][j]["Discount"] * (
+                                            bill[i]["Line"][j]["UnitAmount"] * bill[i]["Line"][j]["Quantity"])) / 100
 
                         else:
                             if bill[i]["Line"][j]["LineAmount"] < 0:
-                                quantity1=-1
-                                calculate_discount=(bill[i]["Line"][j]["Discount"] * (bill[i]["Line"][j]["UnitAmount"]*quantity1))/100
+                                quantity1 = -1
+                                calculate_discount = (bill[i]["Line"][j]["Discount"] * (
+                                            bill[i]["Line"][j]["UnitAmount"] * quantity1)) / 100
                             else:
-                                quantity1=1
-                                calculate_discount=(bill[i]["Line"][j]["Discount"] * (bill[i]["Line"][j]["UnitAmount"]*quantity1))/100
+                                quantity1 = 1
+                                calculate_discount = (bill[i]["Line"][j]["Discount"] * (
+                                            bill[i]["Line"][j]["UnitAmount"] * quantity1)) / 100
 
-                       
-                    
                     if 'ItemCode' in bill[i]["Line"][j]:
                         if 'Quantity' in bill[i]["Line"][j]:
                             if bill[i]["Line"][j]["LineAmount"] < 0:
@@ -242,15 +235,17 @@ def add_xero_bill_to_myob(job_id,task_id):
                                 QuerySet3["BillQuantity"] = -bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitCount"] = -bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Line"][j]["UnitAmount"])
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
-                                QuerySet3["BackorderQuantity"] = -bill[i]["Line"][j]["Quantity"]    
-                               
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
+                                QuerySet3["BackorderQuantity"] = -bill[i]["Line"][j]["Quantity"]
+
                             else:
                                 QuerySet3["ReceivedQuantity"] = bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["BillQuantity"] = bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitCount"] = bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitPrice"] = bill[i]["Line"][j]["UnitAmount"]
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
                                 QuerySet3["BackorderQuantity"] = bill[i]["Line"][j]["Quantity"]
                         else:
                             if bill[i]["Line"][j]["LineAmount"] < 0:
@@ -258,14 +253,16 @@ def add_xero_bill_to_myob(job_id,task_id):
                                 QuerySet3["BillQuantity"] = -1
                                 QuerySet3["UnitCount"] = -1
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Line"][j]["UnitAmount"])
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
                                 QuerySet3["BackorderQuantity"] = -1
                             else:
                                 QuerySet3["ReceivedQuantity"] = 1
                                 QuerySet3["BillQuantity"] = 1
                                 QuerySet3["UnitCount"] = 1
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Line"][j]["UnitAmount"])
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
                                 QuerySet3["BackorderQuantity"] = 1
                     else:
                         if 'Quantity' in bill[i]["Line"][j]:
@@ -274,35 +271,37 @@ def add_xero_bill_to_myob(job_id,task_id):
                                 QuerySet3["BillQuantity"] = -bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitCount"] = -bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Line"][j]["UnitAmount"])
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
-                                QuerySet3["BackorderQuantity"] = -bill[i]["Line"][j]["Quantity"]    
-                               
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
+                                QuerySet3["BackorderQuantity"] = -bill[i]["Line"][j]["Quantity"]
+
                             else:
                                 QuerySet3["ReceivedQuantity"] = bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["BillQuantity"] = bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitCount"] = bill[i]["Line"][j]["Quantity"]
                                 QuerySet3["UnitPrice"] = bill[i]["Line"][j]["UnitAmount"]
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
                                 QuerySet3["BackorderQuantity"] = bill[i]["Line"][j]["Quantity"]
-                        
+
                         else:
                             if bill[i]["Line"][j]["LineAmount"] < 0:
                                 QuerySet3["ReceivedQuantity"] = -1
                                 QuerySet3["BillQuantity"] = -1
                                 QuerySet3["UnitCount"] = -1
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Line"][j]["UnitAmount"])
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
                                 QuerySet3["BackorderQuantity"] = -1
                             else:
                                 QuerySet3["ReceivedQuantity"] = 1
                                 QuerySet3["BillQuantity"] = 1
                                 QuerySet3["UnitCount"] = 1
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Line"][j]["UnitAmount"])
-                                QuerySet3["Total"] = round(QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]-calculate_discount,2)
+                                QuerySet3["Total"] = round(
+                                    QuerySet3["UnitPrice"] * QuerySet3["UnitCount"] - calculate_discount, 2)
                                 QuerySet3["BackorderQuantity"] = 1
-                    
 
-                            
                 for j3 in range(0, len(taxcode_myob)):
                     if taxcode_myob[j3]['Code'] == 'N-T':
                         FreightTaxCode['UID'] = taxcode_myob[j3]['UID']
@@ -327,10 +326,10 @@ def add_xero_bill_to_myob(job_id,task_id):
 
                 payload1, base_url, headers = get_settings_myob(job_id)
                 url1 = f"{base_url}/Purchase/Bill/Item"
-                if bill[i]['is_pushed']==0:
+                if bill[i]['is_pushed'] == 0:
                     asyncio.run(
                         post_data_in_myob(url1, headers, payload, dbname['xero_bill'], _id, job_id, task_id,
-                                        id_or_name_value_for_error))
+                                          id_or_name_value_for_error))
                 else:
                     pass
 

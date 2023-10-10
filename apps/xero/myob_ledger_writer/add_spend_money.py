@@ -43,11 +43,10 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
         for p3 in xero_coa1:
             xero_coa.append(p3)
 
-        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id":job_id})
+        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id": job_id})
         xero_archived_coa = []
-        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id":job_id})):
+        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id": job_id})):
             xero_archived_coa.append(xero_archived_coa1[k4])
-
 
         taxcode_myob1 = dbname['taxcode_myob'].find({'job_id': job_id})
         taxcode_myob = []
@@ -89,11 +88,11 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
             for i4 in range(0, len(myob_coa)):
                 if myob_coa[i4]['IsHeader'] != True:
                     if xero_spend_money[i]['BankAccountName'].lower().strip() == myob_coa[i4]['Name'].lower().strip():
-                        
+
                         account['UID'] = myob_coa[i4]['UID']
                         account['Name'] = myob_coa[i4]['Name']
                     elif xero_spend_money[i]['BankAccountName'][0:60] == myob_coa[i4]['Name']:
-                        
+
                         account['UID'] = myob_coa[i4]['UID']
                         account['Name'] = myob_coa[i4]['Name']
 
@@ -105,14 +104,13 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                     contact['Name'] = myob_supplier[i3]['CompanyName']
                     contact['Type'] = 'Supplier'
                     continue
-                elif 'CompanyName' in myob_supplier[i3] and myob_supplier[i3]['CompanyName']!= None:
+                elif 'CompanyName' in myob_supplier[i3] and myob_supplier[i3]['CompanyName'] != None:
                     if myob_supplier[i3]['CompanyName'].startswith(xero_spend_money[i]['ContactName']) and \
-                        myob_supplier[i3]['CompanyName'].endswith("- S"):
+                            myob_supplier[i3]['CompanyName'].endswith("- S"):
                         contact['UID'] = myob_supplier[i3]['UID']
                         contact['Name'] = myob_supplier[i3]['CompanyName']
                         contact['Type'] = 'Supplier'
                         break
-
 
             for i31 in range(0, len(myob_customer)):
                 if 'DisplayName' in myob_customer[i31]:
@@ -121,8 +119,8 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                         contact['Name'] = myob_customer[i31]['DisplayName']
                         contact['Type'] = 'Customer'
                         continue
-                        
-                elif 'Company_Name' in myob_customer[i31] and myob_customer[i31]['Company_Name']!= None:
+
+                elif 'Company_Name' in myob_customer[i31] and myob_customer[i31]['Company_Name'] != None:
                     if myob_customer[i31]['Company_Name'].startswith(xero_spend_money[i]['ContactName']) and \
                             myob_customer[i31]['Company_Name'].endswith("- C"):
                         contact['UID'] = myob_customer[i31]['UID']
@@ -135,11 +133,11 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                         contact['Type'] = 'Customer'
                         continue
                 elif myob_customer[i31]['Company_Name'].strip().lower() == xero_spend_money[i][
-                        'ContactName'][0:50].strip().lower():
-                        contact['UID'] = myob_customer[i31]['UID']
-                        contact['Name'] = myob_customer[i31]['Company_Name']
-                        contact['Type'] = 'Customer'
-                        break
+                                                                               'ContactName'][0:50].strip().lower():
+                    contact['UID'] = myob_customer[i31]['UID']
+                    contact['Name'] = myob_customer[i31]['Company_Name']
+                    contact['Type'] = 'Customer'
+                    break
 
             Queryset1['Contact'] = contact
 
@@ -165,8 +163,6 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
 
                 lineitem['UnitCount'] = xero_spend_money[i]['Line'][j]['Quantity']
 
-        
-
                 # for i2 in range(0, len(myob_coa)):
                 #     if xero_spend_money[i]['Line'][j]['AccountCode'] == myob_coa[i2]['DisplayId']:
                 #         lineaccount['UID'] = myob_coa[i2]['UID']
@@ -180,7 +176,7 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                 #                 if xero_coa[j6]["Name"] == myob_coa[i2]["Name"]:
                 #                     lineaccount['UID'] = myob_coa[i2]['UID']
                 #                     break
-                            
+
                 #             elif xero_spend_money[i]['Line'][j]['AccountCode']  == myob_coa[i2]['DisplayId']:
                 #                 lineaccount['UID'] = myob_coa[i2]['UID']
                 #                 break
@@ -194,40 +190,35 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
 
                 # lineitem['account'] = lineaccount
 
-
                 for i2 in range(0, len(myob_coa)):
                     for j6 in range(0, len(xero_coa)):
 
                         if myob_coa[i2]['IsHeader'] != True:
                             if xero_spend_money[i]['Line'][j]['AccountCode'] == xero_coa[j6]["Code"]:
                                 if xero_coa[j6]["Name"] == myob_coa[i2]["Name"]:
-                                    
                                     lineaccount['UID'] = myob_coa[i2]['UID']
                                     break
-                        # elif myob_coa[i2]['DisplayId'].endswith(xero_receive_money[i]['Line'][j]['AccountCode'].replace(".","")) :
-                        #     lineaccount['UID'] = myob_coa[i2]['UID']
-                        #     break
-                        # elif myob_coa[i2]['DisplayId'].endswith(xero_receive_money[i]['Line'][j]['AccountCode'].replace("/","")) :
-                        #     lineaccount['UID'] = myob_coa[i2]['UID']
-                        #     break
+                            # elif myob_coa[i2]['DisplayId'].endswith(xero_receive_money[i]['Line'][j]['AccountCode'].replace(".","")) :
+                            #     lineaccount['UID'] = myob_coa[i2]['UID']
+                            #     break
+                            # elif myob_coa[i2]['DisplayId'].endswith(xero_receive_money[i]['Line'][j]['AccountCode'].replace("/","")) :
+                            #     lineaccount['UID'] = myob_coa[i2]['UID']
+                            #     break
 
                             elif xero_spend_money[i]['Line'][j]['AccountCode'] == myob_coa[i2]['DisplayId']:
                                 lineaccount['UID'] = myob_coa[i2]['UID']
                                 break
 
-                for n in range(0,len(xero_archived_coa)):    
-                    for p1 in range(0,len(myob_coa)):
+                for n in range(0, len(xero_archived_coa)):
+                    for p1 in range(0, len(myob_coa)):
 
                         if myob_coa[p1]['IsHeader'] != True:
                             if xero_spend_money[i]['Line'][j]['AccountCode'] == xero_archived_coa[n]['Code']:
                                 if xero_archived_coa[n]['Name'] == myob_coa[p1]["Name"]:
                                     lineaccount['UID'] = myob_coa[p1]["UID"]
 
-
                 if lineaccount != {} and lineaccount != None:
                     lineitem['account'] = lineaccount
-                    
-
 
                 for i21 in range(0, len(myob_job)):
                     if 'TrackingName' in xero_spend_money[i]['Line'][j]:
@@ -253,7 +244,7 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                                             taxcode['UID'] = taxcode_myob[j3]['UID']
 
                                     elif xero_tax[j2]['TaxType'] in ['EXEMPTCAPITAL', 'EXEMPTEXPENSES', 'EXEMPTEXPORT',
-                                                                     'EXEMPTOUTPUT','TAX005']:
+                                                                     'EXEMPTOUTPUT', 'TAX005']:
                                         if taxcode_myob[j3]['Code'] == 'FRE':
                                             taxcode['UID'] = taxcode_myob[j3]['UID']
 
@@ -279,15 +270,16 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                 Queryset1['Lines'].append(lineitem)
 
             payload = json.dumps(Queryset1)
-            
-            id_or_name_value_for_error = str(xero_spend_money[i]['Date'])+"-"+str(xero_spend_money[i]['ContactName'])+"-"+str(xero_spend_money[i]['TotalAmount'])
-            
+
+            id_or_name_value_for_error = str(xero_spend_money[i]['Date']) + "-" + str(
+                xero_spend_money[i]['ContactName']) + "-" + str(xero_spend_money[i]['TotalAmount'])
+
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/Banking/SpendMoneyTxn"
-            if xero_spend_money[i]['is_pushed']==0:
+            if xero_spend_money[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, dbname['xero_spend_money'], _id, job_id, task_id,
-                                    id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 

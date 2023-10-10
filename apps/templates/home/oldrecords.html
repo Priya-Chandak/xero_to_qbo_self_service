@@ -15,7 +15,7 @@
                 <span>Records</span>
                 <p style="margin-left:920px">Successful : {{ successful_count }}/{{ total_records }}</p>
                 <p style="margin-left:920px">Failed : {{ error_count }}/{{ total_records }}</p>
-				{% if msg %}
+                {% if msg %}
                 <span class="text-success">{{ request.args.get('msg') }}</span>
                 {% endif %}
             </div>
@@ -29,23 +29,25 @@
                     <thead>
                     <tr>
                         <th> ID</th>
-						<th> Is Pushed</th>
-						<th> Error</th>
+                        <th> Is Pushed</th>
+                        <th> Error</th>
 
-						<!-- <th> Payload</th> -->
-						<th> Push</th>
+                        <!-- <th> Payload</th> -->
+                        <th> Push</th>
                     </tr>
                     </thead>
                     <tbody>
-					{% for item in data1 %}
-					<tr>
+                    {% for item in data1 %}
+                    <tr>
                         <td>{{item._id}}</td>
-						<td>False</td>
-						<td>{{item.error}}</td>
+                        <td>False</td>
+                        <td>{{item.error}}</td>
 
-						<!-- <td>{{item}}</td> -->
-						<td><button type="button" class="btn btn-success">Retry</button></td>
-					</tr>
+                        <!-- <td>{{item}}</td> -->
+                        <td>
+                            <button type="button" class="btn btn-success">Retry</button>
+                        </td>
+                    </tr>
                     {% endfor %}
                     </tbody>
                 </table>
@@ -53,12 +55,12 @@
             </div>
 
             <p>
-            {% if page > 1 %}
+                {% if page > 1 %}
                 <a href="?page={{ page - 1 }}" class="btn btn-dark">Previous</a>
-			{% endif %}
-            {% if (page * per_page) < total_records %}
-				<a href="?page={{ page + 1 }}" class="btn btn-outline-dark">Next</a>
-			{% endif %}
+                {% endif %}
+                {% if (page * per_page) < total_records %}
+                <a href="?page={{ page + 1 }}" class="btn btn-outline-dark">Next</a>
+                {% endif %}
             </p>
 
         </div>
@@ -121,6 +123,7 @@
 
 			});
 		});
+
 
 
 </script>

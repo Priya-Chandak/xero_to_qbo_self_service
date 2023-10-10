@@ -1,19 +1,14 @@
 import json
 import logging
 
-import requests
-
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
-
 logger = logging.getLogger(__name__)
 
 
-
-def add_xero_employee(job_id,task_id):
+def add_xero_employee(job_id, task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_employee -> add_xero_employee")
 
@@ -23,7 +18,7 @@ def add_xero_employee(job_id,task_id):
 
         employee_data = db["xero_employee"]
 
-        x = employee_data.find({"job_id":job_id})
+        x = employee_data.find({"job_id": job_id})
 
         data = []
         for k in x:
@@ -34,7 +29,7 @@ def add_xero_employee(job_id,task_id):
         for i in range(0, len(QuerySet1)):
             _id = QuerySet1['_id']
             task_id = QuerySet1['task_id']
-            
+
             QuerySet2 = {}
             QuerySet4 = {}
             QuerySet5 = {}
@@ -63,10 +58,9 @@ def add_xero_employee(job_id,task_id):
             QuerySet2["Mobile"] = QuerySet6
 
             payload = json.dumps(QuerySet2)
-            
-            post_data_in_qbo(url, headers, payload,employee_data,_id, job_id,task_id, QuerySet1[i]["EmployeeID"])
+
+            post_data_in_qbo(url, headers, payload, employee_data, _id, job_id, task_id, QuerySet1[i]["EmployeeID"])
 
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_employee -> add_xero_employee", ex)
-        

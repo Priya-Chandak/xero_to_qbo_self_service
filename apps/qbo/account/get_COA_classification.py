@@ -1,11 +1,10 @@
 import traceback
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 
 
-def get_classified_coa(job_id,task_id):
+def get_classified_coa(job_id, task_id):
     try:
         db = get_mongodb_database()
         classified_coa = db["classified_coa"]
@@ -31,15 +30,15 @@ def get_classified_coa(job_id,task_id):
 
         for q in range(0, len(QuerySet1)):
             QuerySet2 = {}
-            QuerySet2["Name"] = QuerySet1[q]["Name"].replace(":","-")
+            QuerySet2["Name"] = QuerySet1[q]["Name"].replace(":", "-")
             QuerySet2["job_id"] = job_id
             QuerySet2["task_id"] = task_id
             QuerySet2["is_pushed"] = 0
-            QuerySet2["table_name"]="classified_coa"
+            QuerySet2["table_name"] = "classified_coa"
             QuerySet2["AccountType"] = QuerySet1[q]["Account_Type"]
             QuerySet2["AcctNum"] = QuerySet1[q]["DisplayId"]
             QuerySet2["error"] = None
-            
+
             list1.append(QuerySet2)
 
         list2 = []
@@ -50,8 +49,8 @@ def get_classified_coa(job_id,task_id):
                 QuerySet1["is_pushed"] = 0
                 QuerySet1["error"] = None
                 QuerySet1["task_id"] = task_id
-                QuerySet1["table_name"]="classified_coa"
-            
+                QuerySet1["table_name"] = "classified_coa"
+
                 QuerySet1["Name"] = list1[i]["Name"]
                 QuerySet1["AcctNum"] = list1[i]["AcctNum"]
 
@@ -131,4 +130,3 @@ def get_classified_coa(job_id,task_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

@@ -68,16 +68,14 @@
 #         
 
 
+import base64
 import traceback
+
 import requests
 
 from apps import db
-from apps.home.data_util import add_job_status
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings
-import base64
-
-
 
 
 def post_qbo_settings(job_id):
@@ -85,10 +83,10 @@ def post_qbo_settings(job_id):
         url = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
         keys = (
             db.session.query(Jobs, ToolSettings.keys, ToolSettings.values)
-                .join(Tool, Jobs.output_account_id == Tool.id)
-                .join(ToolSettings, ToolSettings.tool_id == Tool.id)
-                .filter(Jobs.id == job_id)
-                .all()
+            .join(Tool, Jobs.output_account_id == Tool.id)
+            .join(ToolSettings, ToolSettings.tool_id == Tool.id)
+            .filter(Jobs.id == job_id)
+            .all()
         )
         for row in keys:
             if row[1] == "client_id":
@@ -108,12 +106,12 @@ def post_qbo_settings(job_id):
             if row[1] == "refresh_token":
                 refresh_token = row[2]
 
-        redirect_uri="https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl"
+        redirect_uri = "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl"
 
-        payload=f'grant_type=refresh_token&refresh_token={refresh_token}&redirect_uri={redirect_uri}'
-        
+        payload = f'grant_type=refresh_token&refresh_token={refresh_token}&redirect_uri={redirect_uri}'
+
         CLIENT_ID = f"{client_id}"
-        CLIENT_SECRET=f"{client_secret}"
+        CLIENT_SECRET = f"{client_secret}"
         clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
         encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
         auth_code = "%s" % encoded_u
@@ -125,11 +123,10 @@ def post_qbo_settings(job_id):
         #     }
 
         headers = {
-            'Authorization': "Basic" "  "+  f'{auth_code}',
+            'Authorization': "Basic" "  " + f'{auth_code}',
             'Content-Type': 'application/x-www-form-urlencoded'
-            }
+        }
 
-        
         response = requests.request("POST", url, headers=headers, data=payload)
         re = response.json()
         access_token1 = re["access_token"]
@@ -166,4 +163,3 @@ def post_qbo_settings(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

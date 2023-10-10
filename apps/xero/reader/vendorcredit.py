@@ -1,17 +1,14 @@
-import traceback
+import sys
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.home.data_util import get_job_details
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-import sys
 
 
-
-def get_vendorcredit(job_id,task_id):
+def get_vendorcredit(job_id, task_id):
     print("inside vendorcredite")
     try:
         start_date, end_date = get_job_details(job_id)
@@ -33,7 +30,7 @@ def get_vendorcredit(job_id,task_id):
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["CreditNotes"]
-            if len(r2)>0:
+            if len(r2) > 0:
                 no_of_records = len(r2)
                 no_of_pages = (no_of_records // 100) + 1
 
@@ -52,9 +49,9 @@ def get_vendorcredit(job_id,task_id):
 
                     for i in range(0, len(JsonResponse1)):
                         if (
-                            JsonResponse1[i]["Status"] != "DELETED"
-                            and JsonResponse1[i]["Status"] != "VOIDED"
-                            and JsonResponse1[i]["Status"] != "DRAFT"
+                                JsonResponse1[i]["Status"] != "DELETED"
+                                and JsonResponse1[i]["Status"] != "VOIDED"
+                                and JsonResponse1[i]["Status"] != "DRAFT"
                         ):
                             QuerySet = {"Line": []}
                             QuerySet["job_id"] = job_id
@@ -62,7 +59,7 @@ def get_vendorcredit(job_id,task_id):
                             QuerySet["error"] = None
                             QuerySet["payload"] = None
                             QuerySet["is_pushed"] = 0
-                            QuerySet["table_name"] = "xero_vendorcredit" 
+                            QuerySet["table_name"] = "xero_vendorcredit"
                             QuerySet["Inv_No"] = JsonResponse1[i]["CreditNoteNumber"]
                             QuerySet["Inv_ID"] = JsonResponse1[i]["CreditNoteID"]
                             QuerySet["TxnDate"] = JsonResponse1[i]["DateString"]
@@ -95,9 +92,10 @@ def get_vendorcredit(job_id,task_id):
                                     QuerySet1["LineAmount"] = JsonResponse1[i]["LineItems"][j][
                                         "LineAmount"
                                     ]
-                                if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
+                                if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(
+                                        JsonResponse1[i]['LineItems'][j]['Tracking']):
                                     QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
-                                    
+
                                 if "AccountCode" in JsonResponse1[i]["LineItems"][j]:
                                     QuerySet1["AccountCode"] = JsonResponse1[i]["LineItems"][j][
                                         "AccountCode"
@@ -106,7 +104,7 @@ def get_vendorcredit(job_id,task_id):
                                     QuerySet1["Quantity"] = JsonResponse1[i]["LineItems"][j][
                                         "Quantity"
                                     ]
-                                if JsonResponse1[i]["LineItems"][j] != None and  JsonResponse1[i]["LineItems"][j] !=[]:
+                                if JsonResponse1[i]["LineItems"][j] != None and JsonResponse1[i]["LineItems"][j] != []:
                                     if "Item" in JsonResponse1[i]["LineItems"][j]:
                                         QuerySet1["ItemCode"] = JsonResponse1[i]["LineItems"][j][
                                             "Item"
@@ -126,22 +124,21 @@ def get_vendorcredit(job_id,task_id):
                                 QuerySet["Line"].append(QuerySet1)
 
                             if (JsonResponse1[i]["Type"] == "ACCPAYCREDIT") and (
-                                JsonResponse1[i]["Status"] != "DELETED"):
+                                    JsonResponse1[i]["Status"] != "DELETED"):
                                 vendorcredit.append(QuerySet)
-                            
+
                 if len(vendorcredit) > 0:
                     xero_vendorcredit.insert_many(vendorcredit)
 
                 step_name = "Reading data from xero vendorcredit"
                 write_task_execution_step(task_id, status=1, step=step_name)
-                
+
 
     except Exception as ex:
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)
         sys.exit(0)
-        

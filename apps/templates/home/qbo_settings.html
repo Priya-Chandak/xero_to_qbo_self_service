@@ -39,9 +39,9 @@
                     </div>
                     <div class="card-header">
                         {% if request.args.get('msg') %}
-                             <span class="text-success">{{ request.args.get('msg') }}</span>
-                         {% endif %}
-                     </div>
+                        <span class="text-success">{{ request.args.get('msg') }}</span>
+                        {% endif %}
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="basic-datatables" class="display table table-striped table-hover">
@@ -55,15 +55,15 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    {% for item in data %}
-                                        <tr>
-                                            <td>{{item.name}}</td>
-                                            <td>{{item.username}}</td>
-                                            <td>{{item.base_url}}</td>
-                                            <td>{{item.minor_version}}</td>
-                                            <td><a href="qbo_settings/edit/{{item.id}}">Edit Details</a></td>
-                                        </tr>
-                                    {% endfor %}
+                                {% for item in data %}
+                                <tr>
+                                    <td>{{item.name}}</td>
+                                    <td>{{item.username}}</td>
+                                    <td>{{item.base_url}}</td>
+                                    <td>{{item.minor_version}}</td>
+                                    <td><a href="qbo_settings/edit/{{item.id}}">Edit Details</a></td>
+                                </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -129,6 +129,7 @@
 
 			});
 		});
+
 
 </script>
 

@@ -1,11 +1,9 @@
-import requests
-import json
-from pymongo import MongoClient
-from apps.mmc_settings.all_settings import get_settings_myob
-from pymongo import MongoClient
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
 import sys
 
+from pymongo import MongoClient
+
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
+from apps.mmc_settings.all_settings import get_settings_myob
 
 
 def get_xero_classified_coa_for_myobledger(job_id, task_id):
@@ -86,7 +84,7 @@ def get_xero_classified_coa_for_myobledger(job_id, task_id):
     except Exception as ex:
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)

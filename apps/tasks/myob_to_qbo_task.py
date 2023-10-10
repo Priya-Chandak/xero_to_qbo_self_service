@@ -1,5 +1,3 @@
-from apps import celery
-
 from apps.myob import myobreader
 
 

@@ -48,10 +48,8 @@ def post_myob_settings(job_id):
             if row[1] == "redirect_uri":
                 redirect_uri = row[2]
 
-            
-
         difference_of_time = (datetime.now() - token_generated_on).seconds
-        
+
         if difference_of_time >= 1000:
 
             payload = f"client_id={client_id}&client_secret={client_secret}&grant_type=refresh_token&refresh_token={refresh_token}"
@@ -62,7 +60,7 @@ def post_myob_settings(job_id):
 
             response = requests.request("POST", url, headers=headers, data=payload)
             print(response)
-            if response.status_code in[200 ,201]:
+            if response.status_code in [200, 201]:
                 re = response.json()
                 new_access_token = re.get("access_token")
                 new_refresh_token = re.get("refresh_token")

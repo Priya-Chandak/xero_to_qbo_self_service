@@ -1,26 +1,16 @@
-import json
-from ast import Break
-import json
-from os import path
-from os.path import exists
-from MySQLdb import Connect
-from numpy import true_divide
-from apps.home.models import Jobs, Tool
-from apps import db
-from apps.myconstant import *
-from sqlalchemy.orm import aliased
+import sys
+
 import requests
+
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
-from apps.home.data_util import add_job_status, get_job_details
 # from apps.db_mongo_connection.db_mongo import get_mongodb_database
 from apps.util.db_mongo import get_mongodb_database
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-import sys
 
 
 # job_url = f"{base_url}/GeneralLedger/account?$top=100&$skip=0"
 
-def get_xero_supplier(job_id,task_id):
+def get_xero_supplier(job_id, task_id):
     try:
         dbname = get_mongodb_database()
 
@@ -308,7 +298,7 @@ def get_xero_supplier(job_id,task_id):
             pass
         else:
             xero_supplier.insert_many(supplier)
-        
+
             step_name = "Reading data from supplier"
             write_task_execution_step(task_id, status=1, step=step_name)
 
@@ -321,9 +311,8 @@ def get_xero_supplier(job_id,task_id):
         print("------------------------------")
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)
         sys.exit(0)
-

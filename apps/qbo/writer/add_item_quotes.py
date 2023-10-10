@@ -15,7 +15,7 @@ def add_item_quote(job_id):
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         db = get_mongodb_database()
-        item_quotes = db["item_quote"].find({"job_id":job_id})
+        item_quotes = db["item_quote"].find({"job_id": job_id})
 
         item_quote = []
         for p1 in item_quotes:
@@ -23,35 +23,35 @@ def add_item_quote(job_id):
 
         item_quote = item_quote
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p1 in QBO_Item:
             QBO_item.append(p1)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p2 in QBO_Class:
             QBO_class.append(p2)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p3 in QBO_Tax:
             QBO_tax.append(p3)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p4 in QBO_COA:
             QBO_coa.append(p4)
 
-        QBO_Customer = db["QBO_Customer"].find({"job_id":job_id})
+        QBO_Customer = db["QBO_Customer"].find({"job_id": job_id})
         QBO_customer = []
         for p5 in QBO_Customer:
             QBO_customer.append(p5)
 
         for i in range(0, len(item_quote)):
-            _id=item_quote[i]['_id']
-            task_id=item_quote[i]['task_id']
-            
+            _id = item_quote[i]['_id']
+            task_id = item_quote[i]['task_id']
+
             quote = {"Line": []}
             CustomerRef = {}
             BillEmail = {}
@@ -67,7 +67,7 @@ def add_item_quote(job_id):
                     if item_quote[i]["Customer"] == QBO_customer[p1]["DisplayName"]:
                         CustomerRef["value"] = QBO_customer[p1]["Id"]
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
-                    
+
                     if "PrimaryEmailAddr" in QBO_customer[i]:
                         BillEmail["Address"] = QBO_customer[i]["PrimaryEmailAddr"][
                             "Address"
@@ -649,4 +649,3 @@ def add_item_quote(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

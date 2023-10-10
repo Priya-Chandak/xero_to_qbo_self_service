@@ -1,14 +1,12 @@
 import json
 import traceback
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
 
-def add_supplier(job_id,task_id):
-    
+def add_supplier(job_id, task_id):
     try:
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         db = get_mongodb_database()
@@ -16,8 +14,8 @@ def add_supplier(job_id,task_id):
         supplier_data = db["supplier"]
         customer_data = db["customer"]
 
-        supplier = supplier_data.find({"job_id":job_id})
-        customer = customer_data.find({"job_id":job_id})
+        supplier = supplier_data.find({"job_id": job_id})
+        customer = customer_data.find({"job_id": job_id})
 
         cust1 = []
         for k1 in customer:
@@ -30,19 +28,21 @@ def add_supplier(job_id,task_id):
         supplier1 = []
 
         for i in range(0, len(supp1)):
-            if "CompanyName" in supp1[i] and supp1[i]["CompanyName"]!=None:
-                supplier1.append(supp1[i]["CompanyName"].replace(":","-"))
+            if "CompanyName" in supp1[i] and supp1[i]["CompanyName"] != None:
+                supplier1.append(supp1[i]["CompanyName"].replace(":", "-"))
             elif "FirstName" in supp1[i] and "LastName" in supp1[i]:
-                if supp1[i]["FirstName"]!=None and supp1[i]["LastName"]!=None:
-                    supplier1.append(supp1[i]["FirstName"].replace(":","-") + " " + supp1[i]["LastName"].replace(":","-"))
+                if supp1[i]["FirstName"] != None and supp1[i]["LastName"] != None:
+                    supplier1.append(
+                        supp1[i]["FirstName"].replace(":", "-") + " " + supp1[i]["LastName"].replace(":", "-"))
 
         customer1 = []
         for i in range(0, len(cust1)):
-            if "Company_Name" in cust1[i] and cust1[i]["Company_Name"]!=None:
-                customer1.append(cust1[i]["Company_Name"].replace(":","-"))
+            if "Company_Name" in cust1[i] and cust1[i]["Company_Name"] != None:
+                customer1.append(cust1[i]["Company_Name"].replace(":", "-"))
             elif "First_Name" in cust1[i] and "Last_Name" in cust1[i]:
-                if cust1[i]["First_Name"]!=None and cust1[i]["Last_Name"]!=None:
-                    customer1.append(cust1[i]["First_Name"].replace(":","-") + " " + cust1[i]["Last_Name"].replace(":","-"))
+                if cust1[i]["First_Name"] != None and cust1[i]["Last_Name"] != None:
+                    customer1.append(
+                        cust1[i]["First_Name"].replace(":", "-") + " " + cust1[i]["Last_Name"].replace(":", "-"))
 
         common_contact = []
         customer_set = set(customer1)
@@ -59,9 +59,9 @@ def add_supplier(job_id,task_id):
         QuerySet1 = supp1
 
         for i in range(0, len(QuerySet1)):
-            _id=QuerySet1[i]['_id']
-            task_id=QuerySet1[i]['task_id']
-            
+            _id = QuerySet1[i]['_id']
+            task_id = QuerySet1[i]['task_id']
+
             QuerySet2 = {}
             QuerySet3 = {}
             QuerySet4 = {}
@@ -80,25 +80,25 @@ def add_supplier(job_id,task_id):
             if len(common_contact) > 0:
                 if QuerySet1[i]["CompanyName"] is not None:
                     if QuerySet1[i]["CompanyName"] in common_contact1:
-                        QuerySet2["CompanyName"] = QuerySet1[i]["CompanyName"].replace(":","-") + "-S"
-                        QuerySet2["DisplayName"] = QuerySet1[i]["CompanyName"].replace(":","-") + "-S"
+                        QuerySet2["CompanyName"] = QuerySet1[i]["CompanyName"].replace(":", "-") + "-S"
+                        QuerySet2["DisplayName"] = QuerySet1[i]["CompanyName"].replace(":", "-") + "-S"
                         QuerySet2["PrintOnCheckName"] = (
                                 QuerySet1[i]["CompanyName"] + "-S"
                         )
                     else:
-                        QuerySet2["CompanyName"] = QuerySet1[i]["CompanyName"].replace(":","-")
-                        QuerySet2["DisplayName"] = QuerySet1[i]["CompanyName"].replace(":","-")
-                        QuerySet2["PrintOnCheckName"] = QuerySet1[i]["CompanyName"].replace(":","-")
+                        QuerySet2["CompanyName"] = QuerySet1[i]["CompanyName"].replace(":", "-")
+                        QuerySet2["DisplayName"] = QuerySet1[i]["CompanyName"].replace(":", "-")
+                        QuerySet2["PrintOnCheckName"] = QuerySet1[i]["CompanyName"].replace(":", "-")
             else:
-                if QuerySet1[i]["CompanyName"]!=None:
-                    QuerySet2["CompanyName"] = QuerySet1[i]["CompanyName"].replace(":","-")
-                    QuerySet2["DisplayName"] = QuerySet1[i]["CompanyName"].replace(":","-")
-                    QuerySet2["PrintOnCheckName"] = QuerySet1[i]["CompanyName"].replace(":","-")
+                if QuerySet1[i]["CompanyName"] != None:
+                    QuerySet2["CompanyName"] = QuerySet1[i]["CompanyName"].replace(":", "-")
+                    QuerySet2["DisplayName"] = QuerySet1[i]["CompanyName"].replace(":", "-")
+                    QuerySet2["PrintOnCheckName"] = QuerySet1[i]["CompanyName"].replace(":", "-")
 
-            if 'FirstName' in QuerySet1[i] and QuerySet1[i]["FirstName"]!=None:
-                QuerySet2["GivenName"] = QuerySet1[i]["FirstName"].replace(":","-")
-            if 'LastName' in QuerySet1[i] and QuerySet1[i]["LastName"]!=None:
-                QuerySet2["FamilyName"] = QuerySet1[i]["LastName"].replace(":","-")
+            if 'FirstName' in QuerySet1[i] and QuerySet1[i]["FirstName"] != None:
+                QuerySet2["GivenName"] = QuerySet1[i]["FirstName"].replace(":", "-")
+            if 'LastName' in QuerySet1[i] and QuerySet1[i]["LastName"] != None:
+                QuerySet2["FamilyName"] = QuerySet1[i]["LastName"].replace(":", "-")
             QuerySet2["TaxIdentifier"] = QuerySet1[i]["ABN"]
 
             if QuerySet1[i] in ["Street"]:
@@ -173,9 +173,8 @@ def add_supplier(job_id,task_id):
             elif len(QuerySet9) == 4:
                 QuerySet2["VendorPaymentBankDetail"] = QuerySet9
 
+            post_data_in_qbo(url, headers, json.dumps(QuerySet2), supplier_data, _id, job_id, task_id,
+                             QuerySet1[i]['CompanyName'])
 
-            post_data_in_qbo(url, headers, json.dumps(QuerySet2),supplier_data,_id,job_id,task_id, QuerySet1[i]['CompanyName'])
-            
     except Exception as ex:
         traceback.print_exc()
-        

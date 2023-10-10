@@ -3,7 +3,7 @@ import traceback
 import pandas as pd
 import requests
 
-from apps.home.data_util import add_job_status, get_job_details
+from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 
@@ -23,7 +23,6 @@ def get_qbo_trial_balance(job_id):
         QBO_Trial_Balance.insert_many(JsonResponse1)
     except Exception as ex:
         traceback.print_exc()
-        
 
 
 def export_qbo_trial_balance(job_id):
@@ -73,4 +72,3 @@ def export_qbo_trial_balance(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

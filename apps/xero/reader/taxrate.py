@@ -2,7 +2,6 @@ import traceback
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 
@@ -43,4 +42,3 @@ def get_taxrate(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

@@ -3,10 +3,9 @@ import logging
 from apps.util.db_mongo import get_mongodb_database
 
 logger = logging.getLogger(__name__)
-from apps.home.data_util import add_job_status
 
 
-def get_xero_classified_coa(job_id,task_id):
+def get_xero_classified_coa(job_id, task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
 
@@ -30,7 +29,7 @@ def get_xero_classified_coa(job_id,task_id):
             QuerySet2['error'] = None
             QuerySet2['payload'] = None
             QuerySet2['table_name'] = "xero_classified_coa"
-            QuerySet2["Name"] = QuerySet1[q]["Name"].replace(":","-")
+            QuerySet2["Name"] = QuerySet1[q]["Name"].replace(":", "-")
             QuerySet2["AccountType"] = QuerySet1[q]["Type"]
             QuerySet2["BankAccountType"] = QuerySet1[q]["BankAccountType"]
             if "Code" in QuerySet1[q]:
@@ -109,7 +108,8 @@ def get_xero_classified_coa(job_id,task_id):
                 elif (list1[i]["BankAccountType"] == "CREDITCARD") and (list1[i]["AccountType"] == "BANK"):
                     QuerySet1["AccountType"] = "Credit Card"
                     QuerySet1["AccountSubType"] = "CreditCard"
-                elif (list1[i]["AccountType"] == "BANK" or list1[i]["AccountType"] == "Banking") and (list1[i]["BankAccountType"] == "BANK"):
+                elif (list1[i]["AccountType"] == "BANK" or list1[i]["AccountType"] == "Banking") and (
+                        list1[i]["BankAccountType"] == "BANK"):
                     QuerySet1["AccountType"] = "Bank"
                     QuerySet1["AccountSubType"] = "CashAndCashEquivalents"
                 else:
@@ -121,10 +121,9 @@ def get_xero_classified_coa(job_id,task_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa", ex)
-        
 
 
-def get_xero_classified_archived_coa(job_id,task_id):
+def get_xero_classified_archived_coa(job_id, task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
 
@@ -184,7 +183,7 @@ def get_xero_classified_archived_coa(job_id,task_id):
                 ):
                     QuerySet1["AccountType"] = "Expense"
                     QuerySet1["AccountSubType"] = "OfficeGeneralAdministrativeExpenses"
-                elif list1[i]["AccountType"] in ["EXPENSE","DEPRECIATN"]:
+                elif list1[i]["AccountType"] in ["EXPENSE", "DEPRECIATN"]:
                     QuerySet1["AccountType"] = "Expense"
                     QuerySet1["AccountSubType"] = "OfficeGeneralAdministrativeExpenses"
                 elif (
@@ -227,7 +226,8 @@ def get_xero_classified_archived_coa(job_id,task_id):
                 elif (list1[i]["BankAccountType"] == "CREDITCARD") and (list1[i]["AccountType"] == "BANK"):
                     QuerySet1["AccountType"] = "Credit Card"
                     QuerySet1["AccountSubType"] = "CreditCard"
-                elif (list1[i]["AccountType"] == "BANK" or list1[i]["AccountType"] == "Banking") and (list1[i]["BankAccountType"] == "BANK"):
+                elif (list1[i]["AccountType"] == "BANK" or list1[i]["AccountType"] == "Banking") and (
+                        list1[i]["BankAccountType"] == "BANK"):
                     QuerySet1["AccountType"] = "Bank"
                     QuerySet1["AccountSubType"] = "CashAndCashEquivalents"
                 else:
@@ -239,4 +239,3 @@ def get_xero_classified_archived_coa(job_id,task_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa", ex)
-        

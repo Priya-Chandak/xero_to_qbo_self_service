@@ -1,25 +1,11 @@
 import json
-import json
-from ast import Break
-import json
-from os import path
-from os.path import exists
-from MySQLdb import Connect
-from numpy import true_divide
-from apps.home.models import Jobs, Tool
-from apps import db
-from apps.myconstant import *
-from sqlalchemy.orm import aliased
+from datetime import datetime
+
 import requests
-from apps.mmc_settings.get_myob import get_myob_settings
-from apps.mmc_settings.post_myob import post_myob_settings
-from apps.mmc_settings.get_myob_ledger import get_myobledger_settings
-from apps.mmc_settings.post_myob_ledger import post_myobledger_settings
-from apps.mmc_settings.all_settings import *
+
 from apps.home.data_util import add_job_status, get_job_details
-from pymongo import MongoClient
+from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-from datetime import datetime, timedelta, timezone
 
 
 def add_invoice_payment_as_receive_money(job_id):

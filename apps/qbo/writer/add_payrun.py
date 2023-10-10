@@ -2,7 +2,6 @@ import json
 import traceback
 from datetime import datetime
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import get_start_end_dates_of_job, post_data_in_qbo
@@ -201,4 +200,3 @@ def add_payrun(job_id):
                         )
     except Exception as ex:
         traceback.print_exc()
-        
