@@ -95,7 +95,7 @@ def add_service_bill(job_id, task_id):
                         QuerySet = {"Line": []}
                         QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
                                                                                    "invoice_no"] not in key_list else \
-                        final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+                            final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
 
                         TxnTaxDetail = {"TaxLine": []}
 
@@ -349,7 +349,7 @@ def add_service_bill(job_id, task_id):
                         QuerySet = {"Line": []}
                         QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
                                                                                    "invoice_no"] not in key_list else \
-                        final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+                            final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
 
                         QuerySet1 = {}
                         QuerySet2 = {}
@@ -554,7 +554,7 @@ def add_service_bill(job_id, task_id):
                         QuerySet = {"Line": []}
                         QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
                                                                                    "invoice_no"] not in key_list else \
-                        final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+                            final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
                         TxnTaxDetail = {"TaxLine": []}
                         for j in range(0, len(final_bill[i]["account"])):
                             QuerySet1 = {}

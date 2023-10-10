@@ -82,7 +82,7 @@ def add_bill_payment(job_id, task_id):
 
             for k11 in range(0, len(QBO_supplier)):
                 if (QBO_supplier[k11]['DisplayName'].startswith(QuerySet[p2]['supplier'])) and (
-                QBO_supplier[k11]['DisplayName'].endswith("-S")):
+                        QBO_supplier[k11]['DisplayName'].endswith("-S")):
                     QuerySet2['name'] = QBO_supplier[k11]['DisplayName']
                     QuerySet2['value'] = QBO_supplier[k11]['Id']
                     continue
@@ -93,7 +93,7 @@ def add_bill_payment(job_id, task_id):
 
             for k12 in range(0, len(qbo_coa)):
                 if (qbo_coa[k12]["FullyQualifiedName"].startswith(payment[p2]['AccName'])) and (
-                qbo_coa[k12]["FullyQualifiedName"].endswith(payment[p2]['AccId'])):
+                        qbo_coa[k12]["FullyQualifiedName"].endswith(payment[p2]['AccId'])):
                     QuerySet21['name'] = qbo_coa[k12]['Name']
                     QuerySet21['value'] = qbo_coa[k12]['Id']
                 elif QuerySet[p2]['AccName'].lower().strip() == qbo_coa[k12]["FullyQualifiedName"].lower().strip():

@@ -74,7 +74,8 @@ def add_duplicate_item(job_id, task_id):
                                 QuerySet3["name"] = qbo_coa[j1]['FullyQualifiedName']
                                 break
                             elif (qbo_coa[j1]['FullyQualifiedName'].startswith(a[i]['IncomeAccount']['Name'])) and (
-                            qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['IncomeAccount']['DisplayID'])):
+                                    qbo_coa[j1]['FullyQualifiedName'].endswith(
+                                        QuerySet[i]['IncomeAccount']['DisplayID'])):
                                 QuerySet3["value"] = qbo_coa[j1]['Id']
                                 QuerySet3["name"] = qbo_coa[j1]['FullyQualifiedName']
                                 break
@@ -99,7 +100,7 @@ def add_duplicate_item(job_id, task_id):
                                 QuerySet4["name"] = qbo_coa[j1]['FullyQualifiedName']
                                 break
                             elif (qbo_coa[j1]['FullyQualifiedName'].startswith(a[i]['ExpenseAccount']['Name'])) and (
-                            qbo_coa[j1]['FullyQualifiedName'].endswith(a[i]['ExpenseAccount']['DisplayID'])):
+                                    qbo_coa[j1]['FullyQualifiedName'].endswith(a[i]['ExpenseAccount']['DisplayID'])):
                                 QuerySet4["value"] = qbo_coa[j1]['Id']
                                 QuerySet4["name"] = qbo_coa[j1]['FullyQualifiedName']
                                 break
@@ -123,7 +124,7 @@ def add_duplicate_item(job_id, task_id):
                                 QuerySet5["name"] = qbo_coa[j1]['FullyQualifiedName']
                                 break
                             elif (qbo_coa[j1]['FullyQualifiedName'].startswith(a[i]['AssetAccount']['Name'])) and (
-                            qbo_coa[j1]['FullyQualifiedName'].endswith(a[i]['AssetAccount']['DisplayID'])):
+                                    qbo_coa[j1]['FullyQualifiedName'].endswith(a[i]['AssetAccount']['DisplayID'])):
                                 QuerySet5["value"] = qbo_coa[j1]['Id']
                                 QuerySet5["name"] = qbo_coa[j1]['FullyQualifiedName']
                                 break
@@ -228,7 +229,7 @@ def add_item(job_id, task_id):
                             QuerySet3["value"] = qbo_coa[j1]['Id']
                             QuerySet3["name"] = qbo_coa[j1]['FullyQualifiedName']
                         elif (qbo_coa[j1]['FullyQualifiedName'].startswith(QuerySet[i]['IncomeAccount']['Name'])) and (
-                        qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['IncomeAccount']['DisplayID'])):
+                                qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['IncomeAccount']['DisplayID'])):
                             QuerySet3["value"] = qbo_coa[j1]['Id']
                             QuerySet3["name"] = qbo_coa[j1]['FullyQualifiedName']
                         # elif qbo_coa[j1]['FullyQualifiedName'] == 'Sales':
@@ -250,7 +251,7 @@ def add_item(job_id, task_id):
                             QuerySet4["value"] = qbo_coa[j1]['Id']
                             QuerySet4["name"] = qbo_coa[j1]['FullyQualifiedName']
                         elif (qbo_coa[j1]['FullyQualifiedName'].startswith(QuerySet[i]['ExpenseAccount']['Name'])) and (
-                        qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['ExpenseAccount']['DisplayID'])):
+                                qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['ExpenseAccount']['DisplayID'])):
                             QuerySet4["value"] = qbo_coa[j1]['Id']
                             QuerySet4["name"] = qbo_coa[j1]['FullyQualifiedName']
                         # elif qbo_coa[j1]['FullyQualifiedName'] == 'Purchases':
@@ -270,7 +271,7 @@ def add_item(job_id, task_id):
                             QuerySet5["value"] = qbo_coa[j1]['Id']
                             QuerySet5["name"] = qbo_coa[j1]['FullyQualifiedName']
                         elif (qbo_coa[j1]['FullyQualifiedName'].startswith(QuerySet[i]['AssetAccount']['Name'])) and (
-                        qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['AssetAccount']['DisplayID'])):
+                                qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['AssetAccount']['DisplayID'])):
                             QuerySet5["value"] = qbo_coa[j1]['Id']
                             QuerySet5["name"] = qbo_coa[j1]['FullyQualifiedName']
                         else:
@@ -294,7 +295,7 @@ def add_item(job_id, task_id):
                                 QuerySet3["value"] = qbo_coa[j1]['Id']
                                 QuerySet3["name"] = qbo_coa[j1]['FullyQualifiedName']
                         elif (qbo_coa[j1]['FullyQualifiedName'].startswith(QuerySet[i]['IncomeAccount']['Name'])) and (
-                        qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['IncomeAccount']['DisplayID'])):
+                                qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['IncomeAccount']['DisplayID'])):
                             QuerySet3["value"] = qbo_coa[j1]['Id']
                             QuerySet3["name"] = qbo_coa[j1]['FullyQualifiedName']
                         # elif qbo_coa[j1]['FullyQualifiedName'] == 'Sales':
@@ -318,7 +319,7 @@ def add_item(job_id, task_id):
                             QuerySet4["value"] = qbo_coa[j1]['Id']
                             QuerySet4["name"] = qbo_coa[j1]['FullyQualifiedName']
                         elif (qbo_coa[j1]['FullyQualifiedName'].startswith(QuerySet[i]['ExpenseAccount']['Name'])) and (
-                        qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['ExpenseAccount']['DisplayID'])):
+                                qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['ExpenseAccount']['DisplayID'])):
                             QuerySet4["value"] = qbo_coa[j1]['Id']
                             QuerySet4["name"] = qbo_coa[j1]['FullyQualifiedName']
                         # elif qbo_coa[j1]['FullyQualifiedName'] == 'Purchases':
@@ -341,7 +342,7 @@ def add_item(job_id, task_id):
                             QuerySet5["value"] = qbo_coa[j1]['Id']
                             QuerySet5["name"] = qbo_coa[j1]['FullyQualifiedName']
                         elif (qbo_coa[j1]['FullyQualifiedName'].startswith(QuerySet[i]['AssetAccount']['Name'])) and (
-                        qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['AssetAccount']['DisplayID'])):
+                                qbo_coa[j1]['FullyQualifiedName'].endswith(QuerySet[i]['AssetAccount']['DisplayID'])):
                             QuerySet5["value"] = qbo_coa[j1]['Id']
                             QuerySet5["name"] = qbo_coa[j1]['FullyQualifiedName']
                         else:

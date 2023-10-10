@@ -1,7 +1,6 @@
 from ast import Break
 
 import requests
-from pymongo import MongoClient
 
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database

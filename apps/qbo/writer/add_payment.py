@@ -62,7 +62,7 @@ def add_payment(job_id, task_id):
                     CustomerRef['value'] = cust1[j]["Id"]
                     break
                 elif (cust1[j]["DisplayName"].startswith(QuerySet1[i]["customer"])) and (
-                cust1[j]["DisplayName"].endswith("-C")):
+                        cust1[j]["DisplayName"].endswith("-C")):
                     CustomerRef['name'] = cust1[j]["DisplayName"]
                     CustomerRef['value'] = cust1[j]["Id"]
                     break
@@ -90,14 +90,14 @@ def add_payment(job_id, task_id):
                         for k13 in range(0, len(all_invoice1)):
                             if QuerySet1[i]['Invoice'] == all_invoice1[k13]['Invoice_Number']:
                                 if (QBO_Invoice1[k12]['DocNumber'].startswith(QuerySet1[i]['Invoice'])) and (
-                                QBO_Invoice1[k12]['DocNumber'].endswith(all_invoice1[k13]['UID'][-6:])):
+                                        QBO_Invoice1[k12]['DocNumber'].endswith(all_invoice1[k13]['UID'][-6:])):
                                     QuerySet5['TxnId'] = QBO_Invoice1[k12]['Id']
                                     QuerySet5['TxnType'] = 'Invoice'
                                     break
 
             for k13 in range(0, len(qbo_coa)):
                 if (qbo_coa[k13]["FullyQualifiedName"].startswith(QuerySet1[i]['AccName'])) and (
-                qbo_coa[k13]["FullyQualifiedName"].endswith(QuerySet1[i]['AccId'])):
+                        qbo_coa[k13]["FullyQualifiedName"].endswith(QuerySet1[i]['AccId'])):
                     QuerySet21['value'] = qbo_coa[k13]['Id']
                     break
                 elif QuerySet1[i]['AccName'] == qbo_coa[k13]["FullyQualifiedName"]:

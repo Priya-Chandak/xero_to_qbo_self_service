@@ -478,7 +478,7 @@ def retry_payload_for_xero_to_qbo(job_id, payload, _id, task_id, task_function_n
         "Journal": [f"{base_url}/journalentry?minorversion={minorversion}", dbname['xero_manual_journal']],
         #   "Existing Chart of account":[f"{base_url}/GeneralLedger/account",dbname['xero_coa']],
         "Job": [f"{base_url}/class?minorversion={minorversion}", dbname['xero_job']],
-        }
+    }
 
     function_name = list(static_function.keys())
 
@@ -519,7 +519,7 @@ def retry_payload_for_myob_to_qbo(job_id, payload, _id, task_id, task_function_n
         "Journal": [f"{base_url}/journalentry?minorversion={minorversion}", dbname['journal']],
         #   "Existing Chart of account":[f"{base_url}/GeneralLedger/account",dbname['xero_coa']],
         "Job": [f"{base_url}/class?minorversion={minorversion}", dbname['job']],
-        }
+    }
 
     function_name = list(static_function.keys())
     print(function_name)

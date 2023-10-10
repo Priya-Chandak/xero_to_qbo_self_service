@@ -8,7 +8,6 @@ from apps.qbo.reader.QBO_combined_tax import get_qbo_tax
 from apps.qbo.reader.qbo_data_reader import read_qbo_data
 from apps.qbo.reader.taxcode import get_qbo_taxcode
 from apps.qbo.reader.taxrate import get_qbo_taxrate
-from apps.util.db_mongo import get_mongodb_database
 from apps.xero.qbo_writer.add_archieved_customer import add_xero_archieved_customer, get_used_archived_customers
 from apps.xero.qbo_writer.add_archieved_supplier import add_xero_archieved_supplier, get_used_archived_suppliers
 from apps.xero.qbo_writer.add_bank_transfer import add_xero_bank_transfer

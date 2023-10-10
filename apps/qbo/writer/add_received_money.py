@@ -165,7 +165,7 @@ def add_received_money(job_id, task_id):
                                 QuerySet1['TxnDate'] = QuerySet[i]['date']
                                 QuerySet3['Amount'] = round((
                                                                 QuerySet[i]['Line'][j]['line_amount']) / (
-                                                                        100 + taxrate1) * 100, 2)
+                                                                    100 + taxrate1) * 100, 2)
 
                                 if QuerySet[i]['Line'][0]['memo'] != None:
                                     QuerySet3['Description'] = QuerySet[i]['Line'][j]['memo']
@@ -181,7 +181,8 @@ def add_received_money(job_id, task_id):
                                             if QuerySet[i]['Line'][j]['job'] == Myob_Job1[j4]['Name']:
                                                 if (QBO_Class[j2]['FullyQualifiedName'].startswith(
                                                         Myob_Job1[j4]['Name'])) and (
-                                                QBO_Class[j2]['FullyQualifiedName'].endswith(Myob_Job1[j4]['Number'])):
+                                                        QBO_Class[j2]['FullyQualifiedName'].endswith(
+                                                            Myob_Job1[j4]['Number'])):
                                                     QuerySet7['value'] = QBO_Class[j2]['Id']
                                                     QuerySet7['name'] = QBO_Class[j2]['Name']
 

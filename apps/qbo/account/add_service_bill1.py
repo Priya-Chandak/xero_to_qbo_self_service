@@ -145,7 +145,7 @@ def add_service_bill1(job_id, task_id):
                                     QuerySet['GlobalTaxCalculation'] = 'TaxInclusive'
                                     QuerySet1['Amount'] = (final_bill[i]['account'][j]['Quantity'] *
                                                            final_bill[i]['account'][j]['Unit_Price']) / (
-                                                                      100 + taxrate1) * 100
+                                                                  100 + taxrate1) * 100
                                     print(QuerySet1['Amount'])
                                 else:
                                     QuerySet['GlobalTaxCalculation'] = 'TaxExcluded'
@@ -197,7 +197,7 @@ def add_service_bill1(job_id, task_id):
                                         QuerySet4['value'] = QBO_supplier[j3]['Id']
                                     elif (QBO_supplier[j3]["DisplayName"]).startswith(
                                             final_bill[i]["Supplier_Name"]) and (
-                                    (QBO_supplier[j3]["DisplayName"]).endswith("-S")):
+                                            (QBO_supplier[j3]["DisplayName"]).endswith("-S")):
                                         QuerySet4["value"] = QBO_supplier[j3]["Id"]
 
                                 QuerySet2['ClassRef'] = QuerySet5
@@ -209,7 +209,8 @@ def add_service_bill1(job_id, task_id):
                                             if final_bill[i]['account'][j]['Job']['Name'] == Myob_Job1[j4]['Name']:
                                                 if (QBO_class[j2]['FullyQualifiedName'].startswith(
                                                         Myob_Job1[j4]['Name'])) and (
-                                                QBO_class[j2]['FullyQualifiedName'].endswith(Myob_Job1[j4]['Number'])):
+                                                        QBO_class[j2]['FullyQualifiedName'].endswith(
+                                                            Myob_Job1[j4]['Number'])):
                                                     QuerySet5['value'] = QBO_class[j2]['Id']
                                                     QuerySet5['name'] = QBO_class[j2]['Name']
 
@@ -376,7 +377,7 @@ def add_service_bill1(job_id, task_id):
                                 if final_bill[i]['Supplier_Name'] == QBO_supplier[j3]['DisplayName']:
                                     QuerySet4['value'] = QBO_supplier[j3]['Id']
                                 elif (QBO_supplier[j3]["DisplayName"]).startswith(final_bill[i]["Supplier_Name"]) and (
-                                (QBO_supplier[j3]["DisplayName"]).endswith("-S")):
+                                        (QBO_supplier[j3]["DisplayName"]).endswith("-S")):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
 
                             QuerySet2['ClassRef'] = QuerySet5
@@ -387,8 +388,10 @@ def add_service_bill1(job_id, task_id):
                                             final_bill[i]['account'][j]['Job'] != None):
                                         if final_bill[i]['account'][j]['Job']['Name'] == Myob_Job1[j4]['Name']:
                                             if (
-                                            QBO_class[j2]['FullyQualifiedName'].startswith(Myob_Job1[j4]['Name'])) and (
-                                            QBO_class[j2]['FullyQualifiedName'].endswith(Myob_Job1[j4]['Number'])):
+                                                    QBO_class[j2]['FullyQualifiedName'].startswith(
+                                                        Myob_Job1[j4]['Name'])) and (
+                                                    QBO_class[j2]['FullyQualifiedName'].endswith(
+                                                        Myob_Job1[j4]['Number'])):
                                                 QuerySet5['value'] = QBO_class[j2]['Id']
                                                 QuerySet5['name'] = QBO_class[j2]['Name']
                             if QuerySet2['ItemRef'] != {}:

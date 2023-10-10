@@ -175,8 +175,8 @@ def add_negative_spend_money(job_id, task_id):
                                                 if QuerySet[i]['Lines'][j]['job'] == Myob_Job1[j4]['Name']:
                                                     if (QBO_Class[j2]['FullyQualifiedName'].startswith(
                                                             Myob_Job1[j4]['Name'])) and (
-                                                    QBO_Class[j2]['FullyQualifiedName'].endswith(
-                                                            Myob_Job1[j4]['Number'])):
+                                                            QBO_Class[j2]['FullyQualifiedName'].endswith(
+                                                                Myob_Job1[j4]['Number'])):
                                                         QuerySet7['value'] = QBO_Class[j2]['Id']
                                                         QuerySet7['name'] = QBO_Class[j2]['Name']
 
@@ -198,8 +198,9 @@ def add_negative_spend_money(job_id, task_id):
 
                                     for j3 in range(0, len(QBO_COA)):
                                         if (
-                                        QBO_COA[j3]['Name'].startswith(QuerySet[i]['Lines'][j]['account_name'])) and (
-                                        QBO_COA[j3]['Name'].endswith(QuerySet[i]['Lines'][j]['DisplayID'])):
+                                                QBO_COA[j3]['Name'].startswith(
+                                                    QuerySet[i]['Lines'][j]['account_name'])) and (
+                                                QBO_COA[j3]['Name'].endswith(QuerySet[i]['Lines'][j]['DisplayID'])):
                                             QuerySet5['name'] = QBO_COA[j3]['Name']
                                             QuerySet5['value'] = QBO_COA[j3]['Id']
 

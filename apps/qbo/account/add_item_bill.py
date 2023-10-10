@@ -184,7 +184,7 @@ def add_item_bill(job_id, task_id):
 
                             QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
                                                                                        "invoice_no"] not in key_list else \
-                            final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+                                final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
 
                             QuerySet2["TaxCodeRef"] = TaxCodeRef
                             QuerySet1["Description"] = final_bill[i]["account"][0][
@@ -433,7 +433,7 @@ def add_item_bill(job_id, task_id):
 
                                 QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
                                                                                            "invoice_no"] not in key_list else \
-                                final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+                                    final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
 
                                 QuerySet2["TaxCodeRef"] = TaxCodeRef
 
@@ -722,7 +722,7 @@ def add_item_bill(job_id, task_id):
 
                         QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
                                                                                    "invoice_no"] not in key_list else \
-                        final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+                            final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
 
                         QuerySet2["TaxCodeRef"] = TaxCodeRef
 
@@ -965,7 +965,7 @@ def add_item_bill(job_id, task_id):
 
                             QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
                                                                                        "invoice_no"] not in key_list else \
-                            final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+                                final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
 
                             QuerySet2["TaxCodeRef"] = TaxCodeRef
                             if ("Comment" in final_bill[i]) and (

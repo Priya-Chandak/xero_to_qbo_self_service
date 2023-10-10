@@ -81,7 +81,7 @@ def add_multiple_item_invoice(job_id, task_id):
             invoice["TxnDate"] = multiple_invoice[i]["invoice_date"]
             invoice["DueDate"] = multiple_invoice[i]["due_date"]
             invoice['DocNumber'] = multiple_invoice[i]['invoice_no'] + "-" + multiple_invoice[i]['UID'][-6:] if \
-            multiple_invoice[i]['invoice_no'] in key_list else multiple_invoice[i]['invoice_no'][0:21]
+                multiple_invoice[i]['invoice_no'] in key_list else multiple_invoice[i]['invoice_no'][0:21]
             invoice['TotalAmt'] = abs(multiple_invoice[i]['TotalAmount'])
             invoice['HomeTotalAmt'] = abs(multiple_invoice[i]['TotalAmount'])
 
@@ -96,7 +96,7 @@ def add_multiple_item_invoice(job_id, task_id):
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
                         break
                     elif (QBO_customer[p1]["DisplayName"]).startswith(multiple_invoice[i]["customer_name"]) and (
-                    (QBO_customer[p1]["DisplayName"]).endswith("-C")):
+                            (QBO_customer[p1]["DisplayName"]).endswith("-C")):
                         CustomerRef["value"] = QBO_customer[p1]["Id"]
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
                         break
@@ -255,7 +255,7 @@ def add_multiple_item_invoice(job_id, task_id):
                                     salesitemline["Amount"] = SalesItemLineDetail['Qty'] * SalesItemLineDetail[
                                         'UnitPrice']
                                     SalesItemLineDetail['TaxInclusiveAmt'] = salesitemline["Amount"] * (
-                                                100 + taxrate1) / 100
+                                            100 + taxrate1) / 100
 
                                     subtotal['Amount'] = multiple_invoice[i][
                                         'Subtotal']
@@ -308,7 +308,7 @@ def add_multiple_item_invoice(job_id, task_id):
                                     salesitemline["Amount"] = SalesItemLineDetail['Qty'] * SalesItemLineDetail[
                                         'UnitPrice']
                                     SalesItemLineDetail['TaxInclusiveAmt'] = salesitemline["Amount"] * (
-                                                100 + taxrate1) / 100
+                                            100 + taxrate1) / 100
 
                                     subtotal[
                                         'Amount'] = -multiple_invoice[i]['Subtotal']
@@ -358,12 +358,12 @@ def add_multiple_item_invoice(job_id, task_id):
                                         SalesItemLineDetail['Qty'] = multiple_invoice[i][
                                             'Item'][j]['ship_quantity']
                                     SalesItemLineDetail['UnitPrice'] = multiple_invoice[i]['Item'][j]['unit_price'] / (
-                                                100 + taxrate1) * 100
+                                            100 + taxrate1) * 100
 
                                     salesitemline["Amount"] = (SalesItemLineDetail[
                                                                    'Qty'] * SalesItemLineDetail['UnitPrice'])
                                     SalesItemLineDetail['TaxInclusiveAmt'] = salesitemline["Amount"] * (
-                                                100 + taxrate1) / 100
+                                            100 + taxrate1) / 100
 
                                     subtotal['Amount'] = multiple_invoice[i][
                                                              'Subtotal'] - multiple_invoice[i]['TotalTax']
@@ -387,11 +387,11 @@ def add_multiple_item_invoice(job_id, task_id):
                                         'Item'][j]['ship_quantity']
                                     #                 SalesItemLineDetail['UnitPrice'] = abs(multiple_invoice[i]['Item'][j]['unit_price'])
                                     SalesItemLineDetail['UnitPrice'] = multiple_invoice[i]['Item'][j]['unit_price'] / (
-                                                100 + taxrate1) * 100
+                                            100 + taxrate1) * 100
                                     salesitemline["Amount"] = SalesItemLineDetail[
                                                                   'Qty'] * SalesItemLineDetail['UnitPrice']
                                     SalesItemLineDetail['TaxInclusiveAmt'] = salesitemline["Amount"] * (
-                                                100 + taxrate1) / 100
+                                            100 + taxrate1) / 100
 
                                     subtotal['Amount'] = -(
                                             multiple_invoice[i]['Subtotal'] -
