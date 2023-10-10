@@ -1,47 +1,45 @@
 import json
 from datetime import datetime
 
-from pymongo import MongoClient
-
 from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import *
+from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
 
 def add_xero_journal(job_id, task_id):
     try:
         start_date, end_date = get_job_details(job_id)
-        if (start_date != '' and end_date != ''):
+        if start_date != '' and end_date != '':
             start_date1 = datetime.strptime(start_date, '%Y-%m-%d')
             end_date1 = datetime.strptime(end_date, '%Y-%m-%d')
 
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db = myclient["MMC"]
+        mongodb_connection = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         url = f"{base_url}/journalentry?minorversion={minorversion}"
 
-        journal1 = db['xero_manual_journal']
+        journal1 = mongodb_connection['xero_manual_journal']
 
         journal = []
-        for p1 in db['xero_manual_journal'].find({"job_id": job_id}):
+        for p1 in mongodb_connection['xero_manual_journal'].find({"job_id": job_id}):
             journal.append(p1)
 
-        QBO_COA = db['QBO_COA'].find({"job_id": job_id})
+        QBO_COA = mongodb_connection['QBO_COA'].find({"job_id": job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        QBO_Class = db['QBO_Class'].find({"job_id": job_id})
+        QBO_Class = mongodb_connection['QBO_Class'].find({"job_id": job_id})
         QBO_class = []
         for p3 in QBO_Class:
             QBO_class.append(p3)
 
-        QBO_Tax = db['QBO_Tax'].find({"job_id": job_id})
+        QBO_Tax = mongodb_connection['QBO_Tax'].find({"job_id": job_id})
         QBO_tax = []
         for p4 in QBO_Tax:
             QBO_tax.append(p4)
 
-        Xero_COA = db['xero_coa'].find({"job_id": job_id})
+        Xero_COA = mongodb_connection['xero_coa'].find({"job_id": job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
@@ -233,7 +231,7 @@ def add_xero_journal(job_id, task_id):
                             QuerySet6['Description'] = QuerySet1[i]['Line'][j]['Description']
 
                     elif (QuerySet1[i]['LineAmountTypes'] == 'Exclusive') or (
-                    (QuerySet1[i]['LineAmountTypes'] == 'NoTax')):
+                            (QuerySet1[i]['LineAmountTypes'] == 'NoTax')):
                         QuerySet12['NetAmountTaxable'] = round(QuerySet1[i]['Line'][j]['LineAmount'], 2)
                         QuerySet11['Amount'] = QuerySet1[i]['Line'][j]['TaxAmount']
                         QuerySet6['Amount'] = abs(round(QuerySet1[i]['Line'][j]['LineAmount'], 2))

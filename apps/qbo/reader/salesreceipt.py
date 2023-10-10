@@ -4,12 +4,12 @@ import requests
 from pymongo import MongoClient
 
 from apps.mmc_settings.all_settings import get_settings_qbo
+from apps.util.db_mongo import get_mongodb_database
 
 
 def get_qbo_sales_receipt(job_id, task_id):
     try:
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db1 = myclient["MMC"]
+        db1 = get_mongodb_database()
         QBO_SALES_RECEIPT1 = db1['QBO_SALES_RECEIPT']
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 

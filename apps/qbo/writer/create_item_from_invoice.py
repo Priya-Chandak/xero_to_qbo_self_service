@@ -1,18 +1,17 @@
 import json
 
 import requests
-from pymongo import MongoClient
 
 from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
+from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
 
 def create_item_from_invoice(job_id, task_id):
     try:
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db = myclient["MMC"]
+        db = get_mongodb_database()
         Collection = db['item_invoice']
         income_acc1 = db['QBO_income_acc']
         expense_acc1 = db['QBO_expense_acc']
@@ -129,8 +128,7 @@ def create_item_from_invoice(job_id, task_id):
 def create_item_from_service_invoice(job_id, task_id):
     try:
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db = myclient["MMC"]
+        db = get_mongodb_database()
         Collection = db['service_invoice']
         income_acc1 = db['QBO_income_acc']
         expense_acc1 = db['QBO_expense_acc']
@@ -218,8 +216,7 @@ def create_item_from_service_invoice(job_id, task_id):
 def create_item_from_itemcode_acccode(job_id, task_id):
     try:
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db = myclient["MMC"]
+        db = get_mongodb_database()
         Collection = db['item_invoice']
 
         x = Collection.find()

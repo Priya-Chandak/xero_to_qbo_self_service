@@ -4,12 +4,13 @@ import requests
 from pymongo import MongoClient
 
 from apps.mmc_settings.all_settings import get_settings_qbo
+from apps.util.db_mongo import get_mongodb_database
 
 
 def get_qbo_taxcode(job_id, task_id):
     try:
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db1 = myclient["MMC"]
+        db1 = get_mongodb_database()
+
         QBO_Taxcode = db1['QBO_Taxcode']
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
@@ -48,8 +49,7 @@ def get_qbo_taxcode(job_id, task_id):
 
 def get_qbo_taxrate(job_id):
     try:
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db1 = myclient["MMC"]
+        db1 = get_mongodb_database()
         QBO_Taxrate = db1['QBO_Taxrate']
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
@@ -94,8 +94,7 @@ def get_qbo_taxrate(job_id):
 
 def get_qbo_tax(job_id):
     try:
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db = myclient["MMC"]
+        db = get_mongodb_database()
         QBO_Tax = db['QBO_Tax']
 
         Collection1 = db['QBO_Taxrate']

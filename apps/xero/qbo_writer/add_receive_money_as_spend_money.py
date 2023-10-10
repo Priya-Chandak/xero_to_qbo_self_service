@@ -1,10 +1,9 @@
 import json
 from datetime import datetime
 
-from pymongo import MongoClient
-
 from apps.home.data_util import add_job_status, get_job_details
 from apps.mmc_settings.all_settings import get_settings_qbo
+from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
 
@@ -16,8 +15,7 @@ def add_xero_negative_received_money(job_id, task_id):
             end_date1 = datetime.strptime(end_date, '%Y-%m-%d')
 
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db = myclient["MMC"]
+        db = get_mongodb_database()
 
         spend_money1 = []
         for q in db['xero_receive_money'].find({'job_id': job_id}):

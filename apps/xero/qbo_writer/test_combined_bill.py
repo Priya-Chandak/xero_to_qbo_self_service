@@ -2,10 +2,9 @@ import json
 from collections import Counter
 from datetime import datetime
 
-from pymongo import MongoClient
-
 from apps.home.data_util import add_job_status, get_job_details
 from apps.mmc_settings.all_settings import get_settings_qbo
+from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
 
@@ -21,8 +20,7 @@ def add_xero_bill(job_id, task_id):
         url1 = f"{base_url}/bill?minorversion=14"
         url2 = f"{base_url}/vendorcredit?minorversion=14"
 
-        myclient = MongoClient("mongodb://localhost:27017/")
-        db = myclient["MMC"]
+        db = get_mongodb_database()
 
         final_bill1 = db['xero_bill'].find({'job_id': job_id})
 
@@ -213,7 +211,7 @@ def add_xero_bill(job_id, task_id):
                                         if final_bill[i]['LineAmountTypes'] == 'Inclusive':
                                             QuerySet['GlobalTaxCalculation'] = 'TaxInclusive'
                                             QuerySet2['UnitPrice'] = final_bill[i]['Line'][j]['UnitAmount'] / (
-                                                        100 + taxrate1) * 100
+                                                    100 + taxrate1) * 100
                                             QuerySet1['Amount'] = QuerySet2['UnitPrice'] * QuerySet2['Qty']
 
                                             # QuerySet1['Amount'] = (
@@ -229,7 +227,7 @@ def add_xero_bill(job_id, task_id):
 
                                         QuerySet['DocNumber'] = final_bill[i]['Inv_No'][0:21] if final_bill[i][
                                                                                                      'Inv_No'] not in key_list else \
-                                        final_bill[i]['Inv_No'][0:14] + "-" + final_bill[i]['Inv_ID'][-6:]
+                                            final_bill[i]['Inv_No'][0:14] + "-" + final_bill[i]['Inv_ID'][-6:]
 
                                         if 'Comment' in final_bill[i]:
                                             QuerySet['PrivateNote'] = final_bill[i]['Comment']
@@ -512,8 +510,8 @@ def add_xero_bill(job_id, task_id):
                                                             TaxLineDetail["TaxPercent"] = QBO_tax[k1]['Rate']
                                                             taxrate1 = QBO_tax[k1]['Rate']
                                                             TaxLineDetail['NetAmountTaxable'] = \
-                                                            final_bill[i]['Line'][j]['UnitAmount'] - \
-                                                            final_bill[i]['Line'][j]['TaxAmount']
+                                                                final_bill[i]['Line'][j]['UnitAmount'] - \
+                                                                final_bill[i]['Line'][j]['TaxAmount']
                                                             Tax['Amount'] = abs(
                                                                 final_bill[i]['TotalTax'])
 
@@ -527,8 +525,8 @@ def add_xero_bill(job_id, task_id):
                                                             TaxLineDetail["TaxPercent"] = QBO_tax[k1]['Rate']
                                                             taxrate1 = QBO_tax[k1]['Rate']
                                                             TaxLineDetail['NetAmountTaxable'] = \
-                                                            final_bill[i]['Line'][j]['UnitAmount'] - \
-                                                            final_bill[i]['Line'][j]['TaxAmount']
+                                                                final_bill[i]['Line'][j]['UnitAmount'] - \
+                                                                final_bill[i]['Line'][j]['TaxAmount']
                                                             Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
 
                                                 elif final_bill[i]['Line'][j]['TaxType'] == 'OUTPUT':
@@ -539,8 +537,8 @@ def add_xero_bill(job_id, task_id):
                                                             TaxLineDetail["TaxPercent"] = QBO_tax[k1]['Rate']
                                                             taxrate1 = QBO_tax[k1]['Rate']
                                                             TaxLineDetail['NetAmountTaxable'] = \
-                                                            final_bill[i]['Line'][j]['UnitAmount'] - \
-                                                            final_bill[i]['Line'][j]['TaxAmount']
+                                                                final_bill[i]['Line'][j]['UnitAmount'] - \
+                                                                final_bill[i]['Line'][j]['TaxAmount']
                                                             Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
 
 
@@ -553,8 +551,8 @@ def add_xero_bill(job_id, task_id):
                                                             TaxLineDetail["TaxPercent"] = QBO_tax[k1]['Rate']
                                                             taxrate1 = QBO_tax[k1]['Rate']
                                                             TaxLineDetail['NetAmountTaxable'] = \
-                                                            final_bill[i]['Line'][j]['UnitAmount'] - \
-                                                            final_bill[i]['Line'][j]['TaxAmount']
+                                                                final_bill[i]['Line'][j]['UnitAmount'] - \
+                                                                final_bill[i]['Line'][j]['TaxAmount']
                                                             Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
 
 
@@ -568,8 +566,8 @@ def add_xero_bill(job_id, task_id):
                                                             TaxLineDetail["TaxPercent"] = QBO_tax[k1]['Rate']
                                                             taxrate1 = QBO_tax[k1]['Rate']
                                                             TaxLineDetail['NetAmountTaxable'] = \
-                                                            final_bill[i]['Line'][j]['UnitAmount'] - \
-                                                            final_bill[i]['Line'][j]['TaxAmount']
+                                                                final_bill[i]['Line'][j]['UnitAmount'] - \
+                                                                final_bill[i]['Line'][j]['TaxAmount']
                                                             Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
 
                                                 else:
@@ -582,7 +580,7 @@ def add_xero_bill(job_id, task_id):
                                                 # QuerySet1['Amount'] = final_bill[i]['Line'][j]['UnitAmount']-final_bill[i]['Line'][j]['TaxAmount']
                                                 # QuerySet2['UnitPrice'] = final_bill[i]['Line'][j]['UnitAmount']/(100+taxrate1)*100
                                                 QuerySet1['Amount'] = final_bill[i]['Line'][j]['LineAmount'] / (
-                                                            100 + taxrate1) * 100
+                                                        100 + taxrate1) * 100
 
                                             else:
                                                 QuerySet['GlobalTaxCalculation'] = 'TaxExcluded'
@@ -590,7 +588,7 @@ def add_xero_bill(job_id, task_id):
 
                                             QuerySet['DocNumber'] = final_bill[i]['Inv_No'][0:21] if final_bill[i][
                                                                                                          'Inv_No'] not in key_list else \
-                                            final_bill[i]['Inv_No'][0:14] + "-" + final_bill[i]['Inv_ID'][-6:]
+                                                final_bill[i]['Inv_No'][0:14] + "-" + final_bill[i]['Inv_ID'][-6:]
 
                                             if 'Comment' in final_bill[i]:
                                                 QuerySet['PrivateNote'] = final_bill[i]['Comment']
@@ -748,7 +746,7 @@ def add_xero_bill(job_id, task_id):
 
                                                 if (final_bill[i]['Line'][j]['Name'].replace(":", "-") + "-" +
                                                     final_bill[i]['Line'][j]['AccountCode']).endswith(
-                                                        QBO_item[j1]["Name"]):
+                                                    QBO_item[j1]["Name"]):
                                                     ItemRef['value'] = QBO_item[j1]["Id"]
                                                     break
 
@@ -834,7 +832,7 @@ def add_xero_bill(job_id, task_id):
                                     if final_bill[i]['LineAmountTypes'] == "Inclusive":
                                         QuerySet['GlobalTaxCalculation'] = 'TaxInclusive'
                                         QuerySet2['UnitPrice'] = final_bill[i]['Line'][j]['UnitAmount'] / (
-                                                    100 + taxrate1) * 100
+                                                100 + taxrate1) * 100
                                         QuerySet1['Amount'] = QuerySet2['UnitPrice'] * QuerySet2['Qty']
                                         TaxLineDetail['NetAmountTaxable'] = final_bill[i]['Line'][j]['UnitAmount'] - \
                                                                             final_bill[i]['Line'][j]['TaxAmount']
@@ -850,7 +848,7 @@ def add_xero_bill(job_id, task_id):
 
                                     QuerySet['DocNumber'] = final_bill[i]['Inv_No'][0:21] if final_bill[i][
                                                                                                  'Inv_No'] not in key_list else \
-                                    final_bill[i]['Inv_No'][0:14] + "-" + final_bill[i]['Inv_ID'][-6:]
+                                        final_bill[i]['Inv_No'][0:14] + "-" + final_bill[i]['Inv_ID'][-6:]
 
                                     if 'Comment' in final_bill[i]:
                                         QuerySet['PrivateNote'] = final_bill[i]['Comment']
