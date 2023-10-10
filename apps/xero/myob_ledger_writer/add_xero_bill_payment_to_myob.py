@@ -118,7 +118,7 @@ def  add_xero_bill_payment_to_myob(job_id, task_id):
                                                 "Name"].lower().strip():
                                                 account["UID"] = chart_of_account[j5]["UID"]
                                 
-                                QuerySet1["Account"] = account
+                                QuerySet1["account"] = account
 
                                 for m in range(0, len(all_bill)):
                                     # for m23 in range(0, len(xero_bill_data)):

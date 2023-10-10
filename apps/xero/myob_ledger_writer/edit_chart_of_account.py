@@ -48,9 +48,9 @@ def get_duplicate_chart_of_account_myob(job_id, task_id):
                         # a1['Classification'] = xero_coa1[j1]['Classification']
                         a1['Type'] = chart_of_account[j]['Account_Type']
 
-                        if a1['Type'] in ["Bank", "Account receivable", "Other current asset", "Fixed asset", "OtherAsset"]:
+                        if a1['Type'] in ["Bank", "account receivable", "Other current asset", "Fixed asset", "OtherAsset"]:
                             main_acc = "1-"
-                        elif a1['Type'] in ["Credit card", "Account payable", "Other current liability",
+                        elif a1['Type'] in ["Credit card", "account payable", "Other current liability",
                                             "Long term liability", "Other liability"]:
                             main_acc = "2-"
                         elif a1['Type'] in ["Equity"]:
@@ -125,7 +125,7 @@ def update_existing_chart_account_xero_myob(job_id, task_id):
             payload = json.dumps(QuerySet1)
 
             payload1, base_url, headers = get_settings_myob(job_id)
-            url = f"{base_url}/GeneralLedger/Account/{existing_coa_myob1[i]['UID']}"
+            url = f"{base_url}/GeneralLedger/account/{existing_coa_myob1[i]['UID']}"
             asyncio.run(update_data_in_myob(url, headers, payload, dbname['existing_coa_myob'], _id, job_id, task_id,
                                             existing_coa_myob1[i]['Name']))
 

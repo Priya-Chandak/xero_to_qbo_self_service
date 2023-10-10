@@ -241,7 +241,7 @@ def add_xero_invoice_to_myob(job_id, task_id):
                     if Item != {}:
                         QuerySet3["Item"] = Item
 
-                    QuerySet3["Account"] = Account
+                    QuerySet3["account"] = Account
                     QuerySet3['TaxCode'] = taxcode
                     QuerySet3['Type'] = "Transaction"
                     if myob_job != {}:

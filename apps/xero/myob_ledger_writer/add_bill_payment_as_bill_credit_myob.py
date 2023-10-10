@@ -132,7 +132,7 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
                             taxcode = {}
                             QuerySet3 = {}
                             account = {"UID": coa_refined_data[b]["UID"]}
-                            QuerySet3["Account"] = account
+                            QuerySet3["account"] = account
 
                             for j3 in range(0, len(taxcode_myob)):
                                 if taxcode_myob[j3]['Code'] == 'N-T':

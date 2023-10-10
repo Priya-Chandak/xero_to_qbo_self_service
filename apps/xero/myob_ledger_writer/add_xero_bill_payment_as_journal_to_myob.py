@@ -67,8 +67,8 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
                                 QuerySet3 = {}
                                 Supplier = {}
                                 account = {}
-                                # Account = {"UID": coa_refined_data[b]["UID"]}
-                                # QuerySet3["Account"] = Account
+                                # account = {"UID": coa_refined_data[b]["UID"]}
+                                # QuerySet3["account"] = account
                                 terms = {}
                             
                                 QuerySet1["Number"] = "P-"+payment[i]["InvoiceNumber"][-11:]
@@ -111,7 +111,7 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
                                                 "Name"].lower().strip():
                                                 account["UID"] = chart_of_account[j5]["UID"]
                                 
-                                QuerySet3["Account"] = account
+                                QuerySet3["account"] = account
 
                                 for j3 in range(0, len(taxcode_myob)):
                                     if taxcode_myob[j3]['Code'] == 'N-T':

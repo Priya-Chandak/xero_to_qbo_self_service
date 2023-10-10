@@ -88,7 +88,7 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                 elif xero_receive_money[i]['BankAccountName'][0:60]  == myob_coa[i4]['Name']:
                     account['UID'] = myob_coa[i4]['UID']
                     account['Name'] = myob_coa[i4]['Name']
-            Queryset1['Account'] = account
+            Queryset1['account'] = account
 
             for i3 in range(0, len(myob_supplier)):
                 if xero_receive_money[i]['ContactName'][0:50] == myob_supplier[i3]['CompanyName']:
@@ -141,7 +141,7 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
             else:
                 Queryset1['ReceiptNumber'] = xero_receive_money[i]["BankTransactionID"][-12:]
 
-            Queryset1['DepositTo'] = "Account"
+            Queryset1['DepositTo'] = "account"
             Queryset1['Date'] = xero_receive_money[i]['Date']
             Queryset1['AmountPaid'] = xero_receive_money[i]['TotalAmount']
             Queryset1['TotalTax'] = xero_receive_money[i]['TotalTax']
@@ -181,7 +181,7 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
 
 
                     if lineaccount != {} and lineaccount != None:
-                        lineitem['Account'] = lineaccount
+                        lineitem['account'] = lineaccount
             
 
                     for i21 in range(0, len(myob_job)):

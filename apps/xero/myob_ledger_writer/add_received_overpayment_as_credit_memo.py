@@ -158,7 +158,7 @@ def add_xero_overpayment_as_credit_memo_to_myob(job_id, task_id):
 
 
                                         if lineaccount != {} and lineaccount != None:
-                                            lineitem['Account'] = lineaccount
+                                            lineitem['account'] = lineaccount
                                             
 
 

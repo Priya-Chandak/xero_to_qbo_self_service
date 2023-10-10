@@ -162,7 +162,7 @@ def add_xero_credite_memo_refund_as_invoice(job_id, task_id):
                                 Account["UID"] = chart_of_account[p1]["UID"]
 
                 if Account != {} and Account != None:
-                    QuerySet3['Account'] = Account
+                    QuerySet3['account'] = Account
                     
 
                 QuerySet3['TaxCode'] = taxcode

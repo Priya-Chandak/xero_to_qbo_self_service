@@ -123,7 +123,7 @@ def add_invoice_payment_as_receive_money(job_id):
                                 account['UID'] = myob_coa[i2]['UID']
                                 account['Name'] = myob_coa[i2]['Name']
 
-                Queryset1['Account'] = account
+                Queryset1['account'] = account
 
                 for i3 in range(0, len(myob_supplier)):
                     if xero_invoice_payment[i]['Contact'] == myob_supplier[i3]['DisplayName']:
@@ -142,7 +142,7 @@ def add_invoice_payment_as_receive_money(job_id):
                 Queryset1['Contact'] = contact
 
                 Queryset1['ReceiptNumber'] = xero_invoice_payment[i]['InvoiceNumber']
-                Queryset1['DepositTo'] = "Account"
+                Queryset1['DepositTo'] = "account"
                 invoice_date = xero_invoice_payment[i]["Date"]
                 invoice_date11 = int(invoice_date[6:16])
                 invoice_date12 = datetime.utcfromtimestamp(invoice_date11).strftime('%Y-%m-%d')
@@ -162,7 +162,7 @@ def add_invoice_payment_as_receive_money(job_id):
                     if myob_coa[i2]['Name'] == 'Accounts Receivable':
                         lineaccount['UID'] = myob_coa[i2]["UID"]
 
-                lineitem['Account'] = lineaccount
+                lineitem['account'] = lineaccount
 
                 taxrate1 = 0
                 for j3 in range(0, len(taxcode_myob)):
@@ -295,12 +295,12 @@ def add_invoice_batchpayment_as_receive_money(job_id):
 
             for i1 in range(0, len(xero_coa)):
                 for i2 in range(0, len(myob_coa)):
-                    if xero_invoice_batchpayment[i]['Account']['AccountID'] == xero_coa[i1]['AccountID']:
+                    if xero_invoice_batchpayment[i]['account']['AccountID'] == xero_coa[i1]['AccountID']:
                         if xero_coa[i1]['Name'] == myob_coa[i2]['Name']:
                             account['UID'] = myob_coa[i2]['UID']
                             account['Name'] = myob_coa[i2]['Name']
 
-            Queryset1['Account'] = account
+            Queryset1['account'] = account
 
             for i4 in range(0, len(xero_invoice_payment)):
                 if 'BatchPaymentID' in xero_invoice_payment[i4]:
@@ -333,7 +333,7 @@ def add_invoice_batchpayment_as_receive_money(job_id):
                 Queryset1['ReceiptNumber'] = xero_invoice_batchpayment[i]['Docnumber'][-2:]
             else:
                 Queryset1['ReceiptNumber'] = "NA"
-            Queryset1['DepositTo'] = "Account"
+            Queryset1['DepositTo'] = "account"
             invoice_date = xero_invoice_batchpayment[i]["Date"]
             invoice_date11 = int(invoice_date[6:16])
             invoice_date12 = datetime.utcfromtimestamp(invoice_date11).strftime('%Y-%m-%d')
@@ -358,7 +358,7 @@ def add_invoice_batchpayment_as_receive_money(job_id):
                     if myob_coa[i2]['Name'] == 'Accounts Receivable':
                         lineaccount['UID'] = myob_coa[i2]["UID"]
 
-                lineitem['Account'] = lineaccount
+                lineitem['account'] = lineaccount
 
                 #     elif xero_tax[j2]['TaxType'] in ["INPUTTAXED"]:
                 #         if taxcode_myob[j3]['Code']=='INP':
@@ -493,7 +493,7 @@ def add_bill_payment_as_spend_money(job_id):
                             account['UID'] = myob_coa[i2]['UID']
                             account['Name'] = myob_coa[i2]['Name']
 
-            Queryset1['Account'] = account
+            Queryset1['account'] = account
 
             for i3 in range(0, len(myob_customer)):
                 if 'DisplayName' in myob_customer[i3]:
@@ -522,7 +522,7 @@ def add_bill_payment_as_spend_money(job_id):
             Queryset1['Contact'] = contact
 
             Queryset1['PaymentNumber'] = xero_bill_payment[i]['InvoiceNumber']
-            Queryset1['PayFrom'] = "Account"
+            Queryset1['PayFrom'] = "account"
             invoice_date = xero_bill_payment[i]["Date"]
             invoice_date11 = int(invoice_date[6:16])
             invoice_date12 = datetime.utcfromtimestamp(invoice_date11).strftime('%Y-%m-%d')
@@ -542,7 +542,7 @@ def add_bill_payment_as_spend_money(job_id):
                 if myob_coa[i2]['Name'] == 'Accounts Payable':
                     lineaccount['UID'] = myob_coa[i2]["UID"]
 
-            lineitem['Account'] = lineaccount
+            lineitem['account'] = lineaccount
 
             taxrate1 = 0
             for j3 in range(0, len(taxcode_myob)):
@@ -672,12 +672,12 @@ def add_bill_batchpayment_as_spend_money(job_id):
 
                 for i1 in range(0, len(xero_coa)):
                     for i2 in range(0, len(myob_coa)):
-                        if xero_bill_batchpayment[i]['Account']['AccountID'] == xero_coa[i1]['AccountID']:
+                        if xero_bill_batchpayment[i]['account']['AccountID'] == xero_coa[i1]['AccountID']:
                             if xero_coa[i1]['Name'] == myob_coa[i2]['Name']:
                                 account['UID'] = myob_coa[i2]['UID']
                                 account['Name'] = myob_coa[i2]['Name']
 
-                Queryset1['Account'] = account
+                Queryset1['account'] = account
 
                 for i4 in range(0, len(xero_bill_payment)):
                     if 'BatchPaymentID' in xero_bill_payment[i4]:
@@ -704,7 +704,7 @@ def add_bill_batchpayment_as_spend_money(job_id):
                 Queryset1['Contact'] = contact
 
                 Queryset1['PaymentNumber'] = xero_bill_batchpayment[i]['BatchPaymentID'][-4:]
-                Queryset1['PayFrom'] = "Account"
+                Queryset1['PayFrom'] = "account"
                 invoice_date = xero_bill_batchpayment[i]["Date"]
                 invoice_date11 = int(invoice_date[6:16])
                 invoice_date12 = datetime.utcfromtimestamp(invoice_date11).strftime('%Y-%m-%d')
@@ -728,7 +728,7 @@ def add_bill_batchpayment_as_spend_money(job_id):
                         if myob_coa[i2]['Name'] == 'Accounts Payable':
                             lineaccount['UID'] = myob_coa[i2]["UID"]
 
-                    lineitem['Account'] = lineaccount
+                    lineitem['account'] = lineaccount
 
                     taxrate1 = 0
                     for j3 in range(0, len(taxcode_myob)):

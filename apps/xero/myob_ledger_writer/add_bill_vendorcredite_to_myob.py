@@ -181,7 +181,7 @@ def add_xero_vendorcredit_to_myob(job_id, task_id):
                                             taxrate1 = taxcode_myob[j3]['Rate']
 
                         QuerySet3['TaxCode'] = taxcode
-                        QuerySet3['Account'] = Account
+                        QuerySet3['account'] = Account
                         QuerySet1["Lines"].append(QuerySet3)
                         QuerySet3["Type"] ="Transaction"
 

@@ -97,7 +97,7 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                         account['UID'] = myob_coa[i4]['UID']
                         account['Name'] = myob_coa[i4]['Name']
 
-            Queryset1['Account'] = account
+            Queryset1['account'] = account
 
             for i3 in range(0, len(myob_supplier)):
                 if xero_spend_money[i]['ContactName'][0:50] == myob_supplier[i3]['CompanyName']:
@@ -149,7 +149,7 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                 Queryset1['PaymentNumber'] = xero_spend_money[i]["BankTransactionID"][-12:]
 
             # Queryset1['StatementParticulars'] = Queryset1['PaymentNumber']
-            Queryset1['PayFrom'] = "Account"
+            Queryset1['PayFrom'] = "account"
             Queryset1['Date'] = xero_spend_money[i]['Date']
             Queryset1['AmountPaid'] = xero_spend_money[i]['TotalAmount']
             Queryset1['TotalTax'] = xero_spend_money[i]['TotalTax']
@@ -192,7 +192,7 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
                 #             #     lineaccount['UID'] = myob_coa[i2]['UID']
                 #             #     break
 
-                # lineitem['Account'] = lineaccount
+                # lineitem['account'] = lineaccount
 
 
                 for i2 in range(0, len(myob_coa)):
@@ -225,7 +225,7 @@ def add_spend_money_from_xero_to_myobledger(job_id, task_id):
 
 
                 if lineaccount != {} and lineaccount != None:
-                    lineitem['Account'] = lineaccount
+                    lineitem['account'] = lineaccount
                     
 
 

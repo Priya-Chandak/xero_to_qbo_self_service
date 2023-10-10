@@ -131,7 +131,7 @@ def add_xero_invoicepayment_as_vendorcredit_to_myob(job_id, task_id):
                                                     account['UID'] = chart_of_account[p1]["UID"]
 
                                     if account != {} and account != None:
-                                        QuerySet3["Account"] = account
+                                        QuerySet3["account"] = account
                                     
 
                                     for j3 in range(0, len(taxcode_myob)):

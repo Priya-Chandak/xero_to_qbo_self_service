@@ -173,7 +173,7 @@ def add_xero_spend_overpayment_as_billcredit_to_myob(job_id, task_id):
                                                                 break
 
                                             QuerySet3['TaxCode'] = taxcode
-                                            QuerySet3['Account'] = Account
+                                            QuerySet3['account'] = Account
                                             
 
                                         if "Description" in xero_spend_overpayment[i]["Line"][j]:

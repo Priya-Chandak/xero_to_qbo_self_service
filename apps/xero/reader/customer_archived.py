@@ -16,7 +16,7 @@ from apps.home.data_util import add_job_status, get_job_details
 # from apps.db_mongo_connection.db_mongo import get_mongodb_database
 from apps.util.db_mongo import get_mongodb_database
 from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-# job_url = f"{base_url}/GeneralLedger/Account?$top=100&$skip=0"
+# job_url = f"{base_url}/GeneralLedger/account?$top=100&$skip=0"
 
 def get_xero_archived_customer(job_id,task_id):
     try:

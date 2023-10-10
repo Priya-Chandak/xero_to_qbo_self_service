@@ -52,7 +52,7 @@ def add_xero_bank_transfer_to_myobledger(job_id, task_id):
                 if journal[i1]["FromAccountRef"]["name"] == chart_of_account[j1]["Name"]:
                     account['UID'] = chart_of_account[j1]["UID"]
                     
-                    QuerySet2['Account'] = account
+                    QuerySet2['account'] = account
                     
                     if chart_of_account[j1]["Account_Type"] == "Bank":
                         QuerySet2["IsCredit"] = True
@@ -76,7 +76,7 @@ def add_xero_bank_transfer_to_myobledger(job_id, task_id):
                     
                 if journal[i1]["ToAccountRef"]["name"] == chart_of_account[j1]["Name"]:
                     account['UID'] = chart_of_account[j1]["UID"]
-                    QuerySet3['Account'] = account
+                    QuerySet3['account'] = account
                     
                     
                     if chart_of_account[j1]["Account_Type"] == "Bank":

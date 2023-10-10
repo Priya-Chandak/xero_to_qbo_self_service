@@ -152,7 +152,7 @@ def add_xero_bill_credit_refund(job_id,task_id):
                                 Account["UID"] = chart_of_account[p1]["UID"]
 
                 if Account != {} and Account != None:
-                    QuerySet3['Account'] = Account
+                    QuerySet3['account'] = Account
 
                 for j3 in range(0, len(taxcode_myob)):
                     if taxcode_myob[j3]['Code'] == 'N-T':

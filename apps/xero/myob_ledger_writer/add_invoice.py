@@ -72,10 +72,10 @@ def add_xero_invoice_as_journal_to_myobledger(job_id, task_id):
                         if invoice[i]["Line"][j]["AccountCode"] == xero_coa[j2]["Code"]:
                             if xero_coa[j2]["Name"] == chart_of_account[j1]['Name']:
                                 debit_account['UID'] = chart_of_account[j1]["UID"]
-                                QuerySet3['Account'] = debit_account
+                                QuerySet3['account'] = debit_account
                         if chart_of_account[j1]['Name'] == 'Accounts Receivable':
                             credit_account['UID'] = chart_of_account[j1]["UID"]
-                            QuerySet2['Account'] = credit_account
+                            QuerySet2['account'] = credit_account
 
                 QuerySet2["IsCredit"] = False
                 QuerySet3["IsCredit"] = True
@@ -221,10 +221,10 @@ def add_xero_creditnote_as_journal_to_myobledger(job_id, task_id):
                         if invoice[i]["Line"][j]["AccountCode"] == xero_coa[j2]["Code"]:
                             if xero_coa[j2]["Name"] == chart_of_account[j1]['Name']:
                                 debit_account['UID'] = chart_of_account[j1]["UID"]
-                                QuerySet3['Account'] = debit_account
+                                QuerySet3['account'] = debit_account
                         if chart_of_account[j1]['Name'] == 'Accounts Receivable':
                             credit_account['UID'] = chart_of_account[j1]["UID"]
-                            QuerySet2['Account'] = credit_account
+                            QuerySet2['account'] = credit_account
 
                 QuerySet2["IsCredit"] = True
                 QuerySet3["IsCredit"] = False

@@ -119,7 +119,7 @@ def add_xero_payment_as_creditnote_to_myob(job_id, task_id):
                             QuerySet3 = {}
                             taxcode = {}
                             account = {"UID": coa_refined_data[b]["UID"]}
-                            QuerySet3["Account"] = account
+                            QuerySet3["account"] = account
                             for j3 in range(0, len(taxcode_myob1)):
                                 if taxcode_myob1[j3]['Code'] == 'N-T':
                                     taxcode['UID'] = taxcode_myob1[j3]['UID']

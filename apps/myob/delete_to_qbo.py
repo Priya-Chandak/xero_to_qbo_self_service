@@ -21,7 +21,7 @@ def delete_qbo_data(job_id,task_function_name,task_id):
     
     base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
     
-    static_function = {"Chart of account" : ['Account','account',dbname['QBO_COA']],
+    static_function = {"Chart of account" : ['account','account',dbname['QBO_COA']],
           "Customer" : ['Customer','customer',dbname['QBO_Customer']],
           "Supplier" : ['Vendor','vendor',dbname['QBO_Supplier']],
           "Item" : ['Item','item',dbname['QBO_Item']],

@@ -72,7 +72,7 @@ def add_spend_overpayment_as_spend_money(job_id, task_id):
                             account['UID'] = myob_coa[i2]['UID']
                             account['Name'] = myob_coa[i2]['Name']
 
-            Queryset1['Account'] = account
+            Queryset1['account'] = account
 
             for i3 in range(0, len(myob_supplier)):
                 if xero_spend_overpayment[i]['ContactName'] == myob_supplier[i3]['CompanyName']:
@@ -97,7 +97,7 @@ def add_spend_overpayment_as_spend_money(job_id, task_id):
             Queryset1['Contact'] = contact
 
             Queryset1['PaymentNumber'] = xero_spend_overpayment[i]['Reference']
-            Queryset1['PayFrom'] = "Account"
+            Queryset1['PayFrom'] = "account"
             Queryset1['Date'] = xero_spend_overpayment[i]['Date']
             Queryset1['AmountPaid'] = xero_spend_overpayment[i]['TotalAmount']
             Queryset1['TotalTax'] = xero_spend_overpayment[i]['TotalTax']
@@ -118,7 +118,7 @@ def add_spend_overpayment_as_spend_money(job_id, task_id):
                             if xero_coa[i1]['Name'] == myob_coa[i2]['Name']:
                                 lineaccount['UID'] = myob_coa[i2]['UID']
 
-                lineitem['Account'] = lineaccount
+                lineitem['account'] = lineaccount
 
                 for i21 in range(0, len(myob_job)):
                     if 'TrackingName' in xero_spend_overpayment[i]['Line'][j]:

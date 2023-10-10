@@ -16,7 +16,7 @@ from apps.myconstant import *
 
 
 def get_settings_qbo(job_id):
-    """get_settings_qbo is for QBO Account (Any-Input or Output)"""
+    """get_settings_qbo is for QBO account (Any-Input or Output)"""
 
     input_data = aliased(Tool)
     output_data = aliased(Tool)

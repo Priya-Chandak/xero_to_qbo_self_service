@@ -79,7 +79,7 @@ def add_xero_journal_to_myobledger(job_id, task_id):
                             #     account['UID'] = chart_of_account[j1]["UID"]
                             #     break
 
-                    QuerySet2['Account'] = account
+                    QuerySet2['account'] = account
 
                     # for j3 in range(0,len(job)):
                     #     if journal[i]["Line"][j]["ClassRef"]["name"]== job[j3]["Name"]:
@@ -158,7 +158,7 @@ def add_xero_journal_to_myobledger(job_id, task_id):
                             if journal[i]["Line"][j]["AccountCode"] == xero_coa[j2]["Code"]:
                                 if xero_coa[j2]["Name"] == chart_of_account[j1]['Name']:
                                     account['UID'] = chart_of_account[j1]["UID"]
-                    QuerySet3['Account'] = account
+                    QuerySet3['account'] = account
 
                     # for j3 in range(0,len(job)):
                     #     if journal[i]["Line"][j]["ClassRef"]["name"]== job[j3]["Name"]:

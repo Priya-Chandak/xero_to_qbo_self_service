@@ -321,7 +321,7 @@ def records(task_id, function_name):
                     data1.append(i)
                 return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
             
-        if function_name == 'Deleted Chart Of Account':
+        if function_name == 'Deleted Chart Of account':
             page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_deleted_coa"])
             data1 = []
             for i in data:
@@ -917,7 +917,7 @@ def records(task_id, function_name):
             return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
 
     if input_tool == EXCEL and output_tool == RECKON:
-        if function_name == 'Account':
+        if function_name == 'account':
             page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["excel_reckon_chart_of_account"])
             data1 = []
             for i in data:

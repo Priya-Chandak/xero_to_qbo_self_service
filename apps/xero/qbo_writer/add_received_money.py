@@ -29,7 +29,7 @@ def add_xero_receive_money(job_id,task_id):
         
         # new=[]
         # for exp in range(0,len(xero_receive_money)):
-        #     if xero_receive_money[exp]['BankAccountName'] in ['General Account']:
+        #     if xero_receive_money[exp]['BankAccountName'] in ['General account']:
         #         new.append(xero_receive_money[exp])
 
         QBO_COA1 = db["QBO_COA"].find({"job_id":job_id})

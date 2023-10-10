@@ -302,7 +302,7 @@ def retry_payload_for_xero_to_myob(job_id,payload,_id,task_id,task_function_name
           "Invoice Payment" : [f"{base_url}/Sale/CustomerPayment",dbname['xero_invoice_payment']],
           "Bill Payment" :[f"{base_url}/Purchase/SupplierPayment",dbname['xero_bill_payment']],
           "Journal":[f"{base_url}/GeneralLedger/GeneralJournal",dbname['xero_manual_journal']],
-        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/Account",dbname['xero_coa']],
+        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/account",dbname['xero_coa']],
           "Job":[f"{base_url}/GeneralLedger/Category",dbname['xero_job']],
           "Archieved Customer" : [f"{base_url}/Contact/Customer",dbname['xero_archived_customer']],
           "Archieved Supplier" : [f"{base_url}/Contact/Supplier",dbname['xero_archived_supplier']]
@@ -344,7 +344,7 @@ def retry_payload_for_qbo_to_myob(job_id,payload,_id,task_id,task_function_name)
           "Invoice Payment" : [f"{base_url}/Sale/CustomerPayment",dbname['QBO_Payment']],
           "Bill Payment" :[f"{base_url}/Sale/SupplierPayment",dbname['QBO_Bill_Payment']],
           "Journal":[f"{base_url}/GeneralLedger/GeneralJournal",dbname['QBO_Journal']],
-        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/Account",dbname['xero_coa']],
+        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/account",dbname['xero_coa']],
           "Job":[f"{base_url}/GeneralLedger/Category",dbname['QBO_Class']],
           }
 
@@ -382,7 +382,7 @@ def retry_payload_for_excel_to_myob(job_id,payload,_id,task_id,task_function_nam
           "Customer payment" : [f"{base_url}/Sale/CustomerPayment",dbname['excel_invoice_payment']],
           "Supplier return" :[f"{base_url}/Sale/SupplierPayment",dbname['excel_bill_payment']],
           "Journals":[f"{base_url}/GeneralLedger/GeneralJournal",dbname['excel_journal']],
-        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/Account",dbname['xero_coa']],
+        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/account",dbname['xero_coa']],
           "Job":[f"{base_url}/GeneralLedger/Job",dbname['excel_job']],
           }
 
@@ -459,7 +459,7 @@ def retry_payload_for_xero_to_qbo(job_id,payload,_id,task_id,task_function_name)
           "Invoice Payment" : [f"{base_url}/payment?minorversion={minorversion}",dbname['xero_invoice_payment']],
           "Bill Payment" :[f"{base_url}/billpayment?minorversion={minorversion}",dbname['xero_bill_payment']],
           "Journal":[f"{base_url}/journalentry?minorversion={minorversion}",dbname['xero_manual_journal']],
-        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/Account",dbname['xero_coa']],
+        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/account",dbname['xero_coa']],
           "Job":[f"{base_url}/class?minorversion={minorversion}",dbname['xero_job']],
           }
 
@@ -498,7 +498,7 @@ def retry_payload_for_myob_to_qbo(job_id,payload,_id,task_id,task_function_name)
           "Invoice Payment" : [f"{base_url}/payment?minorversion={minorversion}",dbname['invoice_payment']],
           "Bill Payment" :[f"{base_url}/billpayment?minorversion={minorversion}",dbname['bill_payment']],
           "Journal":[f"{base_url}/journalentry?minorversion={minorversion}",dbname['journal']],
-        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/Account",dbname['xero_coa']],
+        #   "Existing Chart of account":[f"{base_url}/GeneralLedger/account",dbname['xero_coa']],
           "Job":[f"{base_url}/class?minorversion={minorversion}",dbname['job']],
           }
 

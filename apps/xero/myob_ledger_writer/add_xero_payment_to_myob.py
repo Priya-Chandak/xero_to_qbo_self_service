@@ -85,9 +85,9 @@ def add_xero_payment_to_myob(job_id, task_id):
             task_id = payment[i]['task_id']
             Customer = {}
             QuerySet1 = {"Invoices": []}
-            # Account = {"UID": coa_refined_data[b]["UID"]}
+            # account = {"UID": coa_refined_data[b]["UID"]}
             account={}
-            # QuerySet1["Account"] = Account
+            # QuerySet1["account"] = account
             QuerySet1["Date"] = payment[i]["Date"]
             if 'Reference' in payment[i] and payment[i]['Reference'] != "":
                 QuerySet1["PaymentNumber"] = payment[i]["Reference"]
@@ -107,7 +107,7 @@ def add_xero_payment_to_myob(job_id, task_id):
                             account['UID'] = chart_of_account[p1]["UID"]
 
             if account != {} and account != None:
-                QuerySet1["Account"] = account
+                QuerySet1["account"] = account
 
 
             for k in range(0, len(myob_customer)):

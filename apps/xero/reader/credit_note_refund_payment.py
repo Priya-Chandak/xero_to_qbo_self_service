@@ -89,7 +89,7 @@ def get_xero_credit_memo_refund_payment(job_id,task_id):
                             QuerySet["HasAccount"] = JsonResponse1[i]["HasAccount"]
 
                             if QuerySet["HasAccount"] == True:
-                                QuerySet["AccountCode"] = JsonResponse1[i]["Account"]["AccountID"]
+                                QuerySet["AccountCode"] = JsonResponse1[i]["account"]["AccountID"]
 
                             if "InvoiceNumber" in JsonResponse1[i]["Invoice"]:
                                 QuerySet["InvoiceNumber"] = JsonResponse1[i]["Invoice"][

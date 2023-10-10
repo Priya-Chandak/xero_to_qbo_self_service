@@ -330,20 +330,20 @@ def add_multiple_service_invoice1(job_id, task_id):
                                         #             'TotalTax']
                                         #         TaxLineDetail[
                                         #             'NetAmountTaxable'] = -round(multiple_invoice[
-                                        #                 i]['Account'][j]['amount'] / (
+                                        #                 i]['account'][j]['amount'] / (
                                         #                     100 + taxrate1) * 100,2)
                                         #     elif multiple_invoice[i]['account'][j][
                                         #             'taxcode'] in ["FRE","EXP"]:
                                         #         TaxDetail['Amount'] = 0
                                         #         TaxLineDetail[
                                         #             'NetAmountTaxable'] = -round(multiple_invoice[
-                                        #                 i]['Account'][j]['amount'],2)
+                                        #                 i]['account'][j]['amount'],2)
                                         #     elif multiple_invoice[i]['account'][j][
                                         #             'taxcode'] == "N-T":
                                         #         TaxDetail['Amount'] = 0
                                         #         TaxLineDetail[
                                         #             'NetAmountTaxable'] = -round(multiple_invoice[
-                                        #                 i]['Account'][j]['amount'],2)
+                                        #                 i]['account'][j]['amount'],2)
 
                                     invoice['TxnTaxDetail'] = TxnTaxDetail
                                     TaxDetail['DetailType'] = "TaxLineDetail"
@@ -428,19 +428,19 @@ def add_multiple_service_invoice1(job_id, task_id):
                                         'TotalTax']
                                     TaxLineDetail[
                                         'NetAmountTaxable'] = multiple_invoice[i][
-                                            'Account'][j]['amount'] / (100 +
+                                            'account'][j]['amount'] / (100 +
                                                                     taxrate1) * 100
                                 elif multiple_invoice[i]['account'][j]['taxcode'] in ["FRE","EXP"]:
                                     TaxDetail['Amount'] = 0
                                     TaxLineDetail[
                                         'NetAmountTaxable'] = multiple_invoice[i][
-                                            'Account'][j]['amount']
+                                            'account'][j]['amount']
                                 elif multiple_invoice[i]['account'][j][
                                         'taxcode'] == "N-T":
                                     TaxDetail['Amount'] = 0
                                     TaxLineDetail[
                                         'NetAmountTaxable'] = multiple_invoice[i][
-                                            'Account'][j]['amount']
+                                            'account'][j]['amount']
                                 else:
                                     pass
                             else:
@@ -455,13 +455,13 @@ def add_multiple_service_invoice1(job_id, task_id):
                                     TaxDetail['Amount'] = 0
                                     TaxLineDetail[
                                         'NetAmountTaxable'] = -multiple_invoice[i][
-                                            'Account'][j]['amount']
+                                            'account'][j]['amount']
                                 elif multiple_invoice[i]['account'][j][
                                         'taxcode'] == "N-T":
                                     TaxDetail['Amount'] = 0
                                     TaxLineDetail[
                                         'NetAmountTaxable'] = -multiple_invoice[i][
-                                            'Account'][j]['amount']
+                                            'account'][j]['amount']
                                 else:
                                     pass
 

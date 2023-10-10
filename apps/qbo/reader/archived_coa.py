@@ -26,11 +26,11 @@ def get_qbo_archived_coa(job_id,task_id):
         url = f"{base_url}/query?minorversion={minorversion}"
         no_of_records = db1['QBO_ARCHIVED_COA'].count_documents({'job_id':job_id})
 
-        payload = f"select * from Account where Active=false  startposition {no_of_records} maxresults 1000"
+        payload = f"select * from account where Active=false  startposition {no_of_records} maxresults 1000"
 
         response = requests.request("POST", url, headers=get_data_header, data=payload)
         JsonResponse = response.json()
-        JsonResponse1 = JsonResponse['QueryResponse']['Account']
+        JsonResponse1 = JsonResponse['QueryResponse']['account']
         
         archivedcoa=[]
         for archived_coa in JsonResponse1:
