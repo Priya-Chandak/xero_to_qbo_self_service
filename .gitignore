@@ -1,0 +1,39 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment-specific files
+.env
+
+# Python virtual environment
+venv/
+
+# Dependency directories
+lib/
+lib64/
+bin/
+include/
+
+# Compiled files
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.db
+
+# System files
+.DS_Store
+
+# Log files
+*.log
+
+# Configuration files
+config.py
+
+# Ignore database files (if you're using SQLite)
+*.db
+
+.idea/
