@@ -70,7 +70,7 @@ def add_xero_invoice_to_myob(job_id, task_id):
             QuerySet1["Number"] = multiple_invoice[i]["Inv_No"][-13:]
             QuerySet1["Date"] = multiple_invoice[i]["TxnDate"]
             QuerySet1['CustomerPurchaseOrderNumber'] = multiple_invoice[i]['Inv_ID']
-           
+
             terms['PaymentIsDue'] = "OnADayOfTheMonth"
             duedate = datetime.strptime(multiple_invoice[i]["DueDate"][0:10], '%Y-%m-%d')
             terms['BalanceDueDate'] = duedate.day
@@ -93,7 +93,7 @@ def add_xero_invoice_to_myob(job_id, task_id):
 
             for j in range(0, len(multiple_invoice[i]["Line"])):
                 if 'AccountCode' in multiple_invoice[i]["Line"][j]:
-                    
+
                     QuerySet3 = {}
                     Item = {}
                     Account = {}
@@ -105,13 +105,14 @@ def add_xero_invoice_to_myob(job_id, task_id):
                         for k1 in range(0, len(xero_tax)):
                             if 'TaxType' in multiple_invoice[i]["Line"][j]:
                                 if multiple_invoice[i]["Line"][j]["TaxType"] == xero_tax[k1]['TaxType']:
-                                    if xero_tax[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT', 'OUTPUT2', 'INPUT2']:
+                                    if xero_tax[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT', 'OUTPUT2',
+                                                                   'INPUT2']:
                                         if taxcode_myob1[j3]['Code'] == 'GST' or taxcode_myob1[j3]['Code'] == 'S15':
                                             taxcode['UID'] = taxcode_myob1[j3]['UID']
                                             taxrate1 = taxcode_myob1[j3]['Rate']
 
                                     elif xero_tax[k1]['TaxType'] in ["EXEMPTCAPITAL", 'EXEMPTEXPENSES', 'EXEMPTOUTPUT',
-                                                                    'EXEMPTEXPORT']:
+                                                                     'EXEMPTEXPORT']:
                                         if taxcode_myob1[j3]['Code'] == 'FRE':
                                             taxcode['UID'] = taxcode_myob1[j3]['UID']
                                             taxrate1 = taxcode_myob1[j3]['Rate']
@@ -199,9 +200,6 @@ def add_xero_invoice_to_myob(job_id, task_id):
 
                                     QuerySet3["Total"] = abs(multiple_invoice[i]["Line"][j]["LineAmount"])
 
-
-                     
-
                     # if "Inv_No" : "INV-10286"'LineAmount' in multiple_invoice[i]["Line"][j]:
                     #     if multiple_invoice[i]["Line"][j]["LineAmount"]<0:
                     #         QuerySet3["UnitPrice"]=abs(multiple_invoice[i]["Line"][j]['UnitAmount'])
@@ -236,7 +234,6 @@ def add_xero_invoice_to_myob(job_id, task_id):
                                     Account["UID"] = chart_of_account[j5]["UID"]
                                 else:
                                     pass
-                        
 
                     if Item != {}:
                         QuerySet3["Item"] = Item
@@ -271,10 +268,10 @@ def add_xero_invoice_to_myob(job_id, task_id):
 
                 payload1, base_url, headers = get_settings_myob(job_id)
                 url1 = f"{base_url}/Sale/Invoice/Item"
-                if multiple_invoice[i]['is_pushed']==0:
+                if multiple_invoice[i]['is_pushed'] == 0:
                     asyncio.run(
                         post_data_in_myob(url1, headers, payload, dbname['xero_invoice'], _id, job_id, task_id,
-                                        id_or_name_value_for_error))
+                                          id_or_name_value_for_error))
                 else:
                     pass
 

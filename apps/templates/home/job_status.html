@@ -28,40 +28,40 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="basic-datatables" class="display table table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Job ID</th>
-                                     <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Status</th>
-                                    <th>Is Successful</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    {% for item in data %}
-                                        <tr>
-                                            <td>{{item.job_id}}</td>
-                                            <td>{{item.start_time}}</td>
-                                            <td>{{item.end_time}}</td>
-                                            <td>{{item.status}}</td>
-                                            {% if item.is_successful %}
-                                            <td><i class="fas fa-check-circle" style="color:green;font-size:25px"></i>  </td>
-                                            {% else %}
-                                            <td><i class="fas fa-times-circle" style="color:red;font-size:25px"></i></td>
-                                            {% endif %}
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="table-responsive">
+                    <table id="basic-datatables" class="display table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Status</th>
+                            <th>Is Successful</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in data %}
+                        <tr>
+                            <td>{{item.job_id}}</td>
+                            <td>{{item.start_time}}</td>
+                            <td>{{item.end_time}}</td>
+                            <td>{{item.status}}</td>
+                            {% if item.is_successful %}
+                            <td><i class="fas fa-check-circle" style="color:green;font-size:25px"></i></td>
+                            {% else %}
+                            <td><i class="fas fa-times-circle" style="color:red;font-size:25px"></i></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
     </div>
+
+</div>
+</div>
 </div>
 </div>
 
@@ -118,6 +118,7 @@
 
 			});
 		});
+
 
 </script>
 

@@ -39,13 +39,11 @@ class CreateJobForm(FlaskForm):
     is_active = BooleanField("is_active", id="is_active", validators=[DataRequired()])
 
 
-
 class CreateSelectidForm(FlaskForm):
     id_select = StringField(
         "id", id="id_select", validators=[DataRequired()]
     )
-    
-   
+
 
 class CreateSettingForm(FlaskForm):
     name = StringField("name", id="name", validators=[DataRequired()])
@@ -61,19 +59,20 @@ class CreateSettingForm(FlaskForm):
     )
     is_active = BooleanField("is_active", id="is_active", validators=[DataRequired()])
 
+
 class CreateIdNameForm(FlaskForm):
     Email = StringField("name", id="name", validators=[DataRequired()])
     client_id = StringField("client_id", id="client_id", validators=[DataRequired()])
     client_secret = StringField("client_secret", id="client_secret", validators=[DataRequired()])
 
+
 class CreateauthcodeForm(FlaskForm):
     auth_code = StringField(
         "auth_code", id="auth_code", validators=[DataRequired()]
     )
-   
+
 
 class CreateEmailForm(FlaskForm):
     email_input_tool = StringField(
         "input_tool", id="input_tool", validators=[DataRequired()]
     )
-    

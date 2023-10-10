@@ -1,7 +1,6 @@
 import traceback
 
 from apps import db
-from apps.home.data_util import add_job_status
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings
 from apps.myconstant import *
@@ -80,4 +79,3 @@ def get_myobledger_settings_for_post(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

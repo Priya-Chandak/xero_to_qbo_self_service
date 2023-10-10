@@ -12,7 +12,6 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 logger = logging.getLogger(__name__)
 
 
-
 def add_xero_item_bill(job_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_item_bill -> add_xero_item_bill")
@@ -24,42 +23,42 @@ def add_xero_item_bill(job_id):
         url1 = f"{base_url}/bill?minorversion=14"
         url2 = f"{base_url}/vendorcredit?minorversion=14"
 
-        final_bill1 = db["xero_bill"].find({"job_id":job_id})
+        final_bill1 = db["xero_bill"].find({"job_id": job_id})
         final_bill = []
         for p1 in final_bill1:
             final_bill.append(p1)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        QBO_Supplier = db["QBO_Supplier"].find({"job_id":job_id})
+        QBO_Supplier = db["QBO_Supplier"].find({"job_id": job_id})
         QBO_supplier = []
         for p3 in QBO_Supplier:
             QBO_supplier.append(p3)
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p4 in QBO_Item:
             QBO_item.append(p4)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p5 in QBO_Class:
             QBO_class.append(p5)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p5 in QBO_Tax:
             QBO_tax.append(p5)
 
-        Xero_Items = db["xero_items"].find({"job_id":job_id})
+        Xero_Items = db["xero_items"].find({"job_id": job_id})
         xero_items = []
         for p5 in Xero_Items:
             xero_items.append(p5)
 
-        XERO_COA = db["xero_coa"].find({"job_id":job_id})
+        XERO_COA = db["xero_coa"].find({"job_id": job_id})
         xero_coa = []
         for p7 in XERO_COA:
             xero_coa.append(p7)
@@ -103,8 +102,8 @@ def add_xero_item_bill(job_id):
                                 QuerySet["GlobalTaxCalculation"] = "TaxInclusive"
                                 for k1 in range(0, len(QBO_tax)):
                                     if (
-                                        final_bill[i]["Line"][0]["TaxType"]
-                                        == "BASEXCLUDED"
+                                            final_bill[i]["Line"][0]["TaxType"]
+                                            == "BASEXCLUDED"
                                     ) or (final_bill[i]["Line"][0]["TaxType"] == None):
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if "BAS-W1" in QBO_tax[k1]["taxrate_name"]:
@@ -126,13 +125,13 @@ def add_xero_item_bill(job_id):
                                                 pass
 
                                         elif (
-                                            final_bill[i]["Line"][0]["TaxType"]
-                                            == "INPUT"
+                                                final_bill[i]["Line"][0]["TaxType"]
+                                                == "INPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -152,12 +151,12 @@ def add_xero_item_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][0]["TaxType"]
-                                            == "EXEMPTEXPENSES"
+                                                final_bill[i]["Line"][0]["TaxType"]
+                                                == "EXEMPTEXPENSES"
                                         ):
                                             if (
-                                                "GST-free (purchases)"
-                                                == QBO_tax[k1]["taxcode_name"]
+                                                    "GST-free (purchases)"
+                                                    == QBO_tax[k1]["taxcode_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -195,8 +194,8 @@ def add_xero_item_bill(job_id):
                                 QuerySet["GlobalTaxCalculation"] = "TaxExcluded"
                                 for k1 in range(0, len(QBO_tax)):
                                     if (
-                                        final_bill[i]["Line"][0]["TaxType"]
-                                        == "BASEXCLUDED"
+                                            final_bill[i]["Line"][0]["TaxType"]
+                                            == "BASEXCLUDED"
                                     ) or (final_bill[i]["Line"][0]["TaxType"] == None):
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if "BAS-W1" in QBO_tax[k1]["taxrate_name"]:
@@ -218,13 +217,13 @@ def add_xero_item_bill(job_id):
                                                 pass
 
                                         elif (
-                                            final_bill[i]["Line"][0]["TaxType"]
-                                            == "INPUT"
+                                                final_bill[i]["Line"][0]["TaxType"]
+                                                == "INPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -244,12 +243,12 @@ def add_xero_item_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][0]["TaxType"]
-                                            == "EXEMPTEXPENSES"
+                                                final_bill[i]["Line"][0]["TaxType"]
+                                                == "EXEMPTEXPENSES"
                                         ):
                                             if (
-                                                "GST-free (purchases)"
-                                                == QBO_tax[k1]["taxcode_name"]
+                                                    "GST-free (purchases)"
+                                                    == QBO_tax[k1]["taxcode_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -272,13 +271,13 @@ def add_xero_item_bill(job_id):
 
                             if "supplier_invoice_no" in final_bill[i]:
                                 if (
-                                    final_bill[i]["supplier_invoice_no"] != ""
-                                    or final_bill[i]["supplier_invoice_no"] is not None
+                                        final_bill[i]["supplier_invoice_no"] != ""
+                                        or final_bill[i]["supplier_invoice_no"] is not None
                                 ):
                                     QuerySet["DocNumber"] = (
-                                        final_bill[i]["supplier_invoice_no"]
-                                        + "-"
-                                        + final_bill[i]["supplier_invoice_no"]
+                                            final_bill[i]["supplier_invoice_no"]
+                                            + "-"
+                                            + final_bill[i]["supplier_invoice_no"]
                                     )
                                 else:
                                     QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -303,23 +302,23 @@ def add_xero_item_bill(job_id):
                                 for j2 in range(0, len(xero_items)):
                                     if "ItemCode" in final_bill[i]["Line"][0]:
                                         if (
-                                            final_bill[i]["Line"][0]["ItemCode"]
-                                            == xero_items[j2]["Code"]
+                                                final_bill[i]["Line"][0]["ItemCode"]
+                                                == xero_items[j2]["Code"]
                                         ):
                                             if (
-                                                xero_items[j2]["Name"]
-                                                == QBO_item[j1]["Name"]
+                                                    xero_items[j2]["Name"]
+                                                    == QBO_item[j1]["Name"]
                                             ):
                                                 QuerySet3["value"] = QBO_item[j1]["Id"]
 
                             for j3 in range(0, len(QBO_supplier)):
                                 if QBO_supplier[j3]["DisplayName"].startswith(
-                                    final_bill[i]["ContactName"]
+                                        final_bill[i]["ContactName"]
                                 ) and QBO_supplier[j3]["DisplayName"].endswith(" - S"):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 elif (
-                                    final_bill[i]["ContactName"]
-                                    == QBO_supplier[j3]["DisplayName"]
+                                        final_bill[i]["ContactName"]
+                                        == QBO_supplier[j3]["DisplayName"]
                                 ):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 else:
@@ -337,14 +336,14 @@ def add_xero_item_bill(job_id):
                             if final_bill[i]["Line"][0]["Discount"] != 0:
                                 discount2["Qty"] = "1"
                                 discount2["UnitPrice"] = (
-                                    -(
-                                        final_bill[i]["Line"][0]["UnitAmount"]
-                                        * final_bill[i]["Line"][0]["Quantity"]
-                                        / (100 + taxrate1)
-                                        * 100
-                                    )
-                                    * final_bill[i]["Line"][0]["Discount"]
-                                    / 100
+                                        -(
+                                                final_bill[i]["Line"][0]["UnitAmount"]
+                                                * final_bill[i]["Line"][0]["Quantity"]
+                                                / (100 + taxrate1)
+                                                * 100
+                                        )
+                                        * final_bill[i]["Line"][0]["Discount"]
+                                        / 100
                                 )
                                 discount2["TaxCodeRef"] = TaxCodeRef
                                 discount2["ItemRef"] = QuerySet3
@@ -352,14 +351,14 @@ def add_xero_item_bill(job_id):
                                 discount1["Description"] = "Discount Given"
                                 discount1["DetailType"] = "ItemBasedExpenseLineDetail"
                                 discount1["Amount"] = (
-                                    -(
-                                        final_bill[i]["Line"][0]["UnitAmount"]
-                                        * final_bill[i]["Line"][0]["Quantity"]
-                                        / (100 + taxrate1)
-                                        * 100
-                                    )
-                                    * final_bill[i]["Line"][0]["Discount"]
-                                    / 100
+                                        -(
+                                                final_bill[i]["Line"][0]["UnitAmount"]
+                                                * final_bill[i]["Line"][0]["Quantity"]
+                                                / (100 + taxrate1)
+                                                * 100
+                                        )
+                                        * final_bill[i]["Line"][0]["Discount"]
+                                        / 100
                                 )
                                 discount1["ItemBasedExpenseLineDetail"] = discount2
 
@@ -376,7 +375,7 @@ def add_xero_item_bill(job_id):
 
                             if start_date1 is not None and end_date1 is not None:
                                 if (bill_date1 >= start_date1) and (
-                                    bill_date1 <= end_date1
+                                        bill_date1 <= end_date1
                                 ):
                                     response = requests.request(
                                         "POST", url1, headers=headers, data=payload
@@ -384,18 +383,18 @@ def add_xero_item_bill(job_id):
                                     if response.status_code == 401:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            (
-                                                res1["fault"]["error"][0]["message"]
-                                            ).split(";")[0]
-                                        ).split("=")[
-                                            1
-                                        ] + ": Please Update the Access Token"
+                                                   (
+                                                       res1["fault"]["error"][0]["message"]
+                                                   ).split(";")[0]
+                                               ).split("=")[
+                                                   1
+                                               ] + ": Please Update the Access Token"
                                         add_job_status(job_id, res2, "error")
                                     elif response.status_code == 400:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            res1["Fault"]["Error"][0]["Detail"]
-                                        ) + "{}".format(final_bill[i]["Inv_No"])
+                                                   res1["Fault"]["Error"][0]["Detail"]
+                                               ) + "{}".format(final_bill[i]["Inv_No"])
                                         add_job_status(job_id, res2, "error")
                                 else:
                                     pass
@@ -406,16 +405,16 @@ def add_xero_item_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + "{}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + "{}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
 
                     else:
@@ -452,15 +451,15 @@ def add_xero_item_bill(job_id):
                                     taxrate1 = 0
                                     for k1 in range(0, len(QBO_tax)):
                                         if (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "BASEXCLUDED"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "BASEXCLUDED"
                                         ) or (
-                                            final_bill[i]["Line"][j]["TaxType"] == None
+                                                final_bill[i]["Line"][j]["TaxType"] == None
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "BAS-W1"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "BAS-W1"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -483,43 +482,13 @@ def add_xero_item_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "EXEMPTEXPENSES"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "EXEMPTEXPENSES"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST-free (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
-                                                ):
-                                                    TaxRate["value"] = QBO_tax[k1][
-                                                        "taxrate_id"
-                                                    ]
-                                                    TaxCodeRef["value"] = QBO_tax[k1][
-                                                        "taxcode_id"
-                                                    ]
-                                                    TaxLineDetail[
-                                                        "TaxPercent"
-                                                    ] = QBO_tax[k1]["Rate"]
-                                                    taxrate1 = QBO_tax[k1]["Rate"]
-                                                    TaxLineDetail[
-                                                        "NetAmountTaxable"
-                                                    ] = abs(
-                                                        QBO_tax[k1]["Rate"]
-                                                        * final_bill[i]["TotalTax"]
-                                                    )
-                                                    Tax["Amount"] = abs(
-                                                        final_bill[i]["TotalTax"]
-                                                        * taxrate1
-                                                    )
-
-                                        elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "CAPEXINPUT"
-                                        ):
-                                            if "taxrate_name" in QBO_tax[k1]:
-                                                if (
-                                                    "GST (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST-free (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -543,13 +512,13 @@ def add_xero_item_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "OUTPUT"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "CAPEXINPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST (sales)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -573,13 +542,43 @@ def add_xero_item_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "EXEMPTOUTPUT"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "OUTPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST-free (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST (sales)"
+                                                        in QBO_tax[k1]["taxrate_name"]
+                                                ):
+                                                    TaxRate["value"] = QBO_tax[k1][
+                                                        "taxrate_id"
+                                                    ]
+                                                    TaxCodeRef["value"] = QBO_tax[k1][
+                                                        "taxcode_id"
+                                                    ]
+                                                    TaxLineDetail[
+                                                        "TaxPercent"
+                                                    ] = QBO_tax[k1]["Rate"]
+                                                    taxrate1 = QBO_tax[k1]["Rate"]
+                                                    TaxLineDetail[
+                                                        "NetAmountTaxable"
+                                                    ] = abs(
+                                                        QBO_tax[k1]["Rate"]
+                                                        * final_bill[i]["TotalTax"]
+                                                    )
+                                                    Tax["Amount"] = abs(
+                                                        final_bill[i]["TotalTax"]
+                                                        * taxrate1
+                                                    )
+
+                                        elif (
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "EXEMPTOUTPUT"
+                                        ):
+                                            if "taxrate_name" in QBO_tax[k1]:
+                                                if (
+                                                        "GST-free (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -606,12 +605,12 @@ def add_xero_item_bill(job_id):
                                             pass
 
                                     QuerySet1["Amount"] = (
-                                        abs(
-                                            final_bill[i]["Line"][j]["Quantity"]
-                                            * final_bill[i]["Line"][j]["UnitAmount"]
-                                        )
-                                        / (100 + taxrate1)
-                                        * 100
+                                            abs(
+                                                final_bill[i]["Line"][j]["Quantity"]
+                                                * final_bill[i]["Line"][j]["UnitAmount"]
+                                            )
+                                            / (100 + taxrate1)
+                                            * 100
                                     )
                                     QuerySet2["UnitPrice"] = abs(
                                         final_bill[i]["Line"][j]["UnitAmount"]
@@ -624,14 +623,14 @@ def add_xero_item_bill(job_id):
 
                                 if "supplier_invoice_no" in final_bill[i]:
                                     if (
-                                        final_bill[i]["supplier_invoice_no"] != ""
-                                        or final_bill[i]["supplier_invoice_no"]
-                                        is not None
+                                            final_bill[i]["supplier_invoice_no"] != ""
+                                            or final_bill[i]["supplier_invoice_no"]
+                                            is not None
                                     ):
                                         QuerySet["DocNumber"] = (
-                                            final_bill[i]["Inv_No"]
-                                            + "-"
-                                            + final_bill[i]["supplier_invoice_no"]
+                                                final_bill[i]["Inv_No"]
+                                                + "-"
+                                                + final_bill[i]["supplier_invoice_no"]
                                         )
                                     else:
                                         QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -658,12 +657,12 @@ def add_xero_item_bill(job_id):
                                     for j2 in range(0, len(xero_items)):
                                         if "ItemCode" in final_bill[i]["Line"][j]:
                                             if (
-                                                final_bill[i]["Line"][j]["ItemCode"]
-                                                == xero_items[j2]["Code"]
+                                                    final_bill[i]["Line"][j]["ItemCode"]
+                                                    == xero_items[j2]["Code"]
                                             ):
                                                 if (
-                                                    xero_items[j2]["Name"]
-                                                    == QBO_item[j1]["Name"]
+                                                        xero_items[j2]["Name"]
+                                                        == QBO_item[j1]["Name"]
                                                 ):
                                                     QuerySet3["value"] = QBO_item[j1][
                                                         "Id"
@@ -671,14 +670,14 @@ def add_xero_item_bill(job_id):
 
                                 for j3 in range(0, len(QBO_supplier)):
                                     if QBO_supplier[j3]["DisplayName"].startswith(
-                                        final_bill[i]["ContactName"]
+                                            final_bill[i]["ContactName"]
                                     ) and QBO_supplier[j3]["DisplayName"].endswith(
                                         " - S"
                                     ):
                                         QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                     elif (
-                                        final_bill[i]["ContactName"]
-                                        == QBO_supplier[j3]["DisplayName"]
+                                            final_bill[i]["ContactName"]
+                                            == QBO_supplier[j3]["DisplayName"]
                                     ):
                                         QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                     else:
@@ -695,16 +694,16 @@ def add_xero_item_bill(job_id):
                                 if final_bill[i]["Line"][j]["Discount"] != 0:
                                     discount2["Qty"] = "1"
                                     discount2["UnitPrice"] = (
-                                        -(
-                                            (
-                                                final_bill[i]["Line"][j]["Quantity"]
-                                                * final_bill[i]["Line"][j]["UnitAmount"]
+                                            -(
+                                                    (
+                                                            final_bill[i]["Line"][j]["Quantity"]
+                                                            * final_bill[i]["Line"][j]["UnitAmount"]
+                                                    )
+                                                    / (100 + taxrate1)
+                                                    * 100
                                             )
-                                            / (100 + taxrate1)
-                                            * 100
-                                        )
-                                        * final_bill[i]["Line"][j]["Discount"]
-                                        / 100
+                                            * final_bill[i]["Line"][j]["Discount"]
+                                            / 100
                                     )
                                     discount2["TaxCodeRef"] = TaxCodeRef
                                     discount2["ItemRef"] = QuerySet3
@@ -714,16 +713,16 @@ def add_xero_item_bill(job_id):
                                         "DetailType"
                                     ] = "ItemBasedExpenseLineDetail"
                                     discount1["Amount"] = (
-                                        -(
-                                            (
-                                                final_bill[i]["Line"][j]["Quantity"]
-                                                * final_bill[i]["Line"][j]["UnitAmount"]
+                                            -(
+                                                    (
+                                                            final_bill[i]["Line"][j]["Quantity"]
+                                                            * final_bill[i]["Line"][j]["UnitAmount"]
+                                                    )
+                                                    / (100 + taxrate1)
+                                                    * 100
                                             )
-                                            / (100 + taxrate1)
-                                            * 100
-                                        )
-                                        * final_bill[i]["Line"][j]["Discount"]
-                                        / 100
+                                            * final_bill[i]["Line"][j]["Discount"]
+                                            / 100
                                     )
                                     discount1["ItemBasedExpenseLineDetail"] = discount2
 
@@ -740,7 +739,7 @@ def add_xero_item_bill(job_id):
 
                         if start_date1 is not None and end_date1 is not None:
                             if (bill_date1 >= start_date1) and (
-                                bill_date1 <= end_date1
+                                    bill_date1 <= end_date1
                             ):
                                 response = requests.request(
                                     "POST", url1, headers=headers, data=payload
@@ -748,16 +747,16 @@ def add_xero_item_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + ":{}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + ":{}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
                             else:
                                 pass
@@ -768,14 +767,14 @@ def add_xero_item_bill(job_id):
                             if response.status_code == 401:
                                 res1 = json.loads(response.text)
                                 res2 = (
-                                    (res1["fault"]["error"][0]["message"]).split(";")[0]
-                                ).split("=")[1] + ": Please Update the Access Token"
+                                           (res1["fault"]["error"][0]["message"]).split(";")[0]
+                                       ).split("=")[1] + ": Please Update the Access Token"
                                 add_job_status(job_id, res2, "error")
                             elif response.status_code == 400:
                                 res1 = json.loads(response.text)
                                 res2 = (
-                                    res1["Fault"]["Error"][0]["Detail"]
-                                ) + ":{}".format(final_bill[i]["Inv_No"])
+                                           res1["Fault"]["Error"][0]["Detail"]
+                                       ) + ":{}".format(final_bill[i]["Inv_No"])
                                 add_job_status(job_id, res2, "error")
 
                 else:
@@ -810,8 +809,8 @@ def add_xero_item_bill(job_id):
                                 QuerySet["GlobalTaxCalculation"] = "TaxInclusive"
                                 for k1 in range(0, len(QBO_tax)):
                                     if (
-                                        final_bill[i]["Line"][0]["TaxType"]
-                                        == "BASEXCLUDED"
+                                            final_bill[i]["Line"][0]["TaxType"]
+                                            == "BASEXCLUDED"
                                     ) or (final_bill[i]["Line"][0]["TaxType"] == None):
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if "BAS-W1" in QBO_tax[k1]["taxrate_name"]:
@@ -835,8 +834,8 @@ def add_xero_item_bill(job_id):
                                     elif final_bill[i]["Line"][0]["TaxType"] == "INPUT":
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if (
-                                                "GST (purchases)"
-                                                in QBO_tax[k1]["taxrate_name"]
+                                                    "GST (purchases)"
+                                                    in QBO_tax[k1]["taxrate_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -854,12 +853,12 @@ def add_xero_item_bill(job_id):
                                                 )
 
                                     elif (
-                                        final_bill[i]["Line"][j]["TaxType"]
-                                        == "EXEMPTEXPENSES"
+                                            final_bill[i]["Line"][j]["TaxType"]
+                                            == "EXEMPTEXPENSES"
                                     ):
                                         if (
-                                            "GST-free (purchases)"
-                                            == QBO_tax[k1]["taxcode_name"]
+                                                "GST-free (purchases)"
+                                                == QBO_tax[k1]["taxcode_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -894,13 +893,13 @@ def add_xero_item_bill(job_id):
 
                             if "supplier_invoice_no" in final_bill[i]:
                                 if (
-                                    final_bill[i]["supplier_invoice_no"] != ""
-                                    or final_bill[i]["supplier_invoice_no"] is not None
+                                        final_bill[i]["supplier_invoice_no"] != ""
+                                        or final_bill[i]["supplier_invoice_no"] is not None
                                 ):
                                     QuerySet["DocNumber"] = (
-                                        final_bill[i]["Inv_No"]
-                                        + "-"
-                                        + final_bill[i]["supplier_invoice_no"]
+                                            final_bill[i]["Inv_No"]
+                                            + "-"
+                                            + final_bill[i]["supplier_invoice_no"]
                                     )
                                 else:
                                     QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -923,23 +922,23 @@ def add_xero_item_bill(job_id):
                                 if "ItemCode" in final_bill[i]["Line"][0]:
                                     for j2 in range(0, len(xero_items)):
                                         if (
-                                            final_bill[i]["Line"][0]["ItemCode"]
-                                            == xero_items[j2]["Code"]
+                                                final_bill[i]["Line"][0]["ItemCode"]
+                                                == xero_items[j2]["Code"]
                                         ):
                                             if (
-                                                xero_items[j2]["Name"]
-                                                == QBO_item[j1]["Name"]
+                                                    xero_items[j2]["Name"]
+                                                    == QBO_item[j1]["Name"]
                                             ):
                                                 QuerySet3["value"] = QBO_item[j1]["Id"]
 
                             for j3 in range(0, len(QBO_supplier)):
                                 if QBO_supplier[j3]["DisplayName"].startswith(
-                                    final_bill[i]["ContactName"]
+                                        final_bill[i]["ContactName"]
                                 ) and QBO_supplier[j3]["DisplayName"].endswith(" - S"):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 elif (
-                                    final_bill[i]["ContactName"]
-                                    == QBO_supplier[j3]["DisplayName"]
+                                        final_bill[i]["ContactName"]
+                                        == QBO_supplier[j3]["DisplayName"]
                                 ):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 else:
@@ -956,17 +955,17 @@ def add_xero_item_bill(job_id):
                             if final_bill[i]["Line"][0]["Discount"] != 0:
                                 discount2["Qty"] = "1"
                                 discount2["UnitPrice"] = (
-                                    -round(
-                                        abs(
-                                            final_bill[i]["Line"][0]["Quantity"]
-                                            * final_bill[i]["Line"][0]["UnitAmount"]
+                                        -round(
+                                            abs(
+                                                final_bill[i]["Line"][0]["Quantity"]
+                                                * final_bill[i]["Line"][0]["UnitAmount"]
+                                            )
+                                            / (100 + taxrate1)
+                                            * 100,
+                                            2,
                                         )
-                                        / (100 + taxrate1)
-                                        * 100,
-                                        2,
-                                    )
-                                    * final_bill[i]["Line"][0]["Discount"]
-                                    / 100
+                                        * final_bill[i]["Line"][0]["Discount"]
+                                        / 100
                                 )
                                 discount2["TaxCodeRef"] = TaxCodeRef
                                 discount2["ItemRef"] = QuerySet3
@@ -974,17 +973,17 @@ def add_xero_item_bill(job_id):
                                 discount1["Description"] = "Discount Given"
                                 discount1["DetailType"] = "ItemBasedExpenseLineDetail"
                                 discount1["Amount"] = (
-                                    -round(
-                                        abs(
-                                            final_bill[i]["Line"][0]["Quantity"]
-                                            * final_bill[i]["Line"][0]["UnitAmount"]
+                                        -round(
+                                            abs(
+                                                final_bill[i]["Line"][0]["Quantity"]
+                                                * final_bill[i]["Line"][0]["UnitAmount"]
+                                            )
+                                            / (100 + taxrate1)
+                                            * 100,
+                                            2,
                                         )
-                                        / (100 + taxrate1)
-                                        * 100,
-                                        2,
-                                    )
-                                    * final_bill[i]["Line"][0]["Discount"]
-                                    / 100
+                                        * final_bill[i]["Line"][0]["Discount"]
+                                        / 100
                                 )
                                 discount1["ItemBasedExpenseLineDetail"] = discount2
 
@@ -1000,7 +999,7 @@ def add_xero_item_bill(job_id):
 
                             if start_date1 is not None and end_date1 is not None:
                                 if (bill_date1 >= start_date1) and (
-                                    bill_date1 <= end_date1
+                                        bill_date1 <= end_date1
                                 ):
                                     response = requests.request(
                                         "POST", url2, headers=headers, data=payload
@@ -1008,18 +1007,18 @@ def add_xero_item_bill(job_id):
                                     if response.status_code == 401:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            (
-                                                res1["fault"]["error"][0]["message"]
-                                            ).split(";")[0]
-                                        ).split("=")[
-                                            1
-                                        ] + ": Please Update the Access Token"
+                                                   (
+                                                       res1["fault"]["error"][0]["message"]
+                                                   ).split(";")[0]
+                                               ).split("=")[
+                                                   1
+                                               ] + ": Please Update the Access Token"
                                         add_job_status(job_id, res2, "error")
                                     elif response.status_code == 400:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            res1["Fault"]["Error"][0]["Detail"]
-                                        ) + ":{}".format(final_bill[i]["Inv_No"])
+                                                   res1["Fault"]["Error"][0]["Detail"]
+                                               ) + ":{}".format(final_bill[i]["Inv_No"])
                                         add_job_status(job_id, res2, "error")
                                 else:
                                     pass
@@ -1031,16 +1030,16 @@ def add_xero_item_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + ":{}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + ":{}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
 
                     else:
@@ -1078,15 +1077,15 @@ def add_xero_item_bill(job_id):
                                     QuerySet["GlobalTaxCalculation"] = "TaxInclusive"
                                     for k1 in range(0, len(QBO_tax)):
                                         if (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "BASEXCLUDED"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "BASEXCLUDED"
                                         ) or (
-                                            final_bill[i]["Line"][j]["TaxType"] == None
+                                                final_bill[i]["Line"][j]["TaxType"] == None
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "BAS-W1"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "BAS-W1"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -1109,13 +1108,13 @@ def add_xero_item_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "INPUT"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "INPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -1135,12 +1134,12 @@ def add_xero_item_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "EXEMPTEXPENSES"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "EXEMPTEXPENSES"
                                         ):
                                             if (
-                                                "GST-free (purchases)"
-                                                == QBO_tax[k1]["taxcode_name"]
+                                                    "GST-free (purchases)"
+                                                    == QBO_tax[k1]["taxcode_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -1165,15 +1164,15 @@ def add_xero_item_bill(job_id):
 
                                     QuerySet1["Amount"] = abs(
                                         (
-                                            round(
-                                                final_bill[i]["Line"][j]["Quantity"]
-                                                * final_bill[i]["Line"][j][
-                                                    "UnitAmount"
-                                                ],
-                                                2,
-                                            )
-                                            / (100 + taxrate1)
-                                            * 100
+                                                round(
+                                                    final_bill[i]["Line"][j]["Quantity"]
+                                                    * final_bill[i]["Line"][j][
+                                                        "UnitAmount"
+                                                    ],
+                                                    2,
+                                                )
+                                                / (100 + taxrate1)
+                                                * 100
                                         )
                                     )
                                     QuerySet2["UnitPrice"] = abs(
@@ -1187,14 +1186,14 @@ def add_xero_item_bill(job_id):
 
                                 if "supplier_invoice_no" in final_bill[i]:
                                     if (
-                                        final_bill[i]["supplier_invoice_no"] != ""
-                                        or final_bill[i]["supplier_invoice_no"]
-                                        is not None
+                                            final_bill[i]["supplier_invoice_no"] != ""
+                                            or final_bill[i]["supplier_invoice_no"]
+                                            is not None
                                     ):
                                         QuerySet["DocNumber"] = (
-                                            final_bill[i]["Inv_No"]
-                                            + "-"
-                                            + final_bill[i]["supplier_invoice_no"]
+                                                final_bill[i]["Inv_No"]
+                                                + "-"
+                                                + final_bill[i]["supplier_invoice_no"]
                                         )
                                     else:
                                         QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -1219,12 +1218,12 @@ def add_xero_item_bill(job_id):
                                     for j2 in range(0, len(xero_items)):
                                         if "ItemCode" in final_bill[i]["Line"][j]:
                                             if (
-                                                final_bill[i]["Line"][j]["ItemCode"]
-                                                == xero_items[j2]["Code"]
+                                                    final_bill[i]["Line"][j]["ItemCode"]
+                                                    == xero_items[j2]["Code"]
                                             ):
                                                 if (
-                                                    xero_items[j2]["Name"]
-                                                    == QBO_item[j1]["Name"]
+                                                        xero_items[j2]["Name"]
+                                                        == QBO_item[j1]["Name"]
                                                 ):
                                                     QuerySet3["value"] = QBO_item[j1][
                                                         "Id"
@@ -1232,14 +1231,14 @@ def add_xero_item_bill(job_id):
 
                                 for j3 in range(0, len(QBO_supplier)):
                                     if QBO_supplier[j3]["DisplayName"].startswith(
-                                        final_bill[i]["ContactName"]
+                                            final_bill[i]["ContactName"]
                                     ) and QBO_supplier[j3]["DisplayName"].endswith(
                                         " - S"
                                     ):
                                         QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                     elif (
-                                        final_bill[i]["ContactName"]
-                                        == QBO_supplier[j3]["DisplayName"]
+                                            final_bill[i]["ContactName"]
+                                            == QBO_supplier[j3]["DisplayName"]
                                     ):
                                         QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                     else:
@@ -1257,21 +1256,21 @@ def add_xero_item_bill(job_id):
                                 if final_bill[i]["Line"][j]["Discount"] != 0:
                                     discount2["Qty"] = "1"
                                     discount2["UnitPrice"] = (
-                                        (
-                                            round(
-                                                (
-                                                    final_bill[i]["Line"][j]["Quantity"]
-                                                    * final_bill[i]["Line"][j][
-                                                        "UnitAmount"
-                                                    ]
+                                            (
+                                                round(
+                                                    (
+                                                            final_bill[i]["Line"][j]["Quantity"]
+                                                            * final_bill[i]["Line"][j][
+                                                                "UnitAmount"
+                                                            ]
+                                                    )
+                                                    / (100 + taxrate1)
+                                                    * 100,
+                                                    2,
                                                 )
-                                                / (100 + taxrate1)
-                                                * 100,
-                                                2,
                                             )
-                                        )
-                                        * final_bill[i]["Line"][j]["Discount"]
-                                        / 100
+                                            * final_bill[i]["Line"][j]["Discount"]
+                                            / 100
                                     )
                                     discount2["TaxCodeRef"] = TaxCodeRef
                                     discount2["ItemRef"] = QuerySet3
@@ -1281,21 +1280,21 @@ def add_xero_item_bill(job_id):
                                         "DetailType"
                                     ] = "ItemBasedExpenseLineDetail"
                                     discount1["Amount"] = (
-                                        (
-                                            round(
-                                                (
-                                                    final_bill[i]["Line"][j]["Quantity"]
-                                                    * final_bill[i]["Line"][j][
-                                                        "UnitAmount"
-                                                    ]
+                                            (
+                                                round(
+                                                    (
+                                                            final_bill[i]["Line"][j]["Quantity"]
+                                                            * final_bill[i]["Line"][j][
+                                                                "UnitAmount"
+                                                            ]
+                                                    )
+                                                    / (100 + taxrate1)
+                                                    * 100,
+                                                    2,
                                                 )
-                                                / (100 + taxrate1)
-                                                * 100,
-                                                2,
                                             )
-                                        )
-                                        * final_bill[i]["Line"][j]["Discount"]
-                                        / 100
+                                            * final_bill[i]["Line"][j]["Discount"]
+                                            / 100
                                     )
                                     discount1["ItemBasedExpenseLineDetail"] = discount2
 
@@ -1312,7 +1311,7 @@ def add_xero_item_bill(job_id):
 
                         if start_date1 is not None and end_date1 is not None:
                             if (bill_date1 >= start_date1) and (
-                                bill_date1 <= end_date1
+                                    bill_date1 <= end_date1
                             ):
                                 response = requests.request(
                                     "POST", url2, headers=headers, data=payload
@@ -1320,16 +1319,16 @@ def add_xero_item_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + ":{}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + ":{}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
                             else:
                                 pass
@@ -1341,14 +1340,14 @@ def add_xero_item_bill(job_id):
                             if response.status_code == 401:
                                 res1 = json.loads(response.text)
                                 res2 = (
-                                    (res1["fault"]["error"][0]["message"]).split(";")[0]
-                                ).split("=")[1] + ": Please Update the Access Token"
+                                           (res1["fault"]["error"][0]["message"]).split(";")[0]
+                                       ).split("=")[1] + ": Please Update the Access Token"
                                 add_job_status(job_id, res2, "error")
                             elif response.status_code == 400:
                                 res1 = json.loads(response.text)
                                 res2 = (
-                                    res1["Fault"]["Error"][0]["Detail"]
-                                ) + ":{}".format(final_bill[i]["Inv_No"])
+                                           res1["Fault"]["Error"][0]["Detail"]
+                                       ) + ":{}".format(final_bill[i]["Inv_No"])
                                 add_job_status(job_id, res2, "error")
 
             else:
@@ -1356,4 +1355,3 @@ def add_xero_item_bill(job_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_item_bill -> add_xero_item_bill", ex)
-        

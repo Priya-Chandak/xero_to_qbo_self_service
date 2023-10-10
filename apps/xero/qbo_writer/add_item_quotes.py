@@ -12,7 +12,6 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 logger = logging.getLogger(__name__)
 
 
-
 def add_xero_item_quote(job_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_item_quotes -> add_xero_item_quote")
@@ -20,7 +19,7 @@ def add_xero_item_quote(job_id):
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        item_quotes = db["xero_quotes"].find({"job_id":job_id})
+        item_quotes = db["xero_quotes"].find({"job_id": job_id})
 
         xero_quotes = []
         for p1 in item_quotes:
@@ -28,37 +27,37 @@ def add_xero_item_quote(job_id):
 
         xero_quotes = xero_quotes
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p1 in QBO_Item:
             QBO_item.append(p1)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p2 in QBO_Class:
             QBO_class.append(p2)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p3 in QBO_Tax:
             QBO_tax.append(p3)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p4 in QBO_COA:
             QBO_coa.append(p4)
 
-        QBO_Customer = db["QBO_Customer"].find({"job_id":job_id})
+        QBO_Customer = db["QBO_Customer"].find({"job_id": job_id})
         QBO_customer = []
         for p5 in QBO_Customer:
             QBO_customer.append(p5)
 
-        QBO_Supplier = db["QBO_Supplier"].find({"job_id":job_id})
+        QBO_Supplier = db["QBO_Supplier"].find({"job_id": job_id})
         QBO_supplier = []
         for p7 in QBO_Supplier:
             QBO_supplier.append(p7)
 
-        Xero_COA = db["xero_coa"].find({"job_id":job_id})
+        Xero_COA = db["xero_coa"].find({"job_id": job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
@@ -77,21 +76,21 @@ def add_xero_item_quote(job_id):
             if "Customer" in xero_quotes[i]:
                 for p1 in range(0, len(QBO_customer)):
                     if (
-                        xero_quotes[i]["Customer"] == QBO_customer[p1]["DisplayName"]
+                            xero_quotes[i]["Customer"] == QBO_customer[p1]["DisplayName"]
                     ) or (
-                        xero_quotes[i]["Customer"]
-                        == QBO_customer[p1]["DisplayName"] + " - C"
+                            xero_quotes[i]["Customer"]
+                            == QBO_customer[p1]["DisplayName"] + " - C"
                     ):
                         CustomerRef["value"] = QBO_customer[p1]["Id"]
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
                     else:
                         for p1 in range(0, len(QBO_supplier)):
                             if (
-                                xero_quotes[i]["Customer"]
-                                == QBO_supplier[p1]["DisplayName"]
+                                    xero_quotes[i]["Customer"]
+                                    == QBO_supplier[p1]["DisplayName"]
                             ) or (
-                                xero_quotes[i]["Customer"]
-                                == QBO_supplier[p1]["DisplayName"] + " - S"
+                                    xero_quotes[i]["Customer"]
+                                    == QBO_supplier[p1]["DisplayName"] + " - S"
                             ):
                                 CustomerRef["value"] = QBO_supplier[p1]["Id"]
                                 CustomerRef["name"] = QBO_supplier[p1]["DisplayName"]
@@ -130,8 +129,8 @@ def add_xero_item_quote(job_id):
                     for p51 in range(0, len(xero_coa)):
                         if "Code" in xero_coa[p51]:
                             if (
-                                xero_quotes[i]["Line"][j]["Acc_Name"]
-                                == xero_coa[p51]["Code"]
+                                    xero_quotes[i]["Line"][j]["Acc_Name"]
+                                    == xero_coa[p51]["Code"]
                             ):
                                 if xero_coa[p51]["Name"] == QBO_coa[p5]["Name"]:
                                     ItemAccountRef["name"] = QBO_coa[p5]["Name"]
@@ -147,10 +146,10 @@ def add_xero_item_quote(job_id):
                                 TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                 taxrate1 = taxrate
                                 total_val = (
-                                    total_val
-                                    + xero_quotes[i]["Line"][j]["Total"]
-                                    / (100 + taxrate1)
-                                    * 100
+                                        total_val
+                                        + xero_quotes[i]["Line"][j]["Total"]
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
 
                     elif xero_quotes[i]["Line"][j]["taxcode"] == "CAP":
@@ -161,9 +160,9 @@ def add_xero_item_quote(job_id):
                             TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                             taxrate1 = taxrate
                             total_val += (
-                                xero_quotes[i]["Line"][j]["Total"]
-                                / (100 + taxrate1)
-                                * 100
+                                    xero_quotes[i]["Line"][j]["Total"]
+                                    / (100 + taxrate1)
+                                    * 100
                             )
 
                     elif xero_quotes[i]["Line"][j]["taxcode"] == "FRE":
@@ -175,9 +174,9 @@ def add_xero_item_quote(job_id):
                                 TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                                 taxrate1 = taxrate
                                 total_val += (
-                                    xero_quotes[i]["Line"][j]["Total"]
-                                    / (100 + taxrate1)
-                                    * 100
+                                        xero_quotes[i]["Line"][j]["Total"]
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
 
                     elif xero_quotes[i]["Line"][j]["taxcode"] == "N-T":
@@ -188,14 +187,14 @@ def add_xero_item_quote(job_id):
                             TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                             taxrate1 = taxrate
                             total_val += (
-                                xero_quotes[i]["Line"][j]["Total"]
-                                / (100 + taxrate1)
-                                * 100
+                                    xero_quotes[i]["Line"][j]["Total"]
+                                    / (100 + taxrate1)
+                                    * 100
                             )
 
                     elif (
-                        xero_quotes[i]["Line"][j]["taxcode"]
-                        == QBO_tax[p6]["taxcode_name"]
+                            xero_quotes[i]["Line"][j]["taxcode"]
+                            == QBO_tax[p6]["taxcode_name"]
                     ):
                         TaxCodeRef["value"] = QBO_tax[p6]["taxcode_id"]
                         taxrate = QBO_tax[p6]["Rate"]
@@ -203,7 +202,7 @@ def add_xero_item_quote(job_id):
                         TaxRate["value"] = QBO_tax[p6]["taxrate_id"]
                         taxrate1 = taxrate
                         total_val += (
-                            xero_quotes[i]["Line"][j]["Total"] / (100 + taxrate1) * 100
+                                xero_quotes[i]["Line"][j]["Total"] / (100 + taxrate1) * 100
                         )
                     else:
                         pass
@@ -232,19 +231,19 @@ def add_xero_item_quote(job_id):
                         discount_SalesItemLineDetail["Qty"] = 1
                         discount_SalesItemLineDetail["UnitPrice"] = -round(
                             (
-                                xero_quotes[i]["Line"][j]["ShipQuantity"]
-                                * xero_quotes[i]["Line"][j]["UnitPrice"]
-                                * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                    * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                    * xero_quotes[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
                         DiscountPercent["Amount"] = -round(
                             (
-                                xero_quotes[i]["Line"][j]["ShipQuantity"]
-                                * xero_quotes[i]["Line"][j]["UnitPrice"]
-                                * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                    * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                    * xero_quotes[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
@@ -294,25 +293,25 @@ def add_xero_item_quote(job_id):
                             2,
                         )
                         subtotal["Amount"] = -(
-                            xero_quotes[i]["Subtotal"] - xero_quotes[i]["TotalTax"]
+                                xero_quotes[i]["Subtotal"] - xero_quotes[i]["TotalTax"]
                         )
                         TxnTaxDetail["TotalTax"] = -xero_quotes[i]["TotalTax"]
                         discount_SalesItemLineDetail["Qty"] = -1
                         discount_SalesItemLineDetail["UnitPrice"] = round(
                             (
-                                xero_quotes[i]["Line"][j]["ShipQuantity"]
-                                * xero_quotes[i]["Line"][j]["UnitPrice"]
-                                * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                    * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                    * xero_quotes[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
                         DiscountPercent["Amount"] = round(
                             (
-                                xero_quotes[i]["Line"][j]["ShipQuantity"]
-                                * xero_quotes[i]["Line"][j]["UnitPrice"]
-                                * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                                / (100 + taxrate1)
+                                    xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                    * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                    * xero_quotes[i]["Line"][j]["DiscountPercent"]
+                                    / (100 + taxrate1)
                             ),
                             2,
                         )
@@ -320,7 +319,7 @@ def add_xero_item_quote(job_id):
                         if xero_quotes[i]["Line"][j]["taxcode"] == "GST":
                             TaxDetail["Amount"] = -xero_quotes[i]["TotalTax"]
                             TaxLineDetail["NetAmountTaxable"] = (
-                                TaxDetail["Amount"] * taxrate1
+                                    TaxDetail["Amount"] * taxrate1
                             )
                         elif xero_quotes[i]["Line"][j]["taxcode"] == "FRE":
                             TaxDetail["Amount"] = 0
@@ -365,26 +364,26 @@ def add_xero_item_quote(job_id):
                         TxnTaxDetail["TotalTax"] = xero_quotes[i]["TotalTax"]
                         discount_SalesItemLineDetail["Qty"] = 1
                         discount_SalesItemLineDetail["UnitPrice"] = (
-                            -(
-                                xero_quotes[i]["Line"][j]["ShipQuantity"]
-                                * xero_quotes[i]["Line"][j]["UnitPrice"]
-                                * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                            )
-                            / 100
+                                -(
+                                        xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                        * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                        * xero_quotes[i]["Line"][j]["DiscountPercent"]
+                                )
+                                / 100
                         )
                         DiscountPercent["Amount"] = (
-                            -(
-                                xero_quotes[i]["Line"][j]["ShipQuantity"]
-                                * xero_quotes[i]["Line"][j]["UnitPrice"]
-                                * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                            )
-                            / 100
+                                -(
+                                        xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                        * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                        * xero_quotes[i]["Line"][j]["DiscountPercent"]
+                                )
+                                / 100
                         )
 
                         if taxrate1 != 0:
                             TaxDetail["Amount"] = xero_quotes[i]["TotalTax"]
                             TaxLineDetail["NetAmountTaxable"] = (
-                                xero_quotes[i]["Subtotal"] - xero_quotes[i]["TotalTax"]
+                                    xero_quotes[i]["Subtotal"] - xero_quotes[i]["TotalTax"]
                             )
                         else:
                             TaxDetail["Amount"] = 0
@@ -393,15 +392,16 @@ def add_xero_item_quote(job_id):
                     else:
                         discount_SalesItemLineDetail["Qty"] = -1
                         discount_SalesItemLineDetail["UnitPrice"] = (
-                            xero_quotes[i]["Line"][j]["ShipQuantity"]
-                            * xero_quotes[i]["Line"][j]["UnitPrice"]
-                            * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                        ) / 100
+                                                                            xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                                                            * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                                                            * xero_quotes[i]["Line"][j][
+                                                                                "DiscountPercent"]
+                                                                    ) / 100
                         DiscountPercent["Amount"] = (
-                            xero_quotes[i]["Line"][j]["ShipQuantity"]
-                            * xero_quotes[i]["Line"][j]["UnitPrice"]
-                            * xero_quotes[i]["Line"][j]["DiscountPercent"]
-                        ) / 100
+                                                            xero_quotes[i]["Line"][j]["ShipQuantity"]
+                                                            * xero_quotes[i]["Line"][j]["UnitPrice"]
+                                                            * xero_quotes[i]["Line"][j]["DiscountPercent"]
+                                                    ) / 100
 
                         SalesItemLineDetail["Qty"] = -xero_quotes[i]["Line"][j][
                             "ShipQuantity"
@@ -420,15 +420,15 @@ def add_xero_item_quote(job_id):
                         if taxrate1 != 0:
                             TaxDetail["Amount"] = xero_quotes[i]["TotalTax"]
                             TaxLineDetail["NetAmountTaxable"] = (
-                                xero_quotes[i]["Subtotal"] - xero_quotes[i]["TotalTax"]
+                                    xero_quotes[i]["Subtotal"] - xero_quotes[i]["TotalTax"]
                             )
                         else:
                             if xero_quotes[i]["Line"][j]["taxcode"] == "GST":
                                 TaxDetail["Amount"] = -xero_quotes[i]["TotalTax"]
                                 TaxLineDetail["NetAmountTaxable"] = (
-                                    -xero_quotes[i]["Line"][j]["Total"]
-                                    / (100 + taxrate1)
-                                    * 100
+                                        -xero_quotes[i]["Line"][j]["Total"]
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
                             elif xero_quotes[i]["Line"][j]["taxcode"] == "FRE":
                                 TaxDetail["Amount"] = 0
@@ -474,7 +474,7 @@ def add_xero_item_quote(job_id):
                     quote["Line"].append(DiscountPercent)
 
                 line_amount = (
-                    line_amount + salesitemline["Amount"] + DiscountPercent["Amount"]
+                        line_amount + salesitemline["Amount"] + DiscountPercent["Amount"]
                 )
                 line_amount1 = line_amount + xero_quotes[i]["TotalTax"]
 
@@ -557,8 +557,8 @@ def add_xero_item_quote(job_id):
 
                 else:
                     if (
-                        line_amount1
-                        == xero_quotes[i]["TotalAmount"] + xero_quotes[i]["TotalTax"]
+                            line_amount1
+                            == xero_quotes[i]["TotalAmount"] + xero_quotes[i]["TotalTax"]
                     ):
                         pass
                     else:
@@ -573,17 +573,17 @@ def add_xero_item_quote(job_id):
                             rounding_SalesItemLineDetail["Qty"] = 1
                             if xero_quotes[i]["Subtotal"] > 0:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    xero_quotes[i]["TotalAmount"] - line_amount1
+                                        xero_quotes[i]["TotalAmount"] - line_amount1
                                 )
                                 rounding["Amount"] = (
-                                    xero_quotes[i]["TotalAmount"] - line_amount1
+                                        xero_quotes[i]["TotalAmount"] - line_amount1
                                 )
                             else:
                                 rounding_SalesItemLineDetail["UnitPrice"] = (
-                                    xero_quotes[i]["TotalAmount"] + line_amount1
+                                        xero_quotes[i]["TotalAmount"] + line_amount1
                                 )
                                 rounding["Amount"] = (
-                                    xero_quotes[i]["TotalAmount"] + line_amount1
+                                        xero_quotes[i]["TotalAmount"] + line_amount1
                                 )
 
                             rounding["DetailType"] = "SalesItemLineDetail"
@@ -668,4 +668,3 @@ def add_xero_item_quote(job_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_item_quotes -> add_xero_item_quote", ex)
-        

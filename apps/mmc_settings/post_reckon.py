@@ -5,6 +5,8 @@ import requests
 from apps import db
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings
+
+
 # from apps.util.qbo_util import add_job_status
 
 
@@ -12,11 +14,11 @@ def post_reckon_settings(job_id):
     try:
         main_url = "https://identity.reckon.com/connect/token"
         keys = (
-            db.session.query(Jobs, ToolSettings.keys, ToolSettings.values,ToolSettings.id)
-                .join(Tool, Jobs.output_account_id== Tool.id)
-                .join(ToolSettings, ToolSettings.tool_id == Tool.id)
-                .filter(Jobs.id == job_id)
-                .all()
+            db.session.query(Jobs, ToolSettings.keys, ToolSettings.values, ToolSettings.id)
+            .join(Tool, Jobs.output_account_id == Tool.id)
+            .join(ToolSettings, ToolSettings.tool_id == Tool.id)
+            .filter(Jobs.id == job_id)
+            .all()
         )
 
         data1 = (
@@ -26,7 +28,6 @@ def post_reckon_settings(job_id):
             .filter(Tool.account_type == "Reckon")
             .all())
 
-        
         for row in keys:
             if row[1] == "client_id":
                 client_id = row[2]
@@ -51,15 +52,14 @@ def post_reckon_settings(job_id):
             if row[1] == "book":
                 book = row[2]
 
-       
-        payload = f"grant_type=refresh_token&refresh_token={refresh_token}&redirect_uri={redirect_url}"  
+        payload = f"grant_type=refresh_token&refresh_token={refresh_token}&redirect_uri={redirect_url}"
 
         headers = {
-                'Authorization': f"Basic {id_secret_encoded}",
-                'Content-Type': 'application/x-www-form-urlencoded',
-               
-            } 
-        
+            'Authorization': f"Basic {id_secret_encoded}",
+            'Content-Type': 'application/x-www-form-urlencoded',
+
+        }
+
         response = requests.request("POST", main_url, headers=headers, data=payload)
 
         re = response.json()
@@ -75,7 +75,6 @@ def post_reckon_settings(job_id):
                 access_token_data_id1 = row[0]
                 db.session.query(ToolSettings).filter_by(id=access_token_data_id1).update({"values": new_access_token})
 
-
         db.session.commit()
 
         base_url = f"{url}/{book}"
@@ -84,16 +83,15 @@ def post_reckon_settings(job_id):
         post_headers = {
             'Authorization': f'Bearer {new_access_token}',
             'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': 'bdddd3c7a4034e538e2fea7f61e92aa5' 
-            }
-        
+            'Ocp-Apim-Subscription-Key': 'bdddd3c7a4034e538e2fea7f61e92aa5'
+        }
+
         get_headers = {
             'Authorization': f'Bearer {new_access_token}',
-            'Ocp-Apim-Subscription-Key': 'bdddd3c7a4034e538e2fea7f61e92aa5' 
-            }
-        
-        return payload, base_url, headers,book,post_headers,get_headers
+            'Ocp-Apim-Subscription-Key': 'bdddd3c7a4034e538e2fea7f61e92aa5'
+        }
+
+        return payload, base_url, headers, book, post_headers, get_headers
 
     except Exception as ex:
         traceback.print_exc()
-        

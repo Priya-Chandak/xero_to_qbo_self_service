@@ -1,35 +1,32 @@
+import asyncio
 import json
 import logging
-import asyncio
 
-
-from apps.home.data_util import add_job_status
-from apps.mmc_settings.all_settings import get_settings_qbo
-from apps.util.db_mongo import get_mongodb_database
 from apps.mmc_settings.all_settings import *
-import re
+from apps.util.db_mongo import get_mongodb_database
+
 logger = logging.getLogger(__name__)
 
 from apps.util.qbo_util import post_data_in_myob
 
 
-def get_used_archived_customers_myob(job_id,task_id):
+def get_used_archived_customers_myob(job_id, task_id):
     try:
         logger.info("Started executing xero -> Myobwriter ->  get_used_archived_customers_myob")
         dbname = get_mongodb_database()
         xero_archived_customer_in_invoice1 = dbname['xero_archived_customer_in_invoice_myob']
-        
-        contacts1 = set([doc["ContactName"] for doc in dbname['xero_invoice_customers'].find({'job_id': job_id}, {"ContactName": 1})])
+
+        contacts1 = set([doc["ContactName"] for doc in
+                         dbname['xero_invoice_customers'].find({'job_id': job_id}, {"ContactName": 1})])
         contacts2 = list(dbname['xero_archived_customer'].find({'job_id': job_id}))
 
         filtered_contacts2 = [doc for doc in contacts2 if any(doc['Name'].startswith(contact) for contact in contacts1)]
         result = filtered_contacts2
-        if len(result)>0:
+        if len(result) > 0:
             xero_archived_customer_in_invoice1.insert_many(result)
-        
+
     except Exception as ex:
         logger.error("Error in xero -> myobwriter -> get_used_archived_customers_myob", ex)
-
 
 
 def add_xero_archived_customer_to_myobledger(job_id, task_id):
@@ -50,9 +47,9 @@ def add_xero_archived_customer_to_myobledger(job_id, task_id):
         for p2 in taxcode:
             taxcode1.append(p2)
 
-        data=data
+        data = data
 
-        for i in range(0, len(data)): 
+        for i in range(0, len(data)):
             _id = data[i]['_id']
             task_id = data[i]['task_id']
             Queryset = {'Addresses': []}
@@ -90,7 +87,8 @@ def add_xero_archived_customer_to_myobledger(job_id, task_id):
                     Queryset2['Website'] = data[i]['Website']
 
                 Queryset2["ContactName"] = data[i]["Name"][0:25]
-                if ('AddressLine2' in data[i]['Address'][j]) and ('AddressLine3' in data[i]['Address'][j]) and ('AddressLine1' in data[i]['Address'][j]):
+                if ('AddressLine2' in data[i]['Address'][j]) and ('AddressLine3' in data[i]['Address'][j]) and (
+                        'AddressLine1' in data[i]['Address'][j]):
                     Queryset2['Street'] = data[i]['Address'][j]['AddressLine1'] + "," + data[i]['Address'][j][
                         'AddressLine2'] + "," + data[i]['Address'][j]['AddressLine3']
                 elif ('AddressLine2' in data[i]['Address'][j]) and ('AddressLine1' in data[i]['Address'][j]):
@@ -135,10 +133,10 @@ def add_xero_archived_customer_to_myobledger(job_id, task_id):
 
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/Contact/Customer"
-            if data[i]['is_pushed']==0:
+            if data[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, xero_customer, _id, job_id, task_id,
-                                    id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 

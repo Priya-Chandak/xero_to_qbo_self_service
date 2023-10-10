@@ -2,13 +2,12 @@ import traceback
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 
 
-def get_xero_quotes(job_id,task_id):
+def get_xero_quotes(job_id, task_id):
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
@@ -91,4 +90,3 @@ def get_xero_quotes(job_id,task_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

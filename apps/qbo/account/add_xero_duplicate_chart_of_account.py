@@ -1,16 +1,12 @@
 import json
 import traceback
 
-import requests
-
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
 
-
-def add_xero_duplicate_chart_account(job_id,task_id):
+def add_xero_duplicate_chart_account(job_id, task_id):
     try:
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -62,20 +58,19 @@ def add_xero_duplicate_chart_account(job_id,task_id):
         for j in range(0, len(QuerySet1)):
             _id = QuerySet1[j]['_id']
             task_id = QuerySet1[j]['task_id']
-            
+
             try:
                 payload = json.dumps(QuerySet1[j])
-                post_data_in_qbo(url, headers, payload,db["duplicate_coa"],_id, job_id,task_id, QuerySet1[j]["Name"])
-                    
+                post_data_in_qbo(url, headers, payload, db["duplicate_coa"], _id, job_id, task_id, QuerySet1[j]["Name"])
+
             except Exception as ex:
                 pass
 
     except Exception as ex:
         traceback.print_exc()
-        
 
 
-def update_xero_existing_chart_account(job_id,task_id):
+def update_xero_existing_chart_account(job_id, task_id):
     try:
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -99,8 +94,8 @@ def update_xero_existing_chart_account(job_id,task_id):
         for j in range(0, len(xero_classified_coa1)):
             for j1 in range(0, len(qbo_coa1)):
                 if (
-                    xero_classified_coa1[j]["Name"].lower().strip()
-                    == qbo_coa1[j1]["FullyQualifiedName"].lower().strip()
+                        xero_classified_coa1[j]["Name"].lower().strip()
+                        == qbo_coa1[j1]["FullyQualifiedName"].lower().strip()
                 ):
                     existing.append(xero_classified_coa1[j])
                 else:
@@ -120,15 +115,15 @@ def update_xero_existing_chart_account(job_id,task_id):
             task_id = QuerySet1[j3]['task_id']
             try:
                 if (QuerySet1[j3]["AcctNum"] is not None) and (
-                    QuerySet1[j3]["AcctNum"] != ""
+                        QuerySet1[j3]["AcctNum"] != ""
                 ):
                     e = {}
                     e["Name"] = QuerySet1[j3]["Name"]
                     e["AcctNum"] = QuerySet1[j3]["AcctNum"]
                     for j4 in range(0, len(qbo_coa1)):
                         if (
-                            QuerySet1[j3]["Name"].lower().strip()
-                            == qbo_coa1[j4]["FullyQualifiedName"].lower().strip()
+                                QuerySet1[j3]["Name"].lower().strip()
+                                == qbo_coa1[j4]["FullyQualifiedName"].lower().strip()
                         ):
                             e["AccountType"] = qbo_coa1[j4]["AccountType"]
                             e["AccountSubType"] = qbo_coa1[j4]["AccountSubType"]
@@ -136,13 +131,13 @@ def update_xero_existing_chart_account(job_id,task_id):
                             e["Id"] = qbo_coa1[j4]["Id"]
 
                     payload = json.dumps(e)
-                    post_data_in_qbo(url, headers, payload,db["existing_coa"],_id, job_id,task_id, QuerySet1[j3]["Name"])
+                    post_data_in_qbo(url, headers, payload, db["existing_coa"], _id, job_id, task_id,
+                                     QuerySet1[j3]["Name"])
                 else:
-                    print("Acct Num Missing")  
+                    print("Acct Num Missing")
 
             except Exception as ex:
                 pass
 
     except Exception as ex:
         traceback.print_exc()
-        

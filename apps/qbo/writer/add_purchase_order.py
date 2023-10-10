@@ -15,7 +15,7 @@ def add_item_purchase_order(job_id):
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         db = get_mongodb_database()
 
-        item_purchase_orders = db["item_purchase_order"].find({"job_id":job_id})
+        item_purchase_orders = db["item_purchase_order"].find({"job_id": job_id})
 
         item_purchase_order = []
         for p1 in item_purchase_orders:
@@ -23,27 +23,27 @@ def add_item_purchase_order(job_id):
 
         item_purchase_order = item_purchase_order
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p1 in QBO_Item:
             QBO_item.append(p1)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p2 in QBO_Class:
             QBO_class.append(p2)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p3 in QBO_Tax:
             QBO_tax.append(p3)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p4 in QBO_COA:
             QBO_coa.append(p4)
 
-        QBO_Supplier = db["QBO_Supplier"].find({"job_id":job_id})
+        QBO_Supplier = db["QBO_Supplier"].find({"job_id": job_id})
         QBO_supplier = []
         for p5 in QBO_Supplier:
             QBO_supplier.append(p5)
@@ -669,4 +669,3 @@ def add_item_purchase_order(job_id):
                 )
     except Exception as ex:
         traceback.print_exc()
-        

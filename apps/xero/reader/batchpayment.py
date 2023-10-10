@@ -2,7 +2,6 @@ import traceback
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
@@ -30,7 +29,7 @@ def get_xero_invoice_batchpayment(job_id, task_id):
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["BatchPayments"]
-            if len(r2)>0:
+            if len(r2) > 0:
                 no_of_records = len(r2)
                 no_of_pages = (no_of_records // 100) + 1
 
@@ -59,13 +58,12 @@ def get_xero_invoice_batchpayment(job_id, task_id):
                         JsonResponse1["table_name"]: "xero_invoice_batchpayment"
                         if JsonResponse1[i]["Type"] == "RECBATCH":
                             invoice_batchpayment.append(JsonResponse1[i])
-                    
+
                     if len(invoice_batchpayment) > 0:
                         xero_invoice_batchpayment.insert_many(invoice_batchpayment)
 
     except Exception as ex:
         traceback.print_exc()
-        
 
 
 def get_xero_bill_batchpayment(job_id):
@@ -90,12 +88,12 @@ def get_xero_bill_batchpayment(job_id):
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["BatchPayments"]
-            if len(r2)>0:
+            if len(r2) > 0:
                 no_of_records = len(r2)
                 no_of_pages = (no_of_records // 100) + 1
 
                 bill_batchpayment = []
-                
+
                 for pages in range(1, no_of_pages + 1):
                     if start_date == "" and end_date == "":
                         main_url = f"{base_url}/BatchPayments?page={pages}"
@@ -118,7 +116,6 @@ def get_xero_bill_batchpayment(job_id):
 
                     if len(bill_batchpayment) > 0:
                         xero_bill_batchpayment.insert_many(bill_batchpayment)
-                    
+
     except Exception as ex:
         traceback.print_exc()
-        

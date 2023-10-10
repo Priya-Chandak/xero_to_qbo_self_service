@@ -7,7 +7,7 @@ from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_myob
 
 
-def  add_xero_bill_payment_to_myob(job_id, task_id):
+def add_xero_bill_payment_to_myob(job_id, task_id):
     try:
         dbname = get_mongodb_database()
         # payload, base_url, headers = get_settings_myob(job_id)
@@ -63,32 +63,32 @@ def  add_xero_bill_payment_to_myob(job_id, task_id):
                              "Account_Type": record.get('Account_Type'),
                              "job_id": record.get('job_id')} for record in chart_of_account if (
                                     record["Name"].lower().strip() in xero_only_names and record[
-                                "Account_Type"].lower().strip() == ["bank","CreditCard"])]
+                                "Account_Type"].lower().strip() == ["bank", "CreditCard"])]
 
         for i in range(0, len(payment)):
             print(i)
-        # # for i in range(31, 200):
-        #     if "AccountCode" in payment[i] and payment[i]["AccountCode"] in account_ids:
-        #         print("inside account code")
-        #         xero_temp_data = xero_account_id_name_mappings_dict.get(payment[i]["AccountCode"])
-        #         print(xero_temp_data,"xero account data -----")
-        #         print(coa_refined_data,"coa_refined_data ---------")  
+            # # for i in range(31, 200):
+            #     if "AccountCode" in payment[i] and payment[i]["AccountCode"] in account_ids:
+            #         print("inside account code")
+            #         xero_temp_data = xero_account_id_name_mappings_dict.get(payment[i]["AccountCode"])
+            #         print(xero_temp_data,"xero account data -----")
+            #         print(coa_refined_data,"coa_refined_data ---------")
 
-        #         for b in range(0, len(coa_refined_data)):
-                    
-        #             if xero_temp_data == coa_refined_data[b]["Name"].lower().strip():
+            #         for b in range(0, len(coa_refined_data)):
+
+            #             if xero_temp_data == coa_refined_data[b]["Name"].lower().strip():
             for a in range(0, len(xero_coa)):
                 if payment[i]["AccountCode"] == xero_coa[a]["AccountID"]:
                     for b in range(0, len(chart_of_account)):
                         if xero_coa[a]["Name"].lower().strip() == chart_of_account[b]["Name"].lower().strip():
                             print(chart_of_account[b]["Name"])
-                            if chart_of_account[b]["Account_Type"] in ['Bank','BANK',"CreditCard"]:
+                            if chart_of_account[b]["Account_Type"] in ['Bank', 'BANK', "CreditCard"]:
                                 _id = payment[i]['_id']
                                 task_id = payment[i]['task_id']
                                 QuerySet1 = {"Lines": []}
                                 Supplier = {}
                                 account = {}
-                                
+
                                 purchase = {}
                                 invoice = {'Purchase': purchase, "Type": 'Bill'}
 
@@ -117,7 +117,7 @@ def  add_xero_bill_payment_to_myob(job_id, task_id):
                                             if xero_coa[j51]['Name'].lower().strip() == chart_of_account[j5][
                                                 "Name"].lower().strip():
                                                 account["UID"] = chart_of_account[j5]["UID"]
-                                
+
                                 QuerySet1["account"] = account
 
                                 for m in range(0, len(all_bill)):
@@ -127,22 +127,22 @@ def  add_xero_bill_payment_to_myob(job_id, task_id):
                                         purchase["UID"] = all_bill[m]["UID"]
                                         invoice["AmountApplied"] = payment[i]["Amount"]
 
-
                                 QuerySet1["Lines"].append(invoice)
 
                                 payload = json.dumps(QuerySet1)
                                 print(payload)
                                 print(payment[i])
 
-                                id_or_name_value_for_error =(str(payment[i]["InvoiceNumber"])+"-"+ str(payment[i]["Date"])+"-"+ str(payment[i]["Amount"]))
+                                id_or_name_value_for_error = (str(payment[i]["InvoiceNumber"]) + "-" + str(
+                                    payment[i]["Date"]) + "-" + str(payment[i]["Amount"]))
 
                                 payload1, base_url, headers = get_settings_myob(job_id)
                                 url = f"{base_url}/Purchase/SupplierPayment"
-                                if payment[i]['is_pushed']==0:
+                                if payment[i]['is_pushed'] == 0:
                                     asyncio.run(
                                         post_data_in_myob(url, headers, payload, dbname['xero_bill_payment'], _id,
-                                                        job_id, task_id,
-                                                        id_or_name_value_for_error))
+                                                          job_id, task_id,
+                                                          id_or_name_value_for_error))
                                 else:
                                     pass
                             else:

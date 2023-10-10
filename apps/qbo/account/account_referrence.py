@@ -1,6 +1,5 @@
 import traceback
 
-from apps.home.data_util import add_job_status
 from apps.util.db_mongo import get_mongodb_database
 
 
@@ -14,7 +13,7 @@ def account_reference(job_id, task_id):
 
         x = Collection1.find({"job_id": job_id})
         data1 = []
-        for p1 in range(0, Collection1.count_documents({job_id:job_id})):
+        for p1 in range(0, Collection1.count_documents({job_id: job_id})):
             data1.append(x[p1])
 
         income_acc = []
@@ -65,4 +64,3 @@ def account_reference(job_id, task_id):
         income_acc1.insert_many(income_acc)
     except Exception as ex:
         traceback.print_exc()
-        

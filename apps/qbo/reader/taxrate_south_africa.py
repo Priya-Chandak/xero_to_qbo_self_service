@@ -3,7 +3,6 @@ from ast import Break
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 
@@ -43,12 +42,12 @@ def get_south_qbo_taxrate(job_id):
                         "RateValue"
                     ]
                     QuerySet[f"Date{j + 1}"] = JsonResponse1[i]["EffectiveTaxRate"][j][
-                        "EffectiveDate"
-                    ][0:10]
+                                                   "EffectiveDate"
+                                               ][0:10]
                 if "EndDate" in JsonResponse1[i]["EffectiveTaxRate"][j]:
                     QuerySet[f"EndDate{j + 1}"] = JsonResponse1[i]["EffectiveTaxRate"][
-                        j
-                    ]["EndDate"][0:10]
+                                                      j
+                                                  ]["EndDate"][0:10]
 
             arr.append(QuerySet)
 
@@ -61,4 +60,3 @@ def get_south_qbo_taxrate(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

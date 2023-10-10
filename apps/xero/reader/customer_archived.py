@@ -1,24 +1,16 @@
-import json
-from ast import Break
-import json
 import sys
-from os import path
-from os.path import exists
-from MySQLdb import Connect
-from numpy import true_divide
-from apps.home.models import Jobs, Tool
-from apps import db
-from apps.myconstant import *
-from sqlalchemy.orm import aliased
+
 import requests
+
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
-from apps.home.data_util import add_job_status, get_job_details
 # from apps.db_mongo_connection.db_mongo import get_mongodb_database
 from apps.util.db_mongo import get_mongodb_database
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
+
+
 # job_url = f"{base_url}/GeneralLedger/account?$top=100&$skip=0"
 
-def get_xero_archived_customer(job_id,task_id):
+def get_xero_archived_customer(job_id, task_id):
     try:
         dbname = get_mongodb_database()
 
@@ -45,7 +37,7 @@ def get_xero_archived_customer(job_id,task_id):
             JsonResponse = response.json()
             print(len(JsonResponse['Contacts']))
             for i in range(0, len(JsonResponse['Contacts'])):
-                if JsonResponse['Contacts'][i]["ContactStatus"] == "ARCHIVED":    
+                if JsonResponse['Contacts'][i]["ContactStatus"] == "ARCHIVED":
                     if (JsonResponse['Contacts'][i]['IsSupplier'] == True and JsonResponse['Contacts'][i][
                         'IsCustomer'] == False):
                         QuerySet = {"Address": [], "Phone": []}
@@ -70,9 +62,11 @@ def get_xero_archived_customer(job_id,task_id):
                         if 'TaxNumber' in JsonResponse['Contacts'][i]:
                             QuerySet['TaxNumber'] = JsonResponse['Contacts'][i]['TaxNumber'].strip()
                         if 'BatchPayments' in JsonResponse['Contacts'][i]:
-                            QuerySet['BankAccNumber'] = JsonResponse['Contacts'][i]['BatchPayments']['BankAccountNumber']
+                            QuerySet['BankAccNumber'] = JsonResponse['Contacts'][i]['BatchPayments'][
+                                'BankAccountNumber']
                             if 'BankAccountName' in JsonResponse['Contacts'][i]['BatchPayments']:
-                                QuerySet['BankAccName'] = JsonResponse['Contacts'][i]['BatchPayments']['BankAccountName']
+                                QuerySet['BankAccName'] = JsonResponse['Contacts'][i]['BatchPayments'][
+                                    'BankAccountName']
                             if 'Details' in JsonResponse['Contacts'][i]['BatchPayments']:
                                 QuerySet['Details'] = JsonResponse['Contacts'][i]['BatchPayments']['Details']
                         if 'BankAccountDetails' in JsonResponse['Contacts'][i]:
@@ -223,7 +217,8 @@ def get_xero_archived_customer(job_id,task_id):
                             if 'Region' in JsonResponse['Contacts'][i]['Addresses'][j1]:
                                 supplier_object1['Region'] = JsonResponse['Contacts'][i]['Addresses'][j1]['Region']
                             if 'PostalCode' in JsonResponse['Contacts'][i]['Addresses'][j1]:
-                                supplier_object1['PostalCode'] = JsonResponse['Contacts'][i]['Addresses'][j1]['PostalCode']
+                                supplier_object1['PostalCode'] = JsonResponse['Contacts'][i]['Addresses'][j1][
+                                    'PostalCode']
                             if 'Country' in JsonResponse['Contacts'][i]['Addresses'][j1]:
                                 supplier_object1['Country'] = JsonResponse['Contacts'][i]['Addresses'][j1]['Country']
 
@@ -234,7 +229,8 @@ def get_xero_archived_customer(job_id,task_id):
                             if 'PhoneType' in JsonResponse['Contacts'][i]['Phones'][k1]:
                                 supplier_object2['PhoneType'] = JsonResponse['Contacts'][i]['Phones'][k1]['PhoneType']
                             if 'PhoneNumber' in JsonResponse['Contacts'][i]['Phones'][k1]:
-                                supplier_object2['PhoneNumber'] = JsonResponse['Contacts'][i]['Phones'][k1]['PhoneNumber']
+                                supplier_object2['PhoneNumber'] = JsonResponse['Contacts'][i]['Phones'][k1][
+                                    'PhoneNumber']
 
                             supplier_object["Phone"].append(supplier_object2)
 
@@ -270,7 +266,8 @@ def get_xero_archived_customer(job_id,task_id):
                             customer_object1 = {}
 
                             if 'AddressType' in JsonResponse['Contacts'][i]['Addresses'][j]:
-                                customer_object1['AddressType'] = JsonResponse['Contacts'][i]['Addresses'][j]['AddressType']
+                                customer_object1['AddressType'] = JsonResponse['Contacts'][i]['Addresses'][j][
+                                    'AddressType']
                             if 'AddressLine1' in JsonResponse['Contacts'][i]['Addresses'][j]:
                                 customer_object1['AddressLine1'] = JsonResponse['Contacts'][i]['Addresses'][j][
                                     'AddressLine1']
@@ -282,7 +279,8 @@ def get_xero_archived_customer(job_id,task_id):
                             if 'Region' in JsonResponse['Contacts'][i]['Addresses'][j]:
                                 customer_object1['Region'] = JsonResponse['Contacts'][i]['Addresses'][j]['Region']
                             if 'PostalCode' in JsonResponse['Contacts'][i]['Addresses'][j]:
-                                customer_object1['PostalCode'] = JsonResponse['Contacts'][i]['Addresses'][j]['PostalCode']
+                                customer_object1['PostalCode'] = JsonResponse['Contacts'][i]['Addresses'][j][
+                                    'PostalCode']
                             if 'Country' in JsonResponse['Contacts'][i]['Addresses'][j]:
                                 customer_object1['Country'] = JsonResponse['Contacts'][i]['Addresses'][j]['Country']
 
@@ -293,17 +291,18 @@ def get_xero_archived_customer(job_id,task_id):
                             if 'PhoneType' in JsonResponse['Contacts'][i]['Phones'][k]:
                                 customer_object2['PhoneType'] = JsonResponse['Contacts'][i]['Phones'][k]['PhoneType']
                             if 'PhoneNumber' in JsonResponse['Contacts'][i]['Phones'][k]:
-                                customer_object2['PhoneNumber'] = JsonResponse['Contacts'][i]['Phones'][k]['PhoneNumber']
+                                customer_object2['PhoneNumber'] = JsonResponse['Contacts'][i]['Phones'][k][
+                                    'PhoneNumber']
 
                             customer_object["Phone"].append(customer_object2)
 
                         customer.append(customer_object)
-                        
-        if dbname['xero_archived_customer'].count_documents({'job_id':job_id}) != 0:
+
+        if dbname['xero_archived_customer'].count_documents({'job_id': job_id}) != 0:
             pass
         else:
             dbname['xero_archived_customer'].insert_many(customer)
-        
+
         step_name = "Reading data from Archived customer"
         write_task_execution_step(task_id, status=1, step=step_name)
 
@@ -311,7 +310,7 @@ def get_xero_archived_customer(job_id,task_id):
         print("------------------------------")
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)

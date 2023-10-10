@@ -47,20 +47,17 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
         xero_coa = []
         for k4 in range(0, dbname['xero_coa'].count_documents({"job_id": job_id})):
             xero_coa.append(xero_coa1[k4])
-        
-      
-            
 
         for i in range(0, len(payment)):
             for a in range(0, len(xero_coa)):
                 if payment[i]["AccountCode"] == xero_coa[a]["AccountID"]:
                     for b in range(0, len(chart_of_account)):
                         if xero_coa[a]["Name"].lower().strip() == chart_of_account[b]["Name"].lower().strip():
-                            if chart_of_account[b]["Account_Type"] not in ['Bank','BANK',"CreditCard"]:
-                # if "AccountCode" in payment[i] and payment[i]["AccountCode"] in account_ids:
-                #     xero_temp_data = xero_account_id_name_mappings_dict.get(payment[i]["AccountCode"])
-                #     for b in range(0, len(coa_refined_data)):
-                #         if xero_temp_data == coa_refined_data[b]["Name"].lower().strip():
+                            if chart_of_account[b]["Account_Type"] not in ['Bank', 'BANK', "CreditCard"]:
+                                # if "AccountCode" in payment[i] and payment[i]["AccountCode"] in account_ids:
+                                #     xero_temp_data = xero_account_id_name_mappings_dict.get(payment[i]["AccountCode"])
+                                #     for b in range(0, len(coa_refined_data)):
+                                #         if xero_temp_data == coa_refined_data[b]["Name"].lower().strip():
                                 _id = payment[i]['_id']
                                 task_id = payment[i]['task_id']
                                 QuerySet1 = {"Lines": []}
@@ -70,8 +67,8 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
                                 # account = {"UID": coa_refined_data[b]["UID"]}
                                 # QuerySet3["account"] = account
                                 terms = {}
-                            
-                                QuerySet1["Number"] = "P-"+payment[i]["InvoiceNumber"][-11:]
+
+                                QuerySet1["Number"] = "P-" + payment[i]["InvoiceNumber"][-11:]
                                 journal_date = payment[i]["Date"]
                                 journal_date11 = int(journal_date[6:16])
                                 journal_date12 = datetime.utcfromtimestamp(journal_date11).strftime('%Y-%m-%d')
@@ -81,7 +78,6 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
 
                                 terms['PaymentIsDue'] = "OnADayOfTheMonth"
                                 if "DueDate" in payment[i]:
-                                    
                                     terms['BalanceDueDate'] = journal_date12.day
                                     terms["DueDate"] = journal_date12
                                     terms['DiscountDate'] = 0
@@ -95,8 +91,10 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
                                     if myob_supplier[k1]["CompanyName"] == payment[i]["Contact"][0:50]:
                                         Supplier['UID'] = myob_supplier[k1]["UID"]
                                         break
-                                    elif 'CompanyName' in myob_supplier[k1] and myob_supplier[k1]["CompanyName"]!= None:
-                                        if myob_supplier[k1]["CompanyName"].startswith(payment[i]["Contact"]) and myob_supplier[k1]["CompanyName"].endswith("- S"):
+                                    elif 'CompanyName' in myob_supplier[k1] and myob_supplier[k1][
+                                        "CompanyName"] != None:
+                                        if myob_supplier[k1]["CompanyName"].startswith(payment[i]["Contact"]) and \
+                                                myob_supplier[k1]["CompanyName"].endswith("- S"):
                                             Supplier['UID'] = myob_supplier[k1]["UID"]
                                             break
 
@@ -110,7 +108,7 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
                                             if xero_coa[j51]['Name'].lower().strip() == chart_of_account[j5][
                                                 "Name"].lower().strip():
                                                 account["UID"] = chart_of_account[j5]["UID"]
-                                
+
                                 QuerySet3["account"] = account
 
                                 for j3 in range(0, len(taxcode_myob)):
@@ -121,7 +119,6 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
                                 QuerySet3['TaxCode'] = taxcode
                                 QuerySet1['FreightTaxCode'] = taxcode
 
-                                
                                 QuerySet3["Description"] = payment[i]["InvoiceID"]
 
                                 QuerySet3["BillQuantity"] = -1
@@ -132,7 +129,7 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
 
                                 payload = json.dumps(QuerySet1)
                                 print(payload)
-                                
+
                                 id_or_name_value_for_error = (
                                     payment[i]['InvoiceNumber']
                                     if payment[i]['InvoiceNumber'] is not None
@@ -140,10 +137,11 @@ def add_xero_billpayment_as_vendorcredit_to_myob(job_id, task_id):
 
                                 payload1, base_url, headers = get_settings_myob(job_id)
                                 url = f"{base_url}/Purchase/Bill/Item"
-                                if payment[i]['is_pushed']==0:
+                                if payment[i]['is_pushed'] == 0:
                                     asyncio.run(
-                                        post_data_in_myob(url, headers, payload, dbname['xero_bill_payment'], _id, job_id, task_id,
-                                                            id_or_name_value_for_error))
+                                        post_data_in_myob(url, headers, payload, dbname['xero_bill_payment'], _id,
+                                                          job_id, task_id,
+                                                          id_or_name_value_for_error))
                                 else:
                                     pass
 

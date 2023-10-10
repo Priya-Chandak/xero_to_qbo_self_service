@@ -3,19 +3,18 @@ from ast import Break
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 
 
-def get_qbo_taxrate(job_id,task_id):
+def get_qbo_taxrate(job_id, task_id):
     try:
         db = get_mongodb_database()
         QBO_Taxrate = db["QBO_Taxrate"]
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
         url = f"{base_url}/query?minorversion={minorversion}"
-        no_of_records = db["QBO_Taxrate"].count_documents({'job_id':job_id})
+        no_of_records = db["QBO_Taxrate"].count_documents({'job_id': job_id})
 
         payload = f"select * from taxrate startposition {no_of_records} maxresults 1000"
         print(payload)
@@ -48,4 +47,3 @@ def get_qbo_taxrate(job_id,task_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

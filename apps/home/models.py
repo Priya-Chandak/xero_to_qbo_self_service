@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-from apps import db
 from datetime import datetime
+
+from apps import db
 
 
 class EntityDataReadDetails(db.Model):
@@ -133,16 +134,18 @@ class Task(db.Model):
 
 
 class ToolId(db.Model):
-    __tablename__="ToolId"
+    __tablename__ = "ToolId"
     id = db.Column(db.Integer, primary_key=True)
-    Email =db.Column(db.String(1264))
+    Email = db.Column(db.String(1264))
     client_id = db.Column(db.String(625))
     client_secret = db.Column(db.String(625))
 
+
 class Authdata(db.Model):
-    __tablename__="Auth_data"
+    __tablename__ = "Auth_data"
     id = db.Column(db.Integer, primary_key=True)
     auth_data = db.Column(db.String(1264))
+
 
 class TaskExecutionStatus(db.Model):
     __tablename__ = "task_execution_status"

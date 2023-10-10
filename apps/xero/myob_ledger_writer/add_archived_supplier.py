@@ -1,7 +1,7 @@
 import asyncio
 import json
-import re
 import logging
+import re
 
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
@@ -9,24 +9,24 @@ from apps.util.qbo_util import post_data_in_myob
 
 logger = logging.getLogger(__name__)
 
-def get_used_archived_suppliers_myob(job_id,task_id):
+
+def get_used_archived_suppliers_myob(job_id, task_id):
     try:
         logger.info("Started executing xero -> myobwriter ->  get_used_archived_suppliers_myob")
         dbname = get_mongodb_database()
         xero_archived_supplier_in_bill1 = dbname['xero_archived_supplier_in_bill']
-        
-        contacts1 = set([doc["ContactName"] for doc in dbname['xero_bill_suppliers'].find({'job_id': job_id}, {"ContactName": 1})])
+
+        contacts1 = set(
+            [doc["ContactName"] for doc in dbname['xero_bill_suppliers'].find({'job_id': job_id}, {"ContactName": 1})])
         contacts2 = list(dbname['xero_archived_supplier'].find({'job_id': job_id}))
 
         filtered_contacts2 = [doc for doc in contacts2 if any(doc['Name'].startswith(contact) for contact in contacts1)]
         result = filtered_contacts2
-        if len(result)>0:
+        if len(result) > 0:
             xero_archived_supplier_in_bill1.insert_many(result)
-        
+
     except Exception as ex:
         logger.error("Error in xero -> myobwriter -> get_used_archived_suppliers_myob", ex)
-
-
 
 
 def add_xero_archived_supplier_to_myobledger(job_id, task_id):
@@ -162,10 +162,10 @@ def add_xero_archived_supplier_to_myobledger(job_id, task_id):
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/Contact/Supplier"
 
-            if data[i]['is_pushed']==0:
+            if data[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, xero_supplier1, _id, job_id, task_id,
-                                    id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 

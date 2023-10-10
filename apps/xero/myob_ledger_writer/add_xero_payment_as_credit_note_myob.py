@@ -1,7 +1,5 @@
 import asyncio
-import datetime
 import json
-from multiprocessing import Pool
 
 from apps.mmc_settings.all_settings import get_settings_myob
 from apps.util.db_mongo import get_mongodb_database
@@ -44,9 +42,9 @@ def add_xero_payment_as_creditnote_to_myob(job_id, task_id):
         for k7 in range(0, dbname['taxcode_myob'].count_documents({"job_id": job_id})):
             taxcode_myob1.append(taxcode_myob[k7])
 
-        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id":job_id})
+        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id": job_id})
         xero_archived_coa = []
-        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id":job_id})):
+        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id": job_id})):
             xero_archived_coa.append(xero_archived_coa1[k4])
 
         job11 = dbname['job'].find({"job_id": job_id})
@@ -87,7 +85,7 @@ def add_xero_payment_as_creditnote_to_myob(job_id, task_id):
 
         multiple_invoice = multiple_invoice
 
-        for i in range(0, len(multiple_invoice)): 
+        for i in range(0, len(multiple_invoice)):
             if "AccountCode" in multiple_invoice[i] and multiple_invoice[i]["AccountCode"] in account_ids:
                 xero_temp_data = xero_account_id_name_mappings_dict.get(multiple_invoice[i]["AccountCode"])
                 for b in range(0, len(coa_refined_data)):
@@ -105,8 +103,9 @@ def add_xero_payment_as_creditnote_to_myob(job_id, task_id):
                         QuerySet1["Date"] = multiple_invoice[i]["Date"]
 
                         for c1 in range(0, len(myob_customer)):
-                            if myob_customer[c1]["Company_Name"] !=None and myob_customer[c1]["Company_Name"] !="":
-                                if myob_customer[c1]["Company_Name"].strip().lower() == multiple_invoice[i]["Contact"].strip().lower():
+                            if myob_customer[c1]["Company_Name"] != None and myob_customer[c1]["Company_Name"] != "":
+                                if myob_customer[c1]["Company_Name"].strip().lower() == multiple_invoice[i][
+                                    "Contact"].strip().lower():
                                     Customer['UID'] = myob_customer[c1]["UID"]
                                 elif myob_customer[c1]["Company_Name"].startswith(multiple_invoice[i]["Contact"]) and \
                                         myob_customer[c1]["Company_Name"].endswith("- C"):
@@ -115,7 +114,7 @@ def add_xero_payment_as_creditnote_to_myob(job_id, task_id):
                         QuerySet1["Customer"] = Customer
                         # if 'InvoiceID' in multiple_invoice[i]:
 
-                        if 'AccountCode' in multiple_invoice[i] :
+                        if 'AccountCode' in multiple_invoice[i]:
                             QuerySet3 = {}
                             taxcode = {}
                             account = {"UID": coa_refined_data[b]["UID"]}
@@ -129,18 +128,17 @@ def add_xero_payment_as_creditnote_to_myob(job_id, task_id):
                             if multiple_invoice[i]["Amount"] < 0:
                                 QuerySet3['ShipQuantity'] = -1
                                 QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Amount"])
-                                QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
+                                QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
                                 QuerySet3['UnitCount'] = -1
                             else:
                                 QuerySet3['ShipQuantity'] = 1
                                 QuerySet3["UnitPrice"] = abs(multiple_invoice[i]["Amount"])
-                                QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
+                                QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
                                 QuerySet3['UnitCount'] = 1
-                        
+
                         QuerySet3['Type'] = "Transaction"
                         QuerySet1["Lines"].append(QuerySet3)
 
-                        
                 payload = json.dumps(QuerySet1)
                 print(payload)
 
@@ -151,8 +149,9 @@ def add_xero_payment_as_creditnote_to_myob(job_id, task_id):
                 payload1, base_url, headers = get_settings_myob(job_id)
                 url1 = f"{base_url}/Sale/Invoice/Item"
 
-                asyncio.run(post_data_in_myob(url1, headers, payload, dbname['xero_invoice_payment'], _id, job_id, task_id,
-                                                id_or_name_value_for_error))
+                asyncio.run(
+                    post_data_in_myob(url1, headers, payload, dbname['xero_invoice_payment'], _id, job_id, task_id,
+                                      id_or_name_value_for_error))
 
 
     except Exception as ex:

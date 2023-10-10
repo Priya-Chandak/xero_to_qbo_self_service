@@ -1,18 +1,17 @@
 import json
+import logging
 import traceback
 from datetime import datetime
 
-import requests
-
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
-from apps.util.qbo_util import post_data_in_qbo
 from apps.util.qbo_util import get_start_end_dates_of_job
-import logging
+from apps.util.qbo_util import post_data_in_qbo
+
 logger = logging.getLogger(__name__)
 
-def add_credit_card_credit(job_id,task_id):
+
+def add_credit_card_credit(job_id, task_id):
     try:
         logger.info("Started executing myob -> qbowriter ->  add_credit_card_credit")
 
@@ -20,49 +19,49 @@ def add_credit_card_credit(job_id,task_id):
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         db = get_mongodb_database()
 
-        received_money = db["received_money"].find({"job_id":job_id})
+        received_money = db["received_money"].find({"job_id": job_id})
         received_money1 = []
-        for x1 in range(0, db["received_money"].count_documents({'job_id':job_id})):
+        for x1 in range(0, db["received_money"].count_documents({'job_id': job_id})):
             received_money1.append(received_money[x1])
 
         QuerySet = received_money1
         purchase_url = f"{base_url}/purchase?minorversion={minorversion}"
 
-        QBO_COA1 = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA1 = db["QBO_COA"].find({"job_id": job_id})
         qbo_coa = []
-        for k2 in range(0, db["QBO_COA"].count_documents({'job_id':job_id})):
+        for k2 in range(0, db["QBO_COA"].count_documents({'job_id': job_id})):
             qbo_coa.append(QBO_COA1[k2])
 
-        Myob_Job = db["job"].find({"job_id":job_id})
+        Myob_Job = db["job"].find({"job_id": job_id})
         Myob_Job1 = []
-        for n in range(0, db["job"].count_documents({'job_id':job_id})):
+        for n in range(0, db["job"].count_documents({'job_id': job_id})):
             Myob_Job1.append(Myob_Job[n])
 
-        QBO_Supplier1 = db["QBO_Supplier"].find({"job_id":job_id})
+        QBO_Supplier1 = db["QBO_Supplier"].find({"job_id": job_id})
         QBO_Supplier = []
-        for k3 in range(0, db["QBO_Supplier"].count_documents({'job_id':job_id})):
+        for k3 in range(0, db["QBO_Supplier"].count_documents({'job_id': job_id})):
             QBO_Supplier.append(QBO_Supplier1[k3])
 
-        QBO_Customer1 = db["QBO_Customer"].find({"job_id":job_id})
+        QBO_Customer1 = db["QBO_Customer"].find({"job_id": job_id})
         QBO_Customer = []
-        for m in range(0, db["QBO_Customer"].count_documents({'job_id':job_id})):
+        for m in range(0, db["QBO_Customer"].count_documents({'job_id': job_id})):
             QBO_Customer.append(QBO_Customer1[m])
 
-        QBO_Class1 = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class1 = db["QBO_Class"].find({"job_id": job_id})
         QBO_Class = []
-        for n in range(0, db["QBO_Class"].count_documents({'job_id':job_id})):
+        for n in range(0, db["QBO_Class"].count_documents({'job_id': job_id})):
             QBO_Class.append(QBO_Class1[n])
 
         QBO_Tax = []
-        QBO_tax1 = db["QBO_Tax"].find({"job_id":job_id})
-        for p in range(0, db["QBO_Tax"].count_documents({'job_id':job_id})):
+        QBO_tax1 = db["QBO_Tax"].find({"job_id": job_id})
+        for p in range(0, db["QBO_Tax"].count_documents({'job_id': job_id})):
             QBO_Tax.append(QBO_tax1[p])
 
         for i in range(0, len(QuerySet)):
             print(QuerySet[i]["ref_no"])
-            _id=QuerySet[i]['_id']
-            task_id=QuerySet[i]['task_id']
-            
+            _id = QuerySet[i]['_id']
+            task_id = QuerySet[i]['task_id']
+
             for j11 in range(0, len(qbo_coa)):
                 if (
                         QuerySet[i]["main_account"].lower().strip()
@@ -287,14 +286,15 @@ def add_credit_card_credit(job_id,task_id):
                                     if (received_money_date1 >= start_date1) and (
                                             received_money_date1 <= end_date1
                                     ):
-                                        post_data_in_qbo(purchase_url, headers, payload,db["received_money"],_id,job_id,task_id, QuerySet[i]["ref_no"])
-                                    
+                                        post_data_in_qbo(purchase_url, headers, payload, db["received_money"], _id,
+                                                         job_id, task_id, QuerySet[i]["ref_no"])
+
                                 else:
-                                    post_data_in_qbo(purchase_url, headers, payload,db["received_money"],_id,job_id,task_id, QuerySet[i]["ref_no"])
-                                    
-                                    
+                                    post_data_in_qbo(purchase_url, headers, payload, db["received_money"], _id, job_id,
+                                                     task_id, QuerySet[i]["ref_no"])
+
+
                 else:
                     pass
     except Exception as ex:
         traceback.print_exc()
-        

@@ -17,7 +17,7 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
         bill = []
         for p1 in bill1:
             bill.append(p1)
-        
+
         myob_item1 = dbname['item'].find({"job_id": job_id})
         myob_item = []
         for k4 in range(0, dbname['item'].count_documents({"job_id": job_id})):
@@ -27,7 +27,6 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
         chart_of_account = []
         for k3 in range(0, dbname['chart_of_account'].count_documents({"job_id": job_id})):
             chart_of_account.append(chart_of_account1[k3])
-
 
         myob_customer1 = dbname['customer'].find({"job_id": job_id})
         myob_customer = []
@@ -86,18 +85,18 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
                 xero_temp_data = xero_account_id_name_mappings_dict.get(bill[i]["AccountCode"])
                 for b in range(0, len(coa_refined_data)):
                     if xero_temp_data == coa_refined_data[b]["Name"].lower().strip():
-                        
+
                         _id = bill[i]['_id']
                         task_id = bill[i]['task_id']
                         QuerySet1 = {"Lines": []}
-                        
+
                         Supplier = {}
                         FreightTaxCode = {}
                         terms = {}
                         line_job = {}
 
                         QuerySet1["Number"] = bill[i]["InvoiceNumber"][-13:]
-                       
+
                         journal_date = bill[i]["Date"]
                         journal_date11 = int(journal_date[6:16])
                         journal_date12 = datetime.utcfromtimestamp(journal_date11).strftime('%Y-%m-%d')
@@ -114,20 +113,19 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
 
                         #     QuerySet1['Terms'] = terms
 
-
                         for k1 in range(0, len(myob_supplier)):
 
                             if myob_supplier[k1]["CompanyName"] == bill[i]["Contact"][0:50]:
                                 Supplier['UID'] = myob_supplier[k1]["UID"]
                                 break
-                            elif 'CompanyName' in myob_supplier[k1] and myob_supplier[k1]["CompanyName"]!= None:
-                                if myob_supplier[k1]["CompanyName"].startswith(bill[i]["Contact"]) and myob_supplier[k1]["CompanyName"].endswith("- S"):
+                            elif 'CompanyName' in myob_supplier[k1] and myob_supplier[k1]["CompanyName"] != None:
+                                if myob_supplier[k1]["CompanyName"].startswith(bill[i]["Contact"]) and \
+                                        myob_supplier[k1]["CompanyName"].endswith("- S"):
                                     Supplier['UID'] = myob_supplier[k1]["UID"]
                                     break
 
                             QuerySet1["Supplier"] = Supplier
 
-                        
                         if 'AccountCode' in bill[i]:
                             taxcode = {}
                             QuerySet3 = {}
@@ -143,14 +141,14 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
                                 QuerySet3["BillQuantity"] = -1
                                 QuerySet3["UnitCount"] = -1
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Amount"])
-                                QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
+                                QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
                             else:
                                 QuerySet3["ReceivedQuantity"] = 1
                                 QuerySet3["BillQuantity"] = 1
                                 QuerySet3["UnitCount"] = 1
                                 QuerySet3["UnitPrice"] = abs(bill[i]["Amount"])
-                                QuerySet3["Total"] = QuerySet3["UnitPrice"]*QuerySet3["UnitCount"]
-                                
+                                QuerySet3["Total"] = QuerySet3["UnitPrice"] * QuerySet3["UnitCount"]
+
                             QuerySet3['TaxCode'] = taxcode
                             QuerySet1["Lines"].append(QuerySet3)
 
@@ -159,9 +157,8 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
                                 FreightTaxCode['UID'] = taxcode_myob[j3]['UID']
                         QuerySet1['FreightTaxCode'] = FreightTaxCode
 
-                    
             payload = json.dumps(QuerySet1)
-            print(payload,"-----------------payload")
+            print(payload, "-----------------payload")
 
             # if 'ItemCode' in bill[i]["Line"][j]:
             #     url = f"{base_url}/Purchase/Bill/Item"
@@ -175,10 +172,10 @@ def add_xero_bill_credit_to_myob(job_id, task_id):
 
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/Purchase/Bill/Item"
-            if  bill[i]['is_pushed']==0:
+            if bill[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, dbname['xero_vendorcredit'], _id, job_id, task_id,
-                                        id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 

@@ -26,35 +26,35 @@
             <form action="" method="post">
                 <div class="card-body">
                     <!-- <div class="row"> -->
-                        <div class="col-md-6 col-lg-4">
+                    <div class="col-md-6 col-lg-4">
 
-                            {% if len(toolsettings)!=0: %}
+                        {% if len(toolsettings)!=0: %}
 
-                            {% for key, value in zip(data, toolsettings): %}
-                            <div class="form-group mt-1">
-                                <label for="client_id"> {{key}}</label>
-                                <input type="text" class="form-control" id="{{key}}" name="{{key}}"
-                                       placeholder="Enter {{key}}" value="{{value.values}}">
-                            </div>
+                        {% for key, value in zip(data, toolsettings): %}
+                        <div class="form-group mt-1">
+                            <label for="client_id"> {{key}}</label>
+                            <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                   placeholder="Enter {{key}}" value="{{value.values}}">
+                        </div>
 
-                            {% endfor %}
-                            {% else: %}
-                            {% for key in data %}
-                            <div class="form-group">
+                        {% endfor %}
+                        {% else: %}
+                        {% for key in data %}
+                        <div class="form-group">
                             <div class="col-xs-6 ms-3 mt-2" style="display: flex;">
                                 <label for="client_id" style="min-width: 150px; font-weight: bold;"> {{key}} </label>
                                 <input type="text" class="form-control" id="{{key}}" name="{{key}}"
                                        placeholder="Enter {{key}}" style="margin-left: 30px; width: 250px;">
                             </div>
                         </div>
-                           
-
-                            {% endfor %}
-
-                            {% endif %}
 
 
-                        </div>
+                        {% endfor %}
+
+                        {% endif %}
+
+
+                    </div>
 
 
                     <!-- </div> -->

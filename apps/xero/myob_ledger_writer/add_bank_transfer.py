@@ -70,10 +70,10 @@ def add_xero_bank_transfer_to_myobledger(job_id, task_id):
 
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/Banking/TransferMoneyTxn"
-            if Transfer[i1]['is_pushed']==0:
+            if Transfer[i1]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, dbname['xero_bank_transfer'], _id, job_id, task_id,
-                                    id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 

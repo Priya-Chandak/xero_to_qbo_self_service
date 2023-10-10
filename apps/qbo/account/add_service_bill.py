@@ -1,17 +1,15 @@
 import json
 import traceback
+from collections import Counter
 from datetime import datetime
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import get_start_end_dates_of_job
 from apps.util.qbo_util import post_data_in_qbo
-from collections import Counter
 
 
-
-def add_service_bill(job_id,task_id):
+def add_service_bill(job_id, task_id):
     try:
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -67,17 +65,17 @@ def add_service_bill(job_id,task_id):
         bill_arr = []
         vendor_credit_arr = []
 
-        bill_bumbers=[]
-        for b1 in range(0,len(final_bill)):
+        bill_bumbers = []
+        for b1 in range(0, len(final_bill)):
             bill_bumbers.append(final_bill[b1]['invoice_no'])
 
-        data1=[]
+        data1 = []
 
         frequency_counter = Counter(bill_bumbers)
         for number, count in frequency_counter.items():
-            if count>1:
-                data1.append({number:count})
-        
+            if count > 1:
+                data1.append({number: count})
+
         key_list = []
 
         for i in range(0, len(final_bill)):
@@ -95,8 +93,10 @@ def add_service_bill(job_id,task_id):
                 if final_bill[i]["Total_Amount"] >= 0:
                     if len(final_bill[i]["account"]) >= 1:
                         QuerySet = {"Line": []}
-                        QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i]["invoice_no"] not in key_list else final_bill[i]["invoice_no"][0:14]+"-"+final_bill[i]["UID"][-6:] 
-                            
+                        QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
+                                                                                   "invoice_no"] not in key_list else \
+                        final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+
                         TxnTaxDetail = {"TaxLine": []}
 
                         for j in range(0, len(final_bill[i]["account"])):
@@ -123,8 +123,8 @@ def add_service_bill(job_id,task_id):
 
                                 for k1 in range(0, len(QBO_tax)):
                                     if (
-                                            final_bill[i]["account"][j]["Tax_Code"] in ["GST","GCA","CAP"]
-                                    ) :
+                                            final_bill[i]["account"][j]["Tax_Code"] in ["GST", "GCA", "CAP"]
+                                    ):
                                         if (
                                                 "GST on purchases"
                                                 == QBO_tax[k1]["taxcode_name"]
@@ -167,8 +167,8 @@ def add_service_bill(job_id,task_id):
                                                 Tax["Amount"] = 0
 
                                     elif (
-                                            final_bill[i]["account"][j]["Tax_Code"] in ["FRE","INP","GNR"]
-                                    ) :
+                                            final_bill[i]["account"][j]["Tax_Code"] in ["FRE", "INP", "GNR"]
+                                    ):
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if (
                                                     "GST-free (purchases)"
@@ -338,15 +338,19 @@ def add_service_bill(job_id,task_id):
                         bill_date1 = datetime.strptime(bill_date, "%Y-%m-%d")
                         if start_date1 is not None and end_date1 is not None and (
                                 start_date1 <= bill_date1 <= end_date1):
-                            post_data_in_qbo(url1, headers, payload,db['final_bill'],_id,job_id,task_id, final_bill[i]['invoice_no'])
+                            post_data_in_qbo(url1, headers, payload, db['final_bill'], _id, job_id, task_id,
+                                             final_bill[i]['invoice_no'])
 
                         else:
-                            post_data_in_qbo(url1, headers, payload,db['final_bill'],_id,job_id,task_id, final_bill[i]['invoice_no'])
+                            post_data_in_qbo(url1, headers, payload, db['final_bill'], _id, job_id, task_id,
+                                             final_bill[i]['invoice_no'])
                 else:
                     if len(final_bill[i]["account"]) == 1:
                         QuerySet = {"Line": []}
-                        QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i]["invoice_no"] not in key_list else final_bill[i]["invoice_no"][0:14]+"-"+final_bill[i]["UID"][-6:] 
-                            
+                        QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
+                                                                                   "invoice_no"] not in key_list else \
+                        final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
+
                         QuerySet1 = {}
                         QuerySet2 = {}
                         QuerySet3 = {}
@@ -365,7 +369,7 @@ def add_service_bill(job_id,task_id):
                         TaxCodeRef = {}
                         QuerySet["TotalAmt"] = abs(final_bill[i]["TotalAmount"])
                         for k1 in range(0, len(QBO_tax)):
-                            if (final_bill[i]["account"][0]["Tax_Code"] ["GST","GCA","CAP"]):
+                            if (final_bill[i]["account"][0]["Tax_Code"]["GST", "GCA", "CAP"]):
                                 if "GST on purchases" == QBO_tax[k1]["taxcode_name"]:
                                     TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                     TaxCodeRef["value"] = QBO_tax[k1]["taxcode_id"]
@@ -398,7 +402,7 @@ def add_service_bill(job_id,task_id):
                                             2,
                                         )
 
-                            elif (final_bill[i]["account"][0]["Tax_Code"])in ["FRE","INP","GNR"]:
+                            elif (final_bill[i]["account"][0]["Tax_Code"]) in ["FRE", "INP", "GNR"]:
                                 if "taxrate_name" in QBO_tax[k1]:
                                     if (
                                             "GST-free (purchases)"
@@ -541,12 +545,16 @@ def add_service_bill(job_id,task_id):
                         bill_date1 = datetime.strptime(bill_date, "%Y-%m-%d")
                         if start_date1 is not None and end_date1 is not None and (
                                 start_date1 <= bill_date1 <= end_date1):
-                            post_data_in_qbo(url2, headers, payload,db['final_bill'],_id,job_id,task_id, final_bill[i]['invoice_no'])
+                            post_data_in_qbo(url2, headers, payload, db['final_bill'], _id, job_id, task_id,
+                                             final_bill[i]['invoice_no'])
                         else:
-                            post_data_in_qbo(url2, headers, payload,db['final_bill'],_id,job_id,task_id, final_bill[i]['invoice_no'])
+                            post_data_in_qbo(url2, headers, payload, db['final_bill'], _id, job_id, task_id,
+                                             final_bill[i]['invoice_no'])
                     else:
                         QuerySet = {"Line": []}
-                        QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i]["invoice_no"] not in key_list else final_bill[i]["invoice_no"][0:14]+"-"+final_bill[i]["UID"][-6:] 
+                        QuerySet["DocNumber"] = final_bill[i]["invoice_no"] if final_bill[i][
+                                                                                   "invoice_no"] not in key_list else \
+                        final_bill[i]["invoice_no"][0:14] + "-" + final_bill[i]["UID"][-6:]
                         TxnTaxDetail = {"TaxLine": []}
                         for j in range(0, len(final_bill[i]["account"])):
                             QuerySet1 = {}
@@ -569,8 +577,8 @@ def add_service_bill(job_id,task_id):
 
                             for k1 in range(0, len(QBO_tax)):
                                 if (
-                                        final_bill[i]["account"][j]["Tax_Code"] ["GST","GCA","CAP"]
-                                ) :
+                                        final_bill[i]["account"][j]["Tax_Code"]["GST", "GCA", "CAP"]
+                                ):
                                     if (
                                             "GST on purchases"
                                             == QBO_tax[k1]["taxcode_name"]
@@ -599,7 +607,7 @@ def add_service_bill(job_id,task_id):
                                             Tax["Amount"] = 0
 
                                 elif (
-                                        final_bill[i]["account"][j]["Tax_Code"]) in ["FRE","INP","GNR"]:
+                                        final_bill[i]["account"][j]["Tax_Code"]) in ["FRE", "INP", "GNR"]:
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
                                                 "GST-free (purchases)"
@@ -643,7 +651,6 @@ def add_service_bill(job_id,task_id):
                                     taxrate1 * final_bill[i]["TotalTax"]
                                 )
 
-                           
                             if ("Comment" in final_bill[i]) and (
                                     "supplier_invoice_no" in final_bill[i]
                             ):
@@ -744,11 +751,12 @@ def add_service_bill(job_id,task_id):
                         bill_date1 = datetime.strptime(bill_date, "%Y-%m-%d")
                         if start_date1 is not None and end_date1 is not None and (
                                 start_date1 <= bill_date1 <= end_date1):
-                            post_data_in_qbo(url2, headers, payload,db['final_bill'],_id,job_id,task_id, final_bill[i]['invoice_no'])
+                            post_data_in_qbo(url2, headers, payload, db['final_bill'], _id, job_id, task_id,
+                                             final_bill[i]['invoice_no'])
 
                         else:
-                            post_data_in_qbo(url2, headers, payload,db['final_bill'],_id,job_id,task_id, final_bill[i]['invoice_no'])
+                            post_data_in_qbo(url2, headers, payload, db['final_bill'], _id, job_id, task_id,
+                                             final_bill[i]['invoice_no'])
 
     except Exception as ex:
         traceback.print_exc()
-        

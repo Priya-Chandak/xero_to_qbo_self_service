@@ -16,5 +16,6 @@ def get_mongodb_database():
     client = MongoClient(CONNECTION_STRING)
     return client["MMC"]
 
-def post_data_to_myob(url,payload):
+
+def post_data_to_myob(url, payload):
     print("Posting data to myob")

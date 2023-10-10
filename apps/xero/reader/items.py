@@ -1,15 +1,13 @@
-import traceback
+import sys
 
 import requests
 
-from apps.home.data_util import add_job_status
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-import sys
 
 
-def get_items(job_id,task_id):
+def get_items(job_id, task_id):
     try:
         dbname = get_mongodb_database()
         Collection = dbname["xero_items"]
@@ -20,7 +18,7 @@ def get_items(job_id,task_id):
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["Items"]
-            if len(r2)>0:
+            if len(r2) > 0:
                 no_of_records = len(r2)
                 # no_of_pages = (no_of_records // 100)+1
                 no_of_pages = 1
@@ -38,7 +36,7 @@ def get_items(job_id,task_id):
                         QuerySet["task_id"] = task_id
                         QuerySet["error"] = None
                         QuerySet["payload"] = None
-                    
+
                         QuerySet["is_pushed"] = 0
 
                         PurchaseDetails = {}
@@ -107,9 +105,8 @@ def get_items(job_id,task_id):
     except Exception as ex:
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)
         sys.exit(0)
-        

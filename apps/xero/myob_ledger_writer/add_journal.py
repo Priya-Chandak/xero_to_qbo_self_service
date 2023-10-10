@@ -44,7 +44,7 @@ def add_xero_journal_to_myobledger(job_id, task_id):
         for k8 in range(0, dbname['job'].count_documents({"job_id": job_id})):
             job.append(job11[k8])
 
-        journal=journal
+        journal = journal
         for i in range(0, len(journal)):
             print(journal[i])
             _id = journal[i]['_id']
@@ -73,7 +73,7 @@ def add_xero_journal_to_myobledger(job_id, task_id):
                                 if xero_coa[j2]["Name"] == chart_of_account[j1]['Name']:
                                     account['UID'] = chart_of_account[j1]["UID"]
                                     break
-                            
+
                             # elif journal[i]["Line"][j]["AccountCode"] == str(chart_of_account[j1]["DisplayId"]):
 
                             #     account['UID'] = chart_of_account[j1]["UID"]
@@ -104,35 +104,32 @@ def add_xero_journal_to_myobledger(job_id, task_id):
                         for k1 in range(0, len(xero_tax)):
                             if 'TaxType' in journal[i]["Line"][j]:
                                 if journal[i]["Line"][j]["TaxType"] == xero_tax[k1]['TaxType']:
-                                    
-                                    
-                                    if xero_tax[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT','INPUT2','INPUT1']:
-                                       
+
+                                    if xero_tax[k1]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT', 'INPUT2', 'INPUT1']:
+
                                         if taxcode_myob[j3]['Code'] == 'GST' or taxcode_myob1[j3]['Code'] == 'S15':
                                             taxcode['UID'] = taxcode_myob[j3]['UID']
                                             taxrate1 = taxcode_myob[j3]['Rate']
                                             break
                                     elif xero_tax[k1]['TaxType'] in ["EXEMPTCAPITAL", 'EXEMPTEXPENSES', 'EXEMPTOUTPUT',
                                                                      'EXEMPTEXPORT']:
-                                        
+
                                         if taxcode_myob[j3]['Code'] == 'FRE':
                                             taxcode['UID'] = taxcode_myob[j3]['UID']
                                             taxrate1 = taxcode_myob[j3]['Rate']
                                             break
                                     elif xero_tax[k1]['TaxType'] in ["INPUTTAXED"]:
-                                        
+
                                         if taxcode_myob[j3]['Code'] == 'INP':
                                             taxcode['UID'] = taxcode_myob[j3]['UID']
                                             taxrate1 = taxcode_myob[j3]['Rate']
                                             break
-                                    elif xero_tax[k1]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2","NONE", None]:
-                                        
+                                    elif xero_tax[k1]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2", "NONE", None]:
+
                                         if taxcode_myob[j3]['Code'] == 'N-T':
-                                            
                                             taxcode['UID'] = taxcode_myob[j3]['UID']
                                             taxrate1 = taxcode_myob[j3]['Rate']
                                             break
-
 
                     QuerySet2['TaxCode'] = taxcode
 
@@ -183,30 +180,29 @@ def add_xero_journal_to_myobledger(job_id, task_id):
                         for k4 in range(0, len(xero_tax)):
                             if 'TaxType' in journal[i]["Line"][j]:
                                 if journal[i]["Line"][j]["TaxType"] == xero_tax[k4]['TaxType']:
-                                    
-                                    if xero_tax[k4]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT',"INPUT2","INPUT1"]:
+
+                                    if xero_tax[k4]['TaxType'] in ['CAPEXINPUT', 'OUTPUT', 'INPUT', "INPUT2", "INPUT1"]:
 
                                         if taxcode_myob[j7]['Code'] == 'GST' or taxcode_myob1[j7]['Code'] == 'S15':
                                             taxcode['UID'] = taxcode_myob[j7]['UID']
                                             break
                                     elif xero_tax[k4]['TaxType'] in ["EXEMPTCAPITAL", 'EXEMPTEXPENSES', 'EXEMPTOUTPUT',
                                                                      'EXEMPTEXPORT']:
-                                        
+
                                         if taxcode_myob[j7]['Code'] == 'FRE':
                                             taxcode['UID'] = taxcode_myob[j7]['UID']
                                             break
                                     elif xero_tax[k4]['TaxType'] in ["INPUTTAXED"]:
-                                        
+
                                         if taxcode_myob[j7]['Code'] == 'INP':
                                             taxcode['UID'] = taxcode_myob[j7]['UID']
                                             break
-                                    elif xero_tax[k4]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2","NONE", None]:
-                                        
+                                    elif xero_tax[k4]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2", "NONE", None]:
+
                                         if taxcode_myob[j7]['Code'] == 'N-T':
                                             taxcode['UID'] = taxcode_myob[j7]['UID']
                                             break
-                                
-                     
+
                     QuerySet3['TaxCode'] = taxcode
 
                     if journal[i]['LineAmountTypes'] == 'Inclusive':
@@ -229,10 +225,10 @@ def add_xero_journal_to_myobledger(job_id, task_id):
 
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/GeneralLedger/GeneralJournal"
-            if journal[i]['is_pushed']==0:
+            if journal[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, dbname['xero_manual_journal'], _id, job_id, task_id,
-                                    id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 

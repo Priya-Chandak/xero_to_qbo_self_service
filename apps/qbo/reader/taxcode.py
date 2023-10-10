@@ -1,47 +1,37 @@
-import json
 from ast import Break
-import json
-from os import path
-from os.path import exists
-from MySQLdb import Connect
-from numpy import true_divide
-from apps.home.models import Jobs, Tool
-from apps import db
-from apps.myconstant import *
-from sqlalchemy.orm import aliased
-import requests
-from apps.mmc_settings.all_settings import get_settings_qbo
 
-from apps.home.data_util import add_job_status
+import requests
 from pymongo import MongoClient
 
+from apps.mmc_settings.all_settings import get_settings_qbo
 
-def get_qbo_taxcode(job_id,task_id):
+
+def get_qbo_taxcode(job_id, task_id):
     try:
         myclient = MongoClient("mongodb://localhost:27017/")
         db1 = myclient["MMC"]
         QBO_Taxcode = db1['QBO_Taxcode']
-        base_url, headers, company_id, minorversion, get_data_header,report_headers = get_settings_qbo(job_id)
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
         url = f"{base_url}/query?minorversion={minorversion}"
-        no_of_records = db1['QBO_Taxcode'].count_documents({'job_id':job_id})
+        no_of_records = db1['QBO_Taxcode'].count_documents({'job_id': job_id})
 
         payload = f"select * from taxcode startposition {no_of_records} maxresults 1000"
 
         response = requests.request("POST", url, headers=get_data_header, data=payload)
         JsonResponse = response.json()
         JsonResponse1 = JsonResponse['QueryResponse']['TaxCode']
-        
-        taxcode=[]
+
+        taxcode = []
         for tax_data in JsonResponse1:
-            tax_data['job_id']=job_id
-            tax_data['task_id']=task_id
-            tax_data['error']=None
-            tax_data['is_pushed']=0
-            tax_data['table_name']="QBO_Taxcode"
+            tax_data['job_id'] = job_id
+            tax_data['task_id'] = task_id
+            tax_data['error'] = None
+            tax_data['is_pushed'] = 0
+            tax_data['table_name'] = "QBO_Taxcode"
 
             taxcode.append(tax_data)
-        
+
         QBO_Taxcode.insert_many(taxcode)
 
         if JsonResponse['QueryResponse']['maxResults'] < 1000:
@@ -59,9 +49,9 @@ def get_qbo_taxcode(job_id,task_id):
 def get_qbo_taxrate(job_id):
     try:
         myclient = MongoClient("mongodb://localhost:27017/")
-        db1= myclient["MMC"]
+        db1 = myclient["MMC"]
         QBO_Taxrate = db1['QBO_Taxrate']
-        base_url, headers, company_id, minorversion, get_data_header,report_headers = get_settings_qbo(job_id)
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
         url = f"{base_url}/query?minorversion={minorversion}"
         no_of_records = db1['QBO_Taxrate'].count_documents({})
@@ -122,46 +112,47 @@ def get_qbo_tax(job_id):
             QBO_taxcode.append(p2)
 
         arr = []
-        for i in range(0,len(QBO_taxcode)):
+        for i in range(0, len(QBO_taxcode)):
             QuerySet = {}
             QuerySet1 = {}
             QuerySet['taxcode_id'] = QBO_taxcode[i]['Id']
             QuerySet['taxcode_name'] = QBO_taxcode[i]['Name']
-            
+
             if QBO_taxcode[i]['SalesTaxRateList'] != {'TaxRateDetail': []}:
                 QuerySet['taxrate_id'] = QBO_taxcode[i]['SalesTaxRateList']['TaxRateDetail'][0]['TaxRateRef']['value']
                 QuerySet['taxrate_name'] = QBO_taxcode[i]['SalesTaxRateList']['TaxRateDetail'][0]['TaxRateRef']['name']
-                
-                for j in range(0,len(QBO_taxrate)):
-                    
+
+                for j in range(0, len(QBO_taxrate)):
+
                     if QuerySet['taxrate_name'] == QBO_taxrate[j]['Name']:
                         QuerySet1 = QBO_taxrate[j]['Rate']
-                    QuerySet['Rate']=QuerySet1
-        
+                    QuerySet['Rate'] = QuerySet1
+
                 arr.append(QuerySet)
-       
-        for i1 in range(0,len(QBO_taxcode)):
+
+        for i1 in range(0, len(QBO_taxcode)):
             QuerySet = {}
             QuerySet1 = {}
             QuerySet['taxcode_id'] = QBO_taxcode[i1]['Id']
             QuerySet['taxcode_name'] = QBO_taxcode[i1]['Name']
-            
+
             if QBO_taxcode[i1]['PurchaseTaxRateList'] != {'TaxRateDetail': []}:
-                QuerySet['taxrate_id'] = QBO_taxcode[i1]['PurchaseTaxRateList']['TaxRateDetail'][0]['TaxRateRef']['value']
-                QuerySet['taxrate_name'] = QBO_taxcode[i1]['PurchaseTaxRateList']['TaxRateDetail'][0]['TaxRateRef']['name']
-                
-                for j1 in range(0,len(QBO_taxrate)):
-                    
+                QuerySet['taxrate_id'] = QBO_taxcode[i1]['PurchaseTaxRateList']['TaxRateDetail'][0]['TaxRateRef'][
+                    'value']
+                QuerySet['taxrate_name'] = QBO_taxcode[i1]['PurchaseTaxRateList']['TaxRateDetail'][0]['TaxRateRef'][
+                    'name']
+
+                for j1 in range(0, len(QBO_taxrate)):
+
                     if QuerySet['taxrate_name'] == QBO_taxrate[j1]['Name']:
                         QuerySet1 = QBO_taxrate[j1]['Rate']
-                
-                    QuerySet['Rate']=QuerySet1
-            
+
+                    QuerySet['Rate'] = QuerySet1
+
                 arr.append(QuerySet)
-            
+
             else:
                 pass
-     
 
         QBO_Tax.insert_many(arr)
 

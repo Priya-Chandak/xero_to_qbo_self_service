@@ -1,10 +1,11 @@
 import asyncio
 import json
 
+import requests
+
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_myob
-import requests
 
 
 def add_xero_chart_account_to_myobledger(job_id, task_id):
@@ -119,7 +120,8 @@ def add_xero_chart_account_to_myobledger(job_id, task_id):
                 elif xero_coa1[i]['Type'] == 'Accounts Receivable':
                     QuerySet1['Type'] = 'AccountsReceivable'
                 elif xero_coa1[i]['Type'] == 'INVENTORY' or xero_coa1[i]['Type'] == 'CURRENT' or xero_coa1[i][
-                    'Type'] == 'Inventory Asset account' or xero_coa1[i]['Type'] == 'Prepayment account' or xero_coa1[i]['Type'] == "PREPAYMENT":
+                    'Type'] == 'Inventory Asset account' or xero_coa1[i]['Type'] == 'Prepayment account' or \
+                        xero_coa1[i]['Type'] == "PREPAYMENT":
                     QuerySet1['Type'] = 'OtherCurrentAsset'
                 elif xero_coa1[i]['Type'] == 'FIXED Asset' or xero_coa1[i]['Type'] == 'Fixed Assets' or xero_coa1[i][
                     'Type'] == 'FIXED':
@@ -138,7 +140,8 @@ def add_xero_chart_account_to_myobledger(job_id, task_id):
                     QuerySet1['Type'] = 'Equity'
                 elif (xero_coa1[i]['Type'] == 'EXPENSE') or (
                         xero_coa1[i]["Type"] == "Superannuation Expense account") or (
-                        xero_coa1[i]["Type"] == "Wages Expense account") or (xero_coa1[i]["Type"] == "OVERHEADS") or (xero_coa1[i]["Type"] == "DEPRECIATN"):
+                        xero_coa1[i]["Type"] == "Wages Expense account") or (xero_coa1[i]["Type"] == "OVERHEADS") or (
+                        xero_coa1[i]["Type"] == "DEPRECIATN"):
                     QuerySet1['Type'] = 'Expense'
                 elif xero_coa1[i]['Type'] == 'DIRECTCOSTS':
                     QuerySet1['Type'] = 'CostOfSales'
@@ -185,7 +188,7 @@ def add_xero_chart_account_to_myobledger(job_id, task_id):
                         if parent_acc[j1]['Name'] == "Other Income":
                             QuerySet3['Name'] = parent_acc[j1]['Name']
                             QuerySet3['UID'] = parent_acc[j1]['UID']
-                    
+
                     elif QuerySet1['Type'] in ['OtherExpense']:
                         if parent_acc[j1]['Name'] == "Other Expense":
                             QuerySet3['Name'] = parent_acc[j1]['Name']
@@ -236,10 +239,10 @@ def add_xero_chart_account_to_myobledger(job_id, task_id):
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/GeneralLedger/Account"
 
-            if xero_coa1[i]['is_pushed']==0:
+            if xero_coa1[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, dbname['xero_coa'], _id, job_id, task_id,
-                                    id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 
@@ -271,7 +274,7 @@ def add_xero_chart_of_account_as_default_myobledger(job_id, task_id):
         for k in s:
             taxcode_myob1.append(k)
 
-        parent_acc1 = ['Income', 'Cost Of Sales' ]
+        parent_acc1 = ['Income', 'Cost Of Sales']
         parent_acc = []
         if len(myob_coa1) > 0:
             for j in range(0, len(myob_coa1)):
@@ -283,18 +286,18 @@ def add_xero_chart_of_account_as_default_myobledger(job_id, task_id):
                     if acc not in parent_acc:
                         parent_acc.append(acc)
 
-        default_coa = [{   "Name": "Item Sale",
+        default_coa = [{"Name": "Item Sale",
                         "Type": "SALES",
                         "Number": 9999,
                         "Description": "",
-                        "TaxType":"N-T"},
-                    {   "Name": "Item Purchase",
+                        "TaxType": "N-T"},
+                       {"Name": "Item Purchase",
                         "Type": "DIRECTCOSTS",
                         "Number": 9991,
                         "Description": "",
-                        "TaxType":"N-T"
+                        "TaxType": "N-T"
 
-            }]
+                        }]
         for i in range(0, len(default_coa)):
             QuerySet1 = {}
             QuerySet2 = {}
@@ -306,18 +309,18 @@ def add_xero_chart_of_account_as_default_myobledger(job_id, task_id):
                 main_acct = "4-"
             elif default_coa[i]['Type'] in ["DIRECTCOSTS"]:
                 main_acct = "5-"
-           
+
             if 'Number' in default_coa[i] and default_coa[i]['Number'] != None:
                 QuerySet1["DisplayID"] = f"{main_acct}" + str(default_coa[i]['Number'])
-           
+
             if "Type" in default_coa[i]:
-               
+
                 if (default_coa[i]['Type'] == 'REVENUE') or (default_coa[i]['Type'] == 'SALES'):
                     QuerySet1['Type'] = 'Income'
-                
+
                 elif default_coa[i]['Type'] == 'DIRECTCOSTS':
                     QuerySet1['Type'] = 'CostOfSales'
-                
+
             if len(parent_acc) > 0:
                 for j1 in range(0, len(parent_acc)):
                     if QuerySet1['Type'] in ['Income']:
@@ -330,7 +333,6 @@ def add_xero_chart_of_account_as_default_myobledger(job_id, task_id):
                             QuerySet3['Name'] = parent_acc[j1]['Name']
                             QuerySet3['UID'] = parent_acc[j1]['UID']
 
-                    
             QuerySet1["ParentAccount"] = QuerySet3
             QuerySet1["Description"] = None
 
@@ -339,7 +341,7 @@ def add_xero_chart_of_account_as_default_myobledger(job_id, task_id):
                     if default_coa[i]['TaxType'] == 'N-T':
                         if taxcode_myob1[p1]['Code'] == 'N-T':
                             QuerySet2['UID'] = taxcode_myob1[p1]['UID']
-         
+
                 QuerySet1["TaxCode"] = QuerySet2
             payload = json.dumps(QuerySet1)
             print(payload)

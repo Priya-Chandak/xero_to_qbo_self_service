@@ -1,16 +1,11 @@
 import json
 import logging
 
-import requests
-
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
-            
 
 logger = logging.getLogger(__name__)
-
 
 
 def add_xero_job(job_id, task_id):
@@ -39,8 +34,7 @@ def add_xero_job(job_id, task_id):
             payload = json.dumps(QuerySet2)
 
             post_data_in_qbo(url, headers, payload, dbname["xero_job"], _id, job_id, task_id, QuerySet1[i]["Name"])
-                
-            
+
+
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_job -> add_xero_job", ex)
-        

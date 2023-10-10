@@ -1,7 +1,6 @@
 import traceback
 
 from apps import db
-from apps.home.data_util import add_job_status
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings
 
@@ -11,10 +10,10 @@ def post_xero_settings(job_id):
         base_url = "https://api.xero.com/api.xro/2.0"
         keys = (
             db.session.query(Jobs, ToolSettings.keys, ToolSettings.values)
-                .join(Tool, Jobs.output_account_id == Tool.id)
-                .join(ToolSettings, ToolSettings.tool_id == Tool.id)
-                .filter(Jobs.id == job_id)
-                .all()
+            .join(Tool, Jobs.output_account_id == Tool.id)
+            .join(ToolSettings, ToolSettings.tool_id == Tool.id)
+            .filter(Jobs.id == job_id)
+            .all()
         )
         for row in keys:
             if row[1] == "client_id":
@@ -49,4 +48,3 @@ def post_xero_settings(job_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

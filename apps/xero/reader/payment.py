@@ -1,24 +1,23 @@
-import traceback
+import sys
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.home.data_util import get_job_details
+from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-from apps.home.data_util import  write_task_execution_step,update_task_execution_status
-import sys
 
-def get_xero_payment(job_id,task_id):
+
+def get_xero_payment(job_id, task_id):
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
         xero_bill_payment = dbname["xero_bill_payment"]
         xero_invoice_payment = dbname["xero_invoice_payment"]
         xero_supplier_credit_cash_refund = dbname["xero_supplier_credit_cash_refund"]
-        xero_receive_overpayment_cash_refund =dbname['xero_receive_overpayment_cash_refund']
+        xero_receive_overpayment_cash_refund = dbname['xero_receive_overpayment_cash_refund']
         xero_spend_overpayment_cash_refund = dbname['xero_spend_overpayment_cash_refund']
-        xero_credit_memo_refund_payment =dbname['xero_credit_memo_refund_payment']
+        xero_credit_memo_refund_payment = dbname['xero_credit_memo_refund_payment']
 
         payload, base_url, headers = get_settings_xero(job_id)
 
@@ -37,16 +36,16 @@ def get_xero_payment(job_id,task_id):
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["Payments"]
-            if len(r2)>0:
+            if len(r2) > 0:
                 no_of_records = len(r2)
                 no_of_pages = (no_of_records // 100) + 1
 
                 bill_payment = []
                 invoice_payment = []
-                supplier_credit_cash_refund=[]
-                receive_overpayment_cash_refund=[]
-                spend_overpayment_cash_refund=[]
-                credit_memo_refund_payment=[]
+                supplier_credit_cash_refund = []
+                receive_overpayment_cash_refund = []
+                spend_overpayment_cash_refund = []
+                credit_memo_refund_payment = []
 
                 for pages in range(1, no_of_pages + 1):
                     if start_date == "" and end_date == "":
@@ -67,8 +66,8 @@ def get_xero_payment(job_id,task_id):
 
                     for i in range(0, len(JsonResponse1)):
                         if (
-                            JsonResponse1[i]["Status"] != "DELETED"
-                            and JsonResponse1[i]["Status"] != "VOIDED"
+                                JsonResponse1[i]["Status"] != "DELETED"
+                                and JsonResponse1[i]["Status"] != "VOIDED"
                         ):
                             QuerySet = {}
                             QuerySet["job_id"] = job_id
@@ -110,22 +109,22 @@ def get_xero_payment(job_id,task_id):
                             QuerySet["Contact"] = JsonResponse1[i]["Invoice"]["Contact"]["Name"]
 
                             if JsonResponse1[i]["PaymentType"] == "ACCRECPAYMENT":
-                                QuerySet["table_name"] = "xero_invoice_payment" 
+                                QuerySet["table_name"] = "xero_invoice_payment"
                                 invoice_payment.append(QuerySet)
                             elif JsonResponse1[i]["PaymentType"] == "ACCPAYPAYMENT":
-                                QuerySet["table_name"] = "xero_bill_payment" 
+                                QuerySet["table_name"] = "xero_bill_payment"
                                 bill_payment.append(QuerySet)
                             elif JsonResponse1[i]["PaymentType"] == "APCREDITPAYMENT":
-                                QuerySet["table_name"] = "xero_supplier_credit_cash_refund" 
+                                QuerySet["table_name"] = "xero_supplier_credit_cash_refund"
                                 supplier_credit_cash_refund.append(QuerySet)
                             elif JsonResponse1[i]["PaymentType"] == "ARCREDITPAYMENT":
-                                QuerySet["table_name"] = "xero_credit_memo_refund_payment" 
+                                QuerySet["table_name"] = "xero_credit_memo_refund_payment"
                                 credit_memo_refund_payment.append(QuerySet)
                             elif JsonResponse1[i]["PaymentType"] == "AROVERPAYMENTPAYMENT":
-                                QuerySet["table_name"] = "xero_receive_overpayment_cash_refund" 
+                                QuerySet["table_name"] = "xero_receive_overpayment_cash_refund"
                                 receive_overpayment_cash_refund.append(QuerySet)
                             elif JsonResponse1[i]["PaymentType"] == "APOVERPAYMENTPAYMENT":
-                                QuerySet["table_name"] = "xero_spend_overpayment_cash_refund" 
+                                QuerySet["table_name"] = "xero_spend_overpayment_cash_refund"
                                 spend_overpayment_cash_refund.append(QuerySet)
 
                 if len(bill_payment) > 0:
@@ -136,21 +135,20 @@ def get_xero_payment(job_id,task_id):
                     xero_supplier_credit_cash_refund.insert_many(supplier_credit_cash_refund)
                 if len(receive_overpayment_cash_refund) > 0:
                     xero_receive_overpayment_cash_refund.insert_many(receive_overpayment_cash_refund)
-                if len(spend_overpayment_cash_refund)>0:
+                if len(spend_overpayment_cash_refund) > 0:
                     xero_spend_overpayment_cash_refund.insert_many(spend_overpayment_cash_refund)
-                if len(credit_memo_refund_payment)>0:
+                if len(credit_memo_refund_payment) > 0:
                     xero_credit_memo_refund_payment.insert_many(credit_memo_refund_payment)
-                    
+
                 step_name = "Reading data from xero payment"
                 write_task_execution_step(task_id, status=1, step=step_name)
-             
+
 
     except Exception as ex:
         step_name = "Access token not valid"
         write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
+        update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
         traceback.print_exc()
         print(ex)
         sys.exit(0)
-        

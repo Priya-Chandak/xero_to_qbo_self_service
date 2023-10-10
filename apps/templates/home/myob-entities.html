@@ -48,13 +48,13 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    {% for item in data %}
-                                        <tr>
-                                            <td>{{item.entity_name}}</td>
-                                            <td>{{item.last_read_count}}</td>
-                                            <td><a href="myob/entity/{{item.entity_name}}">View Details</a></td>
-                                        </tr>
-                                    {% endfor %}
+                                {% for item in data %}
+                                <tr>
+                                    <td>{{item.entity_name}}</td>
+                                    <td>{{item.last_read_count}}</td>
+                                    <td><a href="myob/entity/{{item.entity_name}}">View Details</a></td>
+                                </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -120,6 +120,7 @@
 
 			});
 		});
+
 
 </script>
 

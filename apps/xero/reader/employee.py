@@ -2,12 +2,11 @@ import traceback
 
 import requests
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 
 
-def get_xero_employee(job_id,task_id):
+def get_xero_employee(job_id, task_id):
     try:
         dbname = get_mongodb_database()
         Collection = dbname["xero_employee"]
@@ -55,4 +54,3 @@ def get_xero_employee(job_id,task_id):
 
     except Exception as ex:
         traceback.print_exc()
-        

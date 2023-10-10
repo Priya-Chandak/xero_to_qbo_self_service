@@ -25,7 +25,7 @@ def login():
         password = request.form["password"]
         # Locate user
         user = Users.query.filter_by(email=username).first()
-       
+
         # Check the password
         if user and verify_pass(password, user.password):
             login_user(user)

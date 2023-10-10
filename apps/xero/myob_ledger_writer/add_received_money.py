@@ -35,9 +35,9 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
         for p3 in xero_coa1:
             xero_coa.append(p3)
 
-        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id":job_id})
+        xero_archived_coa1 = dbname['xero_archived_coa'].find({"job_id": job_id})
         xero_archived_coa = []
-        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id":job_id})):
+        for k4 in range(0, dbname['xero_archived_coa'].count_documents({"job_id": job_id})):
             xero_archived_coa.append(xero_archived_coa1[k4])
 
         taxcode_myob1 = dbname['taxcode_myob'].find({'job_id': job_id})
@@ -72,7 +72,7 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
 
         blank = []
 
-        xero_receive_money=xero_receive_money
+        xero_receive_money = xero_receive_money
 
         for i in range(0, len(xero_receive_money)):
             _id = xero_receive_money[i]['_id']
@@ -85,7 +85,7 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                 if xero_receive_money[i]['BankAccountName'].lower().strip() == myob_coa[i4]['Name'].lower().strip():
                     account['UID'] = myob_coa[i4]['UID']
                     account['Name'] = myob_coa[i4]['Name']
-                elif xero_receive_money[i]['BankAccountName'][0:60]  == myob_coa[i4]['Name']:
+                elif xero_receive_money[i]['BankAccountName'][0:60] == myob_coa[i4]['Name']:
                     account['UID'] = myob_coa[i4]['UID']
                     account['Name'] = myob_coa[i4]['Name']
             Queryset1['account'] = account
@@ -96,14 +96,14 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                     contact['Name'] = myob_supplier[i3]['CompanyName']
                     contact['Type'] = 'Supplier'
                     break
-                
-                elif 'CompanyName' in myob_supplier[i3] and myob_supplier[i3]['CompanyName']!= None:
+
+                elif 'CompanyName' in myob_supplier[i3] and myob_supplier[i3]['CompanyName'] != None:
                     if myob_supplier[i3]['CompanyName'].startswith(xero_receive_money[i]['ContactName']) and \
-                        myob_supplier[i3]['CompanyName'].endswith("- S"):
-                            contact['UID'] = myob_supplier[i3]['UID']
-                            contact['Name'] = myob_supplier[i3]['CompanyName']
-                            contact['Type'] = 'Supplier'
-                            break
+                            myob_supplier[i3]['CompanyName'].endswith("- S"):
+                        contact['UID'] = myob_supplier[i3]['UID']
+                        contact['Name'] = myob_supplier[i3]['CompanyName']
+                        contact['Type'] = 'Supplier'
+                        break
 
             for i31 in range(0, len(myob_customer)):
                 if 'DisplayName' in myob_customer[i31]:
@@ -115,7 +115,7 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                 elif 'Company_Name' in myob_customer[i31]:
 
                     if myob_customer[i31]['Company_Name'].strip().lower() == xero_receive_money[i][
-                        'ContactName'][0:50].strip().lower():
+                                                                                 'ContactName'][0:50].strip().lower():
                         contact['UID'] = myob_customer[i31]['UID']
                         contact['Name'] = myob_customer[i31]['Company_Name']
                         contact['Type'] = 'Customer'
@@ -133,7 +133,6 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                         contact['Name'] = myob_customer[i31]['Company_Name']
                         contact['Type'] = 'Customer'
                         break
-                        
 
             Queryset1['Contact'] = contact
             if xero_receive_money[i]['Reference'] != None:
@@ -173,16 +172,14 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                             elif xero_receive_money[i]['Line'][j]['AccountCode'] == myob_coa[i2]['DisplayId']:
                                 lineaccount['UID'] = myob_coa[i2]['UID']
                                 break
-                    for n in range(0,len(xero_archived_coa)):    
-                        for p1 in range(0,len(myob_coa)):
-                            if xero_receive_money[i]['Line'][j]['AccountCode']  == xero_archived_coa[n]['Code']:
+                    for n in range(0, len(xero_archived_coa)):
+                        for p1 in range(0, len(myob_coa)):
+                            if xero_receive_money[i]['Line'][j]['AccountCode'] == xero_archived_coa[n]['Code']:
                                 if xero_archived_coa[n]['Name'] == myob_coa[p1]["Name"]:
                                     lineaccount['UID'] = myob_coa[p1]["UID"]
 
-
                     if lineaccount != {} and lineaccount != None:
                         lineitem['account'] = lineaccount
-            
 
                     for i21 in range(0, len(myob_job)):
                         if 'TrackingName' in xero_receive_money[i]['Line'][j]:
@@ -215,7 +212,8 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                                         taxcode['UID'] = taxcode_myob[j3]['UID']
 
 
-                                elif xero_tax[j2]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2", "NONE", None,"TAX002"]:
+                                elif xero_tax[j2]['TaxType'] in ["BASEXCLUDED", "BAS-W1", "BAS-W2", "NONE", None,
+                                                                 "TAX002"]:
                                     if taxcode_myob[j3]['Code'] == 'N-T':
                                         taxcode['UID'] = taxcode_myob[j3]['UID']
 
@@ -234,14 +232,15 @@ def add_receive_money_from_xero_to_myobledger(job_id, task_id):
                     Queryset1['Lines'].append(lineitem)
 
             payload = json.dumps(Queryset1)
-            id_or_name_value_for_error = str(xero_receive_money[i]['Date'])+"-"+str(xero_receive_money[i]['ContactName'])+"-"+str(xero_receive_money[i]['TotalAmount'])
-                
+            id_or_name_value_for_error = str(xero_receive_money[i]['Date']) + "-" + str(
+                xero_receive_money[i]['ContactName']) + "-" + str(xero_receive_money[i]['TotalAmount'])
+
             payload1, base_url, headers = get_settings_myob(job_id)
             url = f"{base_url}/Banking/ReceiveMoneyTxn"
-            if xero_receive_money[i]['is_pushed']==0:
+            if xero_receive_money[i]['is_pushed'] == 0:
                 asyncio.run(
                     post_data_in_myob(url, headers, payload, dbname['xero_receive_money'], _id, job_id, task_id,
-                                    id_or_name_value_for_error))
+                                      id_or_name_value_for_error))
             else:
                 pass
 

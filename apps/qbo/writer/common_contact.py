@@ -1,6 +1,5 @@
 import traceback
 
-from apps.home.data_util import add_job_status
 from apps.util.db_mongo import get_mongodb_database
 
 
@@ -9,8 +8,8 @@ def get_common_contact(job_id):
         db = get_mongodb_database()
         supplier_data = db["supplier"]
         customer_data = db["customer"]
-        supplier = supplier_data.find({"job_id":job_id})
-        customer = customer_data.find({"job_id":job_id})
+        supplier = supplier_data.find({"job_id": job_id})
+        customer = customer_data.find({"job_id": job_id})
         cust1 = []
         for k1 in customer:
             cust1.append(k1)
@@ -39,4 +38,3 @@ def get_common_contact(job_id):
         common_contact1 = list(common_contact[0])
     except Exception as ex:
         traceback.print_exc()
-        

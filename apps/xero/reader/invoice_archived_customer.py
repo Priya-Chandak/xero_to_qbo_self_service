@@ -1,7 +1,6 @@
 import json
 import logging
 
-from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 
@@ -21,12 +20,11 @@ def add_xero_archieved_customer(job_id, task_id):
         customer_data = dbname["xero_archived_customer"]
         customers = customer_data.find({"job_id": job_id})
 
-        xero_invoice = dbname["xero_invoice"].find({"job_id":job_id})
+        xero_invoice = dbname["xero_invoice"].find({"job_id": job_id})
 
         multiple_invoice = []
         for p1 in xero_invoice:
             multiple_invoice.append(p1)
-
 
         for customer in customers:
             _id = customer.get("_id")
@@ -43,7 +41,7 @@ def add_xero_archieved_customer(job_id, task_id):
             customer_address = customer.get("Address")
             customer_phone = customer.get("Phone")
 
-            if len(customer_address)!=0:
+            if len(customer_address) != 0:
                 if "AddressLine1" in customer_address[0]:
                     QuerySet3["Line1"] = customer_address[0].get("AddressLine1")
                 if "AddressLine2" in customer_address[0]:
@@ -73,10 +71,13 @@ def add_xero_archieved_customer(job_id, task_id):
                     QuerySet31["Country"] = customer_address[1].get("Country")
 
                 if len(customer_phone) != 0:
-                    QuerySet4["FreeFormNumber"] = customer_phone[1].get("PhoneNumber")[0:30] if customer_phone[1].get("PhoneNumber") ==True else None
-                    QuerySet8["FreeFormNumber"] = customer_phone[3].get("PhoneNumber")[0:30] if customer_phone[3].get("PhoneNumber") ==True else None
-                    QuerySet9["FreeFormNumber"] = customer_phone[2].get("PhoneNumber")[0:30] if customer_phone[2].get("PhoneNumber") ==True else None
-                
+                    QuerySet4["FreeFormNumber"] = customer_phone[1].get("PhoneNumber")[0:30] if customer_phone[1].get(
+                        "PhoneNumber") == True else None
+                    QuerySet8["FreeFormNumber"] = customer_phone[3].get("PhoneNumber")[0:30] if customer_phone[3].get(
+                        "PhoneNumber") == True else None
+                    QuerySet9["FreeFormNumber"] = customer_phone[2].get("PhoneNumber")[0:30] if customer_phone[2].get(
+                        "PhoneNumber") == True else None
+
             QuerySet5["Address"] = customer.get("email")
             QuerySet2["BillAddr"] = QuerySet31
             QuerySet2["ShipAddr"] = QuerySet3
@@ -91,13 +92,14 @@ def add_xero_archieved_customer(job_id, task_id):
             # QuerySet2['WebAddr'] = WebAddr
             QuerySet2["Fax"] = QuerySet9
             QuerySet2["Mobile"] = QuerySet8
-            QuerySet2["DisplayName"] = customer.get("Name").replace(":","-")
+            QuerySet2["DisplayName"] = customer.get("Name").replace(":", "-")
             QuerySet2["GivenName"] = customer.get("FirstName")
             QuerySet2["FamilyName"] = customer.get("LastName")
             QuerySet2["PrimaryTaxIdentifier"] = customer.get("TaxNumber")
             payload = json.dumps(QuerySet2)
 
-            post_data_in_qbo(url, headers, payload, dbname["xero_archived_customer"], _id, job_id, task_id, customer.get('Name'))
-            
+            post_data_in_qbo(url, headers, payload, dbname["xero_archived_customer"], _id, job_id, task_id,
+                             customer.get('Name'))
+
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_customer -> add_xero_archived_customer", ex)

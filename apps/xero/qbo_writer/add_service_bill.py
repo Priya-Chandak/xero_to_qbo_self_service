@@ -12,7 +12,6 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 logger = logging.getLogger(__name__)
 
 
-
 def add_xero_service_bill(job_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_service_bill -> add_xero_service_bill")
@@ -22,37 +21,37 @@ def add_xero_service_bill(job_id):
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         url1 = f"{base_url}/bill?minorversion=14"
         url2 = f"{base_url}/vendorcredit?minorversion=14"
-        final_bill1 = db["xero_bill"].find({"job_id":job_id})
+        final_bill1 = db["xero_bill"].find({"job_id": job_id})
         final_bill = []
         for p1 in final_bill1:
             final_bill.append(p1)
 
-        QBO_COA = db["QBO_COA"].find({"job_id":job_id})
+        QBO_COA = db["QBO_COA"].find({"job_id": job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        QBO_Supplier = db["QBO_Supplier"].find({"job_id":job_id})
+        QBO_Supplier = db["QBO_Supplier"].find({"job_id": job_id})
         QBO_supplier = []
         for p3 in QBO_Supplier:
             QBO_supplier.append(p3)
 
-        QBO_Item = db["QBO_Item"].find({"job_id":job_id})
+        QBO_Item = db["QBO_Item"].find({"job_id": job_id})
         QBO_item = []
         for p4 in QBO_Item:
             QBO_item.append(p4)
 
-        QBO_Class = db["QBO_Class"].find({"job_id":job_id})
+        QBO_Class = db["QBO_Class"].find({"job_id": job_id})
         QBO_class = []
         for p5 in QBO_Class:
             QBO_class.append(p5)
 
-        QBO_Tax = db["QBO_Tax"].find({"job_id":job_id})
+        QBO_Tax = db["QBO_Tax"].find({"job_id": job_id})
         QBO_tax = []
         for p6 in QBO_Tax:
             QBO_tax.append(p6)
 
-        XERO_COA = db["xero_coa"].find({"job_id":job_id})
+        XERO_COA = db["xero_coa"].find({"job_id": job_id})
         xero_coa1 = []
         for p7 in XERO_COA:
             xero_coa1.append(p7)
@@ -64,12 +63,12 @@ def add_xero_service_bill(job_id):
 
         for i in range(0, len(final_bill)):
             if (final_bill[i]["Status"] != "DELETED") and (
-                final_bill[i]["Status"] != "VOIDED"
+                    final_bill[i]["Status"] != "VOIDED"
             ):
                 if "Line" in final_bill[i]:
                     if final_bill[i]["TotalAmount"] > 0:
                         if (len(final_bill[i]["Line"]) == 1) and (
-                            "ItemCode" not in final_bill[i]["Line"][0]
+                                "ItemCode" not in final_bill[i]["Line"][0]
                         ):
                             QuerySet = {"Line": []}
                             QuerySet1 = {}
@@ -95,17 +94,17 @@ def add_xero_service_bill(job_id):
                             taxrate1 = 0
                             for k1 in range(0, len(QBO_tax)):
                                 if (
-                                    (
-                                        final_bill[i]["Line"][0]["TaxType"]
-                                        == "BASEXCLUDED"
-                                    )
-                                    or (final_bill[i]["Line"][0]["TaxType"] == None)
-                                    or (final_bill[i]["Line"][0]["TaxType"] == "NONE")
+                                        (
+                                                final_bill[i]["Line"][0]["TaxType"]
+                                                == "BASEXCLUDED"
+                                        )
+                                        or (final_bill[i]["Line"][0]["TaxType"] == None)
+                                        or (final_bill[i]["Line"][0]["TaxType"] == "NONE")
                                 ):
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "Input tax (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "Input tax (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -119,8 +118,8 @@ def add_xero_service_bill(job_id):
                                 elif final_bill[i]["Line"][0]["TaxType"] == "INPUT":
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "GST (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "GST (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -141,8 +140,8 @@ def add_xero_service_bill(job_id):
                                 elif final_bill[i]["Line"][0]["TaxType"] == "OUTPUT":
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "GST (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "GST (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -161,15 +160,15 @@ def add_xero_service_bill(job_id):
                                             )
 
                                 elif (
-                                    final_bill[i]["Line"][0]["TaxType"]
-                                    == "EXEMPTEXPENSES"
-                                    or final_bill[i]["Line"][0]["TaxType"]
-                                    == "EXEMPTOUTPUT"
+                                        final_bill[i]["Line"][0]["TaxType"]
+                                        == "EXEMPTEXPENSES"
+                                        or final_bill[i]["Line"][0]["TaxType"]
+                                        == "EXEMPTOUTPUT"
                                 ):
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "GST-free (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "GST-free (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -186,9 +185,9 @@ def add_xero_service_bill(job_id):
                             if final_bill[i]["LineAmountTypes"] == "Inclusive":
                                 QuerySet["GlobalTaxCalculation"] = "TaxInclusive"
                                 QuerySet1["Amount"] = (
-                                    abs(final_bill[i]["TotalAmount"])
-                                    / (100 + taxrate1)
-                                    * 100
+                                        abs(final_bill[i]["TotalAmount"])
+                                        / (100 + taxrate1)
+                                        * 100
                                 )
                                 TaxLineDetail["NetAmountTaxable"] = abs(
                                     final_bill[i]["TotalAmount"]
@@ -208,18 +207,18 @@ def add_xero_service_bill(job_id):
 
                             if "supplier_invoice_no" in final_bill[i]:
                                 if (
-                                    final_bill[i]["supplier_invoice_no"] == None
-                                    or final_bill[i]["supplier_invoice_no"] == ""
+                                        final_bill[i]["supplier_invoice_no"] == None
+                                        or final_bill[i]["supplier_invoice_no"] == ""
                                 ):
                                     QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
                                 elif (
-                                    final_bill[i]["supplier_invoice_no"] != ""
-                                    or final_bill[i]["supplier_invoice_no"] is not None
+                                        final_bill[i]["supplier_invoice_no"] != ""
+                                        or final_bill[i]["supplier_invoice_no"] is not None
                                 ):
                                     QuerySet["DocNumber"] = (
-                                        final_bill[i]["Inv_No"]
-                                        + "-"
-                                        + final_bill[i]["supplier_invoice_no"]
+                                            final_bill[i]["Inv_No"]
+                                            + "-"
+                                            + final_bill[i]["supplier_invoice_no"]
                                     )
                             else:
                                 QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -245,16 +244,16 @@ def add_xero_service_bill(job_id):
                                     if "Code" in xero_coa1[j2]:
                                         if "AccountCode" in final_bill[i]["Line"][0]:
                                             if (
-                                                final_bill[i]["Line"][0]["AccountCode"]
-                                                == xero_coa1[j2]["Code"]
+                                                    final_bill[i]["Line"][0]["AccountCode"]
+                                                    == xero_coa1[j2]["Code"]
                                             ):
                                                 if (
-                                                    xero_coa1[j2]["Name"]
-                                                    .lower()
-                                                    .strip()
-                                                    == QBO_coa[j1]["FullyQualifiedName"]
-                                                    .lower()
-                                                    .strip()
+                                                        xero_coa1[j2]["Name"]
+                                                                .lower()
+                                                                .strip()
+                                                        == QBO_coa[j1]["FullyQualifiedName"]
+                                                        .lower()
+                                                        .strip()
                                                 ):
                                                     QuerySet3["value"] = QBO_coa[j1][
                                                         "Id"
@@ -264,12 +263,12 @@ def add_xero_service_bill(job_id):
 
                             for j3 in range(0, len(QBO_supplier)):
                                 if QBO_supplier[j3]["DisplayName"].startswith(
-                                    final_bill[i]["ContactName"]
+                                        final_bill[i]["ContactName"]
                                 ) and QBO_supplier[j3]["DisplayName"].endswith(" - S"):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 elif (
-                                    final_bill[i]["ContactName"]
-                                    == QBO_supplier[j3]["DisplayName"]
+                                        final_bill[i]["ContactName"]
+                                        == QBO_supplier[j3]["DisplayName"]
                                 ):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 else:
@@ -292,7 +291,7 @@ def add_xero_service_bill(job_id):
                             bill_date1 = datetime.strptime(bill_date, "%Y-%m-%d")
                             if start_date1 is not None and end_date1 is not None:
                                 if (bill_date1 >= start_date1) and (
-                                    bill_date1 <= end_date1
+                                        bill_date1 <= end_date1
                                 ):
                                     response = requests.request(
                                         "POST", url1, headers=headers, data=payload
@@ -300,18 +299,18 @@ def add_xero_service_bill(job_id):
                                     if response.status_code == 401:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            (
-                                                res1["fault"]["error"][0]["message"]
-                                            ).split(";")[0]
-                                        ).split("=")[
-                                            1
-                                        ] + ": Please Update the Access Token"
+                                                   (
+                                                       res1["fault"]["error"][0]["message"]
+                                                   ).split(";")[0]
+                                               ).split("=")[
+                                                   1
+                                               ] + ": Please Update the Access Token"
                                         add_job_status(job_id, res2, "error")
                                     elif response.status_code == 400:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            res1["Fault"]["Error"][0]["Detail"]
-                                        ) + ": {}".format(final_bill[i]["Inv_No"])
+                                                   res1["Fault"]["Error"][0]["Detail"]
+                                               ) + ": {}".format(final_bill[i]["Inv_No"])
                                         add_job_status(job_id, res2, "error")
                                 else:
                                     pass
@@ -323,16 +322,16 @@ def add_xero_service_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + ": {}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + ": {}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
 
                         elif len(final_bill[i]["Line"]) > 1:
@@ -366,23 +365,23 @@ def add_xero_service_bill(job_id):
 
                                     for k1 in range(0, len(QBO_tax)):
                                         if (
-                                            (
-                                                final_bill[i]["Line"][j]["TaxType"]
-                                                == "BASEXCLUDED"
-                                            )
-                                            or (
+                                                (
+                                                        final_bill[i]["Line"][j]["TaxType"]
+                                                        == "BASEXCLUDED"
+                                                )
+                                                or (
                                                 final_bill[i]["Line"][j]["TaxType"]
                                                 == None
-                                            )
-                                            or (
+                                        )
+                                                or (
                                                 final_bill[i]["Line"][j]["TaxType"]
                                                 == "NONE"
-                                            )
+                                        )
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "Input tax (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "Input tax (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -405,15 +404,15 @@ def add_xero_service_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "EXEMPTEXPENSES"
-                                            or final_bill[i]["Line"][j]["TaxType"]
-                                            == "EXEMPTOUTPUT"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "EXEMPTEXPENSES"
+                                                or final_bill[i]["Line"][j]["TaxType"]
+                                                == "EXEMPTOUTPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST-free (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST-free (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -436,13 +435,13 @@ def add_xero_service_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "OUTPUT"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "OUTPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -465,13 +464,13 @@ def add_xero_service_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "INPUT"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "INPUT"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -494,13 +493,13 @@ def add_xero_service_bill(job_id):
                                                     )
 
                                         elif (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "EXEMPTEXPENSES"
+                                                final_bill[i]["Line"][j]["TaxType"]
+                                                == "EXEMPTEXPENSES"
                                         ):
                                             if "taxrate_name" in QBO_tax[k1]:
                                                 if (
-                                                    "GST-free (purchases)"
-                                                    in QBO_tax[k1]["taxrate_name"]
+                                                        "GST-free (purchases)"
+                                                        in QBO_tax[k1]["taxrate_name"]
                                                 ):
                                                     TaxRate["value"] = QBO_tax[k1][
                                                         "taxrate_id"
@@ -516,8 +515,8 @@ def add_xero_service_bill(job_id):
                                                         "NetAmountTaxable"
                                                     ] = final_bill[i]["TotalAmount"]
                                                     Tax["Amount"] = (
-                                                        abs(final_bill[i]["TotalTax"])
-                                                        * taxrate1
+                                                            abs(final_bill[i]["TotalTax"])
+                                                            * taxrate1
                                                     )
 
                                         else:
@@ -528,9 +527,9 @@ def add_xero_service_bill(job_id):
                                             "GlobalTaxCalculation"
                                         ] = "TaxInclusive"
                                         QuerySet1["Amount"] = (
-                                            (final_bill[i]["Line"][j]["LineAmount"])
-                                            / (100 + taxrate1)
-                                            * 100
+                                                (final_bill[i]["Line"][j]["LineAmount"])
+                                                / (100 + taxrate1)
+                                                * 100
                                         )
 
                                     else:
@@ -541,22 +540,22 @@ def add_xero_service_bill(job_id):
 
                                     if "supplier_invoice_no" in final_bill[i]:
                                         if (
-                                            final_bill[i]["supplier_invoice_no"] == None
-                                            or final_bill[i]["supplier_invoice_no"]
-                                            == ""
+                                                final_bill[i]["supplier_invoice_no"] == None
+                                                or final_bill[i]["supplier_invoice_no"]
+                                                == ""
                                         ):
                                             QuerySet["DocNumber"] = final_bill[i][
                                                 "Inv_No"
                                             ]
                                         elif (
-                                            final_bill[i]["supplier_invoice_no"] != ""
-                                            or final_bill[i]["supplier_invoice_no"]
-                                            is not None
+                                                final_bill[i]["supplier_invoice_no"] != ""
+                                                or final_bill[i]["supplier_invoice_no"]
+                                                is not None
                                         ):
                                             QuerySet["DocNumber"] = (
-                                                final_bill[i]["Inv_No"]
-                                                + "-"
-                                                + final_bill[i]["supplier_invoice_no"]
+                                                    final_bill[i]["Inv_No"]
+                                                    + "-"
+                                                    + final_bill[i]["supplier_invoice_no"]
                                             )
                                     else:
                                         QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -585,24 +584,24 @@ def add_xero_service_bill(job_id):
                                         for j2 in range(0, len(xero_coa1)):
                                             if "Code" in xero_coa1[j2]:
                                                 if (
-                                                    "AccountCode"
-                                                    in final_bill[i]["Line"][j]
+                                                        "AccountCode"
+                                                        in final_bill[i]["Line"][j]
                                                 ):
                                                     if (
-                                                        final_bill[i]["Line"][j][
-                                                            "AccountCode"
-                                                        ]
-                                                        == xero_coa1[j2]["Code"]
+                                                            final_bill[i]["Line"][j][
+                                                                "AccountCode"
+                                                            ]
+                                                            == xero_coa1[j2]["Code"]
                                                     ):
                                                         if (
-                                                            xero_coa1[j2]["Name"]
-                                                            .lower()
-                                                            .strip()
-                                                            == QBO_coa[j1][
-                                                                "FullyQualifiedName"
-                                                            ]
-                                                            .lower()
-                                                            .strip()
+                                                                xero_coa1[j2]["Name"]
+                                                                        .lower()
+                                                                        .strip()
+                                                                == QBO_coa[j1][
+                                                            "FullyQualifiedName"
+                                                        ]
+                                                                .lower()
+                                                                .strip()
                                                         ):
                                                             QuerySet3[
                                                                 "value"
@@ -612,14 +611,14 @@ def add_xero_service_bill(job_id):
 
                                     for j3 in range(0, len(QBO_supplier)):
                                         if QBO_supplier[j3]["DisplayName"].startswith(
-                                            final_bill[i]["ContactName"]
+                                                final_bill[i]["ContactName"]
                                         ) and QBO_supplier[j3]["DisplayName"].endswith(
                                             " - S"
                                         ):
                                             QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                         elif (
-                                            final_bill[i]["ContactName"]
-                                            == QBO_supplier[j3]["DisplayName"]
+                                                final_bill[i]["ContactName"]
+                                                == QBO_supplier[j3]["DisplayName"]
                                         ):
                                             QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                         else:
@@ -655,7 +654,7 @@ def add_xero_service_bill(job_id):
                             bill_date1 = datetime.strptime(bill_date, "%Y-%m-%d")
                             if start_date1 is not None and end_date1 is not None:
                                 if (bill_date1 >= start_date1) and (
-                                    bill_date1 <= end_date1
+                                        bill_date1 <= end_date1
                                 ):
                                     response = requests.request(
                                         "POST", url1, headers=headers, data=payload
@@ -663,18 +662,18 @@ def add_xero_service_bill(job_id):
                                     if response.status_code == 401:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            (
-                                                res1["fault"]["error"][0]["message"]
-                                            ).split(";")[0]
-                                        ).split("=")[
-                                            1
-                                        ] + ": Please Update the Access Token"
+                                                   (
+                                                       res1["fault"]["error"][0]["message"]
+                                                   ).split(";")[0]
+                                               ).split("=")[
+                                                   1
+                                               ] + ": Please Update the Access Token"
                                         add_job_status(job_id, res2, "error")
                                     elif response.status_code == 400:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            res1["Fault"]["Error"][0]["Detail"]
-                                        ) + ": {}".format(final_bill[i]["Inv_No"])
+                                                   res1["Fault"]["Error"][0]["Detail"]
+                                               ) + ": {}".format(final_bill[i]["Inv_No"])
                                         add_job_status(job_id, res2, "error")
                                 else:
                                     pass
@@ -685,21 +684,21 @@ def add_xero_service_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + ": {}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + ": {}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
 
                     else:
                         if (len(final_bill[i]["Line"]) == 1) and (
-                            "ItemCode" not in final_bill[i]["Line"][0]
+                                "ItemCode" not in final_bill[i]["Line"][0]
                         ):
                             QuerySet = {"Line": []}
                             QuerySet1 = {}
@@ -725,17 +724,17 @@ def add_xero_service_bill(job_id):
                             taxrate1 = 0
                             for k1 in range(0, len(QBO_tax)):
                                 if (
-                                    (
-                                        final_bill[i]["Line"][0]["TaxType"]
-                                        == "BASEXCLUDED"
-                                    )
-                                    or (final_bill[i]["Line"][0]["TaxType"] == None)
-                                    or (final_bill[i]["Line"][0]["TaxType"] == "NONE")
+                                        (
+                                                final_bill[i]["Line"][0]["TaxType"]
+                                                == "BASEXCLUDED"
+                                        )
+                                        or (final_bill[i]["Line"][0]["TaxType"] == None)
+                                        or (final_bill[i]["Line"][0]["TaxType"] == "NONE")
                                 ):
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "Input tax (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "Input tax (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -753,8 +752,8 @@ def add_xero_service_bill(job_id):
                                 elif final_bill[i]["Line"][0]["TaxType"] == "INPUT":
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "GST (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "GST (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -775,8 +774,8 @@ def add_xero_service_bill(job_id):
                                 elif final_bill[i]["Line"][0]["TaxType"] == "OUTPUT":
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "GST (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "GST (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -795,15 +794,15 @@ def add_xero_service_bill(job_id):
                                             )
 
                                 elif (
-                                    final_bill[i]["Line"][0]["TaxType"]
-                                    == "EXEMPTEXPENSES"
-                                    or final_bill[i]["Line"][0]["TaxType"]
-                                    == "EXEMPTOUTPUT"
+                                        final_bill[i]["Line"][0]["TaxType"]
+                                        == "EXEMPTEXPENSES"
+                                        or final_bill[i]["Line"][0]["TaxType"]
+                                        == "EXEMPTOUTPUT"
                                 ):
                                     if "taxrate_name" in QBO_tax[k1]:
                                         if (
-                                            "GST-free (purchases)"
-                                            in QBO_tax[k1]["taxrate_name"]
+                                                "GST-free (purchases)"
+                                                in QBO_tax[k1]["taxrate_name"]
                                         ):
                                             TaxRate["value"] = QBO_tax[k1]["taxrate_id"]
                                             TaxCodeRef["value"] = QBO_tax[k1][
@@ -846,18 +845,18 @@ def add_xero_service_bill(job_id):
 
                             if "supplier_invoice_no" in final_bill[i]:
                                 if (
-                                    final_bill[i]["supplier_invoice_no"] == None
-                                    or final_bill[i]["supplier_invoice_no"] == ""
+                                        final_bill[i]["supplier_invoice_no"] == None
+                                        or final_bill[i]["supplier_invoice_no"] == ""
                                 ):
                                     QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
                                 elif (
-                                    final_bill[i]["supplier_invoice_no"] != ""
-                                    or final_bill[i]["supplier_invoice_no"] is not None
+                                        final_bill[i]["supplier_invoice_no"] != ""
+                                        or final_bill[i]["supplier_invoice_no"] is not None
                                 ):
                                     QuerySet["DocNumber"] = (
-                                        final_bill[i]["Inv_No"]
-                                        + "-"
-                                        + final_bill[i]["supplier_invoice_no"]
+                                            final_bill[i]["Inv_No"]
+                                            + "-"
+                                            + final_bill[i]["supplier_invoice_no"]
                                     )
                             else:
                                 QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -879,16 +878,16 @@ def add_xero_service_bill(job_id):
                                     if "Code" in xero_coa1[j2]:
                                         if "AccountCode" in final_bill[i]["Line"][0]:
                                             if (
-                                                final_bill[i]["Line"][0]["AccountCode"]
-                                                == xero_coa1[j2]["Code"]
+                                                    final_bill[i]["Line"][0]["AccountCode"]
+                                                    == xero_coa1[j2]["Code"]
                                             ):
                                                 if (
-                                                    xero_coa1[j2]["Name"]
-                                                    .lower()
-                                                    .strip()
-                                                    == QBO_coa[j1]["FullyQualifiedName"]
-                                                    .lower()
-                                                    .strip()
+                                                        xero_coa1[j2]["Name"]
+                                                                .lower()
+                                                                .strip()
+                                                        == QBO_coa[j1]["FullyQualifiedName"]
+                                                        .lower()
+                                                        .strip()
                                                 ):
                                                     QuerySet3["value"] = QBO_coa[j1][
                                                         "Id"
@@ -898,12 +897,12 @@ def add_xero_service_bill(job_id):
 
                             for j3 in range(0, len(QBO_supplier)):
                                 if QBO_supplier[j3]["DisplayName"].startswith(
-                                    final_bill[i]["ContactName"]
+                                        final_bill[i]["ContactName"]
                                 ) and QBO_supplier[j3]["DisplayName"].endswith(" - S"):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 elif (
-                                    final_bill[i]["ContactName"]
-                                    == QBO_supplier[j3]["DisplayName"]
+                                        final_bill[i]["ContactName"]
+                                        == QBO_supplier[j3]["DisplayName"]
                                 ):
                                     QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                 else:
@@ -926,7 +925,7 @@ def add_xero_service_bill(job_id):
 
                             if start_date1 is not None and end_date1 is not None:
                                 if (bill_date1 >= start_date1) and (
-                                    bill_date1 <= end_date1
+                                        bill_date1 <= end_date1
                                 ):
                                     response = requests.request(
                                         "POST", url2, headers=headers, data=payload
@@ -935,18 +934,18 @@ def add_xero_service_bill(job_id):
                                     if response.status_code == 401:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            (
-                                                res1["fault"]["error"][0]["message"]
-                                            ).split(";")[0]
-                                        ).split("=")[
-                                            1
-                                        ] + ": Please Update the Access Token"
+                                                   (
+                                                       res1["fault"]["error"][0]["message"]
+                                                   ).split(";")[0]
+                                               ).split("=")[
+                                                   1
+                                               ] + ": Please Update the Access Token"
                                         add_job_status(job_id, res2, "error")
                                     elif response.status_code == 400:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            res1["Fault"]["Error"][0]["Detail"]
-                                        ) + ": {}".format(final_bill[i]["Inv_No"])
+                                                   res1["Fault"]["Error"][0]["Detail"]
+                                               ) + ": {}".format(final_bill[i]["Inv_No"])
                                         add_job_status(job_id, res2, "error")
 
                                 else:
@@ -959,16 +958,16 @@ def add_xero_service_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + ": {}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + ": {}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
 
                         else:
@@ -999,20 +998,20 @@ def add_xero_service_bill(job_id):
 
                                 for k1 in range(0, len(QBO_tax)):
                                     if (
-                                        (
-                                            final_bill[i]["Line"][j]["TaxType"]
-                                            == "BASEXCLUDED"
-                                        )
-                                        or (final_bill[i]["Line"][j]["TaxType"] == None)
-                                        or (
+                                            (
+                                                    final_bill[i]["Line"][j]["TaxType"]
+                                                    == "BASEXCLUDED"
+                                            )
+                                            or (final_bill[i]["Line"][j]["TaxType"] == None)
+                                            or (
                                             final_bill[i]["Line"][j]["TaxType"]
                                             == "NONE"
-                                        )
+                                    )
                                     ):
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if (
-                                                "Input tax (purchases)"
-                                                in QBO_tax[k1]["taxrate_name"]
+                                                    "Input tax (purchases)"
+                                                    in QBO_tax[k1]["taxrate_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -1031,8 +1030,8 @@ def add_xero_service_bill(job_id):
                                     elif final_bill[i]["Line"][j]["TaxType"] == "INPUT":
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if (
-                                                "GST (purchases)"
-                                                in QBO_tax[k1]["taxrate_name"]
+                                                    "GST (purchases)"
+                                                    in QBO_tax[k1]["taxrate_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -1053,12 +1052,12 @@ def add_xero_service_bill(job_id):
                                                 )
 
                                     elif (
-                                        final_bill[i]["Line"][j]["TaxType"] == "OUTPUT"
+                                            final_bill[i]["Line"][j]["TaxType"] == "OUTPUT"
                                     ):
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if (
-                                                "GST (purchases)"
-                                                in QBO_tax[k1]["taxrate_name"]
+                                                    "GST (purchases)"
+                                                    in QBO_tax[k1]["taxrate_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -1079,15 +1078,15 @@ def add_xero_service_bill(job_id):
                                                 )
 
                                     elif (
-                                        final_bill[i]["Line"][j]["TaxType"]
-                                        == "EXEMPTEXPENSES"
-                                        or final_bill[i]["Line"][j]["TaxType"]
-                                        == "EXEMPTOUTPUT"
+                                            final_bill[i]["Line"][j]["TaxType"]
+                                            == "EXEMPTEXPENSES"
+                                            or final_bill[i]["Line"][j]["TaxType"]
+                                            == "EXEMPTOUTPUT"
                                     ):
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if (
-                                                "GST-free (purchases)"
-                                                in QBO_tax[k1]["taxrate_name"]
+                                                    "GST-free (purchases)"
+                                                    in QBO_tax[k1]["taxrate_name"]
                                             ):
                                                 TaxRate["value"] = QBO_tax[k1][
                                                     "taxrate_id"
@@ -1100,8 +1099,8 @@ def add_xero_service_bill(job_id):
                                                 ]["Rate"]
                                                 taxrate1 = QBO_tax[k1]["Rate"]
                                                 Tax["Amount"] = (
-                                                    abs(final_bill[i]["TotalTax"])
-                                                    * taxrate1
+                                                        abs(final_bill[i]["TotalTax"])
+                                                        * taxrate1
                                                 )
 
                                     else:
@@ -1113,9 +1112,9 @@ def add_xero_service_bill(job_id):
                                         final_bill[i]["Line"][j]["LineAmount"]
                                     )
                                     TaxLineDetail["NetAmountTaxable"] = (
-                                        abs(taxrate1 * final_bill[i]["TotalTax"])
-                                        / (100 + taxrate1)
-                                        * 100
+                                            abs(taxrate1 * final_bill[i]["TotalTax"])
+                                            / (100 + taxrate1)
+                                            * 100
                                     )
 
                                 else:
@@ -1129,19 +1128,19 @@ def add_xero_service_bill(job_id):
 
                                 if "supplier_invoice_no" in final_bill[i]:
                                     if (
-                                        final_bill[i]["supplier_invoice_no"] == None
-                                        or final_bill[i]["supplier_invoice_no"] == ""
+                                            final_bill[i]["supplier_invoice_no"] == None
+                                            or final_bill[i]["supplier_invoice_no"] == ""
                                     ):
                                         QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
                                     elif (
-                                        final_bill[i]["supplier_invoice_no"] != ""
-                                        or final_bill[i]["supplier_invoice_no"]
-                                        is not None
+                                            final_bill[i]["supplier_invoice_no"] != ""
+                                            or final_bill[i]["supplier_invoice_no"]
+                                            is not None
                                     ):
                                         QuerySet["DocNumber"] = (
-                                            final_bill[i]["Inv_No"]
-                                            + "-"
-                                            + final_bill[i]["supplier_invoice_no"]
+                                                final_bill[i]["Inv_No"]
+                                                + "-"
+                                                + final_bill[i]["supplier_invoice_no"]
                                         )
                                 else:
                                     QuerySet["DocNumber"] = final_bill[i]["Inv_No"]
@@ -1164,24 +1163,24 @@ def add_xero_service_bill(job_id):
                                     for j2 in range(0, len(xero_coa1)):
                                         if "Code" in xero_coa1[j2]:
                                             if (
-                                                "AccountCode"
-                                                in final_bill[i]["Line"][j]
+                                                    "AccountCode"
+                                                    in final_bill[i]["Line"][j]
                                             ):
                                                 if (
-                                                    final_bill[i]["Line"][j][
-                                                        "AccountCode"
-                                                    ]
-                                                    == xero_coa1[j2]["Code"]
+                                                        final_bill[i]["Line"][j][
+                                                            "AccountCode"
+                                                        ]
+                                                        == xero_coa1[j2]["Code"]
                                                 ):
                                                     if (
-                                                        xero_coa1[j2]["Name"]
-                                                        .lower()
-                                                        .strip()
-                                                        == QBO_coa[j1][
-                                                            "FullyQualifiedName"
-                                                        ]
-                                                        .lower()
-                                                        .strip()
+                                                            xero_coa1[j2]["Name"]
+                                                                    .lower()
+                                                                    .strip()
+                                                            == QBO_coa[j1][
+                                                        "FullyQualifiedName"
+                                                    ]
+                                                            .lower()
+                                                            .strip()
                                                     ):
                                                         QuerySet3["value"] = QBO_coa[
                                                             j1
@@ -1191,14 +1190,14 @@ def add_xero_service_bill(job_id):
 
                                 for j3 in range(0, len(QBO_supplier)):
                                     if QBO_supplier[j3]["DisplayName"].startswith(
-                                        final_bill[i]["ContactName"]
+                                            final_bill[i]["ContactName"]
                                     ) and QBO_supplier[j3]["DisplayName"].endswith(
                                         " - S"
                                     ):
                                         QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                     elif (
-                                        final_bill[i]["ContactName"]
-                                        == QBO_supplier[j3]["DisplayName"]
+                                            final_bill[i]["ContactName"]
+                                            == QBO_supplier[j3]["DisplayName"]
                                     ):
                                         QuerySet4["value"] = QBO_supplier[j3]["Id"]
                                     else:
@@ -1221,7 +1220,7 @@ def add_xero_service_bill(job_id):
 
                             if start_date1 is not None and end_date1 is not None:
                                 if (bill_date1 >= start_date1) and (
-                                    bill_date1 <= end_date1
+                                        bill_date1 <= end_date1
                                 ):
                                     response = requests.request(
                                         "POST", url2, headers=headers, data=payload
@@ -1229,18 +1228,18 @@ def add_xero_service_bill(job_id):
                                     if response.status_code == 401:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            (
-                                                res1["fault"]["error"][0]["message"]
-                                            ).split(";")[0]
-                                        ).split("=")[
-                                            1
-                                        ] + ": Please Update the Access Token"
+                                                   (
+                                                       res1["fault"]["error"][0]["message"]
+                                                   ).split(";")[0]
+                                               ).split("=")[
+                                                   1
+                                               ] + ": Please Update the Access Token"
                                         add_job_status(job_id, res2, "error")
                                     elif response.status_code == 400:
                                         res1 = json.loads(response.text)
                                         res2 = (
-                                            res1["Fault"]["Error"][0]["Detail"]
-                                        ) + ": {}".format(final_bill[i]["Inv_No"])
+                                                   res1["Fault"]["Error"][0]["Detail"]
+                                               ) + ": {}".format(final_bill[i]["Inv_No"])
                                         add_job_status(job_id, res2, "error")
                                 else:
                                     pass
@@ -1252,16 +1251,16 @@ def add_xero_service_bill(job_id):
                                 if response.status_code == 401:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        (res1["fault"]["error"][0]["message"]).split(
-                                            ";"
-                                        )[0]
-                                    ).split("=")[1] + ": Please Update the Access Token"
+                                               (res1["fault"]["error"][0]["message"]).split(
+                                                   ";"
+                                               )[0]
+                                           ).split("=")[1] + ": Please Update the Access Token"
                                     add_job_status(job_id, res2, "error")
                                 elif response.status_code == 400:
                                     res1 = json.loads(response.text)
                                     res2 = (
-                                        res1["Fault"]["Error"][0]["Detail"]
-                                    ) + ": {}".format(final_bill[i]["Inv_No"])
+                                               res1["Fault"]["Error"][0]["Detail"]
+                                           ) + ": {}".format(final_bill[i]["Inv_No"])
                                     add_job_status(job_id, res2, "error")
 
                 else:
@@ -1272,4 +1271,3 @@ def add_xero_service_bill(job_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_service_bill -> add_xero_service_bill", ex)
-        
