@@ -13,7 +13,16 @@ from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
 from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task
 
-
+@blueprint.route("/connect_output_tool")
+def connect_output_tool():
+    return render_template(
+        "home/connect_output_tool.html"
+    )
+@blueprint.route("/conversion_underway")
+def conversion_underway():
+    return render_template(
+        "home/conversion_underway.html"
+    )
 @blueprint.route("/startJobByID", methods=["POST"])
 @login_required
 def startJobByID():

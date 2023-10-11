@@ -3,42 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Switching Data</title>
+    <title>Xero to QBO Conversion</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .infographic-img {
+            max-width: 100%;
+            height: auto;
+        }
+        .card {
+            width: 100%;
+            max-width: 820px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+        }
+        .form-control {
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h1 class="text-brown">Switching Data</h1>
+<div class="container">
+    <img class="infographic-img mb-4" src="your_infographic_image.jpg" alt="Infographic">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="text"><b>LET'S MOVE YOUR BOOKS</b></h1>
+            <h3>Contact Details</h3>
+            <p>Please provide your contact details so we can send you updates about the status of your data migration.</p>
+        </div>
+        <div class="card-body">
+            <form enctype="multipart/form-data" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputCompany">Company <span style="color:red">*</span></label>
+                            <input type="text" class="form-control form-control-lg" id="inputCompany" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputEmail">Email <span style="color:red">*</span></label>
+                            <input type="email" class="form-control form-control-lg" id="inputEmail" required>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form enctype="multipart/form-data" method="post">
+                <div class="row">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="selectTool" class="text-black">Switching from</label>
-                            <select class="form-control form-control-lg mb-3" id="selectTool">
-                                <option selected>Select Tool</option>
-                                <option value="1">Xero</option>
-                            </select>
+                            <label for="inputFirstName">First Name</label>
+                            <input type="text" class="form-control form-control-lg" id="inputFirstName" required>
                         </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="selectEmail" class="text-black">Enter your email</label>
-                            <input type="email" class="form-control form-control-lg mb-3"
-                                   placeholder="enter your email id" required>
+                            <label for="inputLastName">Last Name</label>
+                            <input type="text" class="form-control form-control-lg" id="inputLastName" required>
                         </div>
-                        <div class="form-group">
-                            <label for="selectEmail" class="text-black">Enter your company</label>
-                            <input type="text" class="form-control form-control-lg mb-3"
-                                   placeholder="enter your company" required>
-                        </div>
-                        <div>
-                            <button class="btn btn-success ms-3 mb-3">Let's Go</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+                <button class="btn btn-success mb-3">Let's Go</button>
+            </form>
         </div>
     </div>
 </div>
@@ -48,32 +92,5 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <!-- Your JavaScript code can be placed here -->
-
-<script>
-    $(document).ready(function() {
-      $('#myButton').click(function() {
-        debugger
-        $.ajax({
-          type: "POST",
-          url: "/xero-connect",
-        });
-      });
-    });
-	$(document).ready(function() {
-      $('#button11').click(function() {
-        var x = $("input:text").val();
-        $.ajax({
-          type: "POST",
-          url: "/getcompanyid",
-          data:{url1:x}
-        });
-        });
-      });
-
-</script>
-
 </body>
 </html>
-
-
-
