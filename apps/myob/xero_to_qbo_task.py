@@ -94,26 +94,7 @@ class XeroToQbo(object):
                 get_xero_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading data from qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo taxrate"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo chart of account"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Chart of account" == task.function_name:
@@ -134,26 +115,7 @@ class XeroToQbo(object):
                 get_xero_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading data from qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo taxrate"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo chart of account"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Archieved Chart of account" == task.function_name:
@@ -174,26 +136,7 @@ class XeroToQbo(object):
                 get_xero_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading data from qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo taxrate"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo chart of account"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Job" == task.function_name:
@@ -279,21 +222,7 @@ class XeroToQbo(object):
                 get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading data from qbo chart of account"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading account reference data "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                account_reference(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Spend Money" == task.function_name:
@@ -311,46 +240,7 @@ class XeroToQbo(object):
                     get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo job"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Job")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Receive Money" == task.function_name:
@@ -368,51 +258,7 @@ class XeroToQbo(object):
                     get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo job"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Job")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Employee"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Employee")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Journal" == task.function_name:
@@ -423,31 +269,13 @@ class XeroToQbo(object):
                 get_manual_journal(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 step_name = "Reading xero chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading data from qbo chart of account"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Invoice" == task.function_name:
@@ -458,46 +286,7 @@ class XeroToQbo(object):
                 get_invoice(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo job"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Job")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Invoice CreditNote" == task.function_name:
@@ -508,46 +297,7 @@ class XeroToQbo(object):
                 get_creditnote(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo job"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Job")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Bill" == task.function_name:
@@ -558,41 +308,7 @@ class XeroToQbo(object):
                 get_xero_bill(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo job"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Job")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 step_name = "Reading xero Item"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_items(job_id, task.id)
@@ -603,11 +319,7 @@ class XeroToQbo(object):
                 get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Bill VendorCredit" == task.function_name:
@@ -618,56 +330,13 @@ class XeroToQbo(object):
                 get_vendorcredit(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo job"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Job")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 step_name = "Reading xero Item"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_items(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo COA"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
 
             if "Payment Allocation" == task.function_name:
@@ -698,48 +367,6 @@ class XeroToQbo(object):
                 get_xero_payment(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo Invoice"
-                write_task_execution_step(
-                    task.id, status=2, step=step_name)
-                get_qbo_invoice_for_payments(job_id, task.id)
-                write_task_execution_step(
-                    task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
                 step_name = "Reading Xero COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_coa(job_id, task.id)
@@ -760,46 +387,7 @@ class XeroToQbo(object):
                 get_xero_payment(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo Bill"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_bill_for_payments(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo taxrate "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Item"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id, task.id, "Item")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 step_name = "Reading Xero COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_coa(job_id, task.id)
@@ -858,6 +446,30 @@ class XeroToQbo(object):
 
             if "Existing Chart of account" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+
+                delete_coa(job_id)
+
+                
+                step_name = "Reading data from qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo chart of account"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Updating existing chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 update_xero_existing_chart_account(job_id, task.id)
@@ -867,6 +479,28 @@ class XeroToQbo(object):
 
             if "Chart of account" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+
+                delete_coa(job_id)
+                
+                step_name = "Reading data from qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo chart of account"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Duplicate chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -882,6 +516,28 @@ class XeroToQbo(object):
 
             if "Archieved Chart of account" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+
+                delete_coa(job_id)
+                
+                step_name = "Reading data from qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo chart of account"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -910,7 +566,7 @@ class XeroToQbo(object):
 
             if "Archieved Customer" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
-
+                
                 step_name = "Adding data Archieved Customer"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_used_archived_customers(job_id, task.id)
@@ -935,7 +591,7 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_archieved_supplier(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 update_task_execution_status(task.id, status=1, task_type="write")
 
             if "Employee" == task.function_name:
@@ -961,6 +617,27 @@ class XeroToQbo(object):
             if "Item" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                delete_coa(job_id)
+                delete_item(job_id)
+                delete_invoice(job_id)
+                delete_bill(job_id)
+
+
+                step_name = "Reading data from qbo chart of account"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading account reference data "
+                write_task_execution_step(task.id, status=2, step=step_name)
+                account_reference(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Adding duplicate item data "
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_duplicate_item(job_id, task.id)
@@ -970,6 +647,8 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_item(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
+
+                delete_item(job_id)
 
                 step_name = "Reading qbo item"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -1021,6 +700,51 @@ class XeroToQbo(object):
             if "Spend Money" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate "
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo job"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Job")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Add Positive Spend Money data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_spend_money(job_id, task.id)
@@ -1050,6 +774,56 @@ class XeroToQbo(object):
 
             if "Receive Money" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+                
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate "
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo job"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Job")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Employee"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Employee")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Positive Receive Money data"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -1081,6 +855,28 @@ class XeroToQbo(object):
             if "Journal" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                delete_coa(job_id)
+                
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading data from qbo chart of account"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Add Journal data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_journal(job_id, task.id)
@@ -1090,6 +886,51 @@ class XeroToQbo(object):
 
             if "Invoice" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo job"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Job")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Invoice data"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -1101,6 +942,51 @@ class XeroToQbo(object):
             if "Invoice CreditNote" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo job"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Job")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Add Credit Note data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_credit_note(job_id, task.id)
@@ -1111,6 +997,51 @@ class XeroToQbo(object):
             if "Bill" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate "
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo job"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Job")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 step_name = "Add Bill data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_bill(job_id, task.id)
@@ -1121,6 +1052,56 @@ class XeroToQbo(object):
             if "Bill VendorCredit" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate "
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo job"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Job")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo COA"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_coa(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 step_name = "Add Vendor Credit data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_vendorcredit(job_id, task.id)
@@ -1131,6 +1112,55 @@ class XeroToQbo(object):
             if "Invoice Payment" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                delete_invoice(job_id)
+                
+                step_name = "Reading qbo Invoice"
+                write_task_execution_step(
+                    task.id, status=2, step=step_name)
+                get_qbo_invoice_for_payments(job_id, task.id)
+                write_task_execution_step(
+                    task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate "
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                
                 step_name = "Add Invoice Payment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_invoice_payment(job_id, task.id)
@@ -1145,6 +1175,52 @@ class XeroToQbo(object):
 
             if "Bill Payment" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+
+                delete_coa(job_id)
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_item(job_id)
+                delete_bill(job_id)
+                
+                step_name = "Reading qbo Bill"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_bill_for_payments(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo taxrate "
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Item"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id, task.id, "Item")
+                write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Bill Payment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
