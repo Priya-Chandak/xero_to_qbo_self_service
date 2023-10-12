@@ -6,8 +6,7 @@ import requests
 import random
 import string
 from datetime import timedelta
-
-
+from apps.util.db_mongo import get_mongodb_database
 
 from flask import Flask,render_template, current_app,redirect, request, url_for,session, g
 from flask_login import login_required
@@ -101,6 +100,32 @@ def Task_Execution_Status(task_id):
 #                 success=True,
 #             )
 #         )
+
+
+@blueprint.route("/conversion_report/<int:job_id>")
+@login_required
+def conversion_report(job_id):
+    dbname = get_mongodb_database()
+
+    function_name = ["Chart of Account","Supplier","Customer","Item","Spend Money","Receive Money","Bank Transfer","Journal","Invoice","Bill","Invoice Payment","Bill Payment"]
+    table_name = [dbname['xero_classified_coa'],dbname['supplier'],dbname['customer'],dbname['xero_item'],dbname['xero_spend_money'],dbname['xero_received_money'],dbname['xero_bank_transfer'],dbname['xero_manual_journal'],dbname['xero_invoice'],dbname['xero_bill'],dbname['xero_invoice_payment'],dbname['xero_bill_payment']]
+
+    condition1={"job_id":f"{job_id}"}
+    condition2={"job_id":f"{job_id}","is_pushed":1}
+    condition3={"job_id":f"{job_id}","is_pushed":0}
+    
+    all_data=[]
+    pushed_data=[]
+    unpushed_data=[]
+    for k in range(0,len(table_name)):
+        all_data = table_name[k].count_documents(condition1)
+        pushed_data = table_name[k].count_documents(condition2)
+        unpushed_data = table_name[k].count_documents(condition3)
+        all_data.append(all_data)
+        pushed_data.append(pushed_data)
+        unpushed_data.append(unpushed_data)
+        
+    return render_template("home/conversion_report.html",function_name=function_name,data1=all_data,data2=pushed_data,data3=unpushed_data)
 
 
 @blueprint.route("/xero-connect", methods=["GET", "POST"])
