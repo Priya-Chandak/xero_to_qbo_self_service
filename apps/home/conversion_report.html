@@ -1,30 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Function Data</title>
+    <title>Function Data Report</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
         table {
             margin: 0 auto;
             border-collapse: collapse;
-            width: 90%;
+            width: 80%;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px #888;
         }
 
         th {
             text-align: center;
-            font-size: 20px;
+            font-size: 18px;
+            background-color: #333;
+            color: #fff;
             padding: 10px;
         }
 
         td {
             text-align: center;
+            font-size: 16px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #ccc;
         }
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">Reports for the Data Conversion: XERO to QBO</h1>
-    <br></br>
-    <br></br>
-    <table border="1">
+    <h1>Reports for the Data Conversion: XERO to QBO</h1>
+    <br>
+    <table>
         <tr>
             <th>Function Name</th>
             <th>Total Count</th>
