@@ -5,8 +5,10 @@ import webbrowser
 import requests
 import random
 import string
-from datetime import timedelta
+from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
+
+
 
 from flask import Flask,render_template, current_app,redirect, request, url_for,session, g
 from flask_login import login_required
@@ -19,8 +21,7 @@ from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, Task
 from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
 from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 @blueprint.route("/connect_output_tool")
 def connect_output_tool():
@@ -100,32 +101,6 @@ def Task_Execution_Status(task_id):
 #                 success=True,
 #             )
 #         )
-
-
-@blueprint.route("/conversion_report/<int:job_id>")
-@login_required
-def conversion_report(job_id):
-    dbname = get_mongodb_database()
-
-    function_name = ["Chart of Account","Supplier","Customer","Item","Spend Money","Receive Money","Bank Transfer","Journal","Invoice","Bill","Invoice Payment","Bill Payment"]
-    table_name = [dbname['xero_classified_coa'],dbname['supplier'],dbname['customer'],dbname['xero_item'],dbname['xero_spend_money'],dbname['xero_received_money'],dbname['xero_bank_transfer'],dbname['xero_manual_journal'],dbname['xero_invoice'],dbname['xero_bill'],dbname['xero_invoice_payment'],dbname['xero_bill_payment']]
-
-    condition1={"job_id":f"{job_id}"}
-    condition2={"job_id":f"{job_id}","is_pushed":1}
-    condition3={"job_id":f"{job_id}","is_pushed":0}
-    
-    all_data=[]
-    pushed_data=[]
-    unpushed_data=[]
-    for k in range(0,len(table_name)):
-        all_data = table_name[k].count_documents(condition1)
-        pushed_data = table_name[k].count_documents(condition2)
-        unpushed_data = table_name[k].count_documents(condition3)
-        all_data.append(all_data)
-        pushed_data.append(pushed_data)
-        unpushed_data.append(unpushed_data)
-        
-    return render_template("home/conversion_report.html",function_name=function_name,data1=all_data,data2=pushed_data,data3=unpushed_data)
 
 
 @blueprint.route("/xero-connect", methods=["GET", "POST"])
@@ -264,6 +239,7 @@ def connect_input_tool():
     if request.method == "POST":
         # job_functions=['Customer','Supplier']
         job = Jobs()
+        job_functions=['Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
         job.functions = "Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
         # job.functions="Customer,Supplier"
         length = 10 
@@ -277,12 +253,24 @@ def connect_input_tool():
         db.session.add(job)
         db.session.commit()
 
+        key_to_clear = 'my_key'
+        redis.delete(key_to_clear)
 
-        session.permanent = True  
-        session['job_id_data']=job.id
+        redis.set('my_key', job.id)
+        print(redis.get('my_key'),"request data same function ")
 
-        print("---------session data print--------")
-        print(session['job_id_data'])
+        for fun in range(0, len(job_functions)):
+            print('inside for loop',job.id)
+            task = Task()
+            task.function_name = job_functions[fun]
+            task.job_id = job.id
+            db.session.add(task)
+            db.session.commit()
+        # session.permanent = True  
+        # session['job_id_data']=job.id
+
+        # print("---------session data print--------")
+        # print(session['job_id_data'])
 
       
     
@@ -336,13 +324,16 @@ def create_auth_code():
     json_response= response.json()
     print(json_response)
     token_data=XeroQboTokens()
+  
     print("inside xero auth code")
-    print(session['job_id_data'])  
-    # print(session.get('job_id_data'))
-    if 'job_id_data' in session:
-        print("inside session in auth code")
+    print(redis.get('my_key'),"create auth routes")
 
-    token_data.job_id=session['job_id_data']
+    # print(session['job_id_data'])  
+    # print(session.get('job_id_data'))
+    # if 'job_id_data' in session:
+    #     print("inside session in auth code")
+
+    token_data.job_id=redis.get('my_key')
     token_data.xero_access_token=response.json().get("access_token")
     token_data.xero_refresh_token=response.json().get("refresh_token")
     db.session.add(token_data)
@@ -372,20 +363,21 @@ def qbo_auth():
 #     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
     print(auth_url,"print auth url")
-    get_xerocompany_data()
+    # get_xerocompany_data()
     # window.location.replace(auth_url,"_self")
     webbrowser.open_new(auth_url)
     # return redirect(auth_url)
 
 #@blueprint.route("/xerocompany_data", methods=["GET", "POST"])
 def get_xerocompany_data():
-    if "job_id_data" in session:
-        xero_company_name = CustomerInfo.query.filter(CustomerInfo.job_id == session["job_id_data"])
-        xero_access_token = XeroQboTokens.query.filter(XeroQboTokens.job_id == session["job_id_data"])
+
+        xero_company_name = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key'))
+        xero_access_token = XeroQboTokens.query.filter(XeroQboTokens.job_id == redis.get('my_key'))
 
         print(xero_company_name.get("Company"))
 
         print(xero_access_token.get("xero_access_token"))
+
         url= "https://api.xero.com/connections"
         payload={}
         headers = {
@@ -400,17 +392,18 @@ def get_xerocompany_data():
         
         for i in range(0,len(json_response)): 
             if json_response[i]["tenantName"] == xero_company_name.get("Company"):
-                if "job_id_data" in session:
-                    token_data = XeroQboTokens.query.filter_by(job_id=session["job_id_data"]).first()
-                    print(token_data)
-                    token_data.xero_company_id=json_response[i]["tenantId"]
-                    db.session.commit()
+                token_data = XeroQboTokens.query.filter_by(job_id=redis.get('my_key')).first()
+                print(token_data)
+                token_data.xero_company_id=json_response[i]["tenantId"]
+                db.session.commit()
 
 
 @blueprint.route("/data_access", methods=["GET", "POST"])
 def data_access():
 
     token_endpoint = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
+
+
 
     # client_id = "ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz"
     # client_secret = "EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE"
@@ -436,13 +429,12 @@ def data_access():
     response = requests.post(token_endpoint, data=data, headers=headers)
     print(response.json())
 
-    if "job_id_data" in session:
-        token_data = XeroQboTokens.query.filter_by(job_id=session["job_id_data"]).first()
-        print(token_data)
-        token_data.qbo_access_token=response.json().get("access_token")
-        token_data.qbo_refresh_token=response.json().get("refresh_token")
-        token_data.qbo_company_id=realme_id
-        db.session.commit()
+    token_data = XeroQboTokens.query.filter_by(job_id=redis.get('my_key')).first()
+    print(token_data)
+    token_data.qbo_access_token=response.json().get("access_token")
+    token_data.qbo_refresh_token=response.json().get("refresh_token")
+    token_data.qbo_company_id=realme_id
+    db.session.commit()
 
     if response.status_code == 200:
 
@@ -454,3 +446,29 @@ def data_access():
         print("Token failed data")
 
     return response.json()
+
+
+@blueprint.route("/conversion_report/<int:job_id>")
+@login_required
+def conversion_report(job_id):
+    dbname = get_mongodb_database()
+
+    function_name = ["Chart of Account","Supplier","Customer","Item","Spend Money","Receive Money","Bank Transfer","Journal","Invoice","Bill","Invoice Payment","Bill Payment"]
+    table_name = [dbname['xero_classified_coa'],dbname['supplier'],dbname['customer'],dbname['xero_item'],dbname['xero_spend_money'],dbname['xero_received_money'],dbname['xero_bank_transfer'],dbname['xero_manual_journal'],dbname['xero_invoice'],dbname['xero_bill'],dbname['xero_invoice_payment'],dbname['xero_bill_payment']]
+
+    condition1={"job_id":f"{job_id}"}
+    condition2={"job_id":f"{job_id}","is_pushed":1}
+    condition3={"job_id":f"{job_id}","is_pushed":0}
+    
+    all_data=[]
+    pushed_data=[]
+    unpushed_data=[]
+    for k in range(0,len(table_name)):
+        all_data = table_name[k].count_documents(condition1)
+        pushed_data = table_name[k].count_documents(condition2)
+        unpushed_data = table_name[k].count_documents(condition3)
+        all_data.append(all_data)
+        pushed_data.append(pushed_data)
+        unpushed_data.append(unpushed_data)
+        
+    return render_template("home/conversion_report.html",function_name=function_name,data1=all_data,data2=pushed_data,data3=unpushed_data)
