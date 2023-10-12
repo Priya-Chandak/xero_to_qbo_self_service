@@ -20,7 +20,7 @@
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
-            box-shadow: 0px 0px 10px #888;
+            box-shadow: 0px 10px 10px #130202;
         }
 
         th {
@@ -45,28 +45,34 @@
         tr:hover {
             background-color: #ccc;
         }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
     <h1>Reports for the Data Conversion: XERO to QBO</h1>
     <br>
-    <table>
-        <tr>
-            <th>Function Name</th>
-            <th>Total Count</th>
-            <th>Count of Data Migrated Successfully</th>
-            <th>Count of Data Migration Failed</th>
-        </tr>
-        <tbody>
-        {% for i in range(function_name|length) %}
+    <div class="table-wrapper">
+        <table>
             <tr>
-                <td>{{function_name[i]}}</td>
-                <td>{{data1[i]}}</td>
-                <td>{{data2[i]}}</td>
-                <td>{{data3[i]}}</td>
+                <th>Function Name</th>
+                <th>Total Count</th>
+                <th>Count of Data Migrated Successfully</th>
+                <th>Count of Data Migration Failed</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            <tbody>
+            {% for i in range(function_name|length) %}
+                <tr>
+                    <td>{{function_name[i]}}</td>
+                    <td>{{data1[i]}}</td>
+                    <td>{{data2[i]}}</td>
+                    <td>{{data3[i]}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
