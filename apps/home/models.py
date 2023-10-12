@@ -165,3 +165,27 @@ class TaskExecutionStep(db.Model):
     status = db.Column(db.Integer, default=2)
     step = db.Column(db.String(500))
     error = db.Column(db.String(2000))
+
+class CustomerInfo(db.Model):
+    __tablename__ = "customer_info"
+    id = db.Column(db.Integer, primary_key=True)
+    job_id = db.Column(db.Integer, db.ForeignKey("jobs.id"))
+    Company = db.Column(db.String(1264))
+    Email = db.Column(db.String(625))
+    First_Name = db.Column(db.String(625))
+    Last_Name = db.Column(db.String(625))
+    created_at = db.Column(db.DateTime(timezone=True))
+    
+
+class XeroQboTokens(db.Model):
+    __tablename__ = "Xero_Qbo_Tokens"
+    id = db.Column(db.Integer, primary_key=True)
+    job_id = db.Column(db.Integer, db.ForeignKey("jobs.id"))
+    xero_access_token = db.Column(db.String(4000))
+    xero_refresh_token = db.Column(db.String(4000))
+    xero_company_id = db.Column(db.String(100))
+    qbo_access_token = db.Column(db.String(4000))
+    qbo_refresh_token = db.Column(db.String(4000))
+    qbo_company_id = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime(timezone=True))
+    

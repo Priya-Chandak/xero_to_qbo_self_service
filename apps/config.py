@@ -36,7 +36,7 @@ class ProductionConfig(Config):
         os.getenv("DB_PASS", MDB_PASSWORD),
         os.getenv("DB_HOST", "localhost"),
         os.getenv("DB_PORT", 3306),
-        os.getenv("DB_NAME", "code_refactor_mmc"),
+        os.getenv("DB_NAME", "xero_to_qbo"),
     )
 
 

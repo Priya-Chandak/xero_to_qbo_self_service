@@ -56,15 +56,28 @@
 
         <div class="card-body">
                 <h3>Connect to QuickBooks Online</h3>
-                <button class="btn btn-success mb-3">Connect to QuickBooks</button>
+                <a class="btn btn-success mb-3" id="Connect_qbo">Connect to QuickBooks</a>
         </div>
     </div>
 </div>
 
 <!-- jQuery and Bootstrap JS CDN links -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
 
-<!-- Your JavaScript code can be placed here -->
-</body>
+$(document).ready(function() {
+        $('#Connect_qbo').click(function() {
+        
+        $.ajax({
+        type: "POST",
+        url: "/qbo_auth",
+        
+        
+     });
+     });
+     });
+	
+</script></body>
 </html>

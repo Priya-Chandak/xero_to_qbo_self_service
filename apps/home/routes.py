@@ -1,32 +1,46 @@
 import asyncio
 import base64
 import json
-import webbrowser
+import webbrowser 
+import requests
+import random
+import string
+from datetime import timedelta
 
-from flask import render_template, redirect, request, url_for
+
+
+from flask import Flask,render_template, current_app,redirect, request, url_for,session, g
 from flask_login import login_required
 
-from apps.authentication.forms import CreateJobForm, CreateauthcodeForm
+
+
+from apps.authentication.forms import CreateJobForm, CreateauthcodeForm,CreateCustomerInfoForm
 from apps.home import blueprint
-from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep, ToolId
+from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep, ToolId,CustomerInfo,XeroQboTokens
 from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
 from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 @blueprint.route("/connect_output_tool")
 def connect_output_tool():
+    
     return render_template(
         "home/connect_output_tool.html"
     )
+
+
 @blueprint.route("/conversion_underway")
 def conversion_underway():
     return render_template(
         "home/conversion_underway.html"
     )
 @blueprint.route("/startJobByID", methods=["POST"])
-@login_required
+
 def startJobByID():
-    job_id = request.form['job_id']
+    # job_id = request.form['job_id']
+    job_id = 1
     asyncio.run(read_myob_write_qbo_task(job_id))
     return json.dumps({'status': 'success'})
 
@@ -66,35 +80,36 @@ def Task_Execution_Status(task_id):
     )
 
 
-@blueprint.route("/create_auth_code", methods=["GET", "POST"])
-def create_auth_code():
-    create_auth_code_form = CreateauthcodeForm(request.form)
-    if request.method == "GET":
-        return render_template(
-            "home/create_auth_token.html",
-            segment="jobs",
-            form=create_auth_code_form,
-        )
+# @blueprint.route("/create_auth_code", methods=["GET", "POST"])
+# def create_auth_code():
+#     create_auth_code_form = CreateauthcodeForm(request.form)
+#     if request.method == "GET":
+#         return render_template(
+#             "home/create_auth_token.html",
+#             segment="jobs",
+#             form=create_auth_code_form,
+#         )
 
-    if request.method == "POST":
-        toolId = ToolId()
+#     if request.method == "POST":
+#         toolId = ToolId()
 
-        return redirect(
-            url_for(
-                ".create_auth_code",
-                tool_id=toolId.id,
-                msg="Email created successfully!!!!.",
-                success=True,
-            )
-        )
+#         return redirect(
+#             url_for(
+#                 ".create_auth_code",
+#                 tool_id=toolId.id,
+#                 msg="Email created successfully!!!!.",
+#                 success=True,
+#             )
+#         )
 
 
 @blueprint.route("/xero-connect", methods=["GET", "POST"])
 def xero_connect():
+    
     client_id = "BDDDE967BCF943098B8A44E164AE1A74"
     client_secret = "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
-    redirect_uri = "http://127.0.0.1:5000/"
-    scope = "offline_access accounting.transactions"
+    redirect_uri = "http://localhost:5000/create_auth_code"
+    scope = "offline_access%20accounting.transactions"
 
     CLIENT_ID = f"{client_id}"
     CLIENT_SECRET = f"{client_secret}"
@@ -109,13 +124,27 @@ def xero_connect():
                 '''&redirect_uri=''' + redirect_uri +
                 '''&scope=''' + scope +
                 '''&state=123456''')
+    print(auth_url)
+    
+    return redirect(auth_url)
+    
+    
+                
+                
+    # return render_template('home/redirect_auth_url.html', auth_url1=auth_url)
+    # return redirect(
+    #             url_for(
+    #                 ".redirect_auth_url",
+    #                auth_url1=auth_url
+    #             )
+    #         )
 
-    webbrowser.open_new(auth_url)
-    return redirect(
-        url_for(
-            ".create_auth_code"
-        )
+@blueprint.route("/redirect_auth_url")
+def redirect_auth_url():
+    return render_template(
+        "home/redirect_auth_url.html"
     )
+
 
 
 @blueprint.route("/jobs/create", methods=["GET", "POST"])
@@ -201,17 +230,202 @@ def myob_settings():
 
 @blueprint.route("/connect_input_tool", methods=["GET", "POST"])
 def connect_input_tool():
+    create_customer_info_form = CreateCustomerInfoForm(request.form)
     if request.method == "GET":
-        return render_template("home/connect_input_tool.html")
+
+        return render_template("home/connect_input_tool.html",
+                               form=create_customer_info_form
+                               )
     if request.method == "POST":
+        # job_functions=['Customer','Supplier']
+        job = Jobs()
+        job.functions = "Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
+        # job.functions="Customer,Supplier"
+        length = 10 
+        job.name = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))  
+        print(job.name)    
+        job.description = ""
+        job.input_account_id = 1
+        job.output_account_id = 2
+        job.start_date = ""
+        job.end_date = ""
+        db.session.add(job)
+        db.session.commit()
+
+
+        session.permanent = True  
+        session['job_id_data']=job.id
+
+        print("---------session data print--------")
+        print(session['job_id_data'])
+
+      
+    
+
+        customer_info= CustomerInfo()
+        customer_info.job_id=job.id
+        customer_info.Company = request.form["inputCompany"]
+        customer_info.Email = request.form["inputEmail"]
+        customer_info.First_Name = request.form["inputFirstName"]
+        customer_info.Last_Name = request.form["inputLastName"]
+        db.session.add(customer_info)
+        db.session.commit()
+
         return redirect(
             url_for(
                 ".xero_connect"
+               
+
             )
-        )
-
-
+        )    
+    
 @blueprint.route("/xero_task_execution", methods=["GET", "POST"])
 def xero_task_execution():
     if request.method == "GET":
         return render_template("home/xero_task_execution.html")
+
+
+@blueprint.route("/create_auth_code", methods=["GET"])
+def create_auth_code():
+    client_id = "BDDDE967BCF943098B8A44E164AE1A74"
+    client_secret= "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
+    CLIENT_ID = f"{client_id}"
+    CLIENT_SECRET=f"{client_secret}"
+    clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
+    encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
+    auth_code = "%s" % encoded_u
+    redirect_uri = "http://localhost:5000/create_auth_code"
+    auth_code1=request.args.get("code")
+    print(auth_code1)
+    
+    exchange_code_url= "https://identity.xero.com/connect/token"
+    response =requests.post(exchange_code_url,
+        headers={'Authorization': "Basic" "  "+  f'{auth_code}',
+        'Content-Type': 'application/x-www-form-urlencoded'
+        },
+    data={
+        'grant_type':'authorization_code',
+        'code':f"{auth_code1}",
+        'redirect_uri':f"{redirect_uri}"
+    })
+    json_response= response.json()
+    print(json_response)
+    token_data=XeroQboTokens()
+    print("inside xero auth code")
+    print(session['job_id_data'])  
+    # print(session.get('job_id_data'))
+    if 'job_id_data' in session:
+        print("inside session in auth code")
+
+    token_data.job_id=session['job_id_data']
+    token_data.xero_access_token=response.json().get("access_token")
+    token_data.xero_refresh_token=response.json().get("refresh_token")
+    db.session.add(token_data)
+    db.session.commit()
+    return redirect(
+            url_for(
+                ".connect_output_tool"
+            )
+        )
+
+
+
+@blueprint.route("/qbo_auth", methods=["GET", "POST"])
+def qbo_auth():
+    
+    # CLIENT_ID = 'ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz'
+    # CLIENT_SECRET = 'EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE'
+
+    CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
+    CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
+
+    REDIRECT_URI = 'http://localhost:5000/data_access'
+    AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
+    TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
+    
+    
+#     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
+    auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
+    print(auth_url,"print auth url")
+    get_xerocompany_data()
+    # window.location.replace(auth_url,"_self")
+    webbrowser.open_new(auth_url)
+    # return redirect(auth_url)
+
+#@blueprint.route("/xerocompany_data", methods=["GET", "POST"])
+def get_xerocompany_data():
+    if "job_id_data" in session:
+        xero_company_name = CustomerInfo.query.filter(CustomerInfo.job_id == session["job_id_data"])
+        xero_access_token = XeroQboTokens.query.filter(XeroQboTokens.job_id == session["job_id_data"])
+
+        print(xero_company_name.get("Company"))
+
+        print(xero_access_token.get("xero_access_token"))
+        url= "https://api.xero.com/connections"
+        payload={}
+        headers = {
+        'Authorization': f'Bearer {xero_access_token.get("xero_access_token")}',
+        
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+        
+        
+        json_response= response.json()
+        
+        for i in range(0,len(json_response)): 
+            if json_response[i]["tenantName"] == xero_company_name.get("Company"):
+                if "job_id_data" in session:
+                    token_data = XeroQboTokens.query.filter_by(job_id=session["job_id_data"]).first()
+                    print(token_data)
+                    token_data.xero_company_id=json_response[i]["tenantId"]
+                    db.session.commit()
+
+
+@blueprint.route("/data_access", methods=["GET", "POST"])
+def data_access():
+
+    token_endpoint = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
+
+    # client_id = "ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz"
+    # client_secret = "EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE"
+    CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
+    CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
+    redirect_uri = "http://localhost:5000/data_access"
+
+    authorization_code = request.args.get("code")
+    realme_id=request.args.get("realmId")
+
+
+    data = {
+        "grant_type": "authorization_code",
+        "code": authorization_code,
+        "redirect_uri": redirect_uri,
+    }
+
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Basic QUJwV09VV3RjRUcxZ0N1bjVkUWJRTmZjN2R2eWFsdzVxVkY5N0FrSlFjbjVMaDA5bzY6TGVweWpYVEFEVzU5MkRxNVJZVVA4VWJHTGNINXh0cURRaHJmMnhKTg==",
+    }
+
+    response = requests.post(token_endpoint, data=data, headers=headers)
+    print(response.json())
+
+    if "job_id_data" in session:
+        token_data = XeroQboTokens.query.filter_by(job_id=session["job_id_data"]).first()
+        print(token_data)
+        token_data.qbo_access_token=response.json().get("access_token")
+        token_data.qbo_refresh_token=response.json().get("refresh_token")
+        token_data.qbo_company_id=realme_id
+        db.session.commit()
+
+    if response.status_code == 200:
+
+        access_token = response.json().get("access_token")
+        refresh_token = response.json().get("refresh_token")
+        print(f"Access Token: {access_token}")
+        print(f"refresh Token: {refresh_token}")
+    else:
+        print("Token failed data")
+
+    return response.json()
