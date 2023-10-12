@@ -69,7 +69,7 @@ from apps.xero.reader.vendorcredit import get_vendorcredit
 
 
 class XeroToQbo(object):
-
+    print("xero to qbo")
     @staticmethod
     def read_data(job_id, task):
         step_name = None

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Function Data</title>
+    <style>
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 90%;
+        }
+
+        th {
+            text-align: center;
+            font-size: 20px;
+            padding: 10px;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Reports for the Data Conversion: XERO to QBO</h1>
+    <br></br>
+    <br></br>
+    <table border="1">
+        <tr>
+            <th>Function Name</th>
+            <th>Total Count</th>
+            <th>Count of Data Migrated Successfully</th>
+            <th>Count of Data Migration Failed</th>
+        </tr>
+        <tbody>
+        {% for i in range(function_name|length) %}
+            <tr>
+                <td>{{function_name[i]}}</td>
+                <td>{{data1[i]}}</td>
+                <td>{{data2[i]}}</td>
+                <td>{{data3[i]}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

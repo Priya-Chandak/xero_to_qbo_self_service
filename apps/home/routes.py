@@ -33,16 +33,21 @@ def connect_output_tool():
 
 @blueprint.route("/conversion_underway")
 def conversion_underway():
+    job_id = redis.get('my_key')
     return render_template(
-        "home/conversion_underway.html"
+        "home/conversion_underway.html",
+        job_id=job_id
+
     )
 @blueprint.route("/startJobByID", methods=["POST"])
 
 def startJobByID():
-    # job_id = request.form['job_id']
-    job_id = 1
+    print("isnide startjob by id")
+    job_id = redis.get('my_key')
+    print(job_id,"start job by id")
+    # job_id = 1
     asyncio.run(read_myob_write_qbo_task(job_id))
-    return json.dumps({'status': 'success'})
+    return render_template("home/conversion_underway.html")
 
 
 @blueprint.route("/task_execution_details/<int:task_id>")
@@ -239,9 +244,12 @@ def connect_input_tool():
     if request.method == "POST":
         # job_functions=['Customer','Supplier']
         job = Jobs()
-        job_functions=['Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
-        job.functions = "Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
-        # job.functions="Customer,Supplier"
+        
+        job_functions=['Customer','Supplier']
+     
+        # job_functions=['Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
+        # job.functions = "Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
+        job.functions="Customer,Supplier"
         length = 10 
         job.name = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))  
         print(job.name)    
@@ -371,17 +379,17 @@ def qbo_auth():
 #@blueprint.route("/xerocompany_data", methods=["GET", "POST"])
 def get_xerocompany_data():
 
-        xero_company_name = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key'))
-        xero_access_token = XeroQboTokens.query.filter(XeroQboTokens.job_id == redis.get('my_key'))
+        xero_company_name = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key')).first()
+        xero_access_token = XeroQboTokens.query.filter(XeroQboTokens.job_id == redis.get('my_key')).first()
 
-        print(xero_company_name.get("Company"))
+        print(xero_company_name.Company,"print data company name ")
 
-        print(xero_access_token.get("xero_access_token"))
+        print(xero_access_token.xero_access_token,"print data access token ")
 
         url= "https://api.xero.com/connections"
         payload={}
         headers = {
-        'Authorization': f'Bearer {xero_access_token.get("xero_access_token")}',
+        'Authorization': f'Bearer {xero_access_token.xero_access_token}',
         
         }
 
@@ -391,11 +399,12 @@ def get_xerocompany_data():
         json_response= response.json()
         
         for i in range(0,len(json_response)): 
-            if json_response[i]["tenantName"] == xero_company_name.get("Company"):
+            if json_response[i]["tenantName"] == xero_company_name.Company:
                 token_data = XeroQboTokens.query.filter_by(job_id=redis.get('my_key')).first()
                 print(token_data)
                 token_data.xero_company_id=json_response[i]["tenantId"]
                 db.session.commit()
+        return 1
 
 
 @blueprint.route("/data_access", methods=["GET", "POST"])
@@ -444,12 +453,16 @@ def data_access():
         print(f"refresh Token: {refresh_token}")
     else:
         print("Token failed data")
-
-    return response.json()
+    abc=get_xerocompany_data()
+    return redirect(
+            url_for(
+                ".start_conversion"
+            )
+        )
 
 
 @blueprint.route("/conversion_report/<int:job_id>")
-@login_required
+
 def conversion_report(job_id):
     dbname = get_mongodb_database()
 
@@ -464,11 +477,17 @@ def conversion_report(job_id):
     pushed_data=[]
     unpushed_data=[]
     for k in range(0,len(table_name)):
-        all_data = table_name[k].count_documents(condition1)
-        pushed_data = table_name[k].count_documents(condition2)
-        unpushed_data = table_name[k].count_documents(condition3)
-        all_data.append(all_data)
-        pushed_data.append(pushed_data)
-        unpushed_data.append(unpushed_data)
+        print(k)
+        
+        all_data1 = table_name[k].count_documents(condition1)
+        pushed_data1 = table_name[k].count_documents(condition2)
+        unpushed_data1 = table_name[k].count_documents(condition3)
+        all_data.append(all_data1)
+        pushed_data.append(pushed_data1)
+        unpushed_data.append(unpushed_data1)
         
     return render_template("home/conversion_report.html",function_name=function_name,data1=all_data,data2=pushed_data,data3=unpushed_data)
+@blueprint.route("/start_conversion", methods=["GET", "POST"])
+def start_conversion():
+    if request.method == "GET":
+        return render_template("home/start_conversion.html")
