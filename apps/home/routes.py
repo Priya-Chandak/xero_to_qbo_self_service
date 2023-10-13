@@ -466,10 +466,14 @@ def data_access():
 def conversion_report(job_id):
     dbname = get_mongodb_database()
 
+    job_id = redis.get('my_key')
+    print(job_id,type(job_id))
+
     function_name = ["Chart of Account","Supplier","Customer","Item","Spend Money","Receive Money","Bank Transfer","Journal","Invoice","Bill","Invoice Payment","Bill Payment"]
-    table_name = [dbname['xero_classified_coa'],dbname['supplier'],dbname['customer'],dbname['xero_item'],dbname['xero_spend_money'],dbname['xero_received_money'],dbname['xero_bank_transfer'],dbname['xero_manual_journal'],dbname['xero_invoice'],dbname['xero_bill'],dbname['xero_invoice_payment'],dbname['xero_bill_payment']]
+    table_name = [dbname['xero_classified_coa'],dbname['xero_supplier'],dbname['xero_customer'],dbname['xero_items'],dbname['xero_spend_money'],dbname['xero_received_money'],dbname['xero_bank_transfer'],dbname['xero_manual_journal'],dbname['xero_invoice'],dbname['xero_bill'],dbname['xero_invoice_payment'],dbname['xero_bill_payment']]
 
     condition1={"job_id":f"{job_id}"}
+    print(condition1)
     condition2={"job_id":f"{job_id}","is_pushed":1}
     condition3={"job_id":f"{job_id}","is_pushed":0}
     
