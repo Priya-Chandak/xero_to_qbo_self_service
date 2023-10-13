@@ -13,8 +13,7 @@ def get_xero_settings(job_id):
         url = "https://identity.xero.com/connect/token?="
 
         data1 = db.session.query(XeroQboTokens).filter(XeroQboTokens.job_id == job_id).first()
-        print(data1,"data12222222222222")
-
+        
         # keys = (
         #     db.session.query(Jobs, ToolSettings.keys, ToolSettings.values, ToolSettings.id)
         #     .join(Tool, Jobs.input_account_id == Tool.id)

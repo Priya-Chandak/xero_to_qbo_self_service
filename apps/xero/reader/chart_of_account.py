@@ -81,12 +81,16 @@ def get_archieved_coa(job_id, task_id):
                             QuerySet["Code"] = JsonResponse1[i]["Code"]
                         else:
                             QuerySet["Code"] = None
-
                         arr.append(QuerySet)
 
-                xero_coa.insert_many(arr)
-                step_name = "Reading xero archived coa successfully"
-                write_task_execution_step(task_id, status=1, step=step_name)
+                if len(arr)>0:
+                    xero_coa.insert_many(arr)
+                    step_name = "Reading xero archived coa successfully"
+                    write_task_execution_step(task_id, status=1, step=step_name)
+                else:
+                    step_name = "No Data Available"
+                    write_task_execution_step(task_id, status=1, step=step_name)
+
             else:
                 step_name = "No Data Available"
                 write_task_execution_step(task_id, status=1, step=step_name)

@@ -6,7 +6,7 @@ from apps.home.data_util import get_job_details
 from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-
+import time
 
 def get_xero_payment(job_id, task_id):
     try:
@@ -33,6 +33,7 @@ def get_xero_payment(job_id, task_id):
             main_url = f"{base_url}/Payments?where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})%20AND%20Date%3C%3DDateTime({y2}%2C{m2}%2C{d2})"
 
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
+        print(response1)
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["Payments"]
@@ -61,6 +62,7 @@ def get_xero_payment(job_id, task_id):
 
                     print(main_url)
                     response = requests.request("GET", main_url, headers=headers, data=payload)
+                    time.sleep(1)
                     JsonResponse = response.json()
                     JsonResponse1 = JsonResponse["Payments"]
 
@@ -97,7 +99,7 @@ def get_xero_payment(job_id, task_id):
                             QuerySet["HasAccount"] = JsonResponse1[i]["HasAccount"]
 
                             if QuerySet["HasAccount"] == True:
-                                QuerySet["AccountCode"] = JsonResponse1[i]["account"]["AccountID"]
+                                QuerySet["AccountCode"] = JsonResponse1[i]["Account"]["AccountID"]
 
                             if "InvoiceNumber" in JsonResponse1[i]["Invoice"]:
                                 QuerySet["InvoiceNumber"] = JsonResponse1[i]["Invoice"][
