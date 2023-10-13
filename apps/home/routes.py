@@ -280,8 +280,6 @@ def connect_input_tool():
         # print("---------session data print--------")
         # print(session['job_id_data'])
 
-      
-    
 
         customer_info= CustomerInfo()
         customer_info.job_id=job.id
@@ -289,6 +287,8 @@ def connect_input_tool():
         customer_info.Email = request.form["inputEmail"]
         customer_info.First_Name = request.form["inputFirstName"]
         customer_info.Last_Name = request.form["inputLastName"]
+        customer_info.start_date = request.form["start_date"]
+        customer_info.end_date = request.form["end_date"]
         db.session.add(customer_info)
         db.session.commit()
 

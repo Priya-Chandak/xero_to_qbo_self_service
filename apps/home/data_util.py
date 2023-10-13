@@ -1,9 +1,11 @@
 import traceback
 
 from apps import db
-from apps.home.models import Jobs, JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep
-
+from apps.home.models import Jobs, JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep,CustomerInfo
+from redis import StrictRedis
 traceback.print_exc()
+
+redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
 def add_job_status(job_id, status):
@@ -93,7 +95,15 @@ def get_job_details(job_id):
     end_date = job_details.end_date
     return start_date, end_date
 
+def get_data_period_details(job_id):
+    date_period_details = db.session.query(CustomerInfo).get(job_id)
+    # date_period_details = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key')).first()
+    start_date = date_period_details.start_date
+    end_date = date_period_details.end_date
+    return start_date, end_date
 
+
+ 
 # job_id
 def update_task_execution_status(task_id, status, task_type):
     task = Task.query.filter(

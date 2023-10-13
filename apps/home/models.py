@@ -174,6 +174,8 @@ class CustomerInfo(db.Model):
     Email = db.Column(db.String(625))
     First_Name = db.Column(db.String(625))
     Last_Name = db.Column(db.String(625))
+    start_date = db.Column(db.String(255), nullable=True)
+    end_date = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime(timezone=True))
     
 
