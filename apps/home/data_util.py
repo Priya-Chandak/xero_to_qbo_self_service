@@ -89,15 +89,16 @@ def add_task_status(job_id, table_name, operation="read", started_or_complete="s
 #             session.close()
 
 
-def get_job_details(job_id):
-    job_details = db.session.query(Jobs).get(job_id)
-    start_date = job_details.start_date
-    end_date = job_details.end_date
-    return start_date, end_date
+# def get_job_details(job_id):
+#     job_details = db.session.query(Jobs).get(job_id)
+#     start_date = job_details.start_date
+#     end_date = job_details.end_date
+#     return start_date, end_date
 
-def get_data_period_details(job_id):
-    date_period_details = db.session.query(CustomerInfo).get(job_id)
-    # date_period_details = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key')).first()
+def get_job_details(job_id):
+    # date_period_details = db.session.query(CustomerInfo).get(job_id)
+    date_period_details = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key')).first()
+    print("date_period_details",date_period_details)
     start_date = date_period_details.start_date
     end_date = date_period_details.end_date
     return start_date, end_date
