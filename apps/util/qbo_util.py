@@ -14,6 +14,7 @@ from apps.util.db_mongo import get_mongodb_database
 
 
 def get_data_from_qbo(job_id, task_id, table_name, json_object_key, qbo_object_name, url, header):
+    print("inside get_data_from_qbo")
     try:
         db = get_mongodb_database()
         start_date, end_date = get_job_details(job_id)

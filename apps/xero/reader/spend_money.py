@@ -2,7 +2,7 @@ import sys
 
 import requests
 
-from apps.home.data_util import get_data_period_details
+from apps.home.data_util import get_job_details
 from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
@@ -10,7 +10,7 @@ from apps.util.db_mongo import get_mongodb_database
 
 def get_xero_spend_money(job_id, task_id):
     try:
-        start_date, end_date = get_data_period_details(job_id)
+        start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
 
         xero_spend_money = dbname["xero_spend_money"]
