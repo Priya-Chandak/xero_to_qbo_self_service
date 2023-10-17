@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xero to QBO Conversion</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .infographic-img {
+            max-width: 100%;
+            height: auto;
+        }
+        .card {
+            width: 100%;
+            max-width: 820px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+        }
+        .form-control {
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img class="infographic-img mb-4" src="/static/assets/img/mmc_logo.png" alt="Infographic" style="width: 70px;">
+    
+    <!-- Display error message here -->
+    <div id="errorMessage" class="alert alert-danger" role="alert" style="display: none;"></div>
+    
+    <div class="card">
+        
+
+        <div class="card-body">
+            <!-- Input box for error message -->
+            <div class="form-group">
+                <label for="errorMessageInput" class="btn btn-denger mb-3">Error Message:</label>
+                <input type="text" class="form-control" id="errorMessageInput">
+            </div>
+            
+            <!-- Single button for connection -->
+            <a href="/connect_input_tool" class="btn btn-success mb-3">Customer info</a>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery and Bootstrap JS CDN links -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#Connect_qbo').click(function() {
+            // Get the error message from the input box
+            var errorMessage = $('#errorMessageInput').val();
+            
+            // Perform validation if needed
+            
+            // Proceed with the AJAX request
+            $.ajax({
+                type: "POST",
+                url: "/qbo_auth",
+                data: { errorMessage: errorMessage }, // Pass error message to the server if needed
+                success: function(response) {
+                    // Handle the success response if needed
+                    console.log(response);
+
+                    // Redirect to another page if needed
+                    window.location.href = "/connect_input_tool";
+                },
+                error: function(error) {
+                    // Handle the error if the AJAX request fails
+                    console.error("Error:", error);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

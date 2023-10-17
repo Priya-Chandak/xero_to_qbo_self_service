@@ -41,11 +41,26 @@
             border-bottom: 1px solid #ccc;
         }
 
+        .error {
+        color: red
+        }
+
     </style>
 
 </head>
 <body>
 <div class="container">
+
+    <div class="container mt-5">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
     <img class="infographic-img mb-4" src="/static/assets/img/mmc_logo.png" alt="Infographic" style="width: 70px;">
     <div class="card">

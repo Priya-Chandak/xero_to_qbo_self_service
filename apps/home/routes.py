@@ -10,7 +10,7 @@ from apps.util.db_mongo import get_mongodb_database
 
 
 
-from flask import Flask,render_template, current_app,redirect, request, url_for,session, g
+from flask import Flask,render_template, current_app,redirect, request, url_for,session, g,flash
 from flask_login import login_required
 
 
@@ -149,8 +149,6 @@ def redirect_auth_url():
     return render_template(
         "home/redirect_auth_url.html"
     )
-
-
 
 @blueprint.route("/jobs/create", methods=["GET", "POST"])
 @login_required
@@ -346,11 +344,25 @@ def create_auth_code():
     token_data.xero_refresh_token=response.json().get("refresh_token")
     db.session.add(token_data)
     db.session.commit()
-    return redirect(
-            url_for(
-                ".connect_output_tool"
-            )
-        )
+
+    abc=get_xerocompany_data()
+
+    if abc == False:
+        flash('Please Enter a valid file name and select correct organisation', 'error')
+        return redirect(
+                        url_for(
+                            ".connect_input_tool"
+                        )
+                    )
+
+    else:
+        return redirect(
+                        url_for(
+                            ".connect_output_tool"
+                        )
+                    )
+
+  
 
 
 
@@ -389,23 +401,20 @@ def get_xerocompany_data():
         url= "https://api.xero.com/connections"
         payload={}
         headers = {
-        'Authorization': f'Bearer {xero_access_token.xero_access_token}',
-        
+        'Authorization': f'Bearer {xero_access_token.xero_access_token}'
         }
-
-        response = requests.request("GET", url, headers=headers, data=payload)
-        
-        
+        response = requests.request("GET", url, headers=headers, data=payload) 
         json_response= response.json()
-        
         for i in range(0,len(json_response)): 
             if json_response[i]["tenantName"] == xero_company_name.Company:
                 token_data = XeroQboTokens.query.filter_by(job_id=redis.get('my_key')).first()
                 print(token_data)
                 token_data.xero_company_id=json_response[i]["tenantId"]
                 db.session.commit()
-        return 1
-
+                return True
+            else:
+                print("you enter file name and you get allow access file is different")
+                return False
 
 @blueprint.route("/data_access", methods=["GET", "POST"])
 def data_access():
@@ -453,7 +462,7 @@ def data_access():
         print(f"refresh Token: {refresh_token}")
     else:
         print("Token failed data")
-    abc=get_xerocompany_data()
+    
     return redirect(
             url_for(
                 ".start_conversion"
@@ -495,3 +504,10 @@ def conversion_report(job_id):
 def start_conversion():
     if request.method == "GET":
         return render_template("home/start_conversion.html")
+
+@blueprint.route("/Xero_file_error")
+def Xero_file_error():
+    
+    return render_template(
+        "home/Xero_file_error.html"
+    )
