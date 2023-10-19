@@ -243,11 +243,11 @@ def connect_input_tool():
         # job_functions=['Customer','Supplier']
         job = Jobs()
         
-        job_functions=['Customer','Supplier']
+        job_functions=['Chart of account','Customer','Supplier','Spend Money','Receive Money','Bank Transfer']
      
         # job_functions=['Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
         # job.functions = "Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
-        job.functions="Customer,Supplier"
+        job.functions="Chart of account,Customer,Supplier,Spend Money,Receive Money,Bank Transfer"
         length = 10 
         job.name = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))  
         print(job.name)    
@@ -405,16 +405,31 @@ def get_xerocompany_data():
         }
         response = requests.request("GET", url, headers=headers, data=payload) 
         json_response= response.json()
-        for i in range(0,len(json_response)): 
-            if json_response[i]["tenantName"] == xero_company_name.Company:
-                token_data = XeroQboTokens.query.filter_by(job_id=redis.get('my_key')).first()
-                print(token_data)
-                token_data.xero_company_id=json_response[i]["tenantId"]
-                db.session.commit()
-                return True
-            else:
-                print("you enter file name and you get allow access file is different")
-                return False
+
+        if response.status_code == 200:
+            json_response = response.json()
+            for entry in json_response:
+                if entry["tenantName"].lower() == xero_company_name.Company.lower():
+                    return True
+            return False
+        else:
+            return False
+
+
+        # for i in range(0,len(json_response)): 
+        #     print(xero_company_name.Company,"inside")
+        #     print(json_response[i]["tenantName"],"inside tennat name data")
+        #     if json_response[i]["tenantName"] == xero_company_name.Company:
+        #         print("inside tenant name data")
+        #         token_data = XeroQboTokens.query.filter_by(job_id=redis.get('my_key')).first()
+        #         print(token_data)
+        #         token_data.xero_company_id=json_response[i]["tenantId"]
+        #         db.session.commit()
+        #         return True
+        #     else:
+            
+        #         print("you enter file name and you get allow access file is different")
+        #         return False
 
 @blueprint.route("/data_access", methods=["GET", "POST"])
 def data_access():
