@@ -1,5 +1,5 @@
-MDB_USERNAME = "brg_dev"
-MDB_PASSWORD = "brg_dev"
+MDB_USERNAME = "root"
+MDB_PASSWORD = "Technology_100"
 MYOB_KEY = "client_id,client_secret,company_file_uri,company_file_id,refresh_token,access_token,redirect_uri"
 QBO_KEY = "client_id,client_secret,base_url,company_id,minor_version,User_Agent,access_token,refresh_token"
 XERO_KEY = "client_id,client_secret,refresh_token,access_token,xero-tenant-id,re_directURI,scopes,state"
@@ -18,3 +18,9 @@ JOB_STATUS_SUCCESSFUL = '1'
 JOB_STATUS_IN_PROGRESS = '2'
 JOB_STATUS_NOT_STARTED = '3'
 JOB_STATUS_FAILED = '4'
+XERO_REDIRECT = "https://mmc.vishleshak.io/create_auth_code"
+QBO_REDIRECT = "https://mmc.vishleshak.io/data_access"
+XERO_CI = "BDDDE967BCF943098B8A44E164AE1A74"
+XERO_CS= "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
+QBO_CI = 'ABO1DrhwFGD0Juq2zKElAFgAxeY9PXLdH4xmNxDURVJJt8QbiS'
+QBO_CS = 'sZdaiuAzUIP8DEf2OhFv76tRZTX1PE1vWtTqahEK'

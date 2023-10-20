@@ -7,6 +7,8 @@ import random
 import string
 from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
+from apps.myconstant import *
+
 
 
 
@@ -111,9 +113,9 @@ def Task_Execution_Status(task_id):
 @blueprint.route("/xero-connect", methods=["GET", "POST"])
 def xero_connect():
     
-    client_id = "BDDDE967BCF943098B8A44E164AE1A74"
-    client_secret = "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
-    redirect_uri = "http://localhost:5000/create_auth_code"
+    client_id = XERO_CI
+    client_secret = XERO_CS
+    redirect_uri = XERO_REDIRECT
     scope = "offline_access%20accounting.transactions"
 
     CLIENT_ID = f"{client_id}"
@@ -132,10 +134,7 @@ def xero_connect():
     print(auth_url)
     
     return redirect(auth_url)
-    
-    
-                
-                
+                        
     # return render_template('home/redirect_auth_url.html', auth_url1=auth_url)
     # return redirect(
     #             url_for(
@@ -306,14 +305,14 @@ def xero_task_execution():
 
 @blueprint.route("/create_auth_code", methods=["GET"])
 def create_auth_code():
-    client_id = "BDDDE967BCF943098B8A44E164AE1A74"
-    client_secret= "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
+    client_id = XERO_CI
+    client_secret= XERO_CS
     CLIENT_ID = f"{client_id}"
     CLIENT_SECRET=f"{client_secret}"
     clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
     encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
     auth_code = "%s" % encoded_u
-    redirect_uri = "http://localhost:5000/create_auth_code"
+    redirect_uri = XERO_REDIRECT
     auth_code1=request.args.get("code")
     print(auth_code1)
     
@@ -362,9 +361,6 @@ def create_auth_code():
                         )
                     )
 
-  
-
-
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
 def qbo_auth():
@@ -377,17 +373,16 @@ def qbo_auth():
 
     #qtfy id client id and client secret 
 
-    CLIENT_ID = 'ABO1DrhwFGD0Juq2zKElAFgAxeY9PXLdH4xmNxDURVJJt8QbiS'
-    CLIENT_SECRET = 'sZdaiuAzUIP8DEf2OhFv76tRZTX1PE1vWtTqahEK'
+    CLIENT_ID = QBO_CI
+    CLIENT_SECRET = QBO_CS
 
 
     # REDIRECT_URI = 'http://localhost:5000/data_access'
 
-    REDIRECT_URI = 'https://mmc.vishleshak.io/data_access'
+    REDIRECT_URI = QBO_REDIRECT
     
     AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
     TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
-    
     
 #     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
@@ -449,16 +444,19 @@ def data_access():
 
     # client_id = "ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz"
     # client_secret = "EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE"
-    CLIENT_ID = 'ABO1DrhwFGD0Juq2zKElAFgAxeY9PXLdH4xmNxDURVJJt8QbiS'
-    CLIENT_SECRET = 'sZdaiuAzUIP8DEf2OhFv76tRZTX1PE1vWtTqahEK'
-
+    CLIENT_ID1 = QBO_CI
+    CLIENT_SECRET1= QBO_CS
     # CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
     # CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
-    redirect_uri = "https://mmc.vishleshak.io/data_access"
+    redirect_uri = QBO_REDIRECT
+    CLIENT_ID = f"{CLIENT_ID1}"
+    CLIENT_SECRET=f"{CLIENT_SECRET1}"
+    clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
+    encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
+    auth_code = "%s" % encoded_u
 
     authorization_code = request.args.get("code")
     realme_id=request.args.get("realmId")
-
 
     data = {
         "grant_type": "authorization_code",
@@ -468,7 +466,7 @@ def data_access():
 
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Basic QUJPMURyaHdGR0QwSnVxMnpLRWxBRmdBeGVZOVBYTGRINHhtTnhEVVJWSkp0OFFiaVM6c1pkYWl1QXpVSVA4REVmMk9oRnY3NnRSWlRYMVBFMXZXdFRxYWhFSw==",
+        'Authorization': "Basic" "  "+  f'{auth_code}',
     }
 
     response = requests.post(token_endpoint, data=data, headers=headers)
