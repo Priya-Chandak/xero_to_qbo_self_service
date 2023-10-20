@@ -14,8 +14,11 @@ def get_xero_tax(job_id, task_id):
         payload, base_url, headers = get_settings_xero(job_id)
 
         main_url = f"{base_url}/TaxRates"
+        print(main_url)
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
         r1 = response1.json()
+        print(response1)
+        print(r1)
         r2 = r1["TaxRates"]
         no_of_records = dbname["xero_taxrate"].count_documents({'job_id': job_id})
         no_of_pages = (no_of_records // 100) + 1

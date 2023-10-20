@@ -6,6 +6,7 @@ import requests
 from apps import db
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings,XeroQboTokens
+from apps.myconstant import *
 
 
 def get_xero_settings(job_id):
@@ -52,9 +53,9 @@ def get_xero_settings(job_id):
         #         state = row[2]
 
         
-        client_id = "BDDDE967BCF943098B8A44E164AE1A74"
-        client_secret = "JVCy3rDSvqkMelGOxJenpLkdiAgRgiHcXLe6GJZ79IAKXv_l"
-
+        client_id = XERO_CI
+        client_secret = XERO_CS
+        
         CLIENT_ID = f"{client_id}"
         CLIENT_SECRET = f"{client_secret}"
         clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
