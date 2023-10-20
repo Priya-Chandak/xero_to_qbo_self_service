@@ -372,10 +372,19 @@ def qbo_auth():
     # CLIENT_ID = 'ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz'
     # CLIENT_SECRET = 'EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE'
 
-    CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
-    CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
+    # CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
+    # CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
 
-    REDIRECT_URI = 'http://localhost:5000/data_access'
+    #qtfy id client id and client secret 
+
+    CLIENT_ID = 'ABO1DrhwFGD0Juq2zKElAFgAxeY9PXLdH4xmNxDURVJJt8QbiS'
+    CLIENT_SECRET = 'sZdaiuAzUIP8DEf2OhFv76tRZTX1PE1vWtTqahEK'
+
+
+    # REDIRECT_URI = 'http://localhost:5000/data_access'
+
+    REDIRECT_URI = 'https://mmc.vishleshak.io/data_access'
+    
     AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
     TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
     
@@ -385,8 +394,8 @@ def qbo_auth():
     print(auth_url,"print auth url")
     # get_xerocompany_data()
     # window.location.replace(auth_url,"_self")
-    webbrowser.open_new(auth_url)
-    # return redirect(auth_url)
+    # webbrowser.open_new(auth_url)
+    return redirect(auth_url)
 
 #@blueprint.route("/xerocompany_data", methods=["GET", "POST"])
 def get_xerocompany_data():
@@ -440,9 +449,12 @@ def data_access():
 
     # client_id = "ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz"
     # client_secret = "EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE"
-    CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
-    CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
-    redirect_uri = "http://localhost:5000/data_access"
+    CLIENT_ID = 'ABO1DrhwFGD0Juq2zKElAFgAxeY9PXLdH4xmNxDURVJJt8QbiS'
+    CLIENT_SECRET = 'sZdaiuAzUIP8DEf2OhFv76tRZTX1PE1vWtTqahEK'
+
+    # CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
+    # CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
+    redirect_uri = "https://mmc.vishleshak.io/data_access"
 
     authorization_code = request.args.get("code")
     realme_id=request.args.get("realmId")
@@ -456,7 +468,7 @@ def data_access():
 
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Basic QUJwV09VV3RjRUcxZ0N1bjVkUWJRTmZjN2R2eWFsdzVxVkY5N0FrSlFjbjVMaDA5bzY6TGVweWpYVEFEVzU5MkRxNVJZVVA4VWJHTGNINXh0cURRaHJmMnhKTg==",
+        "Authorization": "Basic QUJPMURyaHdGR0QwSnVxMnpLRWxBRmdBeGVZOVBYTGRINHhtTnhEVVJWSkp0OFFiaVM6c1pkYWl1QXpVSVA4REVmMk9oRnY3NnRSWlRYMVBFMXZXdFRxYWhFSw==",
     }
 
     response = requests.post(token_endpoint, data=data, headers=headers)
