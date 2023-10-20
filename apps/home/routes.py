@@ -347,7 +347,7 @@ def create_auth_code():
     abc=get_xerocompany_data()
 
     if abc == False:
-        flash('Please Enter a valid file name and select correct organisation', 'error')
+        flash('Please enter a valid file name and select correct organisation', 'error')
         return redirect(
                         url_for(
                             ".connect_input_tool"
@@ -413,7 +413,11 @@ def get_xerocompany_data():
         if response.status_code == 200:
             json_response = response.json()
             for entry in json_response:
-                if entry["tenantName"].lower() == xero_company_name.Company.lower():
+                if entry["tenantName"].lower()== xero_company_name.Company.lower():
+                    print("inside true condition")
+                    token_data = XeroQboTokens.query.filter_by(job_id=redis.get('my_key')).first()
+                    token_data.xero_company_id=entry["tenantId"]
+                    db.session.commit()
                     return True
             return False
         else:
