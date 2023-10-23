@@ -242,11 +242,11 @@ def connect_input_tool():
         # job_functions=['Customer','Supplier']
         job = Jobs()
         
-        job_functions=['Chart of account','Customer','Supplier']#,'Spend Money','Receive Money','Bank Transfer']
+        # job_functions=['Chart of account','Customer','Supplier']#,'Spend Money','Receive Money','Bank Transfer']
      
-        # job_functions=['Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
-        # job.functions = "Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
-        job.functions="Chart of account,Customer,Supplier"#,Spend Money,Receive Money,Bank Transfer"
+        job_functions=['Existing Chart of account','Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
+        job.functions = "Existing Chart of account,Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
+        # job.functions="Chart of account,Customer,Supplier"#,Spend Money,Receive Money,Bank Transfer"
         length = 10 
         job.name = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))  
         print(job.name)    
