@@ -622,16 +622,15 @@ class XeroToQbo(object):
                 delete_invoice(job_id)
                 delete_bill(job_id)
 
-
                 step_name = "Reading data from qbo chart of account"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id, task.id, "Chart of account")
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading account reference data "
-                write_task_execution_step(task.id, status=2, step=step_name)
-                account_reference(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
+                # step_name = "Reading account reference data "
+                # write_task_execution_step(task.id, status=2, step=step_name)
+                # account_reference(job_id, task.id)
+                # write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading qbo Item"
                 write_task_execution_step(task.id, status=2, step=step_name)
