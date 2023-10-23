@@ -5,6 +5,7 @@ from apps.util.qbo_util import get_data_from_qbo
 
 
 def read_qbo_data(job_id, task_id, read_data_from_object):
+    print("inside read qbo data")
     configurations = []
     try:
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -31,8 +32,8 @@ def read_qbo_data(job_id, task_id, read_data_from_object):
             configurations.append({"job_id": job_id,
                                    "table_name": "QBO_COA",
                                    "task_id": task_id,
-                                   "json_object_key": "account",
-                                   "qbo_object_name": "account",
+                                   "json_object_key": "Account",
+                                   "qbo_object_name": "Account",
                                    "url": url,
                                    "header": get_data_header})
         if read_data_from_object == "Bill Payment":
