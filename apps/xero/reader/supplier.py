@@ -6,6 +6,7 @@ from apps.home.data_util import write_task_execution_step, update_task_execution
 from apps.mmc_settings.all_settings import *
 # from apps.db_mongo_connection.db_mongo import get_mongodb_database
 from apps.util.db_mongo import get_mongodb_database
+import time
 
 
 # job_url = f"{base_url}/GeneralLedger/account?$top=100&$skip=0"
@@ -35,6 +36,7 @@ def get_xero_supplier(job_id, task_id):
             response = requests.request(
                 "GET", url, headers=headers, data=payload)
             JsonResponse = response.json()
+            time.sleep(1)
 
             for i in range(0, len(JsonResponse['Contacts'])):
 
