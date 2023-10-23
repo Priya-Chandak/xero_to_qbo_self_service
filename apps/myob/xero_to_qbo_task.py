@@ -102,17 +102,23 @@ class XeroToQbo(object):
 
                 step_name = "Reading xero chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading data from xero classified coa"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_classified_coa(job_id, task.id)
+                results = dbname['xero_classified_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_xero_classified_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading data from xero tax"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_tax(job_id, task.id)
+                results = dbname['xero_taxrate'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_xero_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -133,7 +139,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading data from xero tax"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_tax(job_id, task.id)
+                results = dbname['xero_tax'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_xero_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -219,7 +227,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading xero chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -272,7 +282,9 @@ class XeroToQbo(object):
                 
                 step_name = "Reading xero chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -283,7 +295,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading Invoice data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_invoice(job_id, task.id)
+                results = dbname['xero_invoice'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_invoice(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -294,7 +308,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading CreditNote data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_creditnote(job_id, task.id)
+                results = dbname['xero_creditnote'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_creditnote(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -305,18 +321,24 @@ class XeroToQbo(object):
 
                 step_name = "Reading bill data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_bill(job_id, task.id)
+                results = dbname['xero_bill'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_xero_bill(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
                 step_name = "Reading xero Item"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_items(job_id, task.id)
+                results = dbname['xero_items'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_items(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo COA"
+                step_name = "Reading Xero COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -327,13 +349,17 @@ class XeroToQbo(object):
 
                 step_name = "Reading VendorCredit data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_vendorcredit(job_id, task.id)
+                results = dbname['xero_vendorcredit'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_vendorcredit(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
                 step_name = "Reading xero Item"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_items(job_id, task.id)
+                results = dbname['xero_items'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_items(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -384,18 +410,21 @@ class XeroToQbo(object):
 
                 step_name = "Reading Bill Payment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_payment(job_id, task.id)
+                # get_xero_payment(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                
                 step_name = "Reading Xero COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading Xero Archived COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_archieved_coa(job_id, task.id)
+                results = dbname['xero_archived_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_archieved_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 update_task_execution_status(task.id, status=1, task_type="read")
@@ -405,7 +434,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading Bank Transfer data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_bank_transfer(job_id, task.id)
+                results = dbname['xero_bank_transfer'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_xero_bank_transfer(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 update_task_execution_status(task.id, status=1, task_type="read")
