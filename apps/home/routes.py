@@ -116,7 +116,7 @@ def xero_connect():
     client_id = XERO_CI
     client_secret = XERO_CS
     redirect_uri = XERO_REDIRECT
-    scope = "offline_access%20accounting.transactions"
+    scope = "email%20profile%20openid%20accounting.reports.read%20payroll.employees%20payroll.employees.read%20accounting.settings%20accounting.transactions%20accounting.transactions.read%20accounting.contacts%20offline_access"
 
     CLIENT_ID = f"{client_id}"
     CLIENT_SECRET = f"{client_secret}"
@@ -242,11 +242,11 @@ def connect_input_tool():
         # job_functions=['Customer','Supplier']
         job = Jobs()
         
-        job_functions=['Chart of account','Customer','Supplier','Spend Money','Receive Money','Bank Transfer']
+        job_functions=['Chart of account','Customer','Supplier']#,'Spend Money','Receive Money','Bank Transfer']
      
         # job_functions=['Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
         # job.functions = "Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
-        job.functions="Chart of account,Customer,Supplier,Spend Money,Receive Money,Bank Transfer"
+        job.functions="Chart of account,Customer,Supplier"#,Spend Money,Receive Money,Bank Transfer"
         length = 10 
         job.name = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))  
         print(job.name)    
@@ -389,8 +389,8 @@ def qbo_auth():
     print(auth_url,"print auth url")
     # get_xerocompany_data()
     # window.location.replace(auth_url,"_self")
-    # webbrowser.open_new(auth_url)
-    return redirect(auth_url)
+    webbrowser.open_new(auth_url)
+    # return redirect(auth_url)
 
 #@blueprint.route("/xerocompany_data", methods=["GET", "POST"])
 def get_xerocompany_data():

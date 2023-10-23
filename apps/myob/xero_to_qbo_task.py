@@ -107,7 +107,7 @@ class XeroToQbo(object):
 
                 step_name = "Reading data from xero classified coa"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_classified_coa(job_id, task.id)
+                # get_xero_classified_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading data from xero tax"

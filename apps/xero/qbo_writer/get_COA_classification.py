@@ -116,8 +116,11 @@ def get_xero_classified_coa(job_id, task_id):
                     pass
 
                 list2.append(QuerySet1)
-
-        classified_coa.insert_many(list2)
+        
+        if len(list2)>0:
+            classified_coa.insert_many(list2)
+        else:
+            print("No data")
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa", ex)
