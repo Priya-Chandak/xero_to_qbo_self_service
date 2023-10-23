@@ -16,6 +16,7 @@ def add_xero_supplier(job_id, task_id):
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         url = f"{base_url}/vendor?minorversion=40"
+        print(url)
 
         supplier_data = dbname["xero_supplier"]
 
@@ -94,14 +95,15 @@ def add_xero_supplier(job_id, task_id):
             else:
                 QuerySet9["StatementText"] = "NA"
 
-            if QuerySet9["BankBranchIdentifier"] == None:
-                QuerySet2["VendorPaymentBankDetail"] = None
-            else:
-                QuerySet2["VendorPaymentBankDetail"] = QuerySet9
+            # if QuerySet9["BankBranchIdentifier"] == None:
+            #     QuerySet2["VendorPaymentBankDetail"] = None
+            # else:
+            QuerySet2["VendorPaymentBankDetail"] = QuerySet9
 
             QuerySet2["VendorPaymentBankDetail"] = None
             payload = json.dumps(QuerySet2)
 
+            print(payload)
             post_data_in_qbo(url, headers, payload, supplier_data, _id, job_id, task_id, supplier.get("Name"))
 
 
