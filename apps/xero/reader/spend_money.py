@@ -6,7 +6,7 @@ from apps.home.data_util import get_job_details
 from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-
+import time
 
 def get_xero_spend_money(job_id, task_id):
     try:
@@ -31,7 +31,7 @@ def get_xero_spend_money(job_id, task_id):
             main_url = f"{base_url}/BankTransactions?where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})%20AND%20Date%3C%3DDateTime({y2}%2C{m2}%2C{d2})"
 
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
-
+        time.sleep(1)
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["BankTransactions"]
@@ -51,6 +51,7 @@ def get_xero_spend_money(job_id, task_id):
                     print(url)
                     response = requests.request("GET", url, headers=headers, data=payload)
                     JsonResponse = response.json()
+                    time.sleep(1)
                     JsonResponse1 = JsonResponse["BankTransactions"]
 
                     for i in range(0, len(JsonResponse1)):
