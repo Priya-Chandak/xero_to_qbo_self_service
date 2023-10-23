@@ -22,7 +22,7 @@ def get_data_from_qbo(job_id, task_id, table_name, json_object_key, qbo_object_n
         no_of_records = mongo_table.count_documents({"job_id": job_id})
         print(no_of_records)
         remaining_records = 1000
-        while remaining_records > 1000:
+        while remaining_records >= 1000:
             # if start_date != "" and end_date != "":
             #     payload = (
             #         f"select * from {qbo_object_name} WHERE TxnDate >= '{start_date}' AND TxnDate <= '{end_date}' STARTPOSITION {no_of_records} MAXRESULTS 1000"
