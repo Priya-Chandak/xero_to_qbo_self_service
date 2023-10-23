@@ -8,7 +8,7 @@ import string
 from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import *
-
+from apps.util.qbo_util import get_pagination_for_records
 
 
 
@@ -242,11 +242,11 @@ def connect_input_tool():
         # job_functions=['Customer','Supplier']
         job = Jobs()
         
-        # job_functions=['Chart of account','Customer','Supplier']#,'Spend Money','Receive Money','Bank Transfer']
-     
-        job_functions=['Existing Chart of account','Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
-        job.functions = "Existing Chart of account,Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
-        # job.functions="Chart of account,Customer,Supplier"#,Spend Money,Receive Money,Bank Transfer"
+        
+        # job_functions=['Existing Chart of account','Chart of account','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
+        # job.functions = "Existing Chart of account,Chart of account,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
+        job_functions=['Item','Supplier']
+        job.functions = "Item,Supplier"
         length = 10 
         job.name = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))  
         print(job.name)    
@@ -541,3 +541,178 @@ def Xero_file_error():
     return render_template(
         "home/Xero_file_error.html"
     )
+
+@blueprint.route("/records/<int:task_id>/<function_name>")
+def records(task_id, function_name):
+    dbname = get_mongodb_database()
+    page = request.args.get('page', 1, type=int)
+    input_tool=1
+    
+    if input_tool == 1:
+        if function_name == 'AR-AP':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["AR"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+    
+        
+        if function_name == 'Archieved Chart of account':
+            
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_classified_archived_coa"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Chart of account':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_classified_coa"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+            
+        if function_name == 'Existing Chart of account':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["existing_coa"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+        
+        if function_name == 'Deleted Chart Of Account':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_deleted_coa"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Archieved Customer':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_archived_customer_in_invoice"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+
+               
+        if function_name == 'Archieved Supplier':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_archived_supplier"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Customer':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_customer"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Supplier':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_supplier"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Item':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_items"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Job':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_job"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Spend Money':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_spend_money"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Receive Money':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_receive_money"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Invoice':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_invoice"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+        
+        if function_name == 'Invoice CreditNote':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_creditnote"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+                
+           
+        if function_name == 'Bill':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_bill"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+        
+
+        if function_name == 'Bill VendorCredit':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_vendorcredit"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+        
+
+        if function_name == 'Invoice Credit Memo Refund':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_credit_memo_refund_payment"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+        
+        if function_name == 'Bill Credit Memo Refund':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_supplier_credit_cash_refund"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Journal':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_manual_journal"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Invoice Payment':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_invoice_payment"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+            
+        if function_name == 'Bill Payment':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_bill_payment"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
+
+        if function_name == 'Bank Transfer':
+            page,per_page,total_records,successful_count,error_count,data = get_pagination_for_records(task_id,dbname["xero_bank_transfer"])
+            data1 = []
+            for i in data:
+                data1.append(i)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)

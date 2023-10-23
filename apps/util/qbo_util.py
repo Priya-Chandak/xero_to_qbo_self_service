@@ -20,8 +20,9 @@ def get_data_from_qbo(job_id, task_id, table_name, json_object_key, qbo_object_n
         start_date, end_date = get_job_details(job_id)
         mongo_table = db[table_name]
         no_of_records = mongo_table.count_documents({"job_id": job_id})
+        print(no_of_records)
         remaining_records = 1000
-        while remaining_records >= 1000:
+        while remaining_records > 1000:
             # if start_date != "" and end_date != "":
             #     payload = (
             #         f"select * from {qbo_object_name} WHERE TxnDate >= '{start_date}' AND TxnDate <= '{end_date}' STARTPOSITION {no_of_records} MAXRESULTS 1000"
@@ -37,6 +38,7 @@ def get_data_from_qbo(job_id, task_id, table_name, json_object_key, qbo_object_n
                         f"select * from {qbo_object_name} WHERE TxnDate >= '{start_date}' AND TxnDate <= '{end_date}' STARTPOSITION {no_of_records} MAXRESULTS 1000"
                     )
                 else:
+                    print("else")
                     payload = (
                         f"select * from {qbo_object_name} startposition {no_of_records} maxresults 1000"
                     )
@@ -245,6 +247,7 @@ def get_start_end_dates_of_job(job_id):
 
 
 def get_pagination_for_records(task_id, table_name):
+    print("inside get_pagination_for_records")
     page = request.args.get('page', 1, type=int)
     per_page = 200
     collection = table_name
