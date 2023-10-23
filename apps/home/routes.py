@@ -389,8 +389,9 @@ def qbo_auth():
     print(auth_url,"print auth url")
     # get_xerocompany_data()
     # window.location.replace(auth_url,"_self")
-    webbrowser.open_new(auth_url)
-    # return redirect(auth_url)
+    # webbrowser.open_new(auth_url)
+    # print(auth_url)
+    return redirect(auth_url)
 
 #@blueprint.route("/xerocompany_data", methods=["GET", "POST"])
 def get_xerocompany_data():

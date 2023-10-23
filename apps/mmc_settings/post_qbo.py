@@ -76,7 +76,7 @@ import requests
 from apps import db
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings,XeroQboTokens
-
+from apps.myconstant import *
 
 def post_qbo_settings(job_id):
     try:
@@ -108,13 +108,13 @@ def post_qbo_settings(job_id):
         #     if row[1] == "refresh_token":
         #         refresh_token = row[2]
 
-        redirect_uri = 'http://localhost:5000/data_access'
-        base_url1="https://sandbox-quickbooks.api.intuit.com"
+        redirect_uri = QBO_REDIRECT
+        base_url1=QBO_BaseURL
         minorversion=14
         company_id=data1.qbo_company_id
         payload = f'grant_type=refresh_token&refresh_token={data1.qbo_refresh_token}&redirect_uri={redirect_uri}'
-        CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
-        CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
+        CLIENT_ID = QBO_CI
+        CLIENT_SECRET = QBO_CS
         clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
         encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
         auth_code = "%s" % encoded_u
