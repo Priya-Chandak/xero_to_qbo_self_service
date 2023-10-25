@@ -687,7 +687,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading Invoice data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_invoice(job_id, task.id)
+                results = dbname['xero_invoice'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_invoice(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Create Item ItemCode From Invoice"
