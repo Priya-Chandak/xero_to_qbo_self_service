@@ -81,7 +81,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading xero chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading data from xero classified coa"
@@ -395,7 +397,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading Xero COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading Xero Archived COA"
@@ -1126,7 +1130,9 @@ class XeroToQbo(object):
 
                 step_name = "Reading qbo COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id, task.id)
+                results = dbname['xero_coa'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading qbo Item"
