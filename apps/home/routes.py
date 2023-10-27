@@ -387,7 +387,7 @@ def qbo_auth():
     print(auth_url,"print auth url")
     # get_xerocompany_data()
     # window.location.replace(auth_url,"_self")
-    # webbrowser.open_new(auth_url)
+    webbrowser.open_new(auth_url)
     # print(auth_url)
     
     return redirect(auth_url)
@@ -553,13 +553,13 @@ def conversion_report_data(job_id):
     dbname = get_mongodb_database()
 
     job_id = redis.get('my_key')
-    print(job_id,type(job_id))
+    # print(job_id,type(job_id))
 
     function_name = ["Chart of Account","Supplier","Customer","Item","Spend Money","Receive Money","Bank Transfer","Journal","Invoice","Bill","Invoice Payment","Bill Payment"]
     table_name = [dbname['xero_classified_coa'],dbname['xero_supplier'],dbname['xero_customer'],dbname['xero_items'],dbname['xero_spend_money'],dbname['xero_receive_money'],dbname['xero_bank_transfer'],dbname['xero_manual_journal'],dbname['xero_invoice'],dbname['xero_bill'],dbname['xero_invoice_payment'],dbname['xero_bill_payment']]
 
     condition1={"job_id":f"{job_id}"}
-    print(condition1)
+    # print(condition1)
     condition2={"job_id":f"{job_id}","is_pushed":1}
     condition3={"job_id":f"{job_id}","is_pushed":0}
     
@@ -569,7 +569,7 @@ def conversion_report_data(job_id):
     s1=[]
     f1=[]
     for k in range(0,len(table_name)):
-        print(k)
+        # print(k)
         
         all_data1 = table_name[k].count_documents(condition1)
         pushed_data1 = table_name[k].count_documents(condition2)
@@ -595,8 +595,9 @@ def conversion_report_data(job_id):
 
     data_list = []
         
-    print(function_name)
-    print(s1)
+    # print(function_name)
+    # print(s1)
+    # print(f1)
     for i in range(len(function_name)):
         item_dict={}
     
@@ -605,7 +606,7 @@ def conversion_report_data(job_id):
             
         data_list.append(item_dict)
      
-    return jsonify(data_list)
+    return jsonify({'data':data_list})
 
 
 
