@@ -10,8 +10,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 api_cors_config={
-    "origins":["https://mmc.vishleshak.io/"],
-    "methods":["OPTIONS","GET","POST"]
+    "origins":'*',
+    "methods":["OPTIONS","GET", "POST", "PUT", "DELETE"],
+    "allow_headers":"*",
+    "supports_credentials":True,
+    "vary_header":True
+
 
 }
 
