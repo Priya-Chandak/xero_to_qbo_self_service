@@ -7,6 +7,19 @@ from flask_login import LoginManager
 from flask_pymongo import PyMongo
 from flask_sqlalchemy import SQLAlchemy
 
+from flask_cors import CORS
+
+api_cors_config={
+    "origins":["https://mmc.vishleshak.io/"],
+    "methods":["OPTIONS","GET","POST"]
+
+}
+
+
+
+
+
+
 from apps.myconstant import *
 
 db = SQLAlchemy()
@@ -32,10 +45,20 @@ except KeyError:
 
 def create_app():
     app = Flask(__name__)
+    CORS(app,resources={
+        api_cors_config
+    })
     import os
+    app.secret_key = 'your_secret_key'
+    app.config['SESSION_TYPE'] = 'filesystem'
+    # Session(app)
+
 
     SECRET_KEY = os.urandom(32)
+    #app.secret_key = SECRET_KEY
+    app.config['SESSION_TYPE'] = 'redis'
     app.config["SECRET_KEY"] = SECRET_KEY
+    # Session(app)
     app.config.from_object(config)
     register_extensions(app)
     register_blueprints(app)
