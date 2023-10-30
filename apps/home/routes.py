@@ -439,12 +439,22 @@ def get_xerocompany_data():
         #         print("you enter file name and you get allow access file is different")
         #         return False
 
+
+@blueprint.route("/customerinfo_email", methods=["GET", "POST"])
+def get_customerinfo_email():
+
+        customer_info_data = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key')).first()
+        
+        print(customer_info_data.Email,"customer info email")
+        customer_email=customer_info_data.Email
+
+        return customer_email
+        
+
 @blueprint.route("/data_access", methods=["GET", "POST"])
 def data_access():
 
     token_endpoint = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
-
-
 
     # client_id = "ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz"
     # client_secret = "EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE"
@@ -458,16 +468,13 @@ def data_access():
     clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
     encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
     auth_code = "%s" % encoded_u
-
     authorization_code = request.args.get("code")
     realme_id=request.args.get("realmId")
-
     data = {
         "grant_type": "authorization_code",
         "code": authorization_code,
         "redirect_uri": redirect_uri,
     }
-
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         'Authorization': "Basic" "  "+  f'{auth_code}',
@@ -498,15 +505,12 @@ def data_access():
             )
         )
 
-
 @blueprint.route("/conversion_report/<int:job_id>")
 
 def conversion_report(job_id):
     dbname = get_mongodb_database()
-
     job_id = redis.get('my_key')
     print(job_id,type(job_id))
-
     function_name = ["Chart of Account","Supplier","Customer","Item","Spend Money","Receive Money","Bank Transfer","Journal","Invoice","Bill","Invoice Payment","Bill Payment"]
     table_name = [dbname['xero_classified_coa'],dbname['xero_supplier'],dbname['xero_customer'],dbname['xero_items'],dbname['xero_spend_money'],dbname['xero_receive_money'],dbname['xero_bank_transfer'],dbname['xero_manual_journal'],dbname['xero_invoice'],dbname['xero_bill'],dbname['xero_invoice_payment'],dbname['xero_bill_payment']]
 
