@@ -9,7 +9,7 @@ from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import *
 from apps.util.qbo_util import get_pagination_for_records
-
+from flask_cors import CORS, cross_origin
 
 
 from flask import Flask,render_template, current_app,redirect, request, url_for,session, g,flash,jsonify
@@ -22,6 +22,9 @@ from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
 from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
+
+app = Flask(__name__)
+CORS(app, support_credentials=True)
 
 @blueprint.route("/connect_output_tool")
 def connect_output_tool():
@@ -361,6 +364,7 @@ def create_auth_code():
 
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
+@cross_origin(origin='*')
 def qbo_auth():
     
     # CLIENT_ID = 'ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz'
