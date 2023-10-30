@@ -382,18 +382,18 @@ def qbo_auth():
 
     REDIRECT_URI = QBO_REDIRECT
 
-    auth_url=f"https://accounts.intuit.com/app/sign-in?redirect_uri={REDIRECT_URI}&app_group=QBO&asset_alias=Intuit.accounting.core.qbowebapp&app_environment=prod"
+    # auth_url=f"https://accounts.intuit.com/app/sign-in?redirect_uri={REDIRECT_URI}&app_group=QBO&asset_alias=Intuit.accounting.core.qbowebapp&app_environment=prod"
     
-    # AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
-    # TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
-    # length = 20 
-    # random_key=(random.choice(string.ascii_letters + string.digits) for _ in range(length))
-    # print(random_key,"print random key")
+    AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
+    TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
+    length = 20 
+    random_key=(random.choice(string.ascii_letters + string.digits) for _ in range(length))
+    print(random_key,"print random key")
     
-    # #     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
-    # auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state={random_key}'
-    # print(auth_url,"print auth url")
-    # get_xerocompany_data()
+    #     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
+    auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state={random_key}'
+    print(auth_url,"print auth url")
+    get_xerocompany_data()
     # window.location.replace(auth_url,"_self")
     # webbrowser.open_new(auth_url)
     # print(auth_url)
