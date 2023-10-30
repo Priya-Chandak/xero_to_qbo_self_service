@@ -382,7 +382,7 @@ def qbo_auth():
 
     REDIRECT_URI = QBO_REDIRECT
 
-    auth_url="https://accounts.intuit.com/app/sign-in?redirect_uri={REDIRECT_URI}&app_group=QBO&asset_alias=Intuit.accounting.core.qbowebapp&app_environment=prod"
+    auth_url=f"https://accounts.intuit.com/app/sign-in?redirect_uri={REDIRECT_URI}&app_group=QBO&asset_alias=Intuit.accounting.core.qbowebapp&app_environment=prod"
     
     # AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
     # TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
