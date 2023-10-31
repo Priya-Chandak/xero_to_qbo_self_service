@@ -10,6 +10,12 @@ from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import *
 from apps.util.qbo_util import get_pagination_for_records
 
+import urllib.parse
+
+
+
+
+
 
 
 
@@ -391,14 +397,23 @@ def qbo_auth():
     print(random_key,"print random key")
     
     #     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
-    auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state={random_key}'
-    print(auth_url,"print auth url")
-    get_xerocompany_data()
+    # auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state={random_key}'
+
+    url = AUTHORIZATION_ENDPOINT
+    params = {'scope': "com.intuit.quickbooks.accounting", 'redirect_uri': REDIRECT_URI,
+              'response_type': 'code', 'state': "sbPANMKq-kKiXGvJRgt1h5gnwY3p5nPfFl-Q",'client_id': CLIENT_ID}
+    url += '?' + urllib.parse.urlencode(params)
+    print(url)
+    return redirect(url)
+
+    # url= urllib.parse.urlencode(auth_url)
+    # print(url,"print auth url")
+    # get_xerocompany_data()
     # window.location.replace(auth_url,"_self")
     # webbrowser.open_new(auth_url)
     # print(auth_url)
     
-    return redirect(auth_url)
+    # return redirect(url)
 
 #@blueprint.route("/xerocompany_data", methods=["GET", "POST"])
 def get_xerocompany_data():
