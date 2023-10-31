@@ -392,7 +392,7 @@ def qbo_auth():
     
     AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
     TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
-    length = 20 
+    length = 36 
     random_key=''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
     print(random_key,"print random key")
     
