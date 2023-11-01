@@ -815,55 +815,55 @@ def records(task_id, function_name):
                 data1.append(i)
             return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
 
-@blueprint.route("/connect_to_qbo")
-def connect_to_qbo():
+# @blueprint.route("/connect_to_qbo")
+# def connect_to_qbo():
 
-    node_app_url=NODE_APP_URL
+#     node_app_url=NODE_APP_URL
 
-    response=requests.get(node_app_url)
+#     response=requests.get(node_app_url)
 
-    return Response(response.content, content_type=response.headers['content-type'])
+#     return Response(response.content, content_type=response.headers['content-type'])
 
-#@blueprint.route('/connect_to_quickbooks', defaults={'path': ''})
-@blueprint.route('/connect_to_quickbooks')
-def connect_to_quickbooks():
-    # Define the URL of the Node.js app, including the port number
-    node_app_url = f'http://localhost:6000/connect_to_quickbooks'
+# #@blueprint.route('/connect_to_quickbooks', defaults={'path': ''})
+# @blueprint.route('/connect_to_quickbooks')
+# def connect_to_quickbooks():
+#     # Define the URL of the Node.js app, including the port number
+#     node_app_url = f'http://localhost:6000/connect_to_quickbooks'
 
-    # Make a request to the Node.js app
-    response = requests.get(node_app_url)
+#     # Make a request to the Node.js app
+#     response = requests.get(node_app_url)
+    
+#     # Return the response from the Node.js app to the client
+#     return Response(response.content, content_type=response.headers['content-type'])
 
-    # Return the response from the Node.js app to the client
-    return Response(response.content, content_type=response.headers['content-type'])
 
+# @blueprint.route("/callback")
+# def callback():
 
-@blueprint.route("/callback")
-def callback():
+#     node_app_url = f'http://localhost:6000/callback'
 
-    node_app_url = f'http://localhost:6000/callback'
+#     # Make a request to the Node.js app
+#     response = requests.get(node_app_url)
 
-    # Make a request to the Node.js app
-    response = requests.get(node_app_url)
+#     # Return the response from the Node.js app to the client
+#     return Response(response.content, content_type=response.headers['content-type'])
 
-    # Return the response from the Node.js app to the client
-    return Response(response.content, content_type=response.headers['content-type'])
+# @blueprint.route("/connected")
+# def connected():
 
-@blueprint.route("/connected")
-def connected():
+#     node_app_url=NODE_APP_URL+'/connected'
 
-    node_app_url=NODE_APP_URL+'/connected'
+#     response=requests.get(node_app_url)
 
-    response=requests.get(node_app_url)
-
-    return Response(response.content, content_type=response.headers['content-type'])
+#     return Response(response.content, content_type=response.headers['content-type'])
 
     
-@blueprint.route("/api_call")
-def api_call():
+# @blueprint.route("/api_call")
+# def api_call():
 
-    node_app_url=NODE_APP_URL+'/api_call'
+#     node_app_url=NODE_APP_URL+'/api_call'
 
-    response=requests.get(node_app_url)
+#     response=requests.get(node_app_url)
 
-    return Response(response.content, content_type=response.headers['content-type'])
+#     return Response(response.content, content_type=response.headers['content-type'])
 
