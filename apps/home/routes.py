@@ -639,6 +639,27 @@ def Xero_file_error():
         "home/Xero_file_error.html"
     )
 
+@blueprint.route("/connect_to_qbo")
+def connect_to_qbo():
+
+    node_app_url=NODE_APP_URL
+
+    node_response=requests.get(node_app_url)
+
+    return node_response.content
+
+
+@blueprint.route("/connect_to_quickbooks")
+def connect_to_quickbooks():
+
+    node_app_url=NODE_APP_URL+'/connect_to_quickbooks'
+
+    node_response=requests.get(node_app_url)
+
+    return node_response.content
+
+    
+
 @blueprint.route("/records/<int:task_id>/<function_name>")
 def records(task_id, function_name):
     dbname = get_mongodb_database()
