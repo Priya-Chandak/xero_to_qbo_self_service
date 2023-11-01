@@ -354,7 +354,7 @@ def create_auth_code():
                     )
 
     else:
-        return redirect("proxy")
+        return redirect("connect_to_qbo")
 
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
@@ -639,52 +639,7 @@ def Xero_file_error():
         "home/Xero_file_error.html"
     )
 
-@blueprint.route("/connect_to_qbo")
-def connect_to_qbo():
 
-    node_app_url=NODE_APP_URL
-
-    node_response=requests.get(node_app_url)
-
-    return node_response.content
-
-
-@blueprint.route("/connect_to_quickbooks")
-def connect_to_quickbooks():
-
-    node_app_url=NODE_APP_URL+'/connect_to_quickbooks'
-
-    node_response=requests.get(node_app_url)
-
-    return node_response.content
-
-@blueprint.route("/callback")
-def callback():
-
-    node_app_url=NODE_APP_URL+'/callback'
-
-    node_response=requests.get(node_app_url)
-
-    return node_response.content
-
-
-@blueprint.route("/connected")
-def connected():
-
-    node_app_url=NODE_APP_URL+'/connected'
-
-    node_response=requests.get(node_app_url)
-
-    return node_response.content
-    
-@blueprint.route("/api_call")
-def api_call():
-
-    node_app_url=NODE_APP_URL+'/api_call'
-
-    node_response=requests.get(node_app_url)
-
-    return node_response.content
 
 @blueprint.route("/records/<int:task_id>/<function_name>")
 def records(task_id, function_name):
@@ -862,9 +817,9 @@ def records(task_id, function_name):
             return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
 
 
-@blueprint.route('/proxy', defaults={'path': ''})
-@blueprint.route('/proxy/<path:path>')
-def proxy(path):
+@blueprint.route('/connect_to_qbo', defaults={'path': ''})
+@blueprint.route('/connect_to_qbo/<path:path>')
+def connect_to_qbo(path):
     # Define the URL of the Node.js app, including the port number
     node_app_url = f'http://localhost:6000/{path}'
 
