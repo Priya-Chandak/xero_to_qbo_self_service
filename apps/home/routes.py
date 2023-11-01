@@ -658,7 +658,33 @@ def connect_to_quickbooks():
 
     return node_response.content
 
+@blueprint.route("/callback")
+def callback():
+
+    node_app_url=NODE_APP_URL+'/callback'
+
+    node_response=requests.get(node_app_url)
+
+    return node_response.content
+
+
+@blueprint.route("/connected")
+def connected():
+
+    node_app_url=NODE_APP_URL+'/connected'
+
+    node_response=requests.get(node_app_url)
+
+    return node_response.content
     
+@blueprint.route("/api_call")
+def api_call():
+
+    node_app_url=NODE_APP_URL+'/api_call'
+
+    node_response=requests.get(node_app_url)
+
+    return node_response.content
 
 @blueprint.route("/records/<int:task_id>/<function_name>")
 def records(task_id, function_name):
