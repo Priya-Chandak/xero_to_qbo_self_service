@@ -9,15 +9,8 @@ from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import *
 from apps.util.qbo_util import get_pagination_for_records
-
+from flask import Flask
 import urllib.parse
-
-
-
-
-
-
-
 
 from flask import Flask,render_template, current_app,redirect, request, url_for,session, g,flash,jsonify
 from flask_login import login_required
@@ -361,14 +354,11 @@ def create_auth_code():
                     )
 
     else:
-        return redirect(
-                        url_for(
-                            ".connect_output_tool"
-                        )
-                    )
+        return redirect(NODE_APP_URL,code=302 )
 
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
+
 
 def qbo_auth():
     
@@ -400,11 +390,11 @@ def qbo_auth():
     # auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state={random_key}'
 
     url = AUTHORIZATION_ENDPOINT
-    params = {'scope': "com.intuit.quickbooks.accounting", 'redirect_uri': REDIRECT_URI,
+    params = {'scope': "'com.intuit.quickbooks.accounting', 'openid', 'profile', 'email', 'phone', 'address'", 'redirect_uri': REDIRECT_URI,
               'response_type': 'code', 'state': "sbPANMKq-kKiXGvJRgt1h5gnwY3p5nPfFl-Q",'client_id': CLIENT_ID}
     url += '?' + urllib.parse.urlencode(params)
     print(url)
-    return redirect(url)
+    return redirect(url,code=302)
 
     # url= urllib.parse.urlencode(auth_url)
     # print(url,"print auth url")
