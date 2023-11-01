@@ -354,7 +354,7 @@ def create_auth_code():
                     )
 
     else:
-        return redirect(NODE_APP_URL,code=302 )
+        return redirect("connect_to_qbo")
 
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
