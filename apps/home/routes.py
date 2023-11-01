@@ -639,15 +639,6 @@ def Xero_file_error():
         "home/Xero_file_error.html"
     )
 
-@blueprint.route("/connect_to_qbo")
-def connect_to_qbo():
-
-    node_app_url=NODE_APP_URL
-
-    node_response=requests.get(node_app_url)
-
-    return node_response.content
-
 
 @blueprint.route("/records/<int:task_id>/<function_name>")
 def records(task_id, function_name):
@@ -824,11 +815,20 @@ def records(task_id, function_name):
                 data1.append(i)
             return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
 
+@blueprint.route("/connect_to_qbo")
+def connect_to_qbo():
+
+    node_app_url=NODE_APP_URL
+
+    response=requests.get(node_app_url)
+
+    return Response(response.content, content_type=response.headers['content-type'])
+
 #@blueprint.route('/connect_to_quickbooks', defaults={'path': ''})
 @blueprint.route('/connect_to_quickbooks')
 def connect_to_quickbooks():
     # Define the URL of the Node.js app, including the port number
-    node_app_url = f'http://localhost:6000'
+    node_app_url = f'http://localhost:6000/connect_to_quickbooks'
 
     # Make a request to the Node.js app
     response = requests.get(node_app_url)
