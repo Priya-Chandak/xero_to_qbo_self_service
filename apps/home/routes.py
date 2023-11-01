@@ -354,7 +354,7 @@ def create_auth_code():
                     )
 
     else:
-        return redirect("connect_to_qbo")
+        return redirect("/connect_to_quickbooks")
 
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
@@ -639,6 +639,14 @@ def Xero_file_error():
         "home/Xero_file_error.html"
     )
 
+@blueprint.route("/connect_to_qbo")
+def connect_to_qbo():
+
+    node_app_url=NODE_APP_URL
+
+    node_response=requests.get(node_app_url)
+
+    return node_response.content
 
 
 @blueprint.route("/records/<int:task_id>/<function_name>")
@@ -817,9 +825,9 @@ def records(task_id, function_name):
             return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records,successful_count=successful_count,error_count=error_count)
 
 
-@blueprint.route('/connect_to_qbo', defaults={'path': ''})
-@blueprint.route('/connect_to_qbo/<path:path>')
-def connect_to_qbo(path):
+@blueprint.route('/connect_to_quickbooks', defaults={'path': ''})
+@blueprint.route('/connect_to_quickbooks/<path:path>')
+def connect_to_quickbooks(path):
     # Define the URL of the Node.js app, including the port number
     node_app_url = f'http://localhost:6000/{path}'
 
@@ -828,3 +836,35 @@ def connect_to_qbo(path):
 
     # Return the response from the Node.js app to the client
     return Response(response.content, content_type=response.headers['content-type'])
+
+
+@blueprint.route("/callback")
+def callback():
+
+    node_app_url = f'http://localhost:6000/callback'
+
+    # Make a request to the Node.js app
+    response = requests.get(node_app_url)
+
+    # Return the response from the Node.js app to the client
+    return Response(response.content, content_type=response.headers['content-type'])
+
+@blueprint.route("/connected")
+def connected():
+
+    node_app_url=NODE_APP_URL+'/connected'
+
+    response=requests.get(node_app_url)
+
+    return Response(response.content, content_type=response.headers['content-type'])
+
+    
+@blueprint.route("/api_call")
+def api_call():
+
+    node_app_url=NODE_APP_URL+'/api_call'
+
+    response=requests.get(node_app_url)
+
+    return Response(response.content, content_type=response.headers['content-type'])
+
