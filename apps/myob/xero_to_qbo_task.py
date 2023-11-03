@@ -605,7 +605,7 @@ class XeroToQbo(object):
 
         except Exception as ex:
             write_task_execution_step(
-                job_id, task.id, status=0, step=step_name)
+                task.id, status=0, step=step_name)
             update_task_execution_status(
                 task.id, status=0, task_type="read")
             raise ex
@@ -1665,7 +1665,7 @@ class XeroToQbo(object):
 
         except Exception as ex:
             write_task_execution_step(
-                job_id, task.id, status=0, step=step_name)
+                task.id, status=0, step=step_name)
             update_task_execution_status(
                 task.id, status=0, task_type="write")
             raise ex
