@@ -62,7 +62,7 @@ def add_xero_receive_money(job_id,task_id):
         for p2 in xero_coa:
             xero_coa1.append(p2)
         
-        QuerySet = xero_receive_money[0:1]
+        QuerySet = xero_receive_money
         # QuerySet = new
        
         for i in range(0, len(QuerySet)):
