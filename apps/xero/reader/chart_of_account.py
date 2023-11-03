@@ -8,14 +8,17 @@ from apps.util.db_mongo import get_mongodb_database
 
 
 def get_coa(job_id, task_id):
+    print("Inside coa")
     try:
         dbname = get_mongodb_database()
         xero_coa = dbname["xero_coa"]
         payload, base_url, headers = get_settings_xero(job_id)
+        print(payload, base_url, headers)
 
         main_url = f"{base_url}/Accounts"
 
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
+        print(response1,"foa coa")
         if response1.status_code == 200:
             JsonResponse = response1.json()
             JsonResponse1 = JsonResponse["Accounts"]

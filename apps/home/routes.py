@@ -242,8 +242,8 @@ def connect_input_tool():
         job = Jobs()
         
         
-        job_functions=['Existing Chart of account','Chart of account','Item','Job','Customer','Supplier','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment']
-        job.functions = "Existing Chart of account,Chart of account,Item,Job,Customer,Supplier,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment"
+        job_functions=['Existing Chart of account','Chart of account','Customer','Supplier','Item','Job','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Bill Payment','Invoice Payment','AR-AP','Payrun','Depreciation']
+        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment,AR-AP,Payrun,Depreciation"
         # job_functions=['Item','Supplier']
         # job.functions = "Item,Supplier"
         length = 10 
