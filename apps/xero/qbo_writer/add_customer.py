@@ -98,3 +98,25 @@ def add_xero_customer(job_id, task_id):
 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_customer -> add_xero_customer", ex)
+
+
+def add_default_xero_customer(job_id, task_id):
+    try:
+        logger.info("Started executing xero -> qbowriter -> add_customer -> add_xero_customer")
+
+        dbname = get_mongodb_database()
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+
+        url = f"{base_url}/customer?minorversion={minorversion}"
+
+        QuerySet2 = {}
+        QuerySet2["DisplayName"] = "Temp - C"
+        QuerySet2["GivenName"] = "Temp - C"
+        QuerySet2["FamilyName"] = "Temp - C"
+        payload = json.dumps(QuerySet2)
+        
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response)
+            
+    except Exception as ex:
+        logger.error("Error in xero -> qbowriter -> add_customer -> add_xero_customer", ex)

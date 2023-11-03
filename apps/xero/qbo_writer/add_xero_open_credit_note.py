@@ -14,16 +14,16 @@ from apps.util.qbo_util import post_data_in_qbo
 logger = logging.getLogger(__name__)
 
 
-def add_xero_credit_note(job_id,task_id):
+def add_xero_open_credit_note(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note")
+        logger.info("Started executing xero -> qbowriter -> add_xero_open_credit_note -> add_xero_open_credit_note")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        xero_creditnote = db["xero_creditnote"].find({"job_id":job_id})
+        xero_open_creditnote = db["xero_open_creditnote"].find({"job_id":job_id})
         multiple_invoice = []
-        for p1 in xero_creditnote:
+        for p1 in xero_open_creditnote:
             multiple_invoice.append(p1)
 
         # m1=[]
@@ -934,7 +934,8 @@ def add_xero_credit_note(job_id,task_id):
             invoice["Line"].append(subtotal)
             # invoice["Line"].append(salesitemline)
             
-            if multiple_invoice[i]["Status"] not in ["VOIDED","DELETED","SUBMITTED"]:
+            print(invoice)
+            if multiple_invoice[i]["Status"] not in ["DELETED"]:
                 if "SalesItemLineDetail" in invoice["Line"][0]:
                         count_of_items_not_found=0
                         line_item_count=len(invoice['Line'])-1
@@ -944,10 +945,11 @@ def add_xero_credit_note(job_id,task_id):
                             print(invoice['Line'][line])
                             print("---------------")
                             if 'SalesItemLineDetail' in invoice['Line'][line]: 
-                                if invoice['Line'][line]['SalesItemLineDetail']['ItemRef'] != {}:
-                                    count_of_items_not_found+=0
-                                else:
-                                    count_of_items_not_found+=1
+                                if 'ItemRef' in invoice['Line'][line]['SalesItemLineDetail']: 
+                                    if invoice['Line'][line]['SalesItemLineDetail']['ItemRef'] != {}:
+                                        count_of_items_not_found+=0
+                                    else:
+                                        count_of_items_not_found+=1
                                 
                         # print(count_of_items_not_found,line_item_count,count_of_items_not_found==line_item_count)
 
@@ -958,154 +960,13 @@ def add_xero_credit_note(job_id,task_id):
                             payload = json.dumps(invoice)
                             inv_date = multiple_invoice[i]["TxnDate"][0:10]
                             inv_date1 = datetime.strptime(inv_date, "%Y-%m-%d")
-                            if start_date1 is not None and end_date1 is not None:
-                                if (inv_date1 >= start_date1) and (inv_date1 <= end_date1):
-                                    post_data_in_qbo(url2, headers, payload,db['xero_creditnote'],_id, job_id,task_id, multiple_invoice[i]['Inv_No'])
+                            post_data_in_qbo(url2, headers, payload,db['xero_open_creditnote'],_id, job_id,task_id, multiple_invoice[i]['Inv_No'])
                             
 
                 else:
-                    post_data_in_qbo(url2, headers, payload,db['xero_creditnote'],_id, job_id,task_id, multiple_invoice[i]['Inv_No'])
+                    post_data_in_qbo(url2, headers, payload,db['xero_open_creditnote'],_id, job_id,task_id, multiple_invoice[i]['Inv_No'])
                 
         
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note", ex)
+        logger.error("Error in xero -> qbowriter -> add_xero_open_credit_note -> add_xero_open_credit_note", ex)
         
-
-def add_xero_open_credit_memo_cash_refund_as_journal(job_id,task_id):
-    try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_open_credit_memo_cash_refund_as_journal")
-
-        dbname = get_mongodb_database()
-        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-
-        url = f"{base_url}/journalentry?minorversion={minorversion}"
-
-        journal1 = dbname["xero_open_credit_memo_cash_refund"].find({"job_id":job_id})
-
-        journal = []
-        for p1 in journal1:
-            journal.append(p1)
-
-        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
-        QBO_coa = []
-        for p2 in QBO_COA:
-            QBO_coa.append(p2)
-
-        supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
-        supplier1 = []
-        for k in supplier:
-            supplier1.append(k)
-
-        QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
-        QBO_customer = []
-        for p3 in QBO_Customer:
-            QBO_customer.append(p3)
-
-        QBO_Tax = dbname["QBO_Tax"].find({"job_id":job_id})
-        QBO_tax = []
-        for p4 in QBO_Tax:
-            QBO_tax.append(p4)
-
-        Xero_COA = dbname["xero_coa"].find({"job_id":job_id})
-        xero_coa = []
-        for p6 in Xero_COA:
-            xero_coa.append(p6)
-
-        xero_arc_coa = dbname["xero_archived_coa"].find({"job_id":job_id})
-        for p7 in xero_arc_coa:
-            xero_coa.append(p7)
-
-        QuerySet1 = journal
-
-        for i in range(0, len(QuerySet1)):
-            print(i)
-            _id = QuerySet1[i]['_id']
-            task_id = QuerySet1[i]['task_id']
-            for j1 in range(0, len(QBO_coa)):
-                for j2 in range(0, len(xero_coa)):
-                    if QuerySet1[i]["AccountCode"] == xero_coa[j2]["AccountID"]:
-                        if (xero_coa[j2]["Name"].strip().lower()== QBO_coa[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa[j2]["Name"].replace(":","-")== QBO_coa[j1]["FullyQualifiedName"]):
-                            if QBO_coa[j1]["AccountType"] == "Bank":
-                                payment_date = QuerySet1[i]["Date"]
-                                payment_date11 = int(payment_date[6:16])
-                                journal_date1 = datetime.utcfromtimestamp(
-                                    payment_date11
-                                ).strftime("%Y-%m-%d")
-
-                                QuerySet2 = {"Line": []}
-                                TxnTaxDetail = {}
-                                QuerySet2["TxnTaxDetail"] = TxnTaxDetail
-                                QuerySet2["DocNumber"] = (
-                                    "OpenCNCR-" + QuerySet1[i]["InvoiceID"][-5:]
-                                )
-                                
-                                QuerySet2["TxnDate"] = str(journal_date1)[0:10]
-                                QuerySet2['PrivateNote'] = "InvoiceID:- "+QuerySet1[i]['InvoiceID']+" & "+"InvoiceNo:- "+QuerySet1[i]['InvoiceNumber']
-
-                                QuerySet3 = {}
-                                QuerySet31 = {}
-                                QuerySet32 = {}
-
-                                QuerySet4 = {}
-                                QuerySet41 = {}
-                                QuerySet42 = {}
-                                entity = {}
-                                EntityRef = {}
-
-                                QuerySet3["Amount"] = QuerySet1[i]["Amount"]
-                                QuerySet3["DetailType"] = "JournalEntryLineDetail"
-                                QuerySet3["JournalEntryLineDetail"] = QuerySet31
-                                QuerySet31["PostingType"] = "Credit"
-                                QuerySet31["AccountRef"] = QuerySet32
-
-                                QuerySet32["name"] = QBO_coa[j1]["FullyQualifiedName"]
-                                QuerySet32["value"] = QBO_coa[j1]["Id"]
-
-                                QuerySet4["Amount"] = QuerySet1[i]["Amount"]
-                                QuerySet4["DetailType"] = "JournalEntryLineDetail"
-                                QuerySet4["JournalEntryLineDetail"] = QuerySet41
-                                QuerySet41["PostingType"] = "Debit"
-                                QuerySet41["Entity"] = entity
-                                entity["EntityRef"] = EntityRef
-
-                                for c1 in range(0, len(QBO_customer)):
-                                    entity["Type"] = "Customer"
-                                    if (
-                                        QuerySet1[i]["Contact"].lower()
-                                        == QBO_customer[c1]["DisplayName"].lower()
-                                    ):
-                                        EntityRef["name"] = QBO_customer[c1]["DisplayName"]
-                                        EntityRef["value"] = QBO_customer[c1]["Id"]
-                                    elif QBO_customer[c1]["DisplayName"].startswith(
-                                        QuerySet1[i]["Contact"]
-                                    ) and QBO_customer[c1]["DisplayName"].endswith("- C"):
-                                        EntityRef["name"] = QBO_customer[c1]["DisplayName"]
-                                        EntityRef["value"] = QBO_customer[c1]["Id"]
-                                    
-                                QuerySet41["AccountRef"] = QuerySet42
-
-                                for j11 in range(0, len(QBO_coa)):
-                                    if (
-                                        QBO_coa[j11]["AccountType"]
-                                        == "Accounts Receivable"
-                                    ):
-                                        QuerySet42["name"] = QBO_coa[j11][
-                                            "FullyQualifiedName"
-                                        ]
-                                        QuerySet42["value"] = QBO_coa[j11]["Id"]
-
-                                QuerySet2["Line"].append(QuerySet3)
-                                QuerySet2["Line"].append(QuerySet4)
-
-                                # if QuerySet1[i]['InvoiceNumber']=='REG#14':
-                                payload = json.dumps(QuerySet2)
-                                print(i)
-                                print(payload)
-                                print("===")
-                                
-
-                                post_data_in_qbo(url, headers, payload,dbname['xero_open_credit_memo_cash_refund'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
-                
-    except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_open_credit_memo_cash_refund", ex)
-
