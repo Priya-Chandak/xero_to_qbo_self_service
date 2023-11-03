@@ -123,8 +123,8 @@ def xero_connect():
     client_id = XERO_CI
     client_secret = XERO_CS
     redirect_uri = XERO_REDIRECT
-    scope = "email%20profile%20openid%20accounting.reports.read%20payroll.employees%20payroll.employees.read%20accounting.settings%20accounting.transactions%20accounting.transactions.read%20accounting.contacts%20offline_access"
-
+    # scope = "email%20profile%20openid%20accounting.reports.read%20payroll.employees%20payroll.employees.read%20accounting.settings%20accounting.transactions%20accounting.transactions.read%20accounting.contacts%20offline_access"
+    scope=XERO_SCOPE
     CLIENT_ID = f"{client_id}"
     CLIENT_SECRET = f"{client_secret}"
     clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
