@@ -363,8 +363,6 @@ def create_auth_code():
 
     else:
         return redirect("/connect_to_quickbooks")
-
-
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
 
 
@@ -390,19 +388,14 @@ def qbo_auth():
     
     AUTHORIZATION_ENDPOINT = 'https://appcenter.intuit.com/connect/oauth2'
     TOKEN_ENDPOINT = 'https://oauth.platform.intuit.com/oauth2/v1/tokens'
-    length = 36 
-    random_key=''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
-    print(random_key,"print random key")
     
-    #     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
+    auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
     # auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state={random_key}'
 
-    url = AUTHORIZATION_ENDPOINT
-    params = {'scope': "'com.intuit.quickbooks.accounting', 'openid', 'profile', 'email', 'phone', 'address'", 'redirect_uri': REDIRECT_URI,
-              'response_type': 'code', 'state': "sbPANMKq-kKiXGvJRgt1h5gnwY3p5nPfFl-Q",'client_id': CLIENT_ID}
-    url += '?' + urllib.parse.urlencode(params)
-    print(url)
-    return redirect(url,code=302)
+    
+    print(auth_url)
+    webbrowser.open_new(auth_url)
+    return redirect(auth_url,code=302)
 
     # url= urllib.parse.urlencode(auth_url)
     # print(url,"print auth url")
@@ -587,6 +580,9 @@ def conversion_report_data(job_id):
     # print(condition1)
     condition2={"job_id":f"{job_id}","is_pushed":1}
     condition3={"job_id":f"{job_id}","is_pushed":0}
+
+    company_info = CustomerInfo.query.filter(CustomerInfo.job_id == redis.get('my_key')).first()
+    
     
     all_data=[]
     pushed_data=[]
@@ -623,8 +619,13 @@ def conversion_report_data(job_id):
     # print(function_name)
     # print(s1)
     # print(f1)
+   
     for i in range(len(function_name)):
-        item_dict={}
+        item_dict={
+            "company_name":company_info.Company,
+            "customer_email":company_info.Email,
+            "start_date":company_info.start_date,
+            "end_date":company_info.end_date,}
     
         item_dict['function_name'] = function_name[i]
         item_dict['values'] = s1[i]
