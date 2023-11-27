@@ -254,6 +254,7 @@ def add_xero_credit_note(job_id,task_id):
                                 multiple_invoice[i]["Line"][j]["TaxType"] == "OUTPUT"
                                 or multiple_invoice[i]["Line"][j]["TaxType"] == "GST"
                                 or multiple_invoice[i]["Line"][j]["TaxType"] == "INPUT"
+                                or multiple_invoice[i]["Line"][j]["TaxType"] == "INPUT2"
                             ):
                                 if "taxrate_name" in QBO_tax[p6]:
                                     if "GST (sales)" in QBO_tax[p6]["taxrate_name"]:
@@ -882,7 +883,8 @@ def add_xero_credit_note(job_id,task_id):
 
             b = []
             for i2 in range(0, len(arr)):
-                b.append(arr[i2]["TaxLineDetail"]["TaxRateRef"]["value"])
+                if 'value' in arr[i2]["TaxLineDetail"]["TaxRateRef"]: 
+                    b.append(arr[i2]["TaxLineDetail"]["TaxRateRef"]["value"])
 
             e = {}
             for i1 in range(0, len(b)):
@@ -921,8 +923,9 @@ def add_xero_credit_note(job_id,task_id):
                 new_arr.append(e)
 
             for k3 in range(0, len(arr)):
-                if arr[k3]["TaxLineDetail"]["TaxRateRef"]["value"] in single:
-                    new_arr.append(arr[k3])
+                if 'value' in arr[k3]["TaxLineDetail"]["TaxRateRef"]: 
+                    if arr[k3]["TaxLineDetail"]["TaxRateRef"]["value"] in single:
+                        new_arr.append(arr[k3])
 
             b1["TaxLine"] = new_arr
 

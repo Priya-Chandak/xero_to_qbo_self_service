@@ -169,7 +169,7 @@ def add_xero_bill(job_id,task_id):
                                                         Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
                                             
 
-                                            elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT"]:
+                                            elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT","INPUT2"]:
                                                 if 'taxrate_name' in QBO_tax[k1]:
                                                     if "GST (purchases)" in QBO_tax[k1]['taxrate_name'] or "SI" in QBO_tax[k1]['taxrate_name']:
                                                         TaxRate['value'] = QBO_tax[k1]['taxrate_id']
@@ -178,6 +178,7 @@ def add_xero_bill(job_id,task_id):
                                                         taxrate1 = QBO_tax[k1]['Rate']
                                                         TaxLineDetail['NetAmountTaxable'] = final_bill[i]['Line'][j]['UnitAmount']-final_bill[i]['Line'][j]['TaxAmount']
                                                         Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
+                                                        break
                                             
 
                                             elif final_bill[i]['Line'][j]['TaxType'] in ['EXEMPTEXPENSES' ,"EXEMPTOUTPUT","INPUTTAXED","TAX001"]:
@@ -518,7 +519,7 @@ def add_xero_bill(job_id,task_id):
                                                             Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
                                                 
 
-                                                elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT"]:
+                                                elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT",'INPUT2']:
                                                     if 'taxrate_name' in QBO_tax[k1]:
                                                         if "GST (purchases)" in QBO_tax[k1]['taxrate_name'] or "SI" in QBO_tax[k1]['taxrate_name']:
                                                             TaxRate['value'] = QBO_tax[k1]['taxrate_id']

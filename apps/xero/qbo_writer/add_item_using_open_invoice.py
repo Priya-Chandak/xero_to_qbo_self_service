@@ -69,7 +69,7 @@ def get_list_of_items_from_xero_invoice(job_id):
 
         dbname = get_mongodb_database()
 
-        xero_invoice1 = dbname["xero_invoice"].find({"job_id":job_id})
+        xero_invoice1 = dbname["xero_open_invoice"].find({"job_id":job_id})
         xero_invoice = []
         for p1 in xero_invoice1:
             xero_invoice.append(p1)
@@ -104,7 +104,7 @@ def get_list_of_items_from_xero_invoice(job_id):
         
 
 
-def create_item_xero_invoice_accountcode(job_id,task_id):
+def create_item_xero_open_invoice_accountcode(job_id,task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
 
@@ -120,7 +120,7 @@ def create_item_xero_invoice_accountcode(job_id,task_id):
         ) = get_settings_qbo(job_id)
         url = f"{base_url}/item?minorversion={minorversion}"
 
-        invoices1 = dbname["xero_invoice"].find({"job_id":job_id})
+        invoices1 = dbname["xero_open_invoice"].find({"job_id":job_id})
         invoices = []
         for p1 in invoices1:
             invoices.append(p1)
@@ -188,7 +188,7 @@ def create_item_xero_invoice_accountcode(job_id,task_id):
         logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode", ex)
         
 
-def create_item_xero_creditnote_accountcode(job_id,task_id):
+def create_item_xero_open_creditnote_accountcode(job_id,task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_creditnote_accountcode")
 
@@ -204,7 +204,7 @@ def create_item_xero_creditnote_accountcode(job_id,task_id):
         ) = get_settings_qbo(job_id)
         url = f"{base_url}/item?minorversion={minorversion}"
 
-        invoices1 = dbname["xero_creditnote"].find({"job_id":job_id})
+        invoices1 = dbname["xero_open_creditnote"].find({"job_id":job_id})
         invoices = []
         for p1 in invoices1:
             invoices.append(p1)
@@ -273,9 +273,9 @@ def create_item_xero_creditnote_accountcode(job_id,task_id):
         logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode", ex)
 
 
-def create_item_from_xero_invoice_acccode_itemcode(job_id,task_id):
+def create_item_from_xero_open_invoice_acccode_itemcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode")
+        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -295,7 +295,7 @@ def create_item_from_xero_invoice_acccode_itemcode(job_id,task_id):
         for p2 in xero_coa1:
             xero_coa.append(p2)
 
-        xero_invoice1 = dbname["xero_invoice"].find({"job_id":job_id})
+        xero_invoice1 = dbname["xero_open_invoice"].find({"job_id":job_id})
         xero_invoice = []
         for p1 in xero_invoice1:
             xero_invoice.append(p1)
@@ -403,14 +403,14 @@ def create_item_from_xero_invoice_acccode_itemcode(job_id,task_id):
            
     except Exception as ex:
         logger.error(
-            "Error in xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode",
+            "Error in xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode",
             ex)
         
 
-def create_item_from_xero_creditnote_acccode_itemcode(job_id,task_id):
+def create_item_from_xero_open_creditnote_acccode_itemcode(job_id,task_id):
     
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_creditnote_acccode_itemcode")
+        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_creditnote_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -430,7 +430,7 @@ def create_item_from_xero_creditnote_acccode_itemcode(job_id,task_id):
         for p2 in xero_coa1:
             xero_coa.append(p2)
 
-        xero_invoice1 = dbname["xero_creditnote"].find({"job_id":job_id})
+        xero_invoice1 = dbname["xero_open_creditnote"].find({"job_id":job_id})
         xero_invoice = []
         for p1 in xero_invoice1:
             xero_invoice.append(p1)
@@ -529,14 +529,14 @@ def create_item_from_xero_creditnote_acccode_itemcode(job_id,task_id):
            
     except Exception as ex:
         logger.error(
-            "Error in xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_creditnote_acccode_itemcode",
+            "Error in xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_creditnote_acccode_itemcode",
             ex)
         
 
 
-def create_item_from_xero_bill_acccode_itemcode(job_id,task_id):
+def create_item_from_xero_open_bill_acccode_itemcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode")
+        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -556,7 +556,7 @@ def create_item_from_xero_bill_acccode_itemcode(job_id,task_id):
         for p2 in xero_coa1:
             xero_coa.append(p2)
 
-        xero_invoice1 = dbname["xero_bill"].find({"job_id":job_id})
+        xero_invoice1 = dbname["xero_open_bill"].find({"job_id":job_id})
         xero_invoice = []
         for p1 in xero_invoice1:
             xero_invoice.append(p1)
@@ -654,13 +654,13 @@ def create_item_from_xero_bill_acccode_itemcode(job_id,task_id):
            
     except Exception as ex:
         logger.error(
-            "Error in xero -> qbowriter -> add_item_using_bill -> create_item_from_xero_invoice_acccode_itemcode",
+            "Error in xero -> qbowriter -> add_item_using_bill -> create_item_from_xero_open_bill_acccode_itemcode",
             ex)
 
 
 def create_item_xero_bill_accountcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
+        logger.info("Started executing xero -> qbowriter -> add_item_using_bill -> create_item_xero_invoice_accountcode")
 
         dbname = get_mongodb_database()
 
@@ -674,7 +674,7 @@ def create_item_xero_bill_accountcode(job_id,task_id):
         ) = get_settings_qbo(job_id)
         url = f"{base_url}/item?minorversion={minorversion}"
 
-        invoices1 = dbname["xero_bill"].find({"job_id":job_id})
+        invoices1 = dbname["xero_open_bill"].find({"job_id":job_id})
         invoices = []
         for p1 in invoices1:
             invoices.append(p1)
@@ -741,7 +741,7 @@ def create_item_xero_bill_accountcode(job_id,task_id):
         logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode", ex)
 
 
-def create_item_xero_vendorcredit_accountcode(job_id,task_id):
+def create_item_xero_open_vendorcredit_accountcode(job_id,task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
 
@@ -757,7 +757,7 @@ def create_item_xero_vendorcredit_accountcode(job_id,task_id):
         ) = get_settings_qbo(job_id)
         url = f"{base_url}/item?minorversion={minorversion}"
 
-        invoices1 = dbname["xero_vendorcredit"].find({"job_id":job_id})
+        invoices1 = dbname["xero_open_vendorcredit"].find({"job_id":job_id})
         invoices = []
         for p1 in invoices1:
             invoices.append(p1)
@@ -825,9 +825,9 @@ def create_item_xero_vendorcredit_accountcode(job_id,task_id):
 
 
 
-def create_item_from_xero_vendorcredit_acccode_itemcode(job_id,task_id):
+def create_item_from_xero_open_vendorcredit_acccode_itemcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode")
+        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -847,7 +847,7 @@ def create_item_from_xero_vendorcredit_acccode_itemcode(job_id,task_id):
         for p2 in xero_coa1:
             xero_coa.append(p2)
 
-        xero_invoice1 = dbname["xero_vendorcredit"].find({"job_id":job_id})
+        xero_invoice1 = dbname["xero_open_vendorcredit"].find({"job_id":job_id})
         xero_invoice = []
         for p1 in xero_invoice1:
             xero_invoice.append(p1)
@@ -945,6 +945,6 @@ def create_item_from_xero_vendorcredit_acccode_itemcode(job_id,task_id):
            
     except Exception as ex:
         logger.error(
-            "Error in xero -> qbowriter -> add_item_using_bill -> create_item_from_xero_invoice_acccode_itemcode",
+            "Error in xero -> qbowriter -> add_item_using_bill -> create_item_from_xero_open_invoice_acccode_itemcode",
             ex)
 
