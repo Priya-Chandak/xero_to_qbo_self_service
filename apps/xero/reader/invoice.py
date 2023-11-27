@@ -10,7 +10,7 @@ from apps import db
 from apps.myconstant import *
 from sqlalchemy.orm import aliased
 import requests
-
+import re
 from apps.mmc_settings.all_settings import *
 
 from apps.home.data_util import add_job_status,get_job_details
@@ -493,14 +493,15 @@ def get_open_invoice(job_id,task_id):
         if (start_date == '' and end_date == ''):
             # main_url = f"{base_url}/Invoices?unitdp=4"
             main_url = f"{base_url}/Invoices?where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})"
+            
 
         else:
             y1=int(result_string[0:4])
             m1=int(result_string[5:7])
             d1=int(result_string[8:])
-            # y2=int(end_date[0:4])
-            # m2=int(end_date[5:7])
-            # d2=int(end_date[8:])
+            # y2=int(start_date[0:4])
+            # m2=int(start_date[5:7])
+            # d2=int(start_date[8:])
             # main_url = f"{base_url}/Invoices?unitdp=4&where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})%20AND%20Date%3C%3DDateTime({y2}%2C{m2}%2C{d2})"
             main_url = f"{base_url}/Invoices?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})"
 
@@ -530,103 +531,203 @@ def get_open_invoice(job_id,task_id):
                     else:
                         url = f"{base_url}/Invoices?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})&page={pages}"
 
-                  
+                    print(url)
                     response = requests.request(
                         "GET", url, headers=headers, data=payload)
                     JsonResponse = response.json()
                     JsonResponse1 = JsonResponse['Invoices']
                     for i in range(0, len(JsonResponse1)):
-                        if (JsonResponse1[i]['Status'] != 'DELETED'):
-                            QuerySet = {"Line": []}
-                            QuerySet["job_id"] = job_id
-                            QuerySet["task_id"] = task_id
-                            QuerySet["is_pushed"] = 0
-                            QuerySet["error"] = None
-                            QuerySet["payload"] = None
-                            
-                            QuerySet['Inv_No'] = JsonResponse1[i]['InvoiceNumber']
-                            QuerySet['Inv_ID'] = JsonResponse1[i]['InvoiceID']
-                            if 'DueDateString' in JsonResponse1[i]:
-                                QuerySet['DueDate'] = JsonResponse1[i]['DueDateString']
-                            QuerySet['TxnDate'] = JsonResponse1[i]['DateString']
-                            QuerySet['TotalAmount'] = JsonResponse1[i]['Total']
-                            QuerySet['SubTotal'] = JsonResponse1[i]['SubTotal']
-                            QuerySet['Status'] = JsonResponse1[i]['Status']
-                            QuerySet['TotalTax'] = JsonResponse1[i]['TotalTax']
-                            QuerySet['LineAmountTypes'] = JsonResponse1[i]['LineAmountTypes']
-                            # QuerySet['AmountDue'] = JsonResponse1[i]['AmountDue']
-                            # QuerySet['AmountPaid'] = JsonResponse1[i]['AmountPaid']
-                            # QuerySet['AmountCredited'] = JsonResponse1[i]['AmountCredited']
-                            QuerySet['ContactName'] = JsonResponse1[i]['Contact']['Name']
-                            QuerySet['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
-                            QuerySet['IsDiscounted'] = JsonResponse1[i]['IsDiscounted']
+                        if len(JsonResponse1[i]["Payments"])>0:
+                            date_string = JsonResponse1[i]["Payments"][0]['Date']
+                            match = re.search(r'\d+', date_string)
+                            timestamp = int(match.group()) / 1000  # Convert milliseconds to seconds
+                            date = datetime.utcfromtimestamp(timestamp)
 
-                            for j in range(0, len(JsonResponse1[i]['LineItems'])):
-                                QuerySet1 = {}
-                                if 'Description' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['Description'] = JsonResponse1[i]['LineItems'][j]['Description']
-                                if 'UnitAmount' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['UnitAmount'] = JsonResponse1[i]['LineItems'][j]['UnitAmount']
-                                if 'TaxAmount' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['TaxAmount'] = JsonResponse1[i]['LineItems'][j]['TaxAmount']
-                                if 'LineAmount' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['LineAmount'] = JsonResponse1[i]['LineItems'][j]['LineAmount']
-                                if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
-                                    QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
-                            
-                                if 'AccountCode' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['AccountCode'] = JsonResponse1[i]['LineItems'][j]['AccountCode']
-                                if 'Quantity' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['Quantity'] = JsonResponse1[i]['LineItems'][j]['Quantity']
+                            # Desired date "30-06-2023"
+                            desired_date = one_day_before
+
+                            # Compare the dates
+                            # if date < desired_date:
+                            #     print("The result date less than 30-06-2023.")
+                          
+                            if (JsonResponse1[i]['Status'] =='AUTHORISED') or (JsonResponse1[i]['Status'] == 'PAID' and date > desired_date) :
+                                QuerySet = {"Line": []}
+                                QuerySet["job_id"] = job_id
+                                QuerySet["task_id"] = task_id
+                                QuerySet["is_pushed"] = 0
+                                QuerySet["error"] = None
+                                QuerySet["payload"] = None
                                 
-                                if JsonResponse1[i]['IsDiscounted'] == True:
-                                    if 'DiscountRate' in JsonResponse1[i]['LineItems'][j]:
-                                        QuerySet1['Discount'] = JsonResponse1[i]['LineItems'][j]['DiscountRate']
+                                QuerySet['Inv_No'] = JsonResponse1[i]['InvoiceNumber']
+                                QuerySet['Inv_ID'] = JsonResponse1[i]['InvoiceID']
+                                if 'DueDateString' in JsonResponse1[i]:
+                                    QuerySet['DueDate'] = JsonResponse1[i]['DueDateString']
+                                QuerySet['TxnDate'] = JsonResponse1[i]['DateString']
+                                QuerySet['TotalAmount'] = JsonResponse1[i]['Total']
+                                QuerySet['SubTotal'] = JsonResponse1[i]['SubTotal']
+                                QuerySet['Status'] = JsonResponse1[i]['Status']
+                                QuerySet['TotalTax'] = JsonResponse1[i]['TotalTax']
+                                QuerySet['LineAmountTypes'] = JsonResponse1[i]['LineAmountTypes']
+                                # QuerySet['AmountDue'] = JsonResponse1[i]['AmountDue']
+                                # QuerySet['AmountPaid'] = JsonResponse1[i]['AmountPaid']
+                                # QuerySet['AmountCredited'] = JsonResponse1[i]['AmountCredited']
+                                QuerySet['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                QuerySet['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                QuerySet['IsDiscounted'] = JsonResponse1[i]['IsDiscounted']
+
+                                for j in range(0, len(JsonResponse1[i]['LineItems'])):
+                                    QuerySet1 = {}
+                                    if 'Description' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['Description'] = JsonResponse1[i]['LineItems'][j]['Description']
+                                    if 'UnitAmount' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['UnitAmount'] = JsonResponse1[i]['LineItems'][j]['UnitAmount']
+                                    if 'TaxAmount' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['TaxAmount'] = JsonResponse1[i]['LineItems'][j]['TaxAmount']
+                                    if 'LineAmount' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['LineAmount'] = JsonResponse1[i]['LineItems'][j]['LineAmount']
+                                    if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
+                                        QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
+                                
+                                    if 'AccountCode' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['AccountCode'] = JsonResponse1[i]['LineItems'][j]['AccountCode']
+                                    if 'Quantity' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['Quantity'] = JsonResponse1[i]['LineItems'][j]['Quantity']
+                                    
+                                    if JsonResponse1[i]['IsDiscounted'] == True:
+                                        if 'DiscountRate' in JsonResponse1[i]['LineItems'][j]:
+                                            QuerySet1['Discount'] = JsonResponse1[i]['LineItems'][j]['DiscountRate']
+                                        else:
+                                            QuerySet1['Discount'] = 0
+
+                                    if 'Item' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['ItemCode'] = JsonResponse1[i]['LineItems'][j]['Item']['Code']
+                                        QuerySet1['ItemID'] = JsonResponse1[i]['LineItems'][j]['Item']['ItemID']
+                                        if 'Name' in JsonResponse1[i]['LineItems'][j]['Item']:
+                                            QuerySet1['Name'] = JsonResponse1[i]['LineItems'][j]['Item']['Name']
+                                    if 'TaxType' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['TaxType'] = JsonResponse1[i]['LineItems'][j]['TaxType']
                                     else:
-                                        QuerySet1['Discount'] = 0
+                                        QuerySet1['TaxType'] = None
 
-                                if 'Item' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['ItemCode'] = JsonResponse1[i]['LineItems'][j]['Item']['Code']
-                                    QuerySet1['ItemID'] = JsonResponse1[i]['LineItems'][j]['Item']['ItemID']
-                                    if 'Name' in JsonResponse1[i]['LineItems'][j]['Item']:
-                                        QuerySet1['Name'] = JsonResponse1[i]['LineItems'][j]['Item']['Name']
-                                if 'TaxType' in JsonResponse1[i]['LineItems'][j]:
-                                    QuerySet1['TaxType'] = JsonResponse1[i]['LineItems'][j]['TaxType']
-                                else:
-                                    QuerySet1['TaxType'] = None
+                                    QuerySet['Line'].append(QuerySet1)
 
-                                QuerySet['Line'].append(QuerySet1)
+                                if (JsonResponse1[i]['Type'] == "ACCREC"): #and (JsonResponse1[i]['AmountDue']>0):
+                                    cust={}
+                                    QuerySet["table_name"] = "xero_open_invoice" 
+                                    cust['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                    cust['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                    cust['Type'] = "AR"
+                                    cust['job_id'] = job_id
 
-                            if (JsonResponse1[i]['Type'] == "ACCREC") and (JsonResponse1[i]['AmountDue']>0):
-                                cust={}
-                                QuerySet["table_name"] = "xero_open_invoice" 
-                                cust['ContactName'] = JsonResponse1[i]['Contact']['Name']
-                                cust['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
-                                cust['Type'] = "AR"
-                                cust['job_id'] = job_id
+                                    invoice.append(QuerySet)
+                                    if cust not in customer: 
+                                        customer.append(cust)
 
-                                invoice.append(QuerySet)
-                                if cust not in customer: 
-                                    customer.append(cust)
+                                if (JsonResponse1[i]['Type'] == "ACCPAY"):
+                                    QuerySet["table_name"] = "xero_open_bill" 
+                                    supp={}
+                                    supp['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                    supp['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                    supp['Type'] = "AP"
+                                    supp['job_id'] = job_id
 
-                            if (JsonResponse1[i]['Type'] == "ACCPAY"):
-                                QuerySet["table_name"] = "xero_open_bill" 
-                                supp={}
-                                supp['ContactName'] = JsonResponse1[i]['Contact']['Name']
-                                supp['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
-                                supp['Type'] = "AP"
-                                supp['job_id'] = job_id
+                                    bill.append(QuerySet)
+                                    if supp not in supplier: 
+                                        supplier.append(supp)
+                                
+                        elif len(JsonResponse1[i]["Payments"])==0:
+                            if (JsonResponse1[i]['Status'] =='AUTHORISED'):
+                                QuerySet = {"Line": []}
+                                QuerySet["job_id"] = job_id
+                                QuerySet["task_id"] = task_id
+                                QuerySet["is_pushed"] = 0
+                                QuerySet["error"] = None
+                                QuerySet["payload"] = None
+                                
+                                QuerySet['Inv_No'] = JsonResponse1[i]['InvoiceNumber']
+                                QuerySet['Inv_ID'] = JsonResponse1[i]['InvoiceID']
+                                if 'DueDateString' in JsonResponse1[i]:
+                                    QuerySet['DueDate'] = JsonResponse1[i]['DueDateString']
+                                QuerySet['TxnDate'] = JsonResponse1[i]['DateString']
+                                QuerySet['TotalAmount'] = JsonResponse1[i]['Total']
+                                QuerySet['SubTotal'] = JsonResponse1[i]['SubTotal']
+                                QuerySet['Status'] = JsonResponse1[i]['Status']
+                                QuerySet['TotalTax'] = JsonResponse1[i]['TotalTax']
+                                QuerySet['LineAmountTypes'] = JsonResponse1[i]['LineAmountTypes']
+                                # QuerySet['AmountDue'] = JsonResponse1[i]['AmountDue']
+                                # QuerySet['AmountPaid'] = JsonResponse1[i]['AmountPaid']
+                                # QuerySet['AmountCredited'] = JsonResponse1[i]['AmountCredited']
+                                QuerySet['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                QuerySet['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                QuerySet['IsDiscounted'] = JsonResponse1[i]['IsDiscounted']
 
-                                bill.append(QuerySet)
-                                if supp not in supplier: 
-                                    supplier.append(supp)
+                                for j in range(0, len(JsonResponse1[i]['LineItems'])):
+                                    QuerySet1 = {}
+                                    if 'Description' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['Description'] = JsonResponse1[i]['LineItems'][j]['Description']
+                                    if 'UnitAmount' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['UnitAmount'] = JsonResponse1[i]['LineItems'][j]['UnitAmount']
+                                    if 'TaxAmount' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['TaxAmount'] = JsonResponse1[i]['LineItems'][j]['TaxAmount']
+                                    if 'LineAmount' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['LineAmount'] = JsonResponse1[i]['LineItems'][j]['LineAmount']
+                                    if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
+                                        QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
+                                
+                                    if 'AccountCode' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['AccountCode'] = JsonResponse1[i]['LineItems'][j]['AccountCode']
+                                    if 'Quantity' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['Quantity'] = JsonResponse1[i]['LineItems'][j]['Quantity']
+                                    
+                                    if JsonResponse1[i]['IsDiscounted'] == True:
+                                        if 'DiscountRate' in JsonResponse1[i]['LineItems'][j]:
+                                            QuerySet1['Discount'] = JsonResponse1[i]['LineItems'][j]['DiscountRate']
+                                        else:
+                                            QuerySet1['Discount'] = 0
+
+                                    if 'Item' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['ItemCode'] = JsonResponse1[i]['LineItems'][j]['Item']['Code']
+                                        QuerySet1['ItemID'] = JsonResponse1[i]['LineItems'][j]['Item']['ItemID']
+                                        if 'Name' in JsonResponse1[i]['LineItems'][j]['Item']:
+                                            QuerySet1['Name'] = JsonResponse1[i]['LineItems'][j]['Item']['Name']
+                                    if 'TaxType' in JsonResponse1[i]['LineItems'][j]:
+                                        QuerySet1['TaxType'] = JsonResponse1[i]['LineItems'][j]['TaxType']
+                                    else:
+                                        QuerySet1['TaxType'] = None
+
+                                    QuerySet['Line'].append(QuerySet1)
+
+                                if (JsonResponse1[i]['Type'] == "ACCREC"): #and (JsonResponse1[i]['AmountDue']>0):
+                                    cust={}
+                                    QuerySet["table_name"] = "xero_open_invoice" 
+                                    cust['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                    cust['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                    cust['Type'] = "AR"
+                                    cust['job_id'] = job_id
+
+                                    invoice.append(QuerySet)
+                                    if cust not in customer: 
+                                        customer.append(cust)
+
+                                if (JsonResponse1[i]['Type'] == "ACCPAY"):
+                                    QuerySet["table_name"] = "xero_open_bill" 
+                                    supp={}
+                                    supp['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                    supp['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                    supp['Type'] = "AP"
+                                    supp['job_id'] = job_id
+
+                                    bill.append(QuerySet)
+                                    if supp not in supplier: 
+                                        supplier.append(supp)
                             
+                        
                             
                 if len(invoice)>0:
                     print(len(invoice))
                     xero_invoice.insert_many(invoice)
                 if len(bill)>0:
-                    print(len(bill))
+                    print(len(bill),"bill count------------------------------")
                     xero_bill.insert_many(bill)
                 if len(customer)>0:
                     print(len(customer))

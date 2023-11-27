@@ -217,7 +217,7 @@ def get_open_creditnote(job_id,task_id):
                     JsonResponse1 = JsonResponse["CreditNotes"]
 
                     for i in range(0, len(JsonResponse1)):
-                        if (JsonResponse1[i]['Status'] != 'DELETED') and (JsonResponse1[i]['RemainingCredit']>0):
+                        if (JsonResponse1[i]['Status'] not in ['DELETED','PAID']) and (JsonResponse1[i]['RemainingCredit']>=0):
                         
                             QuerySet = {"Line": []}
                             QuerySet["job_id"] = job_id
