@@ -51,8 +51,8 @@ def startJobByID():
     mail_send = sent_email_to_customer()
     print(mail_send)
 
-    pdf_create=generate_pdf()
-    print(pdf_create,"created pdf file ")
+    # pdf_create=generate_pdf()
+    # print(pdf_create,"created pdf file ")
 
     job_id = redis.get('my_key')
     print(job_id, "start job by id")
