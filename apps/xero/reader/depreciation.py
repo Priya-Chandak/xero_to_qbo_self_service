@@ -42,14 +42,15 @@ def get_xero_asset_types(job_id,task_id):
         payrun_list.append(JsonResponse)
 
         print(payrun_list)   
-        e={}
-        e['job_id']=job_id
-        e['type']=JsonResponse[0]
-        xero_asset_types.insert_one(e)
-                
+        if JsonResponse != []:
+            e={}
+            e['job_id']=job_id
+            e['type']=JsonResponse[0]
+            xero_asset_types.insert_one(e)
+                    
         step_name = "Reading data from xero asset types"
         write_task_execution_step(task_id, status=1, step=step_name)
-                    
+                        
 
     except Exception as ex:
         step_name = "Access token not valid"
@@ -153,8 +154,10 @@ def get_xero_depreciation_journal(job_id,task_id):
             QBO_coa.append(p2)
 
         acc_list=[]
-        acc_list.append(xero_asset_types[0]['type']['depreciationExpenseAccountId'])
-        acc_list.append(xero_asset_types[0]['type']['accumulatedDepreciationAccountId'])
+        if len(xero_asset_types)> 0:
+            acc_list.append(xero_asset_types[0]['type']['depreciationExpenseAccountId'])
+            acc_list.append(xero_asset_types[0]['type']['accumulatedDepreciationAccountId'])
+        
         depreciation_journal=[]
         for i in range(0,len(xero_journal)):
             line_Acc=[]
@@ -233,6 +236,9 @@ def add_xero_depreciation_journal(job_id,task_id):
                 JournalEntryLineDetail['AccountRef'] = account
                 QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                 QuerySet2['Line'].append(QuerySet3)
+                    
+                
+
                 
             payload = json.dumps(QuerySet2)
             print(payload,"payload--------------------------------")
