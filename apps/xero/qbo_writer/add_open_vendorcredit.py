@@ -95,7 +95,7 @@ def add_open_xero_vendorcredit(job_id,task_id):
                                 for j2 in range(0, len(xero_items)):
                                     if ("ItemCode" in final_bill[i]["Line"][j]) and (
                                         "AccountCode" in final_bill[i]["Line"][j]
-                                    ):
+                                    ) and ("ItemCode" in final_bill[i]["Line"][j])!=None:
                                         if (
                                             final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
                                             == xero_items[j2]["Code"]
@@ -112,7 +112,7 @@ def add_open_xero_vendorcredit(job_id,task_id):
 
                                     elif ("ItemCode" in final_bill[i]["Line"][j]) and (
                                         ("AccountCode" not in final_bill[i]["Line"][j])
-                                    ):
+                                    ) and ("ItemCode" in final_bill[i]["Line"][j])!=None:
                                         if (
                                             final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
                                             == xero_items[j2]["Code"]
@@ -157,7 +157,7 @@ def add_open_xero_vendorcredit(job_id,task_id):
                                                     final_bill[i]["TotalTax"]
                                                 )
 
-                                    elif final_bill[i]["Line"][j]["TaxType"] == "INPUT":
+                                    elif final_bill[i]["Line"][j]["TaxType"] in ["INPUT","INPUT2"]:
                                         if "taxrate_name" in QBO_tax[k1]:
                                             if (
                                                 "GST (purchases)"
@@ -304,17 +304,14 @@ def add_open_xero_vendorcredit(job_id,task_id):
 
                             
                             for j1 in range(0, len(QBO_coa)):
-                                for j2 in range(0, len(xero_coa1)):
-                                    if 'Code' in xero_coa1[j2]:
-                                        if 'AccountCode' in final_bill[i]['Line'][j]:
-                                            if 'AcctNum' in QBO_coa[j1]:
-                                                if final_bill[i]['Line'][j]['AccountCode'] == QBO_coa[j1]["AcctNum"]:
-                                                    QuerySet3['value'] = QBO_coa[j1]["Id"]
-                                                
-                                            elif final_bill[i]['Line'][j]['AccountCode'] == xero_coa1[j2]["Code"]:
-                                                if xero_coa1[j2]["Name"].lower().strip() == QBO_coa[j1]["FullyQualifiedName"].lower().strip():
-                                                    QuerySet3['value'] = QBO_coa[j1]["Id"]
-
+                                # for j2 in range(0, len(xero_coa1)):
+                                #     if 'Code' in xero_coa1[j2]:
+                                if 'AccountCode' in final_bill[i]['Line'][j]:
+                                    if 'AcctNum' in QBO_coa[j1]:
+                                        if final_bill[i]['Line'][j]['AccountCode'] == QBO_coa[j1]["AcctNum"]:
+                                            QuerySet3['value'] = QBO_coa[j1]["Id"]
+                                            break
+                                    
                             QuerySet2['AccountRef'] = QuerySet3
                             
                             for j3 in range(0, len(QBO_supplier)):

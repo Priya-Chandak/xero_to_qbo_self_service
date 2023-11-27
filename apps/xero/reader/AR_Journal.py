@@ -12,7 +12,7 @@ from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
-
+import re
 logger = logging.getLogger(__name__)
 
 def add_qbo_ar_journal(job_id,task_id):
@@ -42,19 +42,17 @@ def add_qbo_ar_journal(job_id,task_id):
         retained_earning_amount=0
         retained_earning={}
         JournalEntryLineDetail1={}
+        RE={}
             
         for i in range(0, len(QuerySet1)):
-            print(i)    
-            print(QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0)
-                  
-            if QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0:
+            if 'diff' in QuerySet1[i] and QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0:
                 
                 date_object = datetime.strptime(start_date, '%Y-%m-%d')
                 one_day_before = date_object - timedelta(days=1)
                 journal_date1 = one_day_before.strftime('%Y-%m-%d')
                 
                 AR = {}
-                RE = {}
+                # RE = {}
                 
                 QuerySet3={}
                 JournalEntryLineDetail={}
@@ -135,6 +133,7 @@ def add_qbo_ar_journal(job_id,task_id):
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
 
+
 def add_qbo_ap_journal(job_id,task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_xero_AP_journal")
@@ -162,19 +161,18 @@ def add_qbo_ap_journal(job_id,task_id):
         retained_earning_amount=0
         retained_earning={}
         JournalEntryLineDetail1={}
+        RE = {}
             
         for i in range(0, len(QuerySet1)):
-            print(i)    
-            print(QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0)
                   
-            if QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0:
+            if 'diff' in QuerySet1[i] and QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0:
                 
                 date_object = datetime.strptime(start_date, '%Y-%m-%d')
                 one_day_before = date_object - timedelta(days=1)
                 journal_date1 = one_day_before.strftime('%Y-%m-%d')
                 
                 AP = {}
-                RE = {}
+                
                 
                 QuerySet3={}
                 JournalEntryLineDetail={}
@@ -229,8 +227,7 @@ def add_qbo_ap_journal(job_id,task_id):
                 retained_earning_amount = retained_earning_amount + float(QuerySet1[i]['diff_amount'])
                
                 QuerySet2['Line'].append(QuerySet3)
-        print(retained_earning_amount)
-
+       
         if retained_earning_amount>0:
             JournalEntryLineDetail1["PostingType"] = "Debit"
         else:
@@ -238,7 +235,7 @@ def add_qbo_ap_journal(job_id,task_id):
 
         retained_earning["DetailType"] = "JournalEntryLineDetail"
         retained_earning['JournalEntryLineDetail'] = JournalEntryLineDetail1
-        retained_earning["Amount"] = -retained_earning_amount
+        retained_earning["Amount"] = abs(retained_earning_amount)
         JournalEntryLineDetail1['AccountRef'] = RE
 
         QuerySet2['Line'].append(retained_earning)
@@ -299,12 +296,10 @@ def add_qbo_reverse_trial_balance(job_id,task_id):
             
             QuerySet3={}
             JournalEntryLineDetail={}
-            entity={}
             account={}
-            EntityRef={}
             QuerySet2["DocNumber"] = "ReverseTrialBalance"
             QuerySet3["DetailType"] = "JournalEntryLineDetail"
-            QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+            # QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
             QuerySet2["TxnDate"] = journal_date1
             account['name'] = QuerySet1[i]['bankname']
             account['value'] = QuerySet1[i]['bankid']
@@ -316,28 +311,39 @@ def add_qbo_reverse_trial_balance(job_id,task_id):
                 JournalEntryLineDetail["PostingType"] = "Credit"
                 QuerySet3["Amount"] = abs(float(QuerySet1[i]["debit"]))
                 
-
+            QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+            
             for j11 in range(0, len(QBO_coa)):
-                if 'AcctNum' in QBO_coa[j11]:
-                    if (QuerySet1[i]['bankname'] == QBO_coa[j11]["AcctNum"] + " " + QBO_coa[j11]["FullyQualifiedName"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Payable'):
-                        entity['Type'] = 'Vendor'
-                        entity['EntityRef'] = EntityRef
-                        for s1 in range(0,len(QBO_supplier)):
-                            if QBO_supplier[s1]['DisplayName'] == 'Temp - S':
-                                EntityRef['name'] = QBO_supplier[s1]['DisplayName']
-                                EntityRef['value'] = QBO_supplier[s1]['Id']
-                    
-                        JournalEntryLineDetail["Entity"] = entity
+                print(QuerySet1[i]['bankname'] == QBO_coa[j11]["Name"],QuerySet1[i]['bankname'],QBO_coa[j11]["Name"])
+                if (QuerySet1[i]['bankname'] == QBO_coa[j11]["Name"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Payable'):
+                    print("AP match")
+                    entity={}
+                    EntityRef={}
+        
+                    entity['Type'] = 'Vendor'
+                    entity['EntityRef'] = EntityRef
+                    for s1 in range(0,len(QBO_supplier)):
+                        if QBO_supplier[s1]['DisplayName'] == 'Temp - S':
+                            EntityRef['name'] = QBO_supplier[s1]['DisplayName']
+                            EntityRef['value'] = QBO_supplier[s1]['Id']
+                
+                    JournalEntryLineDetail["Entity"] = entity
+                    QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
 
-                    elif (QuerySet1[i]['bankname'] == QBO_coa[j11]["AcctNum"] + " " + QBO_coa[j11]["FullyQualifiedName"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Receivable'):
-                        entity['Type'] = 'Customer'
-                        entity['EntityRef'] = EntityRef
-                        for c1 in range(0,len(QBO_customer)):
-                            if QBO_customer[c1]['DisplayName'] == 'Temp - C':
-                                EntityRef['name'] = QBO_customer[c1]['DisplayName']
-                                EntityRef['value'] = QBO_customer[c1]['Id']
-                    
-                        JournalEntryLineDetail["Entity"] = entity
+                elif (QuerySet1[i]['bankname'] == QBO_coa[j11]["Name"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Receivable'):
+                    entity={}
+                    EntityRef={}
+        
+                    entity['Type'] = 'Customer'
+                    entity['EntityRef'] = EntityRef
+                    for c1 in range(0,len(QBO_customer)):
+                        if QBO_customer[c1]['DisplayName'] == 'Temp - C':
+                            EntityRef['name'] = QBO_customer[c1]['DisplayName']
+                            EntityRef['value'] = QBO_customer[c1]['Id']
+                
+                    JournalEntryLineDetail["Entity"] = entity
+                    QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+
             QuerySet2['Line'].append(QuerySet3)
         
         payload = json.dumps(QuerySet2)
@@ -375,6 +381,11 @@ def add_xero_open_trial_balance(job_id,task_id):
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
+        xero_coa1 = dbname["xero_coa"].find({"job_id":job_id})
+        xero_coa = []
+        for p2 in xero_coa1:
+            xero_coa.append(p2)
+
         QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
         QBO_customer = []
         for p2 in QBO_Customer:
@@ -401,7 +412,6 @@ def add_xero_open_trial_balance(job_id,task_id):
             EntityRef={}
             QuerySet2["DocNumber"] = "XeroTrialBalance-Open"
             QuerySet3["DetailType"] = "JournalEntryLineDetail"
-            QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
             QuerySet2["TxnDate"] = journal_date1
             if float(QuerySet1[i]['debit'])==0:
                 JournalEntryLineDetail["PostingType"] = "Debit"
@@ -413,51 +423,134 @@ def add_xero_open_trial_balance(job_id,task_id):
 
             for j11 in range(0, len(QBO_coa)):
                 account={}
-            
-                if QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Payable'):
-                    account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                    account['value'] = QBO_coa[j11]["Id"]
-        
-                    entity['Type'] = 'Vendor'
-                    entity['EntityRef'] = EntityRef
-                    for s1 in range(0,len(QBO_supplier)):
-                        if QBO_supplier[s1]['DisplayName'] == 'Temp - S':
-                            EntityRef['name'] = QBO_supplier[s1]['DisplayName']
-                            EntityRef['value'] = QBO_supplier[s1]['Id']
-                
-                    JournalEntryLineDetail["Entity"] = entity
-                    JournalEntryLineDetail['AccountRef'] = account
-                    break
-        
-                elif QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Receivable'):
-                
-                    account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                    account['value'] = QBO_coa[j11]["Id"]
-        
-                    entity['Type'] = 'Customer'
-                    entity['EntityRef'] = EntityRef
-                    for c1 in range(0,len(QBO_customer)):
-                        if QBO_customer[c1]['DisplayName'] == 'Temp - C':
-                            EntityRef['name'] = QBO_customer[c1]['DisplayName']
-                            EntityRef['value'] = QBO_customer[c1]['Id']
-                    JournalEntryLineDetail['AccountRef'] = account
-                    JournalEntryLineDetail["Entity"] = entity
-                    break
+                entity={}
+                EntityRef={}
 
-                elif QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["FullyQualifiedName"]):
-                    print("elif1--",QuerySet1[i]['bankname'])
-                    account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                    account['value'] = QBO_coa[j11]["Id"]
-                    JournalEntryLineDetail['AccountRef'] = account
-                    break
-
-                elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
-                    print("elif2-",QuerySet1[i]['bankname'])
+                for k11 in range(0,len(xero_coa)):
+                    if 'Accounts Receivable' in QuerySet1[i]['bankname']:
+                        if QBO_coa[j11]['AccountSubType'] == 'AccountsReceivable':
+                            print("if")
+                            account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                            account['value'] = QBO_coa[j11]["Id"]
+                            JournalEntryLineDetail['AccountRef'] = account
+                            QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                            for c12 in range(0,len(QBO_customer)):
+                                if QBO_customer[c12]['FullyQualifiedName'] == 'Temp - C':
+                                    entity['Type'] = 'Customer'
+                                    EntityRef['value'] = QBO_customer[c12]['Id']
+                                    entity['EntityRef'] = EntityRef
+                                    
+                            JournalEntryLineDetail['Entity'] = entity
+                            print(QuerySet3,"QuerySet3----------")
+                            break
+                        break
                     
-                    account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                    account['value'] = QBO_coa[j11]["Id"]
-                    JournalEntryLineDetail['AccountRef'] = account
-                    continue
+                    elif 'Accounts Payable' in QuerySet1[i]['bankname']:
+                        if QBO_coa[j11]['AccountSubType'] == 'AccountsPayable':
+                            account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                            account['value'] = QBO_coa[j11]["Id"]
+                            JournalEntryLineDetail['AccountRef'] = account
+                            QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                            for s12 in range(0,len(QBO_supplier)):
+                                if QBO_supplier[s12]['FullyQualifiedName'] == 'Temp - S':
+                                    entity['Type'] = 'vendor'
+                                    EntityRef['value'] = QBO_supplier[s12]['Id']
+                                    entity['EntityRef'] = EntityRef
+                                    
+                            JournalEntryLineDetail['Entity'] = entity
+                            
+                            print(QuerySet3,"QuerySet3----------")
+                            break
+
+                    elif QuerySet1[i]['bankid'] == xero_coa[k11]['AccountID'] and 'Accounts Payable' not in QuerySet1[i]['bankname'] and 'Accounts Receivable' not in QuerySet1[i]['bankname']:
+                        if 'AcctNum' in QBO_coa[j11]:
+                            if xero_coa[k11]['Code'] == QBO_coa[j11]['AcctNum']:
+                                account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                                account['value'] = QBO_coa[j11]["Id"]
+                                JournalEntryLineDetail['AccountRef'] = account
+                                QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                                # print(QuerySet3,"QuerySet3----------")
+                                break
+
+                # if QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountSubType"] == 'AccountsPayable'):
+                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                #     account['value'] = QBO_coa[j11]["Id"]
+        
+                #     entity['Type'] = 'Vendor'
+                #     entity['EntityRef'] = EntityRef
+                #     for s1 in range(0,len(QBO_supplier)):
+                #         if QBO_supplier[s1]['DisplayName'] == 'Temp - S':
+                #             EntityRef['name'] = QBO_supplier[s1]['DisplayName']
+                #             EntityRef['value'] = QBO_supplier[s1]['Id']
+                
+                #     JournalEntryLineDetail["Entity"] = entity
+                #     # JournalEntryLineDetail['AccountRef'] = account
+                #     break
+        
+                # elif QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountSubType"] == 'AccountsReceivable'):
+                
+                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                #     account['value'] = QBO_coa[j11]["Id"]
+        
+                #     entity['Type'] = 'Customer'
+                #     entity['EntityRef'] = EntityRef
+                #     for c1 in range(0,len(QBO_customer)):
+                #         if QBO_customer[c1]['DisplayName'] == 'Temp - C':
+                #             EntityRef['name'] = QBO_customer[c1]['DisplayName']
+                #             EntityRef['value'] = QBO_customer[c1]['Id']
+                #     # JournalEntryLineDetail['AccountRef'] = account
+                #     JournalEntryLineDetail["Entity"] = entity
+                #     break
+                
+                    
+
+                # elif QuerySet1[i]['bankname'].split(" (")[0].replace(":","-") == (QBO_coa[j11]["FullyQualifiedName"]):
+                #     print("elif1--",QuerySet1[i]['bankname'])
+                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                #     account['value'] = QBO_coa[j11]["Id"]
+                #     # JournalEntryLineDetail['AccountRef'] = account
+                #     break
+
+                # elif 'AcctNum' in QBO_coa[j11]:
+                #     accname= QuerySet1[i]['bankname']
+                #     matches = re.findall(r'\((\w+)\)', accname)
+                #     print(matches)
+                #     if matches:
+                #         accnum = matches[0]
+                #         if accnum == QBO_coa[j11]['AcctNum']:
+                #             account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                #             account['value'] = QBO_coa[j11]["Id"]
+                            
+                #             if QBO_coa[j11]["AccountSubType"] == 'AccountsPayable':
+                #                 entity['Type'] = 'Vendor'
+                #                 entity['EntityRef'] = EntityRef
+                #                 for s1 in range(0,len(QBO_supplier)):
+                #                     if QBO_supplier[s1]['DisplayName'] == 'Temp - S':
+                #                         EntityRef['name'] = QBO_supplier[s1]['DisplayName']
+                #                         EntityRef['value'] = QBO_supplier[s1]['Id']
+                #                 JournalEntryLineDetail["Entity"] = entity
+                #                 break
+                    
+                #             elif QBO_coa[j11]["AccountSubType"] == 'AccountsReceivable':
+                #                 entity['Type'] = 'Customer'
+                #                 entity['EntityRef'] = EntityRef
+                #                 for c1 in range(0,len(QBO_customer)):
+                #                     if QBO_customer[c1]['DisplayName'] == 'Temp - C':
+                #                         EntityRef['name'] = QBO_customer[c1]['DisplayName']
+                #                         EntityRef['value'] = QBO_customer[c1]['Id']
+                #                 # JournalEntryLineDetail['AccountRef'] = account
+                #                 JournalEntryLineDetail["Entity"] = entity
+                #                 break
+                    
+                #             break
+
+                # elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
+                #     print("elif2-",QuerySet1[i]['bankname'])
+                    
+                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                #     account['value'] = QBO_coa[j11]["Id"]
+                #     JournalEntryLineDetail['AccountRef'] = account
+                #     continue
 
                     
             QuerySet2['Line'].append(QuerySet3)
@@ -605,7 +698,7 @@ def add_xero_current_trial_balance(job_id,task_id):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
                     account['value'] = QBO_coa[j11]["Id"]
                     JournalEntryLineDetail['AccountRef'] = account
-                    break
+                    continue
 
                 elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
@@ -618,7 +711,7 @@ def add_xero_current_trial_balance(job_id,task_id):
                     
             QuerySet2['Line'].append(QuerySet3)
         
-        print(retained_earning_amount)
+        # print(retained_earning_amount)
 
         if retained_earning_amount>0:
             JournalEntryLineDetail1["PostingType"] = "Debit"
