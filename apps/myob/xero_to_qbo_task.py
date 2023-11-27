@@ -661,7 +661,7 @@ class XeroToQbo(object):
                 
                 step_name = "Reading qbo Item"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                delete_item(job_id,task.id)
+                delete_item(job_id)
                 read_qbo_data(job_id,task.id, "Item")
                 write_task_execution_step(task.id, status=1, step=step_name)
 
