@@ -30,6 +30,7 @@ QBO_BaseURL = "https://quickbooks.api.intuit.com"
 
 # QBO_CI='ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
 # QBO_CS='LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
+Queue_URI='https://sqs.your-aws-region.amazonaws.com/074206019712/MmcSelfServiceEmail'
 
 NODE_APP_URL="http://localhost:6000"
 XERO_SCOPE='openid%20profile%20email%20accounting.transactions%20accounting.contacts%20accounting.settings%20payroll.employees%20accounting.journals.read%20payroll.employees.read%20accounting.transactions.read%20offline_access%20accounting.reports.read%20payroll.payruns%20payroll.payruns.read%20payroll.payslip%20payroll.payslip.read%20payroll.settings%20payroll.settings.read%20assets%20assets.read'
