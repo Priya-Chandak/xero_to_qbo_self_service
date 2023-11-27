@@ -952,21 +952,21 @@ def sent_email_to_customer():
 
 
 
-@blueprint.route("/Create_final_report", methods=["GET", "POST"])
-def Create_final_report():
-    if request.method == "GET":
-        return render_template("home/create_final_report.html")
+# @blueprint.route("/Create_final_report", methods=["GET", "POST"])
+# def Create_final_report():
+#     if request.method == "GET":
+#         return render_template("home/create_final_report.html")
 
 
 
-@blueprint.route("/generate_pdf", methods=["GET", "POST"])
-def generate_pdf():
-    rendered_template = render_template('create_final_report.html')  
+# @blueprint.route("/generate_pdf", methods=["GET", "POST"])
+# def generate_pdf():
+#     rendered_template = render_template('create_final_report.html')  
 
-    pdf = pdfkit.from_string(rendered_template, False)
+#     pdf = pdfkit.from_string(rendered_template, False)
 
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
+#     response = make_response(pdf)
+#     response.headers['Content-Type'] = 'application/pdf'
+#     response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
 
-    return response
+#     return response
