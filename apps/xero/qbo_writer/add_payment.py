@@ -3,12 +3,15 @@ import logging
 import traceback
 from datetime import datetime
 
+import requests
+
+from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 def add_xero_invoice_payment(job_id,task_id):
     try:
@@ -61,7 +64,7 @@ def add_xero_invoice_payment(job_id,task_id):
         for k1 in xero_arc_coa1:
             xero_coa1.append(k1)
 
-        QuerySet1 = data1[0:1]
+        QuerySet1 = data1
 
         for i in range(0, len(QuerySet1)):
             if QuerySet1[i]["InvoiceType"] == "ACCREC":
@@ -164,9 +167,10 @@ def add_xero_invoice_payment(job_id,task_id):
                     
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+        
 
 
-def add_xero_bill_payment(job_id, task_id):
+def add_xero_bill_payment(job_id,task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_payment -> add_xero_bill_payment")
 
@@ -182,32 +186,32 @@ def add_xero_bill_payment(job_id, task_id):
         xero_coa = dbname["xero_coa"]
         xero_arc_coa = dbname["xero_archived_coa"]
 
-        x = Collection.find({"job_id": job_id})
+        x = Collection.find({"job_id":job_id})
         data1 = []
         for k in x:
             data1.append(k)
 
-        supplier = QBO_Supplier.find({"job_id": job_id})
+        supplier = QBO_Supplier.find({"job_id":job_id})
         supplier1 = []
         for k in supplier:
             supplier1.append(k)
 
-        QBO_Bill = QBO_Bill.find({"job_id": job_id})
+        QBO_Bill = QBO_Bill.find({"job_id":job_id})
         QBO_Bill1 = []
         for k in QBO_Bill:
             QBO_Bill1.append(k)
 
-        QBO_COA = QBO_COA.find({"job_id": job_id})
+        QBO_COA = QBO_COA.find({"job_id":job_id})
         QBO_COA1 = []
         for k in QBO_COA:
             QBO_COA1.append(k)
 
-        xero_coa = xero_coa.find({"job_id": job_id})
+        xero_coa = xero_coa.find({"job_id":job_id})
         xero_coa1 = []
         for k in xero_coa:
             xero_coa1.append(k)
 
-        xero_arc_coa = xero_arc_coa.find({"job_id": job_id})
+        xero_arc_coa = xero_arc_coa.find({"job_id":job_id})
         # xero_arc_coa1 = []
         for k in xero_arc_coa:
             xero_coa1.append(k)
@@ -218,17 +222,15 @@ def add_xero_bill_payment(job_id, task_id):
             if QuerySet1[i]["InvoiceType"] == "ACCPAY":
                 _id = QuerySet1[i]['_id']
                 task_id = QuerySet1[i]['task_id']
-
+                
                 for j1 in range(0, len(QBO_COA1)):
                     for j2 in range(0, len(xero_coa1)):
                         if QuerySet1[i]["AccountCode"] == xero_coa1[j2]["AccountID"]:
-                            if (xero_coa1[j2]["Name"].strip().lower() == QBO_COA1[j1][
-                                "FullyQualifiedName"].strip().lower()) or (
-                                    xero_coa1[j2]["Name"].replace(":", "-") == QBO_COA1[j1]["FullyQualifiedName"]):
-
+                            if (xero_coa1[j2]["Name"].strip().lower()== QBO_COA1[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa1[j2]["Name"].replace(":","-")== QBO_COA1[j1]["FullyQualifiedName"]):
+                            
                                 if QBO_COA1[j1]["AccountType"] == "Bank":
 
-                                    print("bank", i)
+                                    print("bank",i)
                                     QuerySet2 = {"Line": []}
                                     VendorRef = {}
                                     QuerySet4 = {"LinkedTxn": []}
@@ -261,7 +263,7 @@ def add_xero_bill_payment(job_id, task_id):
                                     #         ]
                                     #         VendorRef["value"] = supplier1[s1]["Id"]
                                     #         continue
-
+                                        
                                     QuerySet2["TotalAmt"] = QuerySet1[i]["BankAmount"]
                                     QuerySet4["Amount"] = QuerySet1[i]["BankAmount"]
                                     payment_date = QuerySet1[i]["Date"]
@@ -274,40 +276,32 @@ def add_xero_bill_payment(job_id, task_id):
                                     print(QuerySet1[i]['InvoiceNumber'])
                                     for k12 in range(0, len(QBO_Bill1)):
                                         QuerySet5["TxnType"] = "Bill"
-
+                                            
                                         if "DocNumber" in QBO_Bill1[k12]:
-                                            if QuerySet1[i]['InvoiceNumber'][0:14] + "-" + QuerySet1[i]['InvoiceID'][
-                                                                                           -6:] == QBO_Bill1[k12][
-                                                "DocNumber"]:
+                                            if QuerySet1[i]['InvoiceNumber'][0:14]+"-"+QuerySet1[i]['InvoiceID'][-6:]== QBO_Bill1[k12]["DocNumber"]:
                                                 QuerySet5["TxnId"] = QBO_Bill1[k12][
                                                     "Id"
                                                 ]
                                                 VendorRef = QBO_Bill1[k12]['VendorRef']
                                                 break
                                             elif (
-                                                    QuerySet1[i]["InvoiceNumber"]
-                                                    == QBO_Bill1[k12]["DocNumber"]
+                                                QuerySet1[i]["InvoiceNumber"]
+                                                == QBO_Bill1[k12]["DocNumber"]
                                             ):
                                                 QuerySet5["TxnId"] = QBO_Bill1[k12][
                                                     "Id"
                                                 ]
                                                 VendorRef = QBO_Bill1[k12]['VendorRef']
-                                                continue
-                                            elif QuerySet1[i]["InvoiceNumber"][0:21] == QBO_Bill1[k12]["DocNumber"][
-                                                                                        0:21]:
+                                                break
+
+                                            elif QuerySet1[i]["InvoiceNumber"][0:21]==QBO_Bill1[k12]["DocNumber"][0:21]:
                                                 QuerySet5["TxnId"] = QBO_Bill1[k12][
                                                     "Id"
                                                 ]
                                                 print(QuerySet5["TxnId"])
                                                 VendorRef = QBO_Bill1[k12]['VendorRef']
                                                 continue
-
-                                        # elif (
-                                        #     QBO_Bill1[k12]["Balance"]
-                                        #     == QuerySet1[i]["BankAmount"]
-                                        # ):
-                                        #     QuerySet5["TxnId"] = QBO_Bill1[k12]["Id"]
-                                        #     break
+                                                
 
                                     QuerySet2["VendorRef"] = VendorRef
                                     QuerySet2["PayType"] = "Check"
@@ -319,53 +313,53 @@ def add_xero_bill_payment(job_id, task_id):
                                     QuerySet2["Line"].append(QuerySet4)
 
                                     payload = json.dumps(QuerySet2)
-
-                                    post_data_in_qbo(url, headers, payload, dbname['xero_bill_payment'], _id, job_id,
-                                                     task_id, QuerySet1[i]['InvoiceNumber'])
-
+                                   
+                                    post_data_in_qbo(url, headers, payload,dbname['xero_bill_payment'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
+                            
     except Exception as ex:
         traceback.print_exc()
+        
 
 
-def add_xero_bill_payment_as_journal(job_id, task_id):
+def add_xero_bill_payment_as_journal(job_id,task_id):
     try:
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
         url = f"{base_url}/journalentry?minorversion={minorversion}"
 
-        journal1 = dbname["xero_bill_payment"].find({"job_id": job_id})
+        journal1 = dbname["xero_bill_payment"].find({"job_id":job_id})
 
         journal = []
         for p1 in journal1:
             journal.append(p1)
 
-        QBO_COA = dbname["QBO_COA"].find({"job_id": job_id})
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        supplier = dbname["QBO_Supplier"].find({"job_id": job_id})
+        supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
         supplier1 = []
         for k in supplier:
             supplier1.append(k)
 
-        QBO_Customer = dbname["QBO_Customer"].find({"job_id": job_id})
+        QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
         QBO_customer = []
         for p3 in QBO_Customer:
             QBO_customer.append(p3)
 
-        QBO_Tax = dbname["QBO_Tax"].find({"job_id": job_id})
+        QBO_Tax = dbname["QBO_Tax"].find({"job_id":job_id})
         QBO_tax = []
         for p4 in QBO_Tax:
             QBO_tax.append(p4)
 
-        Xero_COA = dbname["xero_coa"].find({"job_id": job_id})
+        Xero_COA = dbname["xero_coa"].find({"job_id":job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
 
-        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id": job_id})
+        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id":job_id})
         for p7 in xero_archived_coa1:
             xero_coa.append(p7)
 
@@ -377,12 +371,10 @@ def add_xero_bill_payment_as_journal(job_id, task_id):
             for j1 in range(0, len(QBO_coa)):
                 for j2 in range(0, len(xero_coa)):
                     if QuerySet1[i]["AccountCode"] == xero_coa[j2]["AccountID"]:
-                        if (xero_coa[j2]["Name"].strip().lower() == QBO_coa[j1][
-                            "FullyQualifiedName"].strip().lower()) or (
-                                xero_coa[j2]["Name"].replace(":", "-") == QBO_coa[j1]["FullyQualifiedName"]):
-
+                        if (xero_coa[j2]["Name"].strip().lower()== QBO_coa[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa[j2]["Name"].replace(":","-")== QBO_coa[j1]["FullyQualifiedName"]):
+                        
                             if QBO_coa[j1]["AccountType"] != "Bank":
-                                print("Not Bank", i)
+                                print("Not Bank",i)
                                 print(QBO_coa[j1]["AccountType"])
                                 payment_date = QuerySet1[i]["Date"]
                                 payment_date11 = int(payment_date[6:16])
@@ -394,10 +386,9 @@ def add_xero_bill_payment_as_journal(job_id, task_id):
                                 TxnTaxDetail = {}
                                 QuerySet2["TxnTaxDetail"] = TxnTaxDetail
                                 QuerySet2["DocNumber"] = (
-                                        "BP-" + QuerySet1[i]["InvoiceID"][-10:]
+                                    "BP-" + QuerySet1[i]["InvoiceID"][-10:]
                                 )
-                                QuerySet2['PrivateNote'] = "InvoiceID:- " + QuerySet1[i][
-                                    'InvoiceID'] + " & " + "BillNo:- " + QuerySet1[i]['InvoiceNumber']
+                                QuerySet2['PrivateNote'] = "InvoiceID:- "+QuerySet1[i]['InvoiceID']+" & "+"BillNo:- "+QuerySet1[i]['InvoiceNumber']
                                 QuerySet2["TxnDate"] = str(journal_date1)[0:10]
 
                                 QuerySet3 = {}
@@ -429,24 +420,26 @@ def add_xero_bill_payment_as_journal(job_id, task_id):
                                 for j in range(0, len(supplier1)):
                                     entity["Type"] = "Vendor"
                                     if (
-                                            QuerySet1[i]["Contact"].lower()
-                                            == supplier1[j]["DisplayName"].lower()
+                                        QuerySet1[i]["Contact"].lower()
+                                        == supplier1[j]["DisplayName"].lower()
                                     ):
                                         EntityRef["name"] = supplier1[j]["DisplayName"]
                                         EntityRef["value"] = supplier1[j]["Id"]
+                                        break
                                     elif supplier1[j]["DisplayName"].startswith(
-                                            QuerySet1[i]["Contact"]
+                                        QuerySet1[i]["Contact"]
                                     ) and supplier1[j]["DisplayName"].endswith("- S"):
                                         EntityRef["name"] = supplier1[j]["DisplayName"]
                                         EntityRef["value"] = supplier1[j]["Id"]
-
+                                        continue
+                                    
                                 QuerySet41["AccountRef"] = QuerySet42
 
                                 for j1 in range(0, len(QBO_coa)):
                                     if (
-                                            QBO_coa[j1]["AccountType"]
-                                            == "Accounts Payable"
-                                    ):
+                                    QBO_coa[j1]["AccountType"]
+                                    == "Accounts Payable"
+                                ):
                                         QuerySet42["value"] = QBO_coa[j1]["Id"]
 
                                 QuerySet2["Line"].append(QuerySet3)
@@ -454,52 +447,51 @@ def add_xero_bill_payment_as_journal(job_id, task_id):
 
                                 payload = json.dumps(QuerySet2)
 
-                                post_data_in_qbo(url, headers, payload, dbname['xero_bill_payment'], _id, job_id,
-                                                 task_id, QuerySet1[i]['InvoiceNumber'])
-
+                                post_data_in_qbo(url, headers, payload,dbname['xero_bill_payment'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
+                
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_bill_payment", ex)
+        
 
-
-def add_xero_supplier_credit_cash_refund_as_journal(job_id, task_id):
+def add_xero_supplier_credit_cash_refund_as_journal(job_id,task_id):
     try:
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
         url = f"{base_url}/journalentry?minorversion={minorversion}"
 
-        journal1 = dbname["xero_supplier_credit_cash_refund"].find({"job_id": job_id})
+        journal1 = dbname["xero_supplier_credit_cash_refund"].find({"job_id":job_id})
 
         journal = []
         for p1 in journal1:
             journal.append(p1)
 
-        QBO_COA = dbname["QBO_COA"].find({"job_id": job_id})
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        supplier = dbname["QBO_Supplier"].find({"job_id": job_id})
+        supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
         supplier1 = []
         for k in supplier:
             supplier1.append(k)
 
-        QBO_Customer = dbname["QBO_Customer"].find({"job_id": job_id})
+        QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
         QBO_customer = []
         for p3 in QBO_Customer:
             QBO_customer.append(p3)
 
-        QBO_Tax = dbname["QBO_Tax"].find({"job_id": job_id})
+        QBO_Tax = dbname["QBO_Tax"].find({"job_id":job_id})
         QBO_tax = []
         for p4 in QBO_Tax:
             QBO_tax.append(p4)
 
-        Xero_COA = dbname["xero_coa"].find({"job_id": job_id})
+        Xero_COA = dbname["xero_coa"].find({"job_id":job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
 
-        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id": job_id})
+        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id":job_id})
         for p7 in xero_archived_coa1:
             xero_coa.append(p7)
 
@@ -511,10 +503,8 @@ def add_xero_supplier_credit_cash_refund_as_journal(job_id, task_id):
             for j1 in range(0, len(QBO_coa)):
                 for j2 in range(0, len(xero_coa)):
                     if QuerySet1[i]["AccountCode"] == xero_coa[j2]["AccountID"]:
-                        if (xero_coa[j2]["Name"].strip().lower() == QBO_coa[j1][
-                            "FullyQualifiedName"].strip().lower()) or (
-                                xero_coa[j2]["Name"].replace(":", "-") == QBO_coa[j1]["FullyQualifiedName"]):
-
+                        if (xero_coa[j2]["Name"].strip().lower()== QBO_coa[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa[j2]["Name"].replace(":","-")== QBO_coa[j1]["FullyQualifiedName"]):
+                        
                             payment_date = QuerySet1[i]["Date"]
                             payment_date11 = int(payment_date[6:16])
                             journal_date1 = datetime.utcfromtimestamp(
@@ -525,10 +515,9 @@ def add_xero_supplier_credit_cash_refund_as_journal(job_id, task_id):
                             TxnTaxDetail = {}
                             QuerySet2["TxnTaxDetail"] = TxnTaxDetail
                             QuerySet2["DocNumber"] = (
-                                    "VCCR-" + QuerySet1[i]["InvoiceID"][-10:]
+                                "VCCR-" + QuerySet1[i]["InvoiceID"][-10:]
                             )
-                            QuerySet2['PrivateNote'] = "InvoiceID:- " + QuerySet1[i][
-                                'InvoiceID'] + " & " + "BillNo:- " + QuerySet1[i]['InvoiceNumber']
+                            QuerySet2['PrivateNote'] = "InvoiceID:- "+QuerySet1[i]['InvoiceID']+" & "+"BillNo:- "+QuerySet1[i]['InvoiceNumber']
                             QuerySet2["TxnDate"] = str(journal_date1)[0:10]
 
                             QuerySet3 = {}
@@ -560,23 +549,25 @@ def add_xero_supplier_credit_cash_refund_as_journal(job_id, task_id):
                             for j in range(0, len(supplier1)):
                                 entity["Type"] = "Vendor"
                                 if (
-                                        QuerySet1[i]["Contact"].lower()
-                                        == supplier1[j]["DisplayName"].lower()
+                                    QuerySet1[i]["Contact"].lower()
+                                    == supplier1[j]["DisplayName"].lower()
                                 ):
                                     EntityRef["name"] = supplier1[j]["DisplayName"]
                                     EntityRef["value"] = supplier1[j]["Id"]
+                                    break
                                 elif supplier1[j]["DisplayName"].startswith(
-                                        QuerySet1[i]["Contact"]
+                                    QuerySet1[i]["Contact"]
                                 ) and supplier1[j]["DisplayName"].endswith("- S"):
                                     EntityRef["name"] = supplier1[j]["DisplayName"]
                                     EntityRef["value"] = supplier1[j]["Id"]
-
+                                    continue
+                                
                             QuerySet41["AccountRef"] = QuerySet42
 
                             for j1 in range(0, len(QBO_coa)):
                                 if (
-                                        QBO_coa[j1]["AccountType"]
-                                        == "Accounts Payable"
+                                    QBO_coa[j1]["AccountType"]
+                                    == "Accounts Payable"
                                 ):
                                     QuerySet42["value"] = QBO_coa[j1]["Id"]
 
@@ -585,14 +576,13 @@ def add_xero_supplier_credit_cash_refund_as_journal(job_id, task_id):
 
                             payload = json.dumps(QuerySet2)
 
-                            post_data_in_qbo(url, headers, payload, dbname['xero_supplier_credit_cash_refund'], _id,
-                                             job_id, task_id, QuerySet1[i]['InvoiceNumber'])
-
+                            post_data_in_qbo(url, headers, payload,dbname['xero_supplier_credit_cash_refund'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
+            
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_bill_payment", ex)
 
 
-def add_xero_invoice_payment_as_journal(job_id, task_id):
+def add_xero_invoice_payment_as_journal(job_id,task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_xero_invoice_payment_as_journal")
 
@@ -601,38 +591,38 @@ def add_xero_invoice_payment_as_journal(job_id, task_id):
 
         url = f"{base_url}/journalentry?minorversion={minorversion}"
 
-        journal1 = dbname["xero_invoice_payment"].find({"job_id": job_id})
+        journal1 = dbname["xero_invoice_payment"].find({"job_id":job_id})
 
         journal = []
         for p1 in journal1:
             journal.append(p1)
 
-        QBO_COA = dbname["QBO_COA"].find({"job_id": job_id})
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        supplier = dbname["QBO_Supplier"].find({"job_id": job_id})
+        supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
         supplier1 = []
         for k in supplier:
             supplier1.append(k)
 
-        QBO_Customer = dbname["QBO_Customer"].find({"job_id": job_id})
+        QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
         QBO_customer = []
         for p3 in QBO_Customer:
             QBO_customer.append(p3)
 
-        QBO_Tax = dbname["QBO_Tax"].find({"job_id": job_id})
+        QBO_Tax = dbname["QBO_Tax"].find({"job_id":job_id})
         QBO_tax = []
         for p4 in QBO_Tax:
             QBO_tax.append(p4)
 
-        Xero_COA = dbname["xero_coa"].find({"job_id": job_id})
+        Xero_COA = dbname["xero_coa"].find({"job_id":job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
 
-        xero_arc_coa = dbname["xero_archived_coa"].find({"job_id": job_id})
+        xero_arc_coa = dbname["xero_archived_coa"].find({"job_id":job_id})
         for p7 in xero_arc_coa:
             xero_coa.append(p7)
 
@@ -644,10 +634,8 @@ def add_xero_invoice_payment_as_journal(job_id, task_id):
             for j1 in range(0, len(QBO_coa)):
                 for j2 in range(0, len(xero_coa)):
                     if QuerySet1[i]["AccountCode"] == xero_coa[j2]["AccountID"]:
-                        if (xero_coa[j2]["Name"].strip().lower() == QBO_coa[j1][
-                            "FullyQualifiedName"].strip().lower()) or (
-                                xero_coa[j2]["Name"].replace(":", "-") == QBO_coa[j1]["FullyQualifiedName"]):
-
+                        if (xero_coa[j2]["Name"].strip().lower()== QBO_coa[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa[j2]["Name"].replace(":","-")== QBO_coa[j1]["FullyQualifiedName"]):
+                            
                             if QBO_coa[j1]["AccountType"] != "Bank":
                                 print(QuerySet1[i]["Contact"])
                                 payment_date = QuerySet1[i]["Date"]
@@ -660,12 +648,11 @@ def add_xero_invoice_payment_as_journal(job_id, task_id):
                                 TxnTaxDetail = {}
                                 QuerySet2["TxnTaxDetail"] = TxnTaxDetail
                                 QuerySet2["DocNumber"] = (
-                                        "IP-" + QuerySet1[i]["InvoiceID"][-10:]
+                                    "IP-" + QuerySet1[i]["InvoiceID"][-10:]
                                 )
-
+                                
                                 QuerySet2["TxnDate"] = str(journal_date1)[0:10]
-                                QuerySet2['PrivateNote'] = "InvoiceID:- " + QuerySet1[i][
-                                    'InvoiceID'] + " & " + "InvoiceNo:- " + QuerySet1[i]['InvoiceNumber']
+                                QuerySet2['PrivateNote'] = "InvoiceID:- "+QuerySet1[i]['InvoiceID']+" & "+"InvoiceNo:- "+QuerySet1[i]['InvoiceNumber']
 
                                 QuerySet3 = {}
                                 QuerySet31 = {}
@@ -696,23 +683,23 @@ def add_xero_invoice_payment_as_journal(job_id, task_id):
                                 for c1 in range(0, len(QBO_customer)):
                                     entity["Type"] = "Customer"
                                     if (
-                                            QuerySet1[i]["Contact"].lower()
-                                            == QBO_customer[c1]["DisplayName"].lower()
+                                        QuerySet1[i]["Contact"].lower()
+                                        == QBO_customer[c1]["DisplayName"].lower()
                                     ):
                                         EntityRef["name"] = QBO_customer[c1]["DisplayName"]
                                         EntityRef["value"] = QBO_customer[c1]["Id"]
                                     elif QBO_customer[c1]["DisplayName"].startswith(
-                                            QuerySet1[i]["Contact"]
+                                        QuerySet1[i]["Contact"]
                                     ) and QBO_customer[c1]["DisplayName"].endswith("- C"):
                                         EntityRef["name"] = QBO_customer[c1]["DisplayName"]
                                         EntityRef["value"] = QBO_customer[c1]["Id"]
-
+                                    
                                 QuerySet41["AccountRef"] = QuerySet42
 
                                 for j11 in range(0, len(QBO_coa)):
                                     if (
-                                            QBO_coa[j11]["AccountType"]
-                                            == "Accounts Receivable"
+                                        QBO_coa[j11]["AccountType"]
+                                        == "Accounts Receivable"
                                     ):
                                         QuerySet42["name"] = QBO_coa[j11][
                                             "FullyQualifiedName"
@@ -724,53 +711,53 @@ def add_xero_invoice_payment_as_journal(job_id, task_id):
 
                                 # if QuerySet1[i]['InvoiceNumber']=='REG#14':
                                 payload = json.dumps(QuerySet2)
+                                
 
-                                post_data_in_qbo(url, headers, payload, dbname['xero_invoice_payment'], _id, job_id,
-                                                 task_id, QuerySet1[i]['InvoiceNumber'])
-
+                                post_data_in_qbo(url, headers, payload,dbname['xero_invoice_payment'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
+                
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+        
 
-
-def add_xero_receive_overpayment_cash_refund_as_journal(job_id, task_id):
+def add_xero_receive_overpayment_cash_refund_as_journal(job_id,task_id):
     try:
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
         url = f"{base_url}/journalentry?minorversion={minorversion}"
 
-        journal1 = dbname["xero_receive_overpayment_cash_refund"].find({"job_id": job_id})
+        journal1 = dbname["xero_receive_overpayment_cash_refund"].find({"job_id":job_id})
 
         journal = []
         for p1 in journal1:
             journal.append(p1)
 
-        QBO_COA = dbname["QBO_COA"].find({"job_id": job_id})
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        supplier = dbname["QBO_Supplier"].find({"job_id": job_id})
+        supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
         supplier1 = []
         for k in supplier:
             supplier1.append(k)
 
-        QBO_Customer = dbname["QBO_Customer"].find({"job_id": job_id})
+        QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
         QBO_customer = []
         for p3 in QBO_Customer:
             QBO_customer.append(p3)
 
-        QBO_Tax = dbname["QBO_Tax"].find({"job_id": job_id})
+        QBO_Tax = dbname["QBO_Tax"].find({"job_id":job_id})
         QBO_tax = []
         for p4 in QBO_Tax:
             QBO_tax.append(p4)
 
-        Xero_COA = dbname["xero_coa"].find({"job_id": job_id})
+        Xero_COA = dbname["xero_coa"].find({"job_id":job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
 
-        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id": job_id})
+        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id":job_id})
         for p7 in xero_archived_coa1:
             xero_coa.append(p7)
 
@@ -782,10 +769,8 @@ def add_xero_receive_overpayment_cash_refund_as_journal(job_id, task_id):
             for j1 in range(0, len(QBO_coa)):
                 for j2 in range(0, len(xero_coa)):
                     if QuerySet1[i]["AccountCode"] == xero_coa[j2]["AccountID"]:
-                        if (xero_coa[j2]["Name"].strip().lower() == QBO_coa[j1][
-                            "FullyQualifiedName"].strip().lower()) or (
-                                xero_coa[j2]["Name"].replace(":", "-") == QBO_coa[j1]["FullyQualifiedName"]):
-
+                        if (xero_coa[j2]["Name"].strip().lower()== QBO_coa[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa[j2]["Name"].replace(":","-")== QBO_coa[j1]["FullyQualifiedName"]):
+                        
                             payment_date = QuerySet1[i]["Date"]
                             payment_date11 = int(payment_date[6:16])
                             journal_date1 = datetime.utcfromtimestamp(
@@ -796,10 +781,9 @@ def add_xero_receive_overpayment_cash_refund_as_journal(job_id, task_id):
                             TxnTaxDetail = {}
                             QuerySet2["TxnTaxDetail"] = TxnTaxDetail
                             QuerySet2["DocNumber"] = (
-                                    "RMOPCR-" + QuerySet1[i]["InvoiceID"][-10:]
+                                "RMOPCR-" + QuerySet1[i]["AccountCode"][-10:]
                             )
-                            QuerySet2['PrivateNote'] = "InvoiceID:- " + QuerySet1[i][
-                                'InvoiceID'] + " & " + "ReceiveMoneyOverPaymentNo:- " + QuerySet1[i]['InvoiceNumber']
+                            # QuerySet2['PrivateNote'] = "InvoiceID:- "+QuerySet1[i]['InvoiceID']+" & "+"ReceiveMoneyOverPaymentNo:- "+QuerySet1[i]['InvoiceNumber']
                             QuerySet2["TxnDate"] = str(journal_date1)[0:10]
 
                             QuerySet3 = {}
@@ -831,25 +815,25 @@ def add_xero_receive_overpayment_cash_refund_as_journal(job_id, task_id):
                             for c1 in range(0, len(QBO_customer)):
                                 entity["Type"] = "Customer"
                                 if (
-                                        QuerySet1[i]["Contact"].lower()
-                                        == QBO_customer[c1]["DisplayName"].lower()
+                                    QuerySet1[i]["Contact"].lower()
+                                    == QBO_customer[c1]["DisplayName"].lower()
                                 ):
                                     EntityRef["name"] = QBO_customer[c1]["DisplayName"]
                                     EntityRef["value"] = QBO_customer[c1]["Id"]
                                     break
                                 elif QBO_customer[c1]["DisplayName"].startswith(
-                                        QuerySet1[i]["Contact"]
+                                    QuerySet1[i]["Contact"]
                                 ) and QBO_customer[c1]["DisplayName"].endswith("- C"):
                                     EntityRef["name"] = QBO_customer[c1]["DisplayName"]
                                     EntityRef["value"] = QBO_customer[c1]["Id"]
                                     continue
-
+                            
                             QuerySet41["AccountRef"] = QuerySet42
 
                             for j1 in range(0, len(QBO_coa)):
                                 if (
-                                        QBO_coa[j1]["AccountType"]
-                                        == "Accounts Receivable"
+                                    QBO_coa[j1]["AccountType"]
+                                    == "Accounts Receivable"
                                 ):
                                     QuerySet42["value"] = QBO_coa[j1]["Id"]
 
@@ -860,67 +844,66 @@ def add_xero_receive_overpayment_cash_refund_as_journal(job_id, task_id):
                             print(payload)
                             print("-")
 
-                            post_data_in_qbo(url, headers, payload, dbname['xero_supplier_credit_cash_refund'], _id,
-                                             job_id, task_id, QuerySet1[i]['InvoiceNumber'])
-
+                            post_data_in_qbo(url, headers, payload,dbname['xero_receive_overpayment_cash_refund'],_id, job_id,task_id, QuerySet1[i]['AccountCode'])
+            
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> xero_supplier_credit_cash_refund", ex)
+        logger.error("Error in xero -> qbowriter -> xero_receive_overpayment_cash_refund", ex)
 
 
-def add_xero_spend_overpayment_cash_refund_as_journal(job_id, task_id):
+
+def add_xero_spend_overpayment_cash_refund_as_journal(job_id,task_id):
     try:
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
 
         url = f"{base_url}/journalentry?minorversion={minorversion}"
 
-        journal1 = dbname["xero_spend_overpayment_cash_refund"].find({"job_id": job_id})
+        journal1 = dbname["xero_spend_overpayment_cash_refund"].find({"job_id":job_id})
 
         journal = []
         for p1 in journal1:
             journal.append(p1)
 
-        QBO_COA = dbname["QBO_COA"].find({"job_id": job_id})
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
         QBO_coa = []
         for p2 in QBO_COA:
             QBO_coa.append(p2)
 
-        supplier = dbname["QBO_Supplier"].find({"job_id": job_id})
+        supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
         supplier1 = []
         for k in supplier:
             supplier1.append(k)
 
-        QBO_Customer = dbname["QBO_Customer"].find({"job_id": job_id})
-        QBO_customer = []
+        QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
+        customer1 = []
         for p3 in QBO_Customer:
-            QBO_customer.append(p3)
+            customer1.append(p3)
 
-        QBO_Tax = dbname["QBO_Tax"].find({"job_id": job_id})
+        QBO_Tax = dbname["QBO_Tax"].find({"job_id":job_id})
         QBO_tax = []
         for p4 in QBO_Tax:
             QBO_tax.append(p4)
 
-        Xero_COA = dbname["xero_coa"].find({"job_id": job_id})
+        Xero_COA = dbname["xero_coa"].find({"job_id":job_id})
         xero_coa = []
         for p6 in Xero_COA:
             xero_coa.append(p6)
 
-        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id": job_id})
+        xero_archived_coa1 = dbname["xero_archived_coa"].find({"job_id":job_id})
         for p7 in xero_archived_coa1:
             xero_coa.append(p7)
 
         QuerySet1 = journal
 
         for i in range(0, len(QuerySet1)):
+            print(i)
             _id = QuerySet1[i]['_id']
             task_id = QuerySet1[i]['task_id']
             for j1 in range(0, len(QBO_coa)):
                 for j2 in range(0, len(xero_coa)):
                     if QuerySet1[i]["AccountCode"] == xero_coa[j2]["AccountID"]:
-                        if (xero_coa[j2]["Name"].strip().lower() == QBO_coa[j1][
-                            "FullyQualifiedName"].strip().lower()) or (
-                                xero_coa[j2]["Name"].replace(":", "-") == QBO_coa[j1]["FullyQualifiedName"]):
-
+                        if (xero_coa[j2]["Name"].strip().lower()== QBO_coa[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa[j2]["Name"].replace(":","-")== QBO_coa[j1]["FullyQualifiedName"]):
+                            print(QBO_coa[j1]["FullyQualifiedName"])
                             payment_date = QuerySet1[i]["Date"]
                             payment_date11 = int(payment_date[6:16])
                             journal_date1 = datetime.utcfromtimestamp(
@@ -931,7 +914,7 @@ def add_xero_spend_overpayment_cash_refund_as_journal(job_id, task_id):
                             TxnTaxDetail = {}
                             QuerySet2["TxnTaxDetail"] = TxnTaxDetail
                             QuerySet2["DocNumber"] = (
-                                    "SMOPCR-" + QuerySet1[i]["Reference"][0:14]
+                                "SMOPCR-" + QuerySet1[i]["AccountCode"][0:14]
                             )
                             # QuerySet2['PrivateNote'] = "InvoiceID:- "+QuerySet1[i]['InvoiceID']+" & "+"SpendMoneyOverPaymentNo:- "+QuerySet1[i]['InvoiceNumber']
                             QuerySet2["TxnDate"] = str(journal_date1)[0:10]
@@ -965,27 +948,27 @@ def add_xero_spend_overpayment_cash_refund_as_journal(job_id, task_id):
                             for j in range(0, len(supplier1)):
                                 entity["Type"] = "Vendor"
                                 if (
-                                        QuerySet1[i]["Contact"].lower()
-                                        == supplier1[j]["DisplayName"].lower()
+                                    QuerySet1[i]["Contact"].lower()
+                                    == supplier1[j]["DisplayName"].lower()
                                 ):
                                     EntityRef["name"] = supplier1[j]["DisplayName"]
                                     EntityRef["value"] = supplier1[j]["Id"]
                                     break
                                 elif supplier1[j]["DisplayName"].startswith(
-                                        QuerySet1[i]["Contact"]
+                                    QuerySet1[i]["Contact"]
                                 ) and supplier1[j]["DisplayName"].endswith("- S"):
                                     EntityRef["name"] = supplier1[j]["DisplayName"]
                                     EntityRef["value"] = supplier1[j]["Id"]
                                     continue
-
+                            
                             QuerySet41["AccountRef"] = QuerySet42
 
-                            for j1 in range(0, len(QBO_coa)):
+                            for j3 in range(0, len(QBO_coa)):
                                 if (
-                                        QBO_coa[j1]["AccountType"]
-                                        == "Accounts Payable"
+                                    QBO_coa[j3]["AccountType"]
+                                    == "Accounts Payable"
                                 ):
-                                    QuerySet42["value"] = QBO_coa[j1]["Id"]
+                                    QuerySet42["value"] = QBO_coa[j3]["Id"]
 
                             QuerySet2["Line"].append(QuerySet3)
                             QuerySet2["Line"].append(QuerySet4)
@@ -994,9 +977,8 @@ def add_xero_spend_overpayment_cash_refund_as_journal(job_id, task_id):
                             print(payload)
                             print("-")
 
-                            post_data_in_qbo(url, headers, payload, dbname['xero_supplier_credit_cash_refund'], _id,
-                                             job_id, task_id, QuerySet1[i]['Reference'])
-
+                            post_data_in_qbo(url, headers, payload,dbname['xero_spend_overpayment_cash_refund'],_id, job_id,task_id, QuerySet1[i]['AccountCode'])
+                            
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> xero_supplier_credit_cash_refund", ex)
 

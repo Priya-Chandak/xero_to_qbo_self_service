@@ -41,11 +41,12 @@ def get_aged_receivable_summary(job_id,task_id):
         result_string = one_day_before.strftime('%Y-%m-%d')
         print(result_string)
 
-        for i in range(0,len(xero_customer)):
+        for i1 in range(0,len(xero_customer)):
             y1=int(result_string[0:4])
             m1=int(result_string[5:7])
             d1=int(result_string[8:])
-            main_url = f"{base_url}/Reports/AgedReceivablesByContact?contactId={xero_customer[i]['ContactID']}&fromDate=2010-01-01&toDate={y1}-{m1}-{d1}"
+            # main_url = f"{base_url}/Reports/AgedReceivablesByContact?contactId={xero_customer[i]['ContactID']}&fromDate=2020-01-01&toDate={y1}-{m1}-{d1}"
+            main_url = f"{base_url}/Reports/AgedReceivablesByContact?contactId={xero_customer[i1]['ContactID']}&date={y1}-{m1}-{d1}"
                 
             print(main_url)
             
@@ -54,17 +55,49 @@ def get_aged_receivable_summary(job_id,task_id):
             time.sleep(1)
             
             AR=[]
+            # if response1.status_code == 200:
+            #     a = response1.json()
+            #     b={}
+            #     b['job_id'] = job_id
+            #     b['ContactID'] = xero_customer[i]['ContactID']
+            #     b['ContactName'] = xero_customer[i]['ContactName']
+            #     if a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['RowType']=="SummaryRow":
+            #         b['xero_balance']=a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'][len(a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'])-1]["Value"]
+            #         AR.append(b)
+
             if response1.status_code == 200:
                 a = response1.json()
+                total=0
+                paid=0
+                due=0
+                print(len(a['Reports'][0]['Rows']))
+                for i in range(1,len(a['Reports'][0]['Rows'])):
+                    for j in range(0,len(a['Reports'][0]['Rows'][i]['Rows'])-1):
+                        print(i,j)
+                        date_string = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Value']
+                        print(date_string,"date string")
+                        if date_string != '':
+                            date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S')
+                            comparison_date = datetime(2023, 6, 30)
+                            if date_object <= comparison_date:
+                                print("inside loop")
+                                e={}
+                                e['inv_id'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Attributes'][0]['Value']
+                                e['date'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Value']
+                                e['duedate'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][2]['Value']
+                                paid = paid + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'])
+                                total = total+ float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
+                                print(total,"inside loop-----")
+                                e['credited'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']
+                                due = due + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
                 b={}
                 b['job_id'] = job_id
-                b['ContactID'] = xero_customer[i]['ContactID']
-                b['ContactName'] = xero_customer[i]['ContactName']
-                if a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['RowType']=="SummaryRow":
-                    b['xero_balance']=a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'][len(a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'])-1]["Value"]
-                    AR.append(b)
+                b['ContactID'] = xero_customer[i1]['ContactID']
+                b['ContactName'] = xero_customer[i1]['ContactName']
+                b['xero_balance']=due
+                AR.append(b)
 
-            print(AR,"AR---------------------------------")  
+            # print(AR,"AR---------------------------------")  
             
             if len(AR)>0:
                 xero_ar_summary.insert_many(AR)
@@ -96,17 +129,19 @@ def get_aged_payable_summary(job_id,task_id):
         for p1 in x:
             xero_supplier.append(p1)
         
+        print(xero_supplier,len(xero_supplier),"----length")
+        
         print(start_date,type(start_date))
         date_object = datetime.strptime(start_date, '%Y-%m-%d')
         one_day_before = date_object - timedelta(days=1)
         result_string = one_day_before.strftime('%Y-%m-%d')
         print(result_string)
 
-        for i in range(0,len(xero_supplier)):
+        for i1 in range(0,len(xero_supplier)):
             y1=int(result_string[0:4])
             m1=int(result_string[5:7])
             d1=int(result_string[8:])
-            main_url = f"{base_url}/Reports/AgedPayablesByContact?contactId={xero_supplier[i]['ContactID']}&fromDate=2010-01-01&toDate={y1}-{m1}-{d1}"
+            main_url = f"{base_url}/Reports/AgedPayablesByContact?contactId={xero_supplier[i1]['ContactID']}&date={y1}-{m1}-{d1}"
                 
             print(main_url)
             
@@ -115,17 +150,52 @@ def get_aged_payable_summary(job_id,task_id):
             time.sleep(1)
             
             AP=[]
+
             if response1.status_code == 200:
                 a = response1.json()
+                total=0
+                paid=0
+                due=0
+                print(len(a['Reports'][0]['Rows']))
+                for i in range(1,len(a['Reports'][0]['Rows'])):
+                    for j in range(0,len(a['Reports'][0]['Rows'][i]['Rows'])-1):
+                        print(i,j)
+                        date_string = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Value']
+                        print(date_string,"date string")
+                        if date_string != '':
+                            date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S')
+                            comparison_date = datetime(2023, 6, 30)
+                            if date_object <= comparison_date:
+                                print("inside loop")
+                                e={}
+                                e['inv_id'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Attributes'][0]['Value']
+                                e['date'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Value']
+                                e['duedate'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][2]['Value']
+                                paid = paid + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'])
+                                total = total+ float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
+                                print(total,"inside loop-----")
+                                e['credited'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']
+                                due = due + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
                 b={}
                 b['job_id'] = job_id
-                b['ContactID'] = xero_supplier[i]['ContactID']
-                b['ContactName'] = xero_supplier[i]['ContactName']
-                if a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['RowType']=="SummaryRow":
-                    b['xero_balance']=a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'][len(a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'])-1]["Value"]
-                    AP.append(b)
+                b['ContactID'] = xero_supplier[i1]['ContactID']
+                b['ContactName'] = xero_supplier[i1]['ContactName']
+                b['xero_balance']=due
+                AP.append(b)
 
-            print(AP,"AP---------------------------------")  
+
+            # if response1.status_code == 200:
+            #     a = response1.json()
+            #     b={}
+            #     b['job_id'] = job_id
+            #     b['ContactID'] = xero_supplier[i]['ContactID']
+            #     b['ContactName'] = xero_supplier[i]['ContactName']
+            #     if a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['RowType']=="SummaryRow":
+            #         b['xero_balance']=a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'][len(a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'])-1]['Value']
+            #         # print(f"a['Reports'][0]['Rows'][{(len(a['Reports'][0]['Rows'])-1)}]['Rows'][0]['Cells'][{len(a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'])-1}]['Value']")
+            #         AP.append(b)
+
+            # print(AP,"AP---------------------------------")  
             
             if len(AP)>0:
                 xero_ap_summary.insert_many(AP)
@@ -156,37 +226,49 @@ def get_qbo_ar_customer(job_id,task_id):
         for p4 in Xero_AR_Customer1:
             Xero_AR_Customer.append(p4)
 
-        QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
-        QBO_customer = []
-        for p5 in QBO_Customer:
-            QBO_customer.append(p5)
+        # QBO_Customer = dbname["QBO_Customer"].find({"job_id":job_id})
+        # QBO_customer = []
+        # for p5 in QBO_Customer:
+        #     QBO_customer.append(p5)
 
         qbo_ar=[]
         date_object = datetime.strptime(start_date, '%Y-%m-%d')
         one_day_before = date_object - timedelta(days=1)
         result_string = one_day_before.strftime('%Y-%m-%d')
+
+        url = f"{base_url}/reports/AgedReceivables?report_date={result_string}&minorversion={minorversion}"
+        print(url)
+        payload={}
+        response = requests.request("GET", url, headers=get_data_header, data=payload)
+        data=response.json()
+
+        QBO_customer=[]
+        for k in range(0,len(data['Rows']['Row'])-1):
+            e={}
+            e['ContactName']=data['Rows']['Row'][k]['ColData'][0]['value']
+            e['qbo_balance']=data['Rows']['Row'][k]['ColData'][6]['value']
+            e['contact_id']=data['Rows']['Row'][k]['ColData'][0]['id']
+            e['job_id']=job_id
+            print(e)
+            QBO_customer.append(e)
                     
+    
         for i in range(0,len(Xero_AR_Customer)):
-            print(i)
             for j in range(0,len(QBO_customer)):
-                if (Xero_AR_Customer[i]['ContactName'] == QBO_customer[j]['DisplayName']): 
+                if (Xero_AR_Customer[i]['ContactName'] == QBO_customer[j]['ContactName']) or (QBO_customer[j]['ContactName'].startswith(Xero_AR_Customer[i]['ContactName']) and ((QBO_customer[j]['ContactName']).endswith("- C") or (QBO_customer[j]['ContactName']).endswith("-C"))):
+                 
                     queryset={}
-                    url = f"{base_url}/reports/CustomerBalance?customer={QBO_customer[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
-                    print(url)
-                    payload = {}
-                    
-                    response = requests.request("GET", url, headers=get_data_header, data=payload)
-                    data=response.json()
-                    queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
-                    queryset["qbo_balance"] = data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']
+                    queryset['diff'] = True if float(Xero_AR_Customer[i]['xero_balance'])!=float(QBO_customer[j]['qbo_balance']) else False
+                    queryset["ContactName"] = Xero_AR_Customer[i]['ContactName']
+                    queryset["qbo_balance"] = QBO_customer[j]['qbo_balance']
                     queryset['job_id'] = job_id
-                    queryset['diff'] = True if Xero_AR_Customer[i]['xero_balance']!=data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'] else False
                     try:
                         queryset['posting_type'] = "Credit" if float(Xero_AR_Customer[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
                         queryset['diff_amount'] = float(Xero_AR_Customer[i]['xero_balance']) - float(queryset["qbo_balance"])
                     except ValueError:
                         queryset['posting_type'] = "Undefined"
                         queryset['diff_amount'] = 0 
+
                     dbname["xero_AR"].update_one(
                         {
                         "ContactName": f"{Xero_AR_Customer[i]['ContactName']}"
@@ -194,50 +276,101 @@ def get_qbo_ar_customer(job_id,task_id):
                         {
                             "$set": 
                             {
-                                "qbo_balance": f"{data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']}",
-                                "QBO_ContactID":f"{QBO_customer[j]['Id']}",
+                                "qbo_balance": QBO_customer[j]['qbo_balance'],
+                                "QBO_ContactID":f"{QBO_customer[j]['contact_id']}",
                                 "diff": f"{queryset['diff']}",
                                 "posting_type":f"{queryset['posting_type']}",
                                 "diff_amount":f"{queryset['diff_amount']}"
                             }
                         }
                         )
+                    qbo_ar.append(queryset)
                     break
 
-                elif (QBO_customer[j]['DisplayName'].startswith(Xero_AR_Customer[i]['ContactName']) and (QBO_customer[j]['DisplayName']).endswith("- C") ):
-                    queryset={}
-                    url = f"{base_url}/reports/CustomerBalance?customer={QBO_customer[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
-                    print(url)
-                    payload = {}
                     
-                    response = requests.request("GET", url, headers=get_data_header, data=payload)
-                    data=response.json()
-                    queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
-                    queryset["qbo_balance"] = data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']
-                    queryset['job_id'] = job_id
-                    queryset['diff'] = True if Xero_AR_Customer[i]['xero_balance']!=data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'] else False
-                    try:
-                        queryset['posting_type'] = "Credit" if float(Xero_AR_Customer[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
-                        queryset['diff_amount'] = float(Xero_AR_Customer[i]['xero_balance']) - float(queryset["qbo_balance"])
-                    except ValueError:
-                        queryset['posting_type'] = "Undefined"
-                        queryset['diff_amount'] = 0 
-                    dbname["xero_AR"].update_one(
-                        {
-                        "ContactName": f"{Xero_AR_Customer[i]['ContactName']}"
-                        },
-                        {
-                            "$set": 
-                            {
-                                "qbo_balance": f"{data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']}",
-                                "QBO_ContactID":f"{QBO_customer[j]['Id']}",
-                                "diff": f"{queryset['diff']}",
-                                "posting_type":f"{queryset['posting_type']}",
-                                "diff_amount":f"{queryset['diff_amount']}"
-                            }
-                        }
-                        )
-                    break
+        # for i in range(0,len(Xero_AR_Customer)):
+        #     print(i)
+        #     for j in range(0,len(QBO_customer)):
+        #         if (Xero_AR_Customer[i]['ContactName'] == QBO_customer[j]['DisplayName']): 
+        #             queryset={}
+        #             url = f"{base_url}/reports/CustomerBalance?customer={QBO_customer[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
+        #             print(url)
+        #             payload = {}
+                    
+        #             response = requests.request("GET", url, headers=get_data_header, data=payload)
+        #             data=response.json()
+        #             queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
+        #             queryset['job_id'] = job_id
+        #             try:
+        #                 queryset["qbo_balance"] = float(data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'])
+        #                 queryset['posting_type'] = "Credit" if float(Xero_AR_Customer[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
+        #                 queryset['diff_amount'] = float(Xero_AR_Customer[i]['xero_balance']) - float(queryset["qbo_balance"])
+        #                 queryset['diff'] = True if Xero_AR_Customer[i]['xero_balance']!=queryset["qbo_balance"] else False
+                    
+        #             except ValueError:
+        #                 queryset["qbo_balance"]=float(Xero_AR_Customer[i]['xero_balance'])
+        #                 queryset['posting_type'] = "Credit" if float(Xero_AR_Customer[i]['xero_balance'])>0 else "Debit"
+        #                 queryset['diff_amount'] = queryset["qbo_balance"]
+        #                 queryset['diff'] = False
+
+        #             dbname["xero_AR"].update_one(
+        #                 {
+        #                 "ContactName": f"{Xero_AR_Customer[i]['ContactName']}"
+        #                 },
+        #                 {
+        #                     "$set": 
+        #                     {
+        #                         "qbo_balance": queryset["qbo_balance"],
+        #                         "QBO_ContactID":f"{QBO_customer[j]['Id']}",
+        #                         "diff": queryset['diff'],
+        #                         "posting_type":f"{queryset['posting_type']}",
+        #                         "diff_amount":f"{queryset['diff_amount']}"
+        #                     }
+        #                 }
+        #                 )
+        #             qbo_ar.append(queryset)
+                    
+        #             break
+
+        #         elif (QBO_customer[j]['DisplayName'].startswith(Xero_AR_Customer[i]['ContactName']) and (QBO_customer[j]['DisplayName']).endswith("- C") ):
+        #             queryset={}
+        #             url = f"{base_url}/reports/CustomerBalance?customer={QBO_customer[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
+        #             print(url)
+        #             payload = {}
+                    
+        #             response = requests.request("GET", url, headers=get_data_header, data=payload)
+        #             data=response.json()
+        #             queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
+        #             queryset['job_id'] = job_id
+        #             try:
+        #                 queryset["qbo_balance"] = float(data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'])
+        #                 queryset['posting_type'] = "Credit" if float(Xero_AR_Customer[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
+        #                 queryset['diff_amount'] = float(Xero_AR_Customer[i]['xero_balance']) - float(queryset["qbo_balance"])
+        #                 queryset['diff'] = True if Xero_AR_Customer[i]['xero_balance']!=queryset["qbo_balance"] else False
+                    
+        #             except ValueError:
+        #                 queryset["qbo_balance"] = float(Xero_AR_Customer[i]['xero_balance'])
+        #                 queryset['posting_type'] = "Credit" if float(Xero_AR_Customer[i]['xero_balance'])>0 else "Debit"
+        #                 queryset['diff'] = False 
+        #                 queryset['diff_amount'] = queryset["qbo_balance"]
+                        
+        #             dbname["xero_AR"].update_one(
+        #                 {
+        #                 "ContactName": f"{Xero_AR_Customer[i]['ContactName']}"
+        #                 },
+        #                 {
+        #                     "$set": 
+        #                     {
+        #                         "qbo_balance": queryset["qbo_balance"],
+        #                         "QBO_ContactID":f"{QBO_customer[j]['Id']}",
+        #                         "diff": queryset['diff'],
+        #                         "posting_type":f"{queryset['posting_type']}",
+        #                         "diff_amount":f"{queryset['diff_amount']}"
+        #                     }
+        #                 }
+        #                 )
+        #             qbo_ar.append(queryset)
+        #             break
                 
         if len(qbo_ar)>0:
             qbo_ar_summary.insert_many(qbo_ar)
@@ -266,37 +399,49 @@ def get_qbo_ap_supplier(job_id,task_id):
         for p4 in xero_AP_Supplier1:
             xero_AP_Supplier.append(p4)
 
-        QBO_Supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
-        QBO_supplier = []
-        for p5 in QBO_Supplier:
-            QBO_supplier.append(p5)
+        # QBO_Supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
+        # QBO_supplier = []
+        # for p5 in QBO_Supplier:
+        #     QBO_supplier.append(p5)
 
         qbo_ap=[]
         date_object = datetime.strptime(start_date, '%Y-%m-%d')
         one_day_before = date_object - timedelta(days=1)
         result_string = one_day_before.strftime('%Y-%m-%d')
+        
+        url = f"{base_url}/reports/AgedPayables?report_date={result_string}&minorversion={minorversion}"
+        print(url)
+        payload={}
+        response = requests.request("GET", url, headers=get_data_header, data=payload)
+        data=response.json()
+
+        QBO_supplier=[]
+        for k in range(0,len(data['Rows']['Row'])-1):
+            e={}
+            e['ContactName']=data['Rows']['Row'][k]['ColData'][0]['value']
+            e['qbo_balance']=data['Rows']['Row'][k]['ColData'][6]['value']
+            e['contact_id']=data['Rows']['Row'][k]['ColData'][0]['id']
+            e['job_id']=job_id
+            print(e)
+            QBO_supplier.append(e)
                     
+    
         for i in range(0,len(xero_AP_Supplier)):
-            print(i)
             for j in range(0,len(QBO_supplier)):
-                if (xero_AP_Supplier[i]['ContactName'] == QBO_supplier[j]['DisplayName']): 
+                if (xero_AP_Supplier[i]['ContactName'] == QBO_supplier[j]['ContactName']) or (QBO_supplier[j]['ContactName'].startswith(xero_AP_Supplier[i]['ContactName']) and ((QBO_supplier[j]['ContactName']).endswith("- S") or (QBO_supplier[j]['ContactName']).endswith("-S"))):
+                 
                     queryset={}
-                    url = f"{base_url}/reports/VendorBalance?vendor={QBO_supplier[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
-                    print(url)
-                    payload = {}
-                    
-                    response = requests.request("GET", url, headers=get_data_header, data=payload)
-                    data=response.json()
-                    queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
-                    queryset["qbo_balance"] = data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']
+                    queryset['diff'] = True if float(xero_AP_Supplier[i]['xero_balance'])!=float(QBO_supplier[j]['qbo_balance']) else False
+                    queryset["ContactName"] = xero_AP_Supplier[i]['ContactName']
+                    queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
                     queryset['job_id'] = job_id
-                    queryset['diff'] = True if xero_AP_Supplier[i]['xero_balance']!=data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'] else False
                     try:
                         queryset['posting_type'] = "Credit" if float(xero_AP_Supplier[i]['xero_balance']) > float(queryset["qbo_balance"]) else "Debit"
                         queryset['diff_amount'] = float(xero_AP_Supplier[i]['xero_balance']) - float(queryset["qbo_balance"])
                     except ValueError:
                         queryset['posting_type'] = "Undefined"
                         queryset['diff_amount'] = 0 
+
                     dbname["xero_AP"].update_one(
                         {
                         "ContactName": f"{xero_AP_Supplier[i]['ContactName']}"
@@ -304,50 +449,99 @@ def get_qbo_ap_supplier(job_id,task_id):
                         {
                             "$set": 
                             {
-                                "qbo_balance": f"{data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']}",
-                                "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
+                                "qbo_balance": QBO_supplier[j]['qbo_balance'],
+                                "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
                                 "diff": f"{queryset['diff']}",
                                 "posting_type":f"{queryset['posting_type']}",
                                 "diff_amount":f"{queryset['diff_amount']}"
                             }
                         }
                         )
+                    qbo_ap.append(queryset)
                     break
 
-                elif (QBO_supplier[j]['DisplayName'].startswith(xero_AP_Supplier[i]['ContactName']) and ((QBO_supplier[j]['DisplayName']).endswith("- S") or (QBO_supplier[j]['DisplayName']).endswith("-S")) ):
-                    queryset={}
-                    url = f"{base_url}/reports/CustomerBalance?customer={QBO_supplier[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
-                    print(url)
-                    payload = {}
                     
-                    response = requests.request("GET", url, headers=get_data_header, data=payload)
-                    data=response.json()
-                    queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
-                    queryset["qbo_balance"] = data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']
-                    queryset['job_id'] = job_id
-                    queryset['diff'] = True if xero_AP_Supplier[i]['xero_balance']!=data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'] else False
-                    try:
-                        queryset['posting_type'] = "Credit" if float(xero_AP_Supplier[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
-                        queryset['diff_amount'] = float(xero_AP_Supplier[i]['xero_balance']) - float(queryset["qbo_balance"])
-                    except ValueError:
-                        queryset['posting_type'] = "Undefined"
-                        queryset['diff_amount'] = 0 
-                    dbname["xero_AP"].update_one(
-                        {
-                        "ContactName": f"{xero_AP_Supplier[i]['ContactName']}"
-                        },
-                        {
-                            "$set": 
-                            {
-                                "qbo_balance": f"{data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']}",
-                                "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
-                                "diff": f"{queryset['diff']}",
-                                "posting_type":f"{queryset['posting_type']}",
-                                "diff_amount":f"{queryset['diff_amount']}"
-                            }
-                        }
-                        )
-                    break
+                    
+                  
+        
+        # for i in range(0,len(xero_AP_Supplier)):
+        #     print(i)
+        #     for j in range(0,len(QBO_supplier)):
+        #         if (xero_AP_Supplier[i]['ContactName'] == QBO_supplier[j]['DisplayName']): 
+        #             queryset={}
+                    
+        #             url = f"{base_url}/reports/VendorBalance?vendor={QBO_supplier[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
+        #             print(url)
+        #             payload = {}
+                    
+        #             response = requests.request("GET", url, headers=get_data_header, data=payload)
+        #             data=response.json()
+        #             queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
+        #             queryset["qbo_balance"] = data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']
+        #             print(queryset["ContactName"])
+        #             print(queryset["qbo_balance"])
+
+        #             queryset['job_id'] = job_id
+        #             queryset['diff'] = True if xero_AP_Supplier[i]['xero_balance']!=data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'] else False
+        #             try:
+        #                 queryset['posting_type'] = "Credit" if float(xero_AP_Supplier[i]['xero_balance']) > float(queryset["qbo_balance"]) else "Debit"
+        #                 queryset['diff_amount'] = float(xero_AP_Supplier[i]['xero_balance']) - float(queryset["qbo_balance"])
+        #             except ValueError:
+        #                 queryset['posting_type'] = "Undefined"
+        #                 queryset['diff_amount'] = 0 
+        #             dbname["xero_AP"].update_one(
+        #                 {
+        #                 "ContactName": f"{xero_AP_Supplier[i]['ContactName']}"
+        #                 },
+        #                 {
+        #                     "$set": 
+        #                     {
+        #                         "qbo_balance": f"{data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']}",
+        #                         "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
+        #                         "diff": f"{queryset['diff']}",
+        #                         "posting_type":f"{queryset['posting_type']}",
+        #                         "diff_amount":f"{queryset['diff_amount']}"
+        #                     }
+        #                 }
+        #                 )
+        #             qbo_ap.append(queryset)
+        #             break
+
+        #         elif (QBO_supplier[j]['DisplayName'].startswith(xero_AP_Supplier[i]['ContactName']) and ((QBO_supplier[j]['DisplayName']).endswith("- S") or (QBO_supplier[j]['DisplayName']).endswith("-S")) ):
+        #             queryset={}
+        #             url = f"{base_url}/reports/VendorBalance?vendor={QBO_supplier[j]['Id']}&report_date={result_string}&minorversion={minorversion}"
+        #             print(url)
+        #             payload = {}
+                    
+        #             response = requests.request("GET", url, headers=get_data_header, data=payload)
+        #             data=response.json()
+        #             queryset["ContactName"] = data['Rows']['Row'][0]['ColData'][0]['value']
+        #             queryset["qbo_balance"] = data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']
+        #             queryset['job_id'] = job_id
+        #             queryset['diff'] = True if xero_AP_Supplier[i]['xero_balance']!=data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value'] else False
+        #             try:
+        #                 queryset['posting_type'] = "Credit" if float(xero_AP_Supplier[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
+        #                 queryset['diff_amount'] = float(xero_AP_Supplier[i]['xero_balance']) - float(queryset["qbo_balance"])
+        #             except ValueError:
+        #                 queryset['posting_type'] = "Undefined"
+        #                 queryset['diff_amount'] = 0 
+        #             dbname["xero_AP"].update_one(
+        #                 {
+        #                 "ContactName": f"{xero_AP_Supplier[i]['ContactName']}"
+        #                 },
+        #                 {
+        #                     "$set": 
+        #                     {
+        #                         "qbo_balance": f"{data['Rows']['Row'][0]['ColData'][len(data['Rows']['Row'][0]['ColData'])-1]['value']}",
+        #                         "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
+        #                         "diff": f"{queryset['diff']}",
+        #                         "posting_type":f"{queryset['posting_type']}",
+        #                         "diff_amount":f"{queryset['diff_amount']}"
+        #                     }
+        #                 }
+        #                 )
+        #             qbo_ap.append(queryset)
+        #             break
                 
         if len(qbo_ap)>0:
             qbo_ap_summary.insert_many(qbo_ap)
@@ -382,6 +576,7 @@ def get_qbo_trial_balance(job_id,task_id):
         payload=""
         response = requests.request("GET", url, headers=headers, data=payload)
         data=response.json()
+        print(data)
 
         trial_balance=[]
         for i in range(0,len(data['Rows']['Row'])-1):
@@ -415,10 +610,10 @@ def get_qbo_current_trial_balance(job_id,task_id):
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         QBO_Trial_Balance = dbname['QBO_Current_Trial_Balance']
         
-        date_object = datetime.strptime(start_date, '%Y-%m-%d')
-        one_day_before = date_object - timedelta(days=1)
-        result_string = one_day_before.strftime('%Y-%m-%d')
-        print(result_string)
+        date_object = datetime.strptime(end_date, '%Y-%m-%d')
+        # result_string = date_object.strftime('%Y-%m-%d')
+        result_string = date.today().strftime("%Y-%m-%d")
+
         y1=int(result_string[0:4])
         m1=int(result_string[5:7])
         d1=int(result_string[8:])
@@ -512,9 +707,8 @@ def get_xero_current_trial_balance(job_id,task_id):
         payload, base_url, headers = get_settings_xero(job_id)
         
         print(start_date,type(start_date))
-        date_object = datetime.strptime(start_date, '%Y-%m-%d')
-        one_day_before = date_object - timedelta(days=1)
-        result_string = one_day_before.strftime('%Y-%m-%d')
+        # date_object = datetime.strptime(end_date, '%Y-%m-%d')
+        result_string=date.today().strftime("%Y-%m-%d")
         print(result_string)
         y1=int(result_string[0:4])
         m1=int(result_string[5:7])
@@ -569,13 +763,23 @@ def match_trial_balance(job_id,task_id):
         qbo_trial_balance1 = []
         for p4 in qbo_trial_balance:
             qbo_trial_balance1.append(p4)
+
+        qbo_coa = dbname["QBO_COA"].find({"job_id":job_id})
+        qbo_coa1 = []
+        for p4 in qbo_coa:
+            qbo_coa1.append(p4)
+
+        xero_coa = dbname["xero_coa"].find({"job_id":job_id})
+        xero_coa1 = []
+        for p4 in xero_coa:
+            xero_coa1.append(p4)
         
         unmatched_data=[]
         for i in range(0,len(xero_trial_balance1)):
             print(i)
             
-            if xero_trial_balance1[i]['bankname'].split(" (")[0] in ['Payroll Wages & Salaries','Depreciation','Superannuation','Payroll  Wages & Salaries']:
-                print(xero_trial_balance1[i]['bankname'].split(" (")[0],"if")
+            if xero_trial_balance1[i]['bankname'].split(" (")[0] in ['Payroll Wages & Salaries','Depreciation','Payroll  Wages & Salaries']:
+                print(xero_trial_balance1[i]['bankname'],"if")
                 queryset={}
                 queryset['job_id']=job_id
                 queryset['bankname'] = xero_trial_balance1[i]['bankname']
@@ -613,6 +817,7 @@ def match_trial_balance(job_id,task_id):
                 queryset['job_id']=job_id
 
                 if (xero_trial_balance1[i]['bankname'].split(" (")[1][:-1] + " " + xero_trial_balance1[i]['bankname'].split(" (")[0] == qbo_trial_balance1[j]['bankname']):
+                    print(xero_trial_balance1[i]['bankname'])
                     queryset['bankname'] = xero_trial_balance1[i]['bankname']
                     if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
                         queryset['debit_diff'] = False
@@ -633,6 +838,7 @@ def match_trial_balance(job_id,task_id):
                     # elif queryset['credit_diff']==True and queryset['debit_diff']==True:
                     #     print("Revrese the entry")
                     else:
+                        print(xero_trial_balance1[i]['bankname'], "to be update-------------")
                         dbname["xero_current_trial_balance"].update_one(
                         {
                         "bankname": f"{xero_trial_balance1[i]['bankname']}"
@@ -650,9 +856,8 @@ def match_trial_balance(job_id,task_id):
                     
                         unmatched_data.append(queryset)
 
-                elif (xero_trial_balance1[i]['bankname'].split(" (")[0] == 'GST'):
-                    print(xero_trial_balance1[i]['bankname'].split(" (")[0])
-                    if qbo_trial_balance1[j]['bankname']=='820 GST Liabilities Payable':
+                elif 'Accounts Payable' in xero_trial_balance1[i]['bankname']:
+                    if 'Accounts Payable' in qbo_trial_balance1[j]['bankname']:
                         print(qbo_trial_balance1[j]['bankname'])
                         print("matched")
                         queryset['bankname'] = xero_trial_balance1[i]['bankname']
@@ -672,8 +877,133 @@ def match_trial_balance(job_id,task_id):
                         
                         if queryset['credit_diff']==False and queryset['debit_diff']==False:
                             print("Both False so we can skip")
-                        # elif queryset['credit_diff']==True and queryset['debit_diff']==True:
-                        #     print("Revrese the entry")
+                        else:
+                            print("else:----------",xero_trial_balance1[i]['bankname'])
+                            dbname["xero_current_trial_balance"].update_one(
+                            {
+                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                            },
+                            {
+                                "$set": 
+                                {
+                                    "credit_diff": queryset['credit_diff'],
+                                    "debit_diff":queryset['debit_diff'],
+                                    "credit_diff_amount": queryset['credit_diff_amount'],
+                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                }
+                            }
+                            )
+                        
+                            unmatched_data.append(queryset)
+                            print(queryset)
+                            break
+
+                elif 'Accounts Receivable' in xero_trial_balance1[i]['bankname']:
+                    if 'Accounts Receivable' in qbo_trial_balance1[j]['bankname']:
+                        print(qbo_trial_balance1[j]['bankname'])
+                        print("matched")
+                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                            queryset['debit_diff'] = False
+                            queryset['debit_diff_amount'] = 0
+                        else:
+                            queryset['debit_diff'] = True
+                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
+                
+                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                            queryset['credit_diff'] = False
+                            queryset['credit_diff_amount'] = 0
+                        else:
+                            queryset['credit_diff'] = True
+                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                        
+                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                            print("Both False so we can skip")
+                        else:
+                            dbname["xero_current_trial_balance"].update_one(
+                            {
+                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                            },
+                            {
+                                "$set": 
+                                {
+                                    "credit_diff": queryset['credit_diff'],
+                                    "debit_diff":queryset['debit_diff'],
+                                    "credit_diff_amount": queryset['credit_diff_amount'],
+                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                }
+                            }
+                            )
+                        
+                            unmatched_data.append(queryset)
+                            print(queryset)
+                            break
+                
+                # elif (xero_trial_balance1[i]['bankname'].split(" (")[0] == 'GST'):
+                #     print(xero_trial_balance1[i]['bankname'].split(" (")[0])
+                #     if qbo_trial_balance1[j]['bankname']=='GST Liabilities Payable':
+                #         print(qbo_trial_balance1[j]['bankname'])
+                #         print("matched")
+                #         queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                #         if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                #             queryset['debit_diff'] = False
+                #             queryset['debit_diff_amount'] = 0
+                #         else:
+                #             queryset['debit_diff'] = True
+                #             queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
+                
+                #         if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                #             queryset['credit_diff'] = False
+                #             queryset['credit_diff_amount'] = 0
+                #         else:
+                #             queryset['credit_diff'] = True
+                #             queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                        
+                #         if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                #             print("Both False so we can skip")
+                #         else:
+                #             dbname["xero_current_trial_balance"].update_one(
+                #             {
+                #             "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                #             },
+                #             {
+                #                 "$set": 
+                #                 {
+                #                     "credit_diff": queryset['credit_diff'],
+                #                     "debit_diff":queryset['debit_diff'],
+                #                     "credit_diff_amount": queryset['credit_diff_amount'],
+                #                     "debit_diff_amount":queryset['debit_diff_amount'] ,
+                #                 }
+                #             }
+                #             )
+                        
+                #             unmatched_data.append(queryset)
+                #             print(queryset)
+                #             break
+
+                elif 'GST Liabilities Payable' not in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
+                # elif (xero_trial_balance1[i]['bankname'].split(" (")[0] == 'GST Liabilities Payable'):
+                #     print(xero_trial_balance1[i]['bankname'].split(" (")[0])
+                    if qbo_trial_balance1[j]['bankname']=='GST':
+                        print(qbo_trial_balance1[j]['bankname'])
+                        print("matched")
+                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                            queryset['debit_diff'] = False
+                            queryset['debit_diff_amount'] = 0
+                        else:
+                            queryset['debit_diff'] = True
+                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
+                
+                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                            queryset['credit_diff'] = False
+                            queryset['credit_diff_amount'] = 0
+                        else:
+                            queryset['credit_diff'] = True
+                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                        
+                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                            print("Both False so we can skip")
                         else:
                             dbname["xero_current_trial_balance"].update_one(
                             {
@@ -694,6 +1024,51 @@ def match_trial_balance(job_id,task_id):
                             print(queryset)
                             break
 
+                elif 'GST Liabilities Payable' in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
+                # elif (xero_trial_balance1[i]['bankname'].split(" (")[0] == 'GST Liabilities Payable'):
+                #     print(xero_trial_balance1[i]['bankname'].split(" (")[0])
+                    if qbo_trial_balance1[j]['bankname']=='GST Liabilities Payable':
+                        print(qbo_trial_balance1[j]['bankname'])
+                        print("matched")
+                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                            queryset['debit_diff'] = False
+                            queryset['debit_diff_amount'] = 0
+                        else:
+                            queryset['debit_diff'] = True
+                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
+                
+                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                            queryset['credit_diff'] = False
+                            queryset['credit_diff_amount'] = 0
+                        else:
+                            queryset['credit_diff'] = True
+                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                        
+                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                            print("Both False so we can skip")
+                        else:
+                            dbname["xero_current_trial_balance"].update_one(
+                            {
+                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                            },
+                            {
+                                "$set": 
+                                {
+                                    "credit_diff": queryset['credit_diff'],
+                                    "debit_diff":queryset['debit_diff'],
+                                    "credit_diff_amount": queryset['credit_diff_amount'],
+                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                }
+                            }
+                            )
+                        
+                            unmatched_data.append(queryset)
+                            print(queryset)
+                            break
+                              
+               
+                                
                     
                 
         if len(unmatched_data)>0:

@@ -134,8 +134,8 @@ def xero_connect():
     client_id = XERO_CI
     client_secret = XERO_CS
     redirect_uri = XERO_REDIRECT
-    scope = "email%20profile%20openid%20accounting.reports.read%20payroll.employees%20payroll.employees.read%20accounting.settings%20accounting.transactions%20accounting.transactions.read%20accounting.contacts%20offline_access"
-
+    # scope = "email%20profile%20openid%20accounting.reports.read%20payroll.employees%20payroll.employees.read%20accounting.settings%20accounting.transactions%20accounting.transactions.read%20accounting.contacts%20offline_access"
+    scope=XERO_SCOPE
     CLIENT_ID = f"{client_id}"
     CLIENT_SECRET = f"{client_secret}"
     clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
@@ -263,9 +263,11 @@ def connect_input_tool():
         # job_functions=['Customer','Supplier']
         job = Jobs()
 
-        job_functions = ['Existing Chart of account', 'Chart of account', 'Customer', 'Supplier', 'Item', 'Job', 'Journal', 'Spend Money',
-                         'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Bill Payment', 'Invoice Payment', 'AR-AP', 'Payrun', 'Depreciation']
-        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Bill Payment,Invoice Payment,AR-AP,Payrun,Depreciation"
+        
+        
+        job_functions=['Existing Chart of account','Chart of account','Customer','Supplier','Item','Job','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Payrun','Depreciation','AR-AP']
+        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,AR-AP"
+
         # job_functions=['Item','Supplier']
         # job.functions = "Item,Supplier"
         length = 10

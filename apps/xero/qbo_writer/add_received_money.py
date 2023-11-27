@@ -29,7 +29,7 @@ def add_xero_receive_money(job_id,task_id):
         
         # new=[]
         # for exp in range(0,len(xero_receive_money)):
-        #     if xero_receive_money[exp]['BankAccountName'] in ['General Account']:
+        #     if xero_receive_money[exp]['BankTransactionID'] in ['f39b15b1-b2f1-4a3d-83c5-9c587fc2b23a']:
         #         new.append(xero_receive_money[exp])
 
         QBO_COA1 = db["QBO_COA"].find({"job_id":job_id})
@@ -62,23 +62,19 @@ def add_xero_receive_money(job_id,task_id):
         for p2 in xero_coa:
             xero_coa1.append(p2)
         
-        QuerySet = xero_receive_money[0:1]
+        QuerySet = xero_receive_money
         # QuerySet = new
        
         for i in range(0, len(QuerySet)):
-            print(i)
             for m1 in range(0,len(xero_coa1)):
                 if QuerySet[i]['BankAccountID'] ==  xero_coa1[m1]['AccountID']:
                     if xero_coa1[m1]['BankAccountType'] != 'CREDITCARD':
-                        print(xero_coa1[m1]['BankAccountType'])
                         if len(QuerySet[i]['Line']) >= 1 and QuerySet[i]['Line'] != [{}]:
-                            print("if","i--------------")
                             _id = QuerySet[i]['_id']
                             task_id = QuerySet[i]['task_id']
                             QuerySet1 = {'Line': []}
                             QuerySet9 = {'TaxLine': []}
                             for j in range(0, len(QuerySet[i]['Line'])):
-                                print(j,"j------------------------")
                                 if 'AccountCode' in QuerySet[i]['Line'][j]: 
                                 
                                     QuerySet2 = {}
@@ -95,7 +91,7 @@ def add_xero_receive_money(job_id,task_id):
 
                                     taxrate1 = 0
                                     for j4 in range(0, len(QBO_tax)):
-                                        if QuerySet[i]['Line'][j]['TaxType'] == "NONE" or QuerySet[i]['Line'][j]['TaxType'] == "BASEXCLUDED" or QuerySet[i]['Line'][j]['TaxType'] == None:
+                                        if QuerySet[i]['Line'][j]['TaxType'] in ["NONE","BASEXCLUDED","TAX001",None] :
                                             if 'taxrate_name' in QBO_tax[j4]:
                                                 if "NOTAXS" in QBO_tax[j4]['taxrate_name']:
                                                     QuerySet8['value'] = QBO_tax[j4]['taxcode_id']
@@ -111,7 +107,7 @@ def add_xero_receive_money(job_id,task_id):
                                                     taxrate1 = taxrate
                                                     QuerySet12['value'] = QBO_tax[j4]['taxrate_id']
 
-                                        elif QuerySet[i]['Line'][j]['TaxType'] in ["TAX001","CAPEXINPUT","INPUT","OUTPUT"]:
+                                        elif QuerySet[i]['Line'][j]['TaxType'] in ["CAPEXINPUT","INPUT","OUTPUT","INPUT2"]:
                                             if 'taxrate_name' in QBO_tax[j4]:
                                                 if "GST (sales)" in QBO_tax[j4]['taxrate_name']:
                                                     QuerySet8['value'] = QBO_tax[j4]['taxcode_id']
@@ -127,7 +123,7 @@ def add_xero_receive_money(job_id,task_id):
 
                                     QuerySet4['TaxCodeRef'] = QuerySet8
 
-                                    QuerySet1['TxnTaxDetail'] = QuerySet9
+                                    # QuerySet1['TxnTaxDetail'] = QuerySet9
                                     QuerySet9['TotalTax'] = QuerySet[i]['TotalTax']
 
                                     QuerySet10['DetailType'] = "TaxLineDetail"
@@ -172,8 +168,11 @@ def add_xero_receive_money(job_id,task_id):
                                     # QuerySet1['PrivateNote'] = QuerySet[i]['notes']
 
                                     QuerySet1['TxnDate'] = QuerySet[i]['Date']
-                                    QuerySet3['Amount'] = round(
-                                        (QuerySet[i]['Line'][j]['LineAmount'])/(100+taxrate1)*100, 2)
+                                    if QuerySet[i]['LineAmountTypes'] == 'Inclusive':
+                                        QuerySet3['Amount'] = round(
+                                            (QuerySet[i]['Line'][j]['LineAmount'])/(100+taxrate1)*100, 2)
+                                    else:
+                                        QuerySet3['Amount'] = QuerySet[i]['Line'][j]['LineAmount']
 
 
                                     if 'Description' in QuerySet[i]['Line'][j]:
@@ -244,6 +243,9 @@ def add_xero_receive_money(job_id,task_id):
                                                     if QuerySet[i]['Line'][j]['AccountCode'] == QBO_COA[j3]['AcctNum']:
                                                         QuerySet5['value'] = QBO_COA[j3]["Id"]
                                                         QuerySet5['name'] = QBO_COA[j3]["Name"]
+                                                    elif str(QuerySet[i]['Line'][j]['AccountCode']).lower() == str(QBO_COA[j3]['AcctNum']).lower():
+                                                        QuerySet5['value'] = QBO_COA[j3]["Id"]
+                                                        QuerySet5['name'] = QBO_COA[j3]["Name"]
                                     
                                 
 
@@ -255,14 +257,22 @@ def add_xero_receive_money(job_id,task_id):
                                     QuerySet4['AccountRef'] = QuerySet5
                                     QuerySet4['TaxApplicableOn'] = "Sales"
                                     QuerySet1['Line'].append(QuerySet3)
-                                    print(QuerySet1['Line'])
-                                    print("Appended")
 
                             payload = json.dumps(QuerySet1)
                             print(payload)
-                            print("----")
                             
-                            post_data_in_qbo(deposit_url, headers, payload,xero_receive_money1,_id, job_id,task_id, QuerySet[i]['BankTransactionID'])
+                            if QuerySet[i]['TotalAmount']>=0:
+                                receive_money_date = QuerySet[i]['Date'][0:10]
+                                receive_money_date1 = datetime.strptime(receive_money_date, '%Y-%m-%d')
+                                if (start_date != '' and end_date != ''):
+                                    if (receive_money_date1 >= start_date1) and (receive_money_date1 <= end_date1):
+                                        post_data_in_qbo(deposit_url, headers, payload,xero_receive_money1,_id, job_id,task_id, QuerySet[i]['BankTransactionID'])
+                                        
+                                    else:
+                                        print("No Receive Money Transaction Within these dates")
+
+                                else:
+                                    post_data_in_qbo(deposit_url, headers, payload,xero_receive_money1,_id, job_id,task_id, QuerySet[i]['BankTransactionID'])
                                     
                 
     except Exception as ex:

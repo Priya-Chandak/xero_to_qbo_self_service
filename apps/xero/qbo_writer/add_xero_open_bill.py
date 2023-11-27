@@ -169,7 +169,7 @@ def add_xero_open_bill(job_id,task_id):
                                                         Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
                                             
 
-                                            elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT"]:
+                                            elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT",'INPUT2']:
                                                 if 'taxrate_name' in QBO_tax[k1]:
                                                     if "GST (purchases)" in QBO_tax[k1]['taxrate_name'] or "SI" in QBO_tax[k1]['taxrate_name']:
                                                         TaxRate['value'] = QBO_tax[k1]['taxrate_id']
@@ -520,7 +520,7 @@ def add_xero_open_bill(job_id,task_id):
                                                             Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
                                                 
 
-                                                elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT"]:
+                                                elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT",'INPUT2']:
                                                     if 'taxrate_name' in QBO_tax[k1]:
                                                         if "GST (purchases)" in QBO_tax[k1]['taxrate_name'] or "SI" in QBO_tax[k1]['taxrate_name']:
                                                             TaxRate['value'] = QBO_tax[k1]['taxrate_id']

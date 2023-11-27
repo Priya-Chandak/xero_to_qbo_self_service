@@ -1,9 +1,14 @@
+from math import expm1
+import requests
 import json
-from datetime import datetime
+from apps.home.data_util import add_job_status, get_job_details
+from apps.home.models import Jobs, JobExecutionStatus
+from pymongo import MongoClient
+from datetime import datetime, timedelta, timezone
 
-from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
+from apps.util.qbo_util import get_start_end_dates_of_job
 from apps.util.qbo_util import post_data_in_qbo
 
 
@@ -20,12 +25,12 @@ def add_xero_bank_transfer(job_id, task_id):
             job_id)
         url = f"{base_url}/transfer?minorversion={minorversion}"
 
-        xero_bank_transfer = dbname['xero_bank_transfer'].find({'job_id': job_id})
+        xero_bank_transfer = dbname['xero_bank_transfer'].find({'job_id':job_id})
 
         xero_bank_transfer1 = [p1 for p1 in xero_bank_transfer]
         QuerySet1 = xero_bank_transfer1
 
-        QBO_COA = dbname['QBO_COA'].find({'job_id': job_id})
+        QBO_COA = dbname['QBO_COA'].find({'job_id':job_id})
         QBO_coa = [p2 for p2 in QBO_COA]
 
         for item in QuerySet1:
@@ -39,7 +44,7 @@ def add_xero_bank_transfer(job_id, task_id):
             if 'Memo' in item:
                 if item['Memo'] != None:
                     QuerySet2['PrivateNote'] = item['Memo'] + \
-                                               "-" + item['TransferNumber']
+                        "-" + item['TransferNumber']
             else:
                 QuerySet2['PrivateNote'] = item['TransferNumber']
             QuerySet2['TxnDate'] = item['Date']

@@ -33,13 +33,13 @@ def add_xero_bill(job_id,task_id):
         for p1 in final_bill1:
             final_bill.append(p1)
 
-        m1=[]
-        for m in range(0,len(final_bill)):
-            # if final_bill[m]['LineAmountTypes']=="Exclusive":
-            if final_bill[m]['Inv_No'] in ["HD 384760992"]: #'Martin Van Eldik','William Lane','June Lane']:#, '51 Artedomus Pickup VDW', '52 Nthside Pick up 99 Emerald', '2396200', '33921 Project: Stone Dev', '2405725', '2415018', '2423617', '0200', '58 99 Design Pick Up', '70 CDK Pick up', 'CMS Waterjet', '3100 Mirador', '2432910', '128 Emerald Repair', '430', '2442386', '0461']:
-                m1.append(final_bill[m])
+        # m1=[]
+        # for m in range(0,len(final_bill)):
+        #     # if final_bill[m]['LineAmountTypes']=="Exclusive":
+        #     if final_bill[m]['Inv_No'] in ["HD 384760992"]: #'Martin Van Eldik','William Lane','June Lane']:#, '51 Artedomus Pickup VDW', '52 Nthside Pick up 99 Emerald', '2396200', '33921 Project: Stone Dev', '2405725', '2415018', '2423617', '0200', '58 99 Design Pick Up', '70 CDK Pick up', 'CMS Waterjet', '3100 Mirador', '2432910', '128 Emerald Repair', '430', '2442386', '0461']:
+        #         m1.append(final_bill[m])
         
-        final_bill = m1
+        # final_bill = m1
 
         blank=[]
 
@@ -169,7 +169,7 @@ def add_xero_bill(job_id,task_id):
                                                         Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
                                             
 
-                                            elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT"]:
+                                            elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT","INPUT2"]:
                                                 if 'taxrate_name' in QBO_tax[k1]:
                                                     if "GST (purchases)" in QBO_tax[k1]['taxrate_name'] or "SI" in QBO_tax[k1]['taxrate_name']:
                                                         TaxRate['value'] = QBO_tax[k1]['taxrate_id']
@@ -178,6 +178,7 @@ def add_xero_bill(job_id,task_id):
                                                         taxrate1 = QBO_tax[k1]['Rate']
                                                         TaxLineDetail['NetAmountTaxable'] = final_bill[i]['Line'][j]['UnitAmount']-final_bill[i]['Line'][j]['TaxAmount']
                                                         Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
+                                                        break
                                             
 
                                             elif final_bill[i]['Line'][j]['TaxType'] in ['EXEMPTEXPENSES' ,"EXEMPTOUTPUT","INPUTTAXED","TAX001"]:
@@ -518,7 +519,7 @@ def add_xero_bill(job_id,task_id):
                                                             Tax['Amount'] = final_bill[i]['Line'][j]['TaxAmount']
                                                 
 
-                                                elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT"]:
+                                                elif final_bill[i]['Line'][j]['TaxType'] in ['INPUT',"CAPEXINPUT",'INPUT2']:
                                                     if 'taxrate_name' in QBO_tax[k1]:
                                                         if "GST (purchases)" in QBO_tax[k1]['taxrate_name'] or "SI" in QBO_tax[k1]['taxrate_name']:
                                                             TaxRate['value'] = QBO_tax[k1]['taxrate_id']

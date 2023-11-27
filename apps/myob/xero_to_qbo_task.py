@@ -19,6 +19,7 @@ from apps.xero.qbo_writer.add_employee import add_xero_employee
 from apps.xero.qbo_writer.add_item import *
 from apps.xero.qbo_writer.add_item_purchase_order import add_xero_item_purchase_order
 from apps.xero.qbo_writer.add_item_quotes import add_xero_item_quote
+from apps.xero.qbo_writer.add_item_using_open_invoice import *
 from apps.xero.qbo_writer.add_item_using_invoice import create_item_from_xero_invoice_acccode_itemcode, \
     create_item_xero_invoice_accountcode, create_item_from_xero_creditnote_acccode_itemcode, create_item_xero_creditnote_accountcode, create_item_xero_bill_accountcode, create_item_from_xero_bill_acccode_itemcode
 from apps.xero.qbo_writer.add_job import add_xero_job
@@ -108,45 +109,6 @@ class XeroToQbo(object):
                 step_name = "Reading xero open Receive Over payment"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_xero_open_overpayment(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Aged Receivable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_receivable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Aged Payable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_payable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                delete_supplier(job_id,task.id)
-                delete_customer(job_id,task.id)
-                delete_coa(job_id,task.id)
-                
-                step_name = "Add default customer to QBO"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_default_xero_customer(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Add default supplier to QBO"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_default_xero_supplier(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id,task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id,task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id,task.id, "Supplier")
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 
@@ -605,7 +567,7 @@ class XeroToQbo(object):
 
         except Exception as ex:
             write_task_execution_step(
-                job_id, task.id, status=0, step=step_name)
+                task.id, status=0, step=step_name)
             update_task_execution_status(
                 task.id, status=0, task_type="read")
             raise ex
@@ -619,14 +581,53 @@ class XeroToQbo(object):
             if "AR-AP" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                step_name = "Reading xero open Aged Receivable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_receivable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Aged Payable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_payable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                delete_supplier(job_id,task.id)
+                delete_customer(job_id,task.id)
+                delete_coa(job_id,task.id)
+                
+                step_name = "Add default customer to QBO"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_default_xero_customer(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Add default supplier to QBO"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_default_xero_supplier(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Create Item ItemCode From Invoice"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                create_item_from_xero_invoice_acccode_itemcode(job_id,task.id)
+                create_item_from_xero_open_invoice_acccode_itemcode(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Create Item AccountCode From Invoice"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                create_item_xero_invoice_accountcode(job_id,task.id)
+                create_item_xero_open_invoice_accountcode(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Reading qbo Item"
@@ -645,13 +646,6 @@ class XeroToQbo(object):
                 add_xero_open_credit_note(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo Invoice"
-                write_task_execution_step(
-                    task.id, status=2, step=step_name)
-                get_qbo_invoice_for_payments(job_id,task.id)
-                write_task_execution_step(
-                    task.id, status=1, step=step_name)
-   
                 step_name = "Reading Xero COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_coa(job_id,task.id)
@@ -662,27 +656,14 @@ class XeroToQbo(object):
                 get_archieved_coa(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Add Invoice Payment data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_open_xero_invoice_payment(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
                 step_name = "Add xero open bill"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_open_bill(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 delete_bill(job_id)
-                step_name = "Reading qbo Bill"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_bill_for_payments(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Add Bill Payment data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_open_xero_bill_payment(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                delete_invoice(job_id)
+                
                 step_name = "Add Vendor Credit data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_open_xero_vendorcredit(job_id,task.id)
@@ -716,6 +697,63 @@ class XeroToQbo(object):
                 step_name = "Add Open Spend Overpayment Cash Refund data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_open_spend_overpayment_cash_refund_as_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading Invoice Payment data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_payment(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Invoice"
+                write_task_execution_step(
+                    task.id, status=2, step=step_name)
+                get_qbo_invoice_for_payments(job_id,task.id)
+                write_task_execution_step(
+                    task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo Bill"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_bill_for_payments(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Add Invoice Payment data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_invoice_payment(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Add Invoice Payment as Journal"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_invoice_payment_as_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Add Creditnote Payment as Journal"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_creditnote_payment_refund_as_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Add Bill Payment data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_bill_payment(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Add Bill Payment as Journal"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_bill_payment_as_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Add vendor Credit Cash Refund as Journal"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_supplier_credit_cash_refund_as_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Add Receive Money Over Payment Cash Refund as Journal"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_receive_overpayment_cash_refund_as_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Add Spend Money Over Payment Cash Refund as Journal"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_spend_overpayment_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Reading qbo AR Customer"
@@ -981,11 +1019,6 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id, task.id, "Chart of account")
                 write_task_execution_step(task.id, status=1, step=step_name)
-
-                # step_name = "Reading account reference data "
-                # write_task_execution_step(task.id, status=2, step=step_name)
-                # account_reference(job_id, task.id)
-                # write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading qbo Item"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -1637,7 +1670,7 @@ class XeroToQbo(object):
 
                 step_name = "Create Item from Purchase Order"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                create_item_from_xero_purchase_order(job_id, task.id)
+                # create_item_from_xero_purchase_order(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "delete item"
@@ -1665,7 +1698,7 @@ class XeroToQbo(object):
 
         except Exception as ex:
             write_task_execution_step(
-                job_id, task.id, status=0, step=step_name)
+                task.id, status=0, step=step_name)
             update_task_execution_status(
                 task.id, status=0, task_type="write")
             raise ex

@@ -640,32 +640,30 @@ def add_open_spend_overpayment(job_id,task_id):
                     Q11 = copy.deepcopy(QuerySet3)
                     Q11["JournalEntryLineDetail"]["PostingType"] = "Debit"
 
+                    
+
+                    Entity = {}
+                    EntityRef = {}
+                    ap_entity={}
+                    ap_entityref={}
+
+                    for v1 in range(0, len(QBO_supplier)):
+                        if QBO_supplier[v1]["DisplayName"] == 'Temp - S':
+                            ap_entityref["value"] = QBO_supplier[v1]["Id"]
+                            ap_entityref["name"] = QBO_supplier[v1]["DisplayName"]
+                            ap_entity["Type"] = "Vendor"
+                            break
+                        
                     for p5 in range(0, len(QBO_coa)):
                         if QBO_coa[p5]["AccountType"] == 'Accounts Payable':
                             Q11["JournalEntryLineDetail"]["AccountRef"]["name"] = QBO_coa[p5]["Name"]
                             Q11["JournalEntryLineDetail"]["AccountRef"][
                                 "value"
                             ] = QBO_coa[p5]["Id"]
-
-
-                        # for p51 in range(0, len(xero_coa)):
-                        #     if ("Code" in xero_coa[p51]) and (
-                        #         "AccountCode" in QuerySet1[i]["Line"][j]
-                        #     ):
-                        #         if (
-                        #             QuerySet1[i]["Line"][j]["AccountCode"]
-                        #             == xero_coa[p51]["Code"]
-                        #         ):
-                        #             if xero_coa[p51]["Name"] == QBO_coa[p5]["Name"]:
-                        #                 Q11["JournalEntryLineDetail"]["AccountRef"][
-                        #                     "name"
-                        #                 ] = QBO_coa[p5]["Name"]
-                        #                 Q11["JournalEntryLineDetail"]["AccountRef"][
-                        #                     "value"
-                        #                 ] = QBO_coa[p5]["Id"]
-                    Entity = {}
-                    EntityRef = {}
-
+                            Q11["JournalEntryLineDetail"]["Entity"] = ap_entity
+                            Q11["JournalEntryLineDetail"]["Entity"]["EntityRef"] = ap_entityref
+                            print(Q11,"Q11====================")
+                    
                     for v1 in range(0, len(QBO_supplier)):
                         if (
                             QuerySet1[i]["ContactName"]
@@ -682,8 +680,8 @@ def add_open_spend_overpayment(job_id,task_id):
                             Entity["Type"] = "Vendor"
                             continue
                         
-                    Q11["JournalEntryLineDetail"]["Entity"] = Entity
-                    Q11["JournalEntryLineDetail"]["Entity"]["EntityRef"] = EntityRef
+                        # Q11["JournalEntryLineDetail"]["Entity"] = Entity
+                        # Q11["JournalEntryLineDetail"]["Entity"]["EntityRef"] = EntityRef
                     
                     QuerySet2["Line"].append(Q11)
 
