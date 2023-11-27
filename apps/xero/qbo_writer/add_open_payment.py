@@ -710,7 +710,6 @@ def add_xero_creditnote_payment_refund_as_journal(job_id,task_id):
                                 QuerySet2["Line"].append(QuerySet3)
                                 QuerySet2["Line"].append(QuerySet4)
 
-                                # if QuerySet1[i]['InvoiceNumber']=='REG#14':
                                 payload = json.dumps(QuerySet2)
                                 
 
