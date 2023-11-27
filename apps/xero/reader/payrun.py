@@ -10,16 +10,13 @@ from apps import db
 from apps.myconstant import *
 from sqlalchemy.orm import aliased
 import requests
-
 from apps.mmc_settings.all_settings import *
-
 from apps.home.data_util import add_job_status,get_job_details
 from apps.util.db_mongo import get_mongodb_database
 from apps.home.data_util import  write_task_execution_step,update_task_execution_status
 import sys
 import time
 from datetime import datetime, timedelta
-
 
 
 def get_payrun(job_id,task_id):
@@ -32,14 +29,13 @@ def get_payrun(job_id,task_id):
         url = "https://api.xero.com/payroll.xro/1.0/PayRuns"
 
         response = requests.request("GET", url, headers=headers, data=payload)
-
+        print(response)
         JsonResponse = response.json()
         JsonResponse1 = JsonResponse['PayRuns']
         payrun_list=[]
         for i in range(0, len(JsonResponse1)):
             payrun_list.append(JsonResponse1[i]['PayRunID'])
 
-        print(payrun_list)   
         
         all_payrun=[]
         for j in range(0,len(payrun_list)):
@@ -50,8 +46,11 @@ def get_payrun(job_id,task_id):
             JsonResponse = response.json()
             JsonResponse1 = JsonResponse['PayRuns']
             queryset1={}
+            
             queryset1['job_id']=job_id
+            queryset1['is_pushed']=0
             queryset1['payrun'] = JsonResponse1[0]
+            print(queryset1,"------------")
             all_payrun.append(queryset1)
 
         if len(all_payrun)>0:
@@ -86,18 +85,19 @@ def get_payslip(job_id,task_id):
         all_payrun=[]
             
         for k in range(0,len(data)):
-            url = f"https://api.xero.com/payroll.xro/1.0/Payslip/{data[k]['payrun']['Payslips'][0]['PayslipID']}"
-            print(url)
-        
-            response = requests.request("GET", url, headers=headers, data=payload)
+            if data[k]['payrun']['Payslips']!=[]:
+                url = f"https://api.xero.com/payroll.xro/1.0/Payslip/{data[k]['payrun']['Payslips'][0]['PayslipID']}"
+                print(url)
+            
+                response = requests.request("GET", url, headers=headers, data=payload)
 
-            JsonResponse = response.json()
-            JsonResponse1 = JsonResponse['Payslip']
-            queryset1={}
-            queryset1['job_id']=job_id
-            queryset1 = JsonResponse1
-        
-            all_payrun.append(queryset1)
+                JsonResponse = response.json()
+                JsonResponse1 = JsonResponse['Payslip']
+                queryset1={}
+                queryset1['job_id']=job_id
+                queryset1 = JsonResponse1
+            
+                all_payrun.append(queryset1)
 
         if len(all_payrun)>0:
             xero_payslip.insert_many(all_payrun)
@@ -132,7 +132,8 @@ def get_payrun_setting(job_id,task_id):
             queryset1['job_id']=job_id
             queryset1['AccountID'] = JsonResponse1[i]['AccountID']
             queryset1['Type'] = JsonResponse1[i]['Type']
-            queryset1['Code'] = JsonResponse1[i]['Code']
+            if 'Code' in JsonResponse1[i]:
+                queryset1['Code'] = JsonResponse1[i]['Code']
             queryset1['Name'] = JsonResponse1[i]['Name']
     
             all_settings.append(queryset1)

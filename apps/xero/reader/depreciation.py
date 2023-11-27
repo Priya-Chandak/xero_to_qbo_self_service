@@ -10,6 +10,8 @@ from apps import db
 from apps.myconstant import *
 from sqlalchemy.orm import aliased
 import requests
+from apps.util.qbo_util import get_start_end_dates_of_job
+
 import re
 from apps.mmc_settings.all_settings import *
 import logging
@@ -35,8 +37,9 @@ def get_xero_asset_types(job_id,task_id):
         response = requests.request("GET", url, headers=headers, data=payload)
 
         JsonResponse = response.json()
+        print(JsonResponse)
         payrun_list=[]
-        payrun_list.append(JsonResponse[0])
+        payrun_list.append(JsonResponse)
 
         print(payrun_list)   
         e={}
@@ -180,6 +183,7 @@ def get_xero_depreciation_journal(job_id,task_id):
 def add_xero_depreciation_journal(job_id,task_id):
     try:
         logger.info("Started executing xero -> qbowriter -> add_xero_depreciation_journal")
+        start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -229,17 +233,21 @@ def add_xero_depreciation_journal(job_id,task_id):
                 JournalEntryLineDetail['AccountRef'] = account
                 QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                 QuerySet2['Line'].append(QuerySet3)
-                    
-                
-
                 
             payload = json.dumps(QuerySet2)
             print(payload,"payload--------------------------------")
 
-            
-            response = requests.request("POST", url, headers=headers, data=payload)
-            print(response.status_code)
-            print(response.text)
+            print(QuerySet1['JournalDate'])
+            print(start_date1)
+
+            journal_date = QuerySet1['JournalDate'][0:10]
+            journal_date1 = datetime.strptime(journal_date, "%Y-%m-%d")
+
+            if start_date1 is not None and end_date1 is not None:
+                if (journal_date1 >= start_date1) and (journal_date1 <= end_date1):
+                    response = requests.request("POST", url, headers=headers, data=payload)
+                    print(response.status_code)
+                    print(response.text)
                     
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
