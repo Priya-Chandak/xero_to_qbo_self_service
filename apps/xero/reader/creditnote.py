@@ -167,7 +167,6 @@ def get_open_creditnote(job_id,task_id):
             p1.pop("_id")
             data1.append(p1)
         
-        print(data1,"====================================")
         xero_supplier = dbname['xero_open_supplier']
         y = xero_supplier.find({"job_id":job_id})
         data2 = []
@@ -189,6 +188,7 @@ def get_open_creditnote(job_id,task_id):
             d1 = int(result_string[8:])
             main_url = f"{base_url}/CreditNotes?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})"
 
+        print(main_url)
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
         time.sleep(1)
         
@@ -328,8 +328,6 @@ def get_open_creditnote(job_id,task_id):
                 if len(supplier)>0:
                     print(len(supplier))
                     xero_supplier.insert_many(supplier)
-              
-
                 
                 step_name = "Reading data from xero creditnote"
                 write_task_execution_step(task_id, status=1, step=step_name)

@@ -505,7 +505,7 @@ def get_open_invoice(job_id,task_id):
             # main_url = f"{base_url}/Invoices?unitdp=4&where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})%20AND%20Date%3C%3DDateTime({y2}%2C{m2}%2C{d2})"
             main_url = f"{base_url}/Invoices?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})"
 
-        # print(main_url)
+        print(main_url)
         
         response1 = requests.request(
             "GET", main_url, headers=headers, data=payload)
@@ -543,13 +543,8 @@ def get_open_invoice(job_id,task_id):
                             timestamp = int(match.group()) / 1000  # Convert milliseconds to seconds
                             date = datetime.utcfromtimestamp(timestamp)
 
-                            # Desired date "30-06-2023"
                             desired_date = one_day_before
-
-                            # Compare the dates
-                            # if date < desired_date:
-                            #     print("The result date less than 30-06-2023.")
-                          
+     
                             if (JsonResponse1[i]['Status'] =='AUTHORISED') or (JsonResponse1[i]['Status'] == 'PAID' and date > desired_date) :
                                 QuerySet = {"Line": []}
                                 QuerySet["job_id"] = job_id
@@ -708,6 +703,7 @@ def get_open_invoice(job_id,task_id):
                                     invoice.append(QuerySet)
                                     if cust not in customer: 
                                         customer.append(cust)
+                                        print("Appended")
 
                                 if (JsonResponse1[i]['Type'] == "ACCPAY"):
                                     QuerySet["table_name"] = "xero_open_bill" 
@@ -724,13 +720,13 @@ def get_open_invoice(job_id,task_id):
                         
                             
                 if len(invoice)>0:
-                    print(len(invoice))
+                    print(len(invoice),"len(invoice)")
                     xero_invoice.insert_many(invoice)
                 if len(bill)>0:
                     print(len(bill),"bill count------------------------------")
                     xero_bill.insert_many(bill)
                 if len(customer)>0:
-                    print(len(customer))
+                    print(len(customer),"len(customer)")
                     xero_customer.insert_many(customer)
                 if len(supplier)>0:
                     print(len(supplier))
