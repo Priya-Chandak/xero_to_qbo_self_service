@@ -22,3 +22,6 @@ dotmap
 Flask-PyMongo
 PyMySQL
 openpyxl
+Flask-Cors
+boto3
+pdfkit

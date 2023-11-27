@@ -33,3 +33,6 @@ QBO_BaseURL = "https://quickbooks.api.intuit.com"
 
 NODE_APP_URL="http://localhost:6000"
 XERO_SCOPE='openid%20profile%20email%20accounting.transactions%20accounting.contacts%20accounting.settings%20payroll.employees%20accounting.journals.read%20payroll.employees.read%20accounting.transactions.read%20offline_access%20accounting.reports.read%20payroll.payruns%20payroll.payruns.read%20payroll.payslip%20payroll.payslip.read%20payroll.settings%20payroll.settings.read%20assets%20assets.read'
+aws_access_key_id1 = 'AKIARCRYGACABFYEF6O3'
+aws_secret_access_key1 = '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'
+region_name1 = 'ap-south-1'
