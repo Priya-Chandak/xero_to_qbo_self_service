@@ -91,6 +91,21 @@ class XeroToQbo(object):
             if "AR-AP" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="read")
 
+                step_name = "Reading data from qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Reading xero open invoices"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_open_invoice(job_id,task.id)
