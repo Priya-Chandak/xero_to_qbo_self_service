@@ -40,6 +40,7 @@ def get_payrun(job_id,task_id):
         all_payrun=[]
         for j in range(0,len(payrun_list)):
             url1=f"https://api.xero.com/payroll.xro/1.0/PayRuns/{payrun_list[j]}" 
+            time.sleep(1)
             print(url1)
             response = requests.request("GET", url1, headers=headers, data=payload)
             print(response)
