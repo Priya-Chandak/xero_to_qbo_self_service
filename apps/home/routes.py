@@ -928,9 +928,20 @@ def sent_email_to_customer():
     ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
                        aws_secret_access_key=aws_secret_access_key)
     queue_url = Queue_URI
-    subject = "Please check your conversion status"
+
+
+    customer_info_data = CustomerInfo.query.filter(
+        CustomerInfo.job_id == redis.get('my_key')).first()
+
+    file_name = customer_info_data.Company
+    first_name = customer_info_data.First_Name
+    start_date = customer_info_data.start_date
+    end_date = customer_info_data.end_date
+    
+
+    subject = f"Check Status of {file_name} from {start_date} to {end_date}"
     conversion_report_link = f"https://mmc.vishleshak.io/conversion_report/{redis.get('my_key')}"
-    html_body = f"<html><body><p>Click the link below to check your conversion status:</p><a href='{conversion_report_link}'>Conversion Report</a></body></html>"
+    html_body = f"<html><body><p>Dear {first_name},</p><p>I hope this email finds you well. I wanted to provide you with an update on the status of the file named <strong>{file_name}</strong> that you are associated with. To view the progress and details, please click on the following link:</p><p><a href=\"{conversion_report_link}\">Check Status</a></p>    <p>This link will redirect you to a page where you can check the status of <strong>{file_name}</strong> between the specified start date of <strong>{start_date}</strong> and the end date of <strong>{end_date}</strong>.</p><p>Thank you</p><p>Best regards,<br>Ankit Mehta<br></body></html>"
     recipient = get_customerinfo_email()
 
     response = ses.send_email(
