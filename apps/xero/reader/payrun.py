@@ -42,9 +42,10 @@ def get_payrun(job_id,task_id):
             url1=f"https://api.xero.com/payroll.xro/1.0/PayRuns/{payrun_list[j]}" 
             print(url1)
             response = requests.request("GET", url1, headers=headers, data=payload)
-
+            print(response)
             JsonResponse = response.json()
             JsonResponse1 = JsonResponse['PayRuns']
+            print(JsonResponse1)
             queryset1={}
             
             queryset1['job_id']=job_id
