@@ -94,6 +94,7 @@ def get_payslip(job_id,task_id):
                 response = requests.request("GET", url, headers=headers, data=payload)
 
                 JsonResponse = response.json()
+                
                 JsonResponse1 = JsonResponse['Payslip']
                 queryset1={}
                 queryset1['job_id']=job_id

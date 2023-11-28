@@ -101,7 +101,8 @@ def get_xero_journal(job_id,task_id):
                         for j in range(0,len(jsonresponse[i]['JournalLines'])):
                             e1={}
                             e1['AccountID'] = jsonresponse[i]['JournalLines'][j]['AccountID']
-                            e1['AccountCode'] = jsonresponse[i]['JournalLines'][j]['AccountCode']
+                            if 'AccountCode' in jsonresponse[i]['JournalLines'][j]:
+                                e1['AccountCode'] = jsonresponse[i]['JournalLines'][j]['AccountCode']
                             e1['AccountType'] = jsonresponse[i]['JournalLines'][j]['AccountType']
                             e1['AccountName'] = jsonresponse[i]['JournalLines'][j]['AccountName']
                             e1['Description'] = jsonresponse[i]['JournalLines'][j]['Description']
