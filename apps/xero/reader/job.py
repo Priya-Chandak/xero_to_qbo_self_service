@@ -35,7 +35,8 @@ def get_xero_job(job_id, task_id):
                                     'error': None, 'payload': None,
                                     "UID": JsonResponse1[i]["TrackingOptionID"], "Name": JsonResponse1[i]["Name"]}
                         arr.append(QuerySet)
-                    xero_job.insert_many(arr)
+                    if len(arr)>0:
+                        xero_job.insert_many(arr)
                 else:
                     print("No data available")
             else:
