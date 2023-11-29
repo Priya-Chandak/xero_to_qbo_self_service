@@ -958,8 +958,8 @@ def sent_email_to_customer():
     return response
 
 
-@blueprint.route("/Create_final_report", methods=["GET", "POST"])
-def Create_final_report():
+@blueprint.route("/create_final_report", methods=["GET", "POST"])
+def create_final_report():
     cust_data = []
     supp_data = []
     if request.method == "GET":

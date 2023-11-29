@@ -8,6 +8,7 @@ from apps.qbo.reader.QBO_combined_tax import get_qbo_tax
 from apps.qbo.reader.qbo_data_reader import read_qbo_data
 from apps.qbo.reader.taxcode import get_qbo_taxcode
 from apps.qbo.reader.taxrate import get_qbo_taxrate
+from apps.xero.reader.report_customer_supplier import get_report_customer_summary,get_report_supplier_summary
 from apps.xero.reader.customer_archived import get_xero_archived_customer
 from apps.xero.reader.supplier_archived import get_xero_archived_supplier
 from apps.xero.qbo_writer.add_bank_transfer import add_xero_bank_transfer
@@ -164,7 +165,6 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id,task.id, "Supplier")
                 write_task_execution_step(task.id, status=1, step=step_name)
-
                 
                 update_task_execution_status(task.id, status=1, task_type="read")
 
@@ -196,6 +196,11 @@ class XeroToQbo(object):
                 read_qbo_data(job_id,task.id, "Supplier")
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
+                update_task_execution_status(task.id, status=1, task_type="read")
+            
+            if "Report" == task.function_name:
+                update_task_execution_status(task.id, status=2, task_type="read")
+
                 update_task_execution_status(task.id, status=1, task_type="read")
             
             if "Depreciation" == task.function_name:
@@ -862,6 +867,34 @@ class XeroToQbo(object):
                 
                 update_task_execution_status(task.id, status=1, task_type="write")
 
+            if "Report" == task.function_name:
+                update_task_execution_status(task.id, status=2, task_type="write")
+                
+                delete_customer(job_id)
+                delete_supplier(job_id)
+                
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading customer report"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_report_customer_summary(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading supplier report"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_report_supplier_summary(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                update_task_execution_status(task.id, status=1, task_type="write")
+            
             if "Depreciation" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
