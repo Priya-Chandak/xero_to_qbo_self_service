@@ -5,6 +5,7 @@ from apps.qbo.account.add_xero_duplicate_chart_of_account import (
     add_xero_duplicate_chart_account, update_xero_existing_chart_account
 )
 from apps.qbo.reader.QBO_combined_tax import get_qbo_tax
+from apps.home.routes import final_report_email_to_customer
 from apps.qbo.reader.qbo_data_reader import read_qbo_data
 from apps.qbo.reader.taxcode import get_qbo_taxcode
 from apps.qbo.reader.taxrate import get_qbo_taxrate
@@ -891,6 +892,11 @@ class XeroToQbo(object):
                 step_name = "Reading supplier report"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_report_supplier_summary(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Final Report"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                final_report_email_to_customer()
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 update_task_execution_status(task.id, status=1, task_type="write")
