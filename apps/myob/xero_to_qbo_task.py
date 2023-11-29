@@ -92,79 +92,6 @@ class XeroToQbo(object):
             if "AR-AP" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="read")
 
-                step_name = "Reading data from qbo taxcode"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo taxrate"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_taxrate(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading data from qbo tax"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_tax(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open invoices"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_open_invoice(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open CR"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_open_creditnote(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading Invoice Payment data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_payment(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Receive Over payment"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_open_overpayment(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Aged Receivable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_receivable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Aged Payable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_payable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                delete_supplier(job_id)
-                delete_customer(job_id)
-                delete_coa(job_id)
-                
-                step_name = "Add default customer to QBO"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_default_xero_customer(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Add default supplier to QBO"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_default_xero_supplier(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id,task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading qbo Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id,task.id, "Customer")
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading qbo supplier"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id,task.id, "Supplier")
-                write_task_execution_step(task.id, status=1, step=step_name)
                 
                 update_task_execution_status(task.id, status=1, task_type="read")
 
@@ -634,7 +561,80 @@ class XeroToQbo(object):
 
             if "AR-AP" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+                step_name = "Reading data from qbo taxcode"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxcode(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
 
+                step_name = "Reading data from qbo taxrate"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_taxrate(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading data from qbo tax"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_tax(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open invoices"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_open_invoice(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open CR"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_open_creditnote(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading Invoice Payment data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_payment(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Receive Over payment"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_open_overpayment(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Aged Receivable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_receivable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Aged Payable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_payable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                delete_supplier(job_id)
+                delete_customer(job_id)
+                delete_coa(job_id)
+                
+                step_name = "Add default customer to QBO"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_default_xero_customer(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Add default supplier to QBO"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_default_xero_supplier(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 delete_supplier(job_id)
                 delete_customer(job_id)
                 delete_coa(job_id)
