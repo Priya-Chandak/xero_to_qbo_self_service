@@ -5,7 +5,7 @@ from apps.qbo.account.add_xero_duplicate_chart_of_account import (
     add_xero_duplicate_chart_account, update_xero_existing_chart_account
 )
 from apps.qbo.reader.QBO_combined_tax import get_qbo_tax
-from apps.home.routes import final_report_email_to_customer
+from apps.xero.qbo_writer.final_report import final_report
 from apps.qbo.reader.qbo_data_reader import read_qbo_data
 from apps.qbo.reader.taxcode import get_qbo_taxcode
 from apps.qbo.reader.taxrate import get_qbo_taxrate
@@ -562,6 +562,7 @@ class XeroToQbo(object):
 
             if "AR-AP" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+                
                 step_name = "Reading data from qbo taxcode"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_taxcode(job_id, task.id)
@@ -871,6 +872,36 @@ class XeroToQbo(object):
             if "Report" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
+                step_name = "Reading xero open invoices"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_open_invoice(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open CR"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_open_creditnote(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading Invoice Payment data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_payment(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Receive Over payment"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_open_overpayment(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Aged Receivable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_receivable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Aged Payable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_payable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 delete_customer(job_id)
                 delete_supplier(job_id)
                 
@@ -896,7 +927,7 @@ class XeroToQbo(object):
                 
                 step_name = "Final Report"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                final_report_email_to_customer()
+                final_report()
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 update_task_execution_status(task.id, status=1, task_type="write")
