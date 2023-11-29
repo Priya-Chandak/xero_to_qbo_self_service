@@ -992,6 +992,8 @@ def create_final_report():
 
 @blueprint.route("/final_report_email_to_customer", methods=["GET", "POST"])
 def final_report_email_to_customer():
+    cust_data = []
+    supp_data = []
     aws_access_key_id = aws_access_key_id1
     aws_secret_access_key = aws_secret_access_key1
     region_name = region_name1
@@ -1008,9 +1010,19 @@ def final_report_email_to_customer():
 
     subject = f"Check Status of Final Report  {file_name}"
 
-    final_report_data=create_final_report()
+    dbname = get_mongodb_database()
 
-    create_final_report_response = final_report_data
+    cust_data1 = dbname["xero_report_customer"].count_documents(
+        {"job_id": redis.get('my_key')})
+
+    supp_data1 = dbname["xero_report_customer"].count_documents(
+        {"job_id": redis.get('my_key')})
+
+    cust_data.append(cust_data1)
+    supp_data.append(supp_data1)
+
+   
+    create_final_report_response = render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data)
 
 
     if isinstance(create_final_report_response, Response):
