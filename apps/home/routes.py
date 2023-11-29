@@ -992,6 +992,8 @@ def create_final_report():
 
 @blueprint.route("/final_report_email_to_customer", methods=["GET", "POST"])
 def final_report_email_to_customer():
+    cust_data = []
+    supp_data = []
     aws_access_key_id = aws_access_key_id1
     aws_secret_access_key = aws_secret_access_key1
     region_name = region_name1
@@ -1006,8 +1008,29 @@ def final_report_email_to_customer():
 
     file_name = customer_info_data.Company
 
-    subject = f"Check your final report  {file_name} "
-    html_body = render_template('home/final_conversion_report.html')
+    subject = f"Check Status of Final Report  {file_name}"
+
+    dbname = get_mongodb_database()
+
+    cust_data1 = dbname["xero_report_customer"].count_documents(
+        {"job_id": redis.get('my_key')})
+
+    supp_data1 = dbname["xero_report_customer"].count_documents(
+        {"job_id": redis.get('my_key')})
+
+    cust_data.append(cust_data1)
+    supp_data.append(supp_data1)
+
+   
+    create_final_report_response = render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data)
+
+
+    if isinstance(create_final_report_response, Response):
+        
+        create_final_report_content = create_final_report_response.data.decode('utf-8')
+    else:
+        create_final_report_content = str(create_final_report_response)
+
     recipient = get_customerinfo_email()
 
     response = ses.send_email(
@@ -1016,7 +1039,7 @@ def final_report_email_to_customer():
         Message={
             'Subject': {'Data': subject},
             'Body': {
-                'Html': {'Data': html_body}
+                'Html': {'Data': create_final_report_content}
             }
         }
     )
