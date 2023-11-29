@@ -171,8 +171,10 @@ def get_aged_payable_summary(job_id,task_id):
                                 e['inv_id'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Attributes'][0]['Value']
                                 e['date'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Value']
                                 e['duedate'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][2]['Value']
-                                paid = paid + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'])
-                                total = total+ float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
+                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'] not in ['', None]:
+                                    paid = paid + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'])
+                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'] not in ['', None]:
+                                    total = total+ float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
                                 print(total,"inside loop-----")
                                 e['credited'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']
                                 due = due + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
