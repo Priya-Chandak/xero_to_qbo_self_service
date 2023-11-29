@@ -872,36 +872,6 @@ class XeroToQbo(object):
             if "Report" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
-                step_name = "Reading xero open invoices"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_open_invoice(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open CR"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_open_creditnote(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading Invoice Payment data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_payment(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Receive Over payment"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_open_overpayment(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Aged Receivable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_receivable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Aged Payable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_payable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
                 delete_customer(job_id)
                 delete_supplier(job_id)
                 
