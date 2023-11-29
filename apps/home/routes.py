@@ -1006,8 +1006,19 @@ def final_report_email_to_customer():
 
     file_name = customer_info_data.Company
 
-    subject = f"Check your final report  {file_name} "
-    html_body = render_template('home/final_conversion_report.html')
+    subject = f"Check Status of Final Report  {file_name}"
+
+    final_report_data=create_final_report()
+
+    create_final_report_response = final_report_data
+
+
+    if isinstance(create_final_report_response, Response):
+        
+        create_final_report_content = create_final_report_response.data.decode('utf-8')
+    else:
+        create_final_report_content = str(create_final_report_response)
+
     recipient = get_customerinfo_email()
 
     response = ses.send_email(
@@ -1016,7 +1027,7 @@ def final_report_email_to_customer():
         Message={
             'Subject': {'Data': subject},
             'Body': {
-                'Html': {'Data': html_body}
+                'Html': {'Data': create_final_report_content}
             }
         }
     )
