@@ -6,7 +6,7 @@ from apps.util.db_mongo import get_mongodb_database
 
 logger = logging.getLogger(__name__)
 from apps.util.qbo_util import post_data_in_qbo
-
+import requests
 
 def add_xero_customer(job_id, task_id):
     try:
