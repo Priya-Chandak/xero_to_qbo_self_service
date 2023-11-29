@@ -2,7 +2,7 @@ from apps.home.data_util import add_job_status
 from apps.home.models import Task
 from apps.mmc_settings.all_settings import *
 from apps.myob.xero_to_qbo_task import XeroToQbo
-from apps.myob.Report_generation_task import XeroToQboReports
+from apps.myob.report_generation_task import XeroToQboReports
 
 
 def read_data(job_id):
