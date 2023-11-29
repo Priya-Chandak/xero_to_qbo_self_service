@@ -44,7 +44,7 @@ def get_report_customer_summary(job_id, task_id):
         for i in range(0, len(xero_customer_data)):
             for j in range(0, len(qbo_customer_data)):
                 customer_data = []
-                if xero_customer_data[i]["ContactName"] == qbo_customer_data[j]["Name"]:
+                if (xero_customer_data[i]["ContactName"] == qbo_customer_data[j]["FullyQualifiedName"]) or (qbo_customer_data[j]["FullyQualifiedName"].startwith(xero_customer_data[i]["ContactName"]) and qbo_customer_data[j]["FullyQualifiedName"].endswith("- C")) :
                     b = {}
                     b['code'] = xero_customer_data[i]['ContactID']
                     b['Customer_name'] = xero_customer_data[i]['ContactName']
