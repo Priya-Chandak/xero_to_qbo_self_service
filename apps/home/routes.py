@@ -15,7 +15,7 @@ import boto3
 import pdfkit
 
 
-from flask import Flask, render_template, current_app, redirect, request, url_for, session, g, flash, jsonify, Response,make_response
+from flask import Flask, render_template, current_app, redirect, request, url_for, session, g, flash, jsonify, Response, make_response
 from flask_login import login_required
 
 from apps.authentication.forms import CreateJobForm, CreateauthcodeForm, CreateCustomerInfoForm
@@ -50,7 +50,8 @@ def startJobByID():
     print("isnide startjob by id")
     mail_send = sent_email_to_customer()
     print(mail_send)
-
+    # final_report = final_report_email_to_customer()
+    # print(final_report)
     # pdf_create=generate_pdf()
     # print(pdf_create,"created pdf file ")
 
@@ -135,7 +136,7 @@ def xero_connect():
     client_secret = XERO_CS
     redirect_uri = XERO_REDIRECT
     # scope = "email%20profile%20openid%20accounting.reports.read%20payroll.employees%20payroll.employees.read%20accounting.settings%20accounting.transactions%20accounting.transactions.read%20accounting.contacts%20offline_access"
-    scope=XERO_SCOPE
+    scope = XERO_SCOPE
     CLIENT_ID = f"{client_id}"
     CLIENT_SECRET = f"{client_secret}"
     clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
@@ -262,9 +263,10 @@ def connect_input_tool():
     if request.method == "POST":
         # job_functions=['Customer','Supplier']
         job = Jobs()
-        
-        job_functions=['Existing Chart of account','Chart of account','Customer','Supplier','Item','Job','Journal','Spend Money','Receive Money','Bank Transfer','Bill','Invoice','Payrun','Depreciation','AR-AP']
-        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,AR-AP"
+
+        job_functions = ['Existing Chart of account', 'Chart of account', 'Customer', 'Supplier', 'Item', 'Job',
+                         'Journal', 'Spend Money', 'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation', 'AR-AP','Report']
+        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,AR-AP,Report"
 
         # job_functions=['Item','Supplier']
         # job.functions = "Item,Supplier"
@@ -379,8 +381,6 @@ def create_auth_code():
         return redirect("/connect_to_quickbooks")
     
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
-
-
 def qbo_auth():
 
     # CLIENT_ID = 'ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz'
@@ -406,7 +406,7 @@ def qbo_auth():
     auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state=12345'
     # auth_url = f'{AUTHORIZATION_ENDPOINT}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=com.intuit.quickbooks.accounting&state={random_key}'
 
-    print(auth_url)
+    print(auth_url, "print auth url ")
     webbrowser.open_new(auth_url)
     return redirect(auth_url, code=302)
 
@@ -581,9 +581,9 @@ def conversion_report_data(job_id):
     job_id = redis.get('my_key')
     # print(job_id,type(job_id))
 
-    function_name = ["Existing COA","Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
+    function_name = ["Existing COA", "Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
                      "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['existing_coa'],dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+    table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
                   dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
@@ -593,7 +593,7 @@ def conversion_report_data(job_id):
 
     company_info = CustomerInfo.query.filter(
         CustomerInfo.job_id == redis.get('my_key')).first()
-    print(company_info,"print company_info data")
+    print(company_info, "print company_info data")
 
     all_data = []
     pushed_data = []
@@ -929,7 +929,6 @@ def sent_email_to_customer():
                        aws_secret_access_key=aws_secret_access_key)
     queue_url = Queue_URI
 
-
     customer_info_data = CustomerInfo.query.filter(
         CustomerInfo.job_id == redis.get('my_key')).first()
 
@@ -937,7 +936,6 @@ def sent_email_to_customer():
     first_name = customer_info_data.First_Name
     start_date = customer_info_data.start_date
     end_date = customer_info_data.end_date
-    
 
     subject = f"Check Status of {file_name} from {start_date} to {end_date}"
     conversion_report_link = f"https://mmc.vishleshak.io/conversion_report/{redis.get('my_key')}"
@@ -960,17 +958,28 @@ def sent_email_to_customer():
     return response
 
 
+@blueprint.route("/Create_final_report", methods=["GET", "POST"])
+def Create_final_report():
+    cust_data = []
+    supp_data = []
+    if request.method == "GET":
+        dbname = get_mongodb_database()
 
-# @blueprint.route("/Create_final_report", methods=["GET", "POST"])
-# def Create_final_report():
-#     if request.method == "GET":
-#         return render_template("home/create_final_report.html")
+        cust_data1 = dbname["xero_report_customer"].count_documents(
+            {"job_id": redis.get('my_key')})
 
+        supp_data1 = dbname["xero_report_customer"].count_documents(
+            {"job_id": redis.get('my_key')})
+
+        cust_data.append(cust_data1)
+        supp_data.append(supp_data1)
+
+        return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data)
 
 
 # @blueprint.route("/generate_pdf", methods=["GET", "POST"])
 # def generate_pdf():
-#     rendered_template = render_template('create_final_report.html')  
+#     rendered_template = render_template('create_final_report.html')
 
 #     pdf = pdfkit.from_string(rendered_template, False)
 
@@ -979,3 +988,39 @@ def sent_email_to_customer():
 #     response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
 
 #     return response
+
+
+@blueprint.route("/final_report_email_to_customer", methods=["GET", "POST"])
+def final_report_email_to_customer():
+    aws_access_key_id = aws_access_key_id1
+    aws_secret_access_key = aws_secret_access_key1
+    region_name = region_name1
+    sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
+                       aws_secret_access_key=aws_secret_access_key)
+    ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
+                       aws_secret_access_key=aws_secret_access_key)
+    queue_url = Queue_URI
+
+    customer_info_data = CustomerInfo.query.filter(
+        CustomerInfo.job_id == redis.get('my_key')).first()
+
+    file_name = customer_info_data.Company
+
+    subject = f"Check your final report  {file_name} "
+    html_body = render_template('home/final_conversion_report.html')
+    recipient = get_customerinfo_email()
+
+    response = ses.send_email(
+        Source='ankit@mmcconvert.com',
+        Destination={'ToAddresses': [recipient]},
+        Message={
+            'Subject': {'Data': subject},
+            'Body': {
+                'Html': {'Data': html_body}
+            }
+        }
+    )
+
+    sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
+
+    return response
