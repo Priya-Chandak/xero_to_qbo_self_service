@@ -237,9 +237,6 @@ def add_xero_depreciation_journal(job_id,task_id):
                 JournalEntryLineDetail['AccountRef'] = account
                 QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                 QuerySet2['Line'].append(QuerySet3)
-                    
-                
-
                 
             payload = json.dumps(QuerySet2)
             print(payload,"payload--------------------------------")

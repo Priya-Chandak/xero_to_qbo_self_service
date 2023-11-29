@@ -121,11 +121,6 @@ class XeroToQbo(object):
                 get_xero_payment(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                # step_name = "Reading xero open CR"
-                # write_task_execution_step(task.id, status=2, step=step_name)
-                # get_open_xero_payment(job_id,task.id)
-                # write_task_execution_step(task.id, status=1, step=step_name)
-                
                 step_name = "Reading xero open Receive Over payment"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_xero_open_overpayment(job_id,task.id)
@@ -179,11 +174,6 @@ class XeroToQbo(object):
                 step_name = "Reading xero payrun"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_payrun(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero payrun"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_payslip(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading xero payrun settings"
