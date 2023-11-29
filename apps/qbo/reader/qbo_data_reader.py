@@ -11,7 +11,6 @@ def read_qbo_data(job_id, task_id, read_data_from_object):
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
         url = f"{base_url}/query?minorversion={minorversion}"
         print(url)
-        print(read_data_from_object)
         if read_data_from_object == "Invoice":
             configurations.append({"job_id": job_id,
                                    "table_name": "QBO_Invoice",
