@@ -148,6 +148,21 @@ class XeroToQbo(object):
             if "AR-AP" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="read")
 
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 step_name = "Reading Data Till date"
                 get_open_invoice_till_end_date(job_id,task.id)
                 get_open_creditnote_till_end_date(job_id,task.id)
