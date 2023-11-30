@@ -20,7 +20,6 @@ def get_data_from_qbo(job_id, task_id, table_name, json_object_key, qbo_object_n
         start_date, end_date = get_job_details(job_id)
         mongo_table = db[table_name]
         no_of_records = mongo_table.count_documents({"job_id": job_id})
-        print(no_of_records)
         remaining_records = 1000
         while remaining_records >= 1000:
             # if start_date != "" and end_date != "":
@@ -38,7 +37,6 @@ def get_data_from_qbo(job_id, task_id, table_name, json_object_key, qbo_object_n
                         f"select * from {qbo_object_name} WHERE TxnDate >= '{start_date}' AND TxnDate <= '{end_date}' STARTPOSITION {no_of_records} MAXRESULTS 1000"
                     )
                 else:
-                    print("else")
                     payload = (
                         f"select * from {qbo_object_name} startposition {no_of_records} maxresults 1000"
                     )
@@ -48,11 +46,9 @@ def get_data_from_qbo(job_id, task_id, table_name, json_object_key, qbo_object_n
                     f"select * from {qbo_object_name} startposition {no_of_records} maxresults 1000"
                 )
 
-            print(payload)
             response = requests.request("POST", url, headers=header, data=payload)
             if response and response.status_code == 200:
                 api_response = response.json()
-                print(api_response)
                 items = api_response["QueryResponse"][json_object_key]
                 if len(items) > 0:
                     items_output = []
