@@ -128,11 +128,9 @@ def get_aged_receivable_summary_till_end_date(job_id,task_id):
         for p1 in x:
             xero_customer.append(p1)
         
-        print(start_date,type(start_date))
         date_object1 = datetime.strptime(end_date, '%Y-%m-%d')
         result_string = date_object1.strftime('%Y-%m-%d')
-        print(result_string)
-
+        
         for i1 in range(0,len(xero_customer)):
             y1=int(result_string[0:4])
             m1=int(result_string[5:7])
@@ -504,7 +502,7 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
             QBO_customer.append(p5)
 
         qbo_ar=[]
-        date_object1 = datetime.strptime(start_date, '%Y-%m-%d')
+        date_object1 = datetime.strptime(end_date, '%Y-%m-%d')
         result_string = date_object1.strftime('%Y-%m-%d')
 
         url = f"{base_url}/reports/AgedReceivables?report_date={result_string}&minorversion={minorversion}"
@@ -524,7 +522,7 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                 print(e)
                 qbo_customer.append(e)
                     
-        print(qbo_customer)
+        print(qbo_customer,'qbo_customer---------------------')
 
         if len(Xero_AR_Customer)>0:
             for i in range(0,len(Xero_AR_Customer)):
@@ -593,6 +591,7 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                     
          
         if len(qbo_ar)>0:
+            print("data added to qbo_ar_summary")
             qbo_ar_summary.insert_many(qbo_ar)
                     
 
@@ -764,6 +763,121 @@ def get_qbo_ap_supplier(job_id,task_id):
         #             qbo_ap.append(queryset)
         #             break
                 
+        if len(qbo_ap)>0:
+            qbo_ap_summary.insert_many(qbo_ap)
+    
+    except Exception as ex:
+        step_name = "Access token not valid"
+        write_task_execution_step(task_id, status=0, step=step_name)
+        update_task_execution_status( task_id, status=0, task_type="read")
+        import traceback
+        traceback.print_exc()
+        print(ex)
+        sys.exit(0)
+
+def get_qbo_ap_supplier_till_end_date(job_id,task_id):
+    try:
+        start_date, end_date = get_job_details(job_id)
+        dbname=get_mongodb_database()
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+        qbo_ap_summary = dbname['QBO_AP_till_end_date']
+        
+        xero_AP_Supplier1 = dbname["xero_AP_till_end_date"].find({"job_id":job_id})
+        xero_AP_Supplier = []
+        for p4 in xero_AP_Supplier1:
+            xero_AP_Supplier.append(p4)
+
+        QBO_Supplier = dbname["QBO_Supplier"].find({"job_id":job_id})
+        QBO_supplier = []
+        for p5 in QBO_Supplier:
+            QBO_supplier.append(p5)
+
+        qbo_ap=[]
+        date_object = datetime.strptime(start_date, '%Y-%m-%d')
+        one_day_before = date_object - timedelta(days=1)
+        result_string = one_day_before.strftime('%Y-%m-%d')
+        
+        url = f"{base_url}/reports/AgedPayables?report_date={result_string}&minorversion={minorversion}"
+        print(url)
+        payload={}
+        response = requests.request("GET", url, headers=get_data_header, data=payload)
+        data=response.json()
+
+        qbo_supplier=[]
+        for k in range(0,len(QBO_supplier)):
+            e={}
+            e['ContactName']=QBO_supplier[k]['FullyQualifiedName']
+            e['qbo_balance']=QBO_supplier[k]['Balance']
+            e['contact_id']=QBO_supplier[k]['Id']
+            e['job_id']=job_id
+            print(e)
+            qbo_supplier.append(e)
+                    
+        
+        if len(xero_AP_Supplier)>0:
+            for i in range(0,len(xero_AP_Supplier)):
+                for j in range(0,len(QBO_supplier)):
+                    if (xero_AP_Supplier[i]['ContactName'] == QBO_supplier[j]['ContactName']) or (QBO_supplier[j]['ContactName'].startswith(xero_AP_Supplier[i]['ContactName']) and ((QBO_supplier[j]['ContactName']).endswith("- S") or (QBO_supplier[j]['ContactName']).endswith("-C"))):
+                    
+                        queryset={}
+                        queryset['diff'] = True if float(xero_AP_Supplier[i]['xero_balance'])!=float(QBO_supplier[j]['qbo_balance']) else False
+                        queryset["ContactName"] = xero_AP_Supplier[i]['ContactName']
+                        queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
+                        queryset['job_id'] = job_id
+                        try:
+                            queryset['posting_type'] = "Credit" if float(xero_AP_Supplier[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
+                            queryset['diff_amount'] = float(xero_AP_Supplier[i]['xero_balance']) - float(queryset["qbo_balance"])
+                        except ValueError:
+                            queryset['posting_type'] = "Undefined"
+                            queryset['diff_amount'] = 0 
+
+                        dbname["xero_AR_till_end_date"].update_one(
+                            {
+                            "ContactName": f"{xero_AP_Supplier[i]['ContactName']}"
+                            },
+                            {
+                                "$set": 
+                                {
+                                    "qbo_balance": QBO_supplier[j]['qbo_balance'],
+                                    "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
+                                    "diff": f"{queryset['diff']}",
+                                    "posting_type":f"{queryset['posting_type']}",
+                                    "diff_amount":f"{queryset['diff_amount']}"
+                                }
+                            }
+                            )
+                        qbo_ap.append(queryset)
+                        print(qbo_ap,"if--qbo_ap")
+                        break
+        else:
+            for j in range(0,len(QBO_supplier)):
+                print(j,len(QBO_supplier))
+                queryset={}
+                queryset['diff'] = True
+                queryset["ContactName"] = QBO_supplier[j]['ContactName']
+                queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
+                queryset['job_id'] = job_id
+                try:
+                    queryset['posting_type'] = "Debit" if float(queryset["qbo_balance"])<0 else "Credit"
+                    queryset['diff_amount'] = abs(float(queryset["qbo_balance"]))
+                except ValueError:
+                    queryset['posting_type'] = "Undefined"
+                    queryset['diff_amount'] = 0 
+
+                dbname["xero_AP_till_end_date"].insert_one(
+                    {
+                    "ContactName": f"{QBO_supplier[j]['ContactName']}",
+                    "qbo_balance": QBO_supplier[j]['qbo_balance'],
+                    "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
+                    "diff": f"{queryset['diff']}",
+                    "posting_type":f"{queryset['posting_type']}",
+                    "diff_amount":f"{queryset['diff_amount']}",
+                    "job_id" :f"{job_id}"
+                    }
+                    )
+                qbo_ap.append(queryset)
+                print(qbo_ap,"else--qbo_ap")
+        
         if len(qbo_ap)>0:
             qbo_ap_summary.insert_many(qbo_ap)
     
