@@ -854,7 +854,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                 print(j,len(QBO_supplier))
                 queryset={}
                 queryset['diff'] = True
-                queryset["ContactName"] = QBO_supplier[j]['ContactName']
+                queryset["ContactName"] = QBO_supplier[j]['DisplayName']
                 queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
                 queryset['job_id'] = job_id
                 try:
@@ -866,7 +866,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
 
                 dbname["xero_AP_till_end_date"].insert_one(
                     {
-                    "ContactName": f"{QBO_supplier[j]['ContactName']}",
+                    "ContactName": f"{QBO_supplier[j]['DisplayName']}",
                     "qbo_balance": QBO_supplier[j]['qbo_balance'],
                     "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
                     "diff": f"{queryset['diff']}",
