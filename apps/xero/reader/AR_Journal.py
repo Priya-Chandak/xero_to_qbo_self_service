@@ -133,6 +133,124 @@ def add_qbo_ar_journal(job_id,task_id):
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
 
+def add_qbo_ar_journal_till_end_date(job_id,task_id):
+    try:
+        logger.info("Started executing xero -> qbowriter -> add_xero_AR_journal")
+        start_date, end_date = get_job_details(job_id)
+        
+        dbname = get_mongodb_database()
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+
+        url = f"{base_url}/journalentry?minorversion={minorversion}"
+
+        journal1 = dbname["xero_AR_till_end_date"].find({"job_id":job_id})
+
+        journal = []
+        for p1 in journal1:
+            journal.append(p1)
+
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
+        QBO_coa = []
+        for p2 in QBO_COA:
+            QBO_coa.append(p2)
+
+        QuerySet1 = journal
+        
+        QuerySet2 = {"Line": []}
+        retained_earning_amount=0
+        retained_earning={}
+        JournalEntryLineDetail1={}
+        RE={}
+        print("add_qbo_ar_journal_till_end_date",len(QuerySet1))
+        for i in range(0, len(QuerySet1)):
+            if 'diff' in QuerySet1[i] and QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0:
+                print("if")
+                date_object = datetime.strptime(end_date, '%Y-%m-%d')
+                journal_date1 = date_object.strftime('%Y-%m-%d')
+                
+                AR = {}
+                RE = {}
+                
+                QuerySet3={}
+                JournalEntryLineDetail={}
+                entity={}
+                EntityRef={}
+                TxnTaxDetail = {}
+                QuerySet2["TxnTaxDetail"] = TxnTaxDetail
+                QuerySet2["DocNumber"] = "AR-Adjustment-Current"
+                QuerySet2["TxnDate"] = journal_date1
+               
+                for j11 in range(0, len(QBO_coa)):
+                    if (
+                        QBO_coa[j11]["AccountType"]
+                        == "Accounts Receivable"
+                    ):
+                        AR["name"] = QBO_coa[j11][
+                            "FullyQualifiedName"
+                        ]
+                        AR["value"] = QBO_coa[j11]["Id"]
+
+                    if (
+                        QBO_coa[j11]["AccountType"] == "Equity" and QBO_coa[j11]["Name"] == "Retained Earnings"
+                    ):
+                        RE['name'] = QBO_coa[j11]["Name"]
+                        RE['value'] = QBO_coa[j11]["Id"]
+
+                
+                if QuerySet1[i]['posting_type'] == "Credit":
+                    print("Credit")
+                    QuerySet3["DetailType"] = "JournalEntryLineDetail"
+                    QuerySet3["Amount"] = abs(float(QuerySet1[i]["diff_amount"]))
+                    QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                    JournalEntryLineDetail["PostingType"] = "Credit"
+                    JournalEntryLineDetail["Entity"] = entity
+                    JournalEntryLineDetail['AccountRef'] = AR
+                    entity['Type'] = 'Customer'
+                    entity['EntityRef'] = EntityRef
+                    EntityRef['name'] = QuerySet1[i]['ContactName']
+                    EntityRef['value'] = QuerySet1[i]['QBO_ContactID']
+
+                elif QuerySet1[i]['posting_type'] == "Debit":
+                    QuerySet3["DetailType"] = "JournalEntryLineDetail"
+                    QuerySet3["Amount"] = abs(float(QuerySet1[i]["diff_amount"]))
+                    QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                    JournalEntryLineDetail["PostingType"] = "Debit"
+                    JournalEntryLineDetail["Entity"] = entity
+                    JournalEntryLineDetail['AccountRef'] = AR
+                    entity['Type'] = 'Customer'
+                    entity['EntityRef'] = EntityRef
+                    EntityRef['name'] = QuerySet1[i]['ContactName']
+                    EntityRef['value'] = QuerySet1[i]['QBO_ContactID']
+
+                retained_earning_amount = retained_earning_amount + float(QuerySet1[i]['diff_amount'])
+               
+                QuerySet2['Line'].append(QuerySet3)
+        
+        print(retained_earning_amount)
+
+        if retained_earning_amount<0:
+            JournalEntryLineDetail1["PostingType"] = "Debit"
+        else:
+            JournalEntryLineDetail1["PostingType"] = "Credit"
+
+        retained_earning["DetailType"] = "JournalEntryLineDetail"
+        retained_earning['JournalEntryLineDetail'] = JournalEntryLineDetail1
+        retained_earning["Amount"] = abs(retained_earning_amount)
+        JournalEntryLineDetail1['AccountRef'] = RE
+
+        QuerySet2['Line'].append(retained_earning)
+
+        payload = json.dumps(QuerySet2)
+        print(payload,"payload--------------------------------")
+
+        url = f"{base_url}/journalentry?minorversion=14"
+        print(url)
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.status_code)
+        print(response.text)
+            
+    except Exception as ex:
+        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
 
 def add_qbo_ap_journal(job_id,task_id):
     try:
@@ -181,6 +299,124 @@ def add_qbo_ap_journal(job_id,task_id):
                 TxnTaxDetail = {}
                 QuerySet2["TxnTaxDetail"] = TxnTaxDetail
                 QuerySet2["DocNumber"] = "AP-Adjustment"
+                QuerySet2["TxnDate"] = journal_date1
+               
+                for j11 in range(0, len(QBO_coa)):
+                    if (
+                        QBO_coa[j11]["AccountType"]
+                        == "Accounts Payable"
+                    ):
+                        AP["name"] = QBO_coa[j11][
+                            "FullyQualifiedName"
+                        ]
+                        AP["value"] = QBO_coa[j11]["Id"]
+
+                    if (
+                        QBO_coa[j11]["AccountType"] == "Equity" and QBO_coa[j11]["Name"] == "Retained Earnings"
+                    ):
+                        RE['name'] = QBO_coa[j11]["Name"]
+                        RE['value'] = QBO_coa[j11]["Id"]
+
+                
+                if QuerySet1[i]['posting_type'] == "Credit":
+                    QuerySet3["DetailType"] = "JournalEntryLineDetail"
+                    QuerySet3["Amount"] = abs(float(QuerySet1[i]["diff_amount"]))
+                    QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                    JournalEntryLineDetail["PostingType"] = "Credit"
+                    JournalEntryLineDetail["Entity"] = entity
+                    JournalEntryLineDetail['AccountRef'] = AP
+                    entity['Type'] = 'Vendor'
+                    entity['EntityRef'] = EntityRef
+                    EntityRef['name'] = QuerySet1[i]['ContactName']
+                    EntityRef['value'] = QuerySet1[i]['QBO_ContactID']
+
+                elif QuerySet1[i]['posting_type'] == "Debit":
+                    QuerySet3["DetailType"] = "JournalEntryLineDetail"
+                    QuerySet3["Amount"] = abs(float(QuerySet1[i]["diff_amount"]))
+                    QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                    JournalEntryLineDetail["PostingType"] = "Debit"
+                    JournalEntryLineDetail["Entity"] = entity
+                    JournalEntryLineDetail['AccountRef'] = AP
+                    entity['Type'] = 'Vendor'
+                    entity['EntityRef'] = EntityRef
+                    EntityRef['name'] = QuerySet1[i]['ContactName']
+                    EntityRef['value'] = QuerySet1[i]['QBO_ContactID']
+
+                retained_earning_amount = retained_earning_amount + float(QuerySet1[i]['diff_amount'])
+               
+                QuerySet2['Line'].append(QuerySet3)
+       
+        if retained_earning_amount>0:
+            JournalEntryLineDetail1["PostingType"] = "Debit"
+        else:
+            JournalEntryLineDetail1["PostingType"] = "Credit"
+
+        retained_earning["DetailType"] = "JournalEntryLineDetail"
+        retained_earning['JournalEntryLineDetail'] = JournalEntryLineDetail1
+        retained_earning["Amount"] = abs(retained_earning_amount)
+        JournalEntryLineDetail1['AccountRef'] = RE
+
+        QuerySet2['Line'].append(retained_earning)
+
+        payload = json.dumps(QuerySet2)
+        print(payload,"payload--------------------------------")
+
+        url = f"{base_url}/journalentry?minorversion=14"
+        print(url)
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.status_code)
+        print(response.text)
+            
+    except Exception as ex:
+        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+
+
+def add_qbo_ap_journal_till_end_date(job_id,task_id):
+    try:
+        logger.info("Started executing xero -> qbowriter -> add_xero_AP_journal")
+        start_date, end_date = get_job_details(job_id)
+        
+        dbname = get_mongodb_database()
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+
+        url = f"{base_url}/journalentry?minorversion={minorversion}"
+
+        journal1 = dbname["xero_AP_till_end_date"].find({"job_id":job_id})
+
+        journal = []
+        for p1 in journal1:
+            journal.append(p1)
+
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
+        QBO_coa = []
+        for p2 in QBO_COA:
+            QBO_coa.append(p2)
+
+        QuerySet1 = journal
+        
+        QuerySet2 = {"Line": []}
+        retained_earning_amount=0
+        retained_earning={}
+        JournalEntryLineDetail1={}
+        RE = {}
+            
+        for i in range(0, len(QuerySet1)):
+                  
+            if 'diff' in QuerySet1[i] and QuerySet1[i]['diff'] == "True" and float(QuerySet1[i]['diff_amount'])!= 0:
+                
+                date_object = datetime.strptime(end_date, '%Y-%m-%d')
+                journal_date1 = date_object.strftime('%Y-%m-%d')
+                
+                AP = {}
+                
+                
+                QuerySet3={}
+                JournalEntryLineDetail={}
+                entity={}
+                EntityRef={}
+                TxnTaxDetail = {}
+                QuerySet2["TxnTaxDetail"] = TxnTaxDetail
+                QuerySet2["DocNumber"] = "AP-Adjustment-Current"
                 QuerySet2["TxnDate"] = journal_date1
                
                 for j11 in range(0, len(QBO_coa)):

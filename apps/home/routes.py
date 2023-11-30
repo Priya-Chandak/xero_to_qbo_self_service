@@ -265,8 +265,8 @@ def connect_input_tool():
         job = Jobs()
 
         job_functions = ['Existing Chart of account', 'Chart of account', 'Customer', 'Supplier', 'Item', 'Job',
-                         'Journal', 'Spend Money', 'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation', 'AR-AP','Report']
-        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,AR-AP,Report"
+                         'Journal', 'Spend Money', 'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation', 'Open Data','AR-AP','Trial Balance','Report']
+        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,Open Data,AR-AP,Trial Balance,Report"
 
         # job_functions=['Item','Supplier']
         # job.functions = "Item,Supplier"
@@ -526,16 +526,15 @@ def data_access():
         )
     )
 
-
 @blueprint.route("/conversion_report/<int:job_id>")
 def conversion_report(job_id):
     dbname = get_mongodb_database()
     job_id = redis.get('my_key')
     print(job_id, type(job_id))
     function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment","Open Invoice","Open Bill"]
     table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment'],dbname['xero_open_invoice'],dbname['xero_open_bill']]
 
     condition1 = {"job_id": f"{job_id}"}
     print(condition1)
