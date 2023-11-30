@@ -855,7 +855,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                 queryset={}
                 queryset['diff'] = True
                 queryset["ContactName"] = QBO_supplier[j]['DisplayName']
-                queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
+                queryset["qbo_balance"] = QBO_supplier[j]['Balance']
                 queryset['job_id'] = job_id
                 try:
                     queryset['posting_type'] = "Debit" if float(queryset["qbo_balance"])<0 else "Credit"
@@ -867,8 +867,8 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                 dbname["xero_AP_till_end_date"].insert_one(
                     {
                     "ContactName": f"{QBO_supplier[j]['DisplayName']}",
-                    "qbo_balance": QBO_supplier[j]['qbo_balance'],
-                    "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
+                    "qbo_balance": QBO_supplier[j]['Balance'],
+                    "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
                     "diff": f"{queryset['diff']}",
                     "posting_type":f"{queryset['posting_type']}",
                     "diff_amount":f"{queryset['diff_amount']}",
