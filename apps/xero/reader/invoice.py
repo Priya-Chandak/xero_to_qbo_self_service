@@ -532,8 +532,10 @@ def get_open_invoice(job_id,task_id):
                         url = f"{base_url}/Invoices?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})&page={pages}"
 
                     print(url)
+
                     response = requests.request(
                         "GET", url, headers=headers, data=payload)
+                    time.sleep(1)
                     JsonResponse = response.json()
                     JsonResponse1 = JsonResponse['Invoices']
                     for i in range(0, len(JsonResponse1)):
