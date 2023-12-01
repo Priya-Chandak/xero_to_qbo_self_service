@@ -263,7 +263,7 @@ def get_aged_payable_summary(job_id,task_id):
                                 if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'] != '':
                                     total = total+ float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
                                 if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']!='':
-                                    e['credited'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']
+                                    e['credited'] = float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value'])
                                 if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value']!='':
                                     due = due + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
                 b={}
