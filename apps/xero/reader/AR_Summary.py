@@ -262,8 +262,10 @@ def get_aged_payable_summary(job_id,task_id):
                                     paid = paid + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'])
                                 if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'] != '':
                                     total = total+ float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
-                                e['credited'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']
-                                due = due + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
+                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']!='':
+                                    e['credited'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']
+                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value']!='':
+                                    due = due + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
                 b={}
                 b['job_id'] = job_id
                 b['ContactID'] = xero_supplier[i1]['ContactID']
