@@ -85,6 +85,7 @@ def add_xero_payrun(job_id,task_id):
                     timestamp = int(match.group())
                     timestamp /= 1000
                     datetime_obj = datetime.utcfromtimestamp(timestamp)
+                    print(datetime_obj,start_date1)
                     xero_payrun_date1 = datetime_obj.strftime("%Y-%m-%d")
                 
                 
@@ -192,11 +193,13 @@ def add_xero_payrun(job_id,task_id):
             payload = json.dumps(QuerySet2)
             print(payload,"payload--------------------------------")
 
+            # response = requests.request("POST", url, headers=headers, data=payload)
             if start_date1 is not None and end_date1 is not None:
-                if (journal_date1 >= start_date1) and (journal_date1 <= end_date1):
-            
+                if (datetime_obj >= start_date1) and (datetime_obj <= end_date1):
                     post_data_in_qbo(url, headers, payload,dbname['xero_payrun'],_id, job_id,task_id, QuerySet1[i]['payrun'])
             
+            # print(response.status_code)
+            # print(response.text)
                 
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)

@@ -258,14 +258,22 @@ def get_aged_payable_summary(job_id,task_id):
                                 e['inv_id'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Attributes'][0]['Value']
                                 e['date'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][0]['Value']
                                 e['duedate'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][2]['Value']
-                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'] != '':
-                                    paid = paid + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'])
-                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'] != '':
-                                    total = total+ float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
-                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']!='':
-                                    e['credited'] = float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value'])
-                                if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value']!='':
-                                    due = due + float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
+
+                                try:
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value']=float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value'])
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value']=float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value'])
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']=float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value'])
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value']=float(a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value'])
+                                except Exception as ex:
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value']=0
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value']=0
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']=0
+                                    a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value']=0
+                                
+                                paid = paid + a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][5]['Value']
+                                total = total+ a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value']
+                                e['credited'] = a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][6]['Value']
+                                due = due + a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][7]['Value']
                 b={}
                 b['job_id'] = job_id
                 b['ContactID'] = xero_supplier[i1]['ContactID']
@@ -809,7 +817,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
         qbo_supplier=[]
         for k in range(0,len(QBO_supplier)):
             e={}
-            e['ContactName']=QBO_supplier[k]['DisplayName']
+            e['ContactName']=QBO_supplier[k]['FullyQualifiedName']
             e['qbo_balance']=QBO_supplier[k]['Balance']
             e['contact_id']=QBO_supplier[k]['Id']
             e['job_id']=job_id
@@ -857,8 +865,8 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                 print(j,len(QBO_supplier))
                 queryset={}
                 queryset['diff'] = True
-                queryset["ContactName"] = QBO_supplier[j]['DisplayName']
-                queryset["qbo_balance"] = QBO_supplier[j]['Balance']
+                queryset["ContactName"] = QBO_supplier[j]['ContactName']
+                queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
                 queryset['job_id'] = job_id
                 try:
                     queryset['posting_type'] = "Debit" if float(queryset["qbo_balance"])<0 else "Credit"
@@ -869,9 +877,9 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
 
                 dbname["xero_AP_till_end_date"].insert_one(
                     {
-                    "ContactName": f"{QBO_supplier[j]['DisplayName']}",
-                    "qbo_balance": QBO_supplier[j]['Balance'],
-                    "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
+                    "ContactName": f"{QBO_supplier[j]['ContactName']}",
+                    "qbo_balance": QBO_supplier[j]['qbo_balance'],
+                    "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
                     "diff": f"{queryset['diff']}",
                     "posting_type":f"{queryset['posting_type']}",
                     "diff_amount":f"{queryset['diff_amount']}",
@@ -949,8 +957,9 @@ def get_qbo_current_trial_balance(job_id,task_id):
         QBO_Trial_Balance = dbname['QBO_Current_Trial_Balance']
         
         date_object = datetime.strptime(end_date, '%Y-%m-%d')
-        result_string = date_object.strftime('%Y-%m-%d')
-        
+        # result_string = date_object.strftime('%Y-%m-%d')
+        result_string = date.today().strftime("%Y-%m-%d")
+
         y1=int(result_string[0:4])
         m1=int(result_string[5:7])
         d1=int(result_string[8:])
@@ -1043,8 +1052,9 @@ def get_xero_current_trial_balance(job_id,task_id):
         xero_trial_balance = dbname['xero_current_trial_balance']
         payload, base_url, headers = get_settings_xero(job_id)
         
-        date_object = datetime.strptime(end_date, '%Y-%m-%d')
-        result_string=date_object
+        print(start_date,type(start_date))
+        # date_object = datetime.strptime(end_date, '%Y-%m-%d')
+        result_string=date.today().strftime("%Y-%m-%d")
         print(result_string)
         y1=int(result_string[0:4])
         m1=int(result_string[5:7])
