@@ -2,19 +2,24 @@ import base64
 import traceback
 
 import requests
+from redis import StrictRedis
 
 from apps import db
 from apps.home.models import Jobs
-from apps.home.models import Tool, ToolSettings,XeroQboTokens
+from apps.home.models import Tool, ToolSettings, XeroQboTokens
 from apps.myconstant import *
+redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
 def get_xero_settings(job_id):
     try:
         url = "https://identity.xero.com/connect/token?="
 
-        data1 = db.session.query(XeroQboTokens).filter(XeroQboTokens.job_id == job_id).first()
-        
+        job_id_from_redis = redis.get('my_key')
+
+        data1 = db.session.query(XeroQboTokens).filter(
+            XeroQboTokens.job_id == job_id_from_redis).first()
+
         # keys = (
         #     db.session.query(Jobs, ToolSettings.keys, ToolSettings.values, ToolSettings.id)
         #     .join(Tool, Jobs.input_account_id == Tool.id)
@@ -52,10 +57,9 @@ def get_xero_settings(job_id):
         #     if row[1] == "state":
         #         state = row[2]
 
-        
         client_id = XERO_CI
         client_secret = XERO_CS
-        
+
         CLIENT_ID = f"{client_id}"
         CLIENT_SECRET = f"{client_secret}"
         clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
@@ -72,7 +76,14 @@ def get_xero_settings(job_id):
         re = response.json()
         new_access_token = re['access_token']
         new_refresh_token = re['refresh_token']
-                
+
+        db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+            {"xero_access_token": new_access_token})
+        db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+            {"xero_refresh_token": new_refresh_token})
+
+        db.session.commit()
+
         base_url = "https://api.xero.com/api.xro/2.0"
         payload = ""
         headers = {
