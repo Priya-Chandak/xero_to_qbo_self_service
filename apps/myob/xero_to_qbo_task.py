@@ -178,6 +178,46 @@ class XeroToQbo(object):
 
             if "Trial Balance" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+                step_name = "Reading QBO Trial Balance"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo AR Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_qbo_reverse_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading xero trial balance"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo AR Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_open_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading xero trial balance"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_current_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading QBO Trial Balance of today's date"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_current_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading xero trial balance"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                match_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo AR Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                add_xero_current_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 update_task_execution_status(task.id, status=1, task_type="write")
             
             if "Payrun" == task.function_name:
@@ -849,45 +889,6 @@ class XeroToQbo(object):
                 update_task_execution_status(task.id, status=2, task_type="write")
             
                 get_coa(job_id,task.id)
-                step_name = "Reading QBO Trial Balance"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading qbo AR Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_qbo_reverse_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading xero trial balance"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading qbo AR Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading xero trial balance"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_current_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading QBO Trial Balance of today's date"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_current_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading xero trial balance"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                match_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading qbo AR Customer"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_current_trial_balance(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
                 
                 update_task_execution_status(task.id, status=1, task_type="write")
 
