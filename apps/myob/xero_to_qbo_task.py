@@ -148,6 +148,16 @@ class XeroToQbo(object):
             if "AR-AP" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="read")
 
+                step_name = "Reading xero open Aged Receivable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_receivable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero open Aged Payable Summary"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_aged_payable_summary(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Reading qbo chart of data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_coa(job_id,task.id)
@@ -360,6 +370,21 @@ class XeroToQbo(object):
                     get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
+                step_name = "Reading Invoice data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                results = dbname['xero_invoice'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_invoice(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading Creditnotes data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                results = dbname['xero_creditnote'].count_documents({"job_id": job_id})
+                if results == 0:
+                    get_creditnote(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                
                 
                 update_task_execution_status(task.id, status=1, task_type="read")
 
@@ -761,16 +786,7 @@ class XeroToQbo(object):
 
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
-                step_name = "Reading xero open Aged Receivable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_receivable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero open Aged Payable Summary"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_aged_payable_summary(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
+                
                 step_name = "Reading qbo AR Customer"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_ar_customer(job_id,task.id)
@@ -1162,13 +1178,6 @@ class XeroToQbo(object):
                 read_qbo_data(job_id, task.id, "Item")
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading Invoice data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                results = dbname['xero_invoice'].count_documents({"job_id": job_id})
-                if results == 0:
-                    get_invoice(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
                 step_name = "Create Item ItemCode From Invoice"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 create_item_from_xero_invoice_acccode_itemcode(job_id, task.id)
@@ -1187,11 +1196,6 @@ class XeroToQbo(object):
                 step_name = "Create Item AccountCode From bill"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 create_item_xero_bill_accountcode(job_id, task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading Creditnotes data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_creditnote(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Create Item ItemCode From CreditNote"
