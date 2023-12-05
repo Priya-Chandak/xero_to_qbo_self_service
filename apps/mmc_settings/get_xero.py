@@ -77,10 +77,15 @@ def get_xero_settings(job_id):
         new_access_token = re['access_token']
         new_refresh_token = re['refresh_token']
 
-        db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+        db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
             {"xero_access_token": new_access_token})
-        db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+        db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
             {"xero_refresh_token": new_refresh_token})
+        
+        # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+        #     {"xero_access_token": new_access_token})
+        # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+        #     {"xero_refresh_token": new_refresh_token})
 
         db.session.commit()
 
