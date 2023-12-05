@@ -16,6 +16,7 @@ def get_coa(job_id, task_id):
         print(payload, base_url, headers)
 
         main_url = f"{base_url}/Accounts"
+        print(main_url)
 
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
         print(response1,"foa coa")
