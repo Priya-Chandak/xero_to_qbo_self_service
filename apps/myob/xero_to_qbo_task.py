@@ -179,6 +179,8 @@ class XeroToQbo(object):
             if "Trial Balance" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
+                read_qbo_data(job_id,task.id, "Chart of account")
+                
                 step_name = "Reading qbo Customer"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id,task.id, "Customer")
