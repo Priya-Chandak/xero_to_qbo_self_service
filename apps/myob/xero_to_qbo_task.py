@@ -178,6 +178,9 @@ class XeroToQbo(object):
 
             if "Trial Balance" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
+                
+                get_coa(job_id,task.id)
+                
                 step_name = "Reading QBO Trial Balance"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_trial_balance(job_id,task.id)
@@ -888,8 +891,6 @@ class XeroToQbo(object):
             if "Trial Balance" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
             
-                get_coa(job_id,task.id)
-                
                 update_task_execution_status(task.id, status=1, task_type="write")
 
             if "Payrun" == task.function_name:
