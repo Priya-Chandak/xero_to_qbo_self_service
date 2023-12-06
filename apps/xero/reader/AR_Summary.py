@@ -526,7 +526,7 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
         for k in range(0,len(QBO_customer)):
             if QBO_customer[k]['Balance'] != 0:
                 e={}
-                e['ContactName']=QBO_customer[k]['FullyQualifiedName']
+                e['ContactName']=QBO_customer[k]['DisplayName']
                 e['qbo_balance']=QBO_customer[k]['Balance']
                 e['contact_id']=QBO_customer[k]['Id']
                 e['job_id']=job_id
@@ -817,7 +817,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
         qbo_supplier=[]
         for k in range(0,len(QBO_supplier)):
             e={}
-            e['ContactName']=QBO_supplier[k]['FullyQualifiedName']
+            e['ContactName']=QBO_supplier[k]['DisplayName']
             e['qbo_balance']=QBO_supplier[k]['Balance']
             e['contact_id']=QBO_supplier[k]['Id']
             e['job_id']=job_id
