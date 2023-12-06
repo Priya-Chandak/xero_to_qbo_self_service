@@ -30,7 +30,7 @@ def get_report_customer_summary(job_id, task_id):
         final_report_cust_summary = dbname['xero_report_customer']
         payload, base_url, headers = get_settings_xero(job_id)
 
-        xero_ar_customer = dbname['xero_AR']
+        xero_ar_customer = dbname['xero_AR_till_end_date']
         x = xero_ar_customer.find({"job_id": job_id})
         xero_customer_data = []
         for p1 in x:
@@ -76,7 +76,7 @@ def get_report_supplier_summary(job_id, task_id):
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
-        final_report_supp_summary = dbname['xero_report_supplier']
+        final_report_supp_summary = dbname['xero_AP_till_end_date']
         payload, base_url, headers = get_settings_xero(job_id)
 
         xero_ar_supplier = dbname['xero_AP']

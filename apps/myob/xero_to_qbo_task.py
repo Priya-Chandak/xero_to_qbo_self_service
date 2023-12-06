@@ -64,7 +64,7 @@ from apps.xero.reader.payrun import get_payrun,get_payslip,get_payrun_setting
 from apps.xero.reader.depreciation import *
 from apps.xero.reader.add_payrun import add_xero_payrun
 from apps.xero.reader.invoice import get_invoice,get_invoice_customers,get_open_invoice,get_open_invoice_till_end_date
-from apps.xero.reader.AR_Summary import get_aged_receivable_summary, get_aged_payable_summary,get_qbo_ar_customer,get_qbo_ap_supplier, get_qbo_trial_balance, get_xero_trial_balance,match_trial_balance,get_xero_current_trial_balance,get_qbo_current_trial_balance, get_aged_payable_summary_till_end_date,get_aged_receivable_summary_till_end_date, get_qbo_ar_customer_till_date,get_qbo_ap_supplier_till_end_date
+from apps.xero.reader.AR_Summary import get_aged_receivable_summary, get_aged_payable_summary,get_qbo_ar_customer,get_qbo_ap_supplier, get_qbo_trial_balance, get_xero_trial_balance,match_trial_balance,get_xero_current_trial_balance,get_qbo_current_trial_balance, get_aged_payable_summary_till_end_date,get_aged_receivable_summary_till_end_date, get_qbo_ar_customer_till_date,get_qbo_ap_supplier_till_end_date,trial_balance_final_report
 from apps.xero.reader.AR_Journal import add_qbo_ar_journal, add_qbo_ap_journal, add_qbo_reverse_trial_balance, add_xero_open_trial_balance,add_xero_current_trial_balance, add_qbo_ar_journal_till_end_date, add_qbo_ap_journal_till_end_date
 from apps.xero.reader.bill import get_xero_bill, get_bill_suppliers
 from apps.xero.reader.items import get_items
@@ -849,7 +849,10 @@ class XeroToQbo(object):
             if "Trial Balance" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id,task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Reading qbo Customer"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -955,6 +958,25 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=2, step=step_name)
                 final_report()
                 write_task_execution_step(task.id, status=1, step=step_name)
+
+                delete_xero_current_trial_balance(job_id)
+                delete_qbo_current_trial_balance(job_id)
+
+                step_name = "Reading xero trial balance"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_current_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading QBO Trial Balance of today's date"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_current_trial_balance(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading xero trial balance"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                trial_balance_final_report(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 
                 update_task_execution_status(task.id, status=1, task_type="write")
             
