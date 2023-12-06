@@ -23,6 +23,7 @@ from datetime import date
 
 
 def get_report_customer_summary(job_id, task_id):
+    print("get_report_customer_summary")
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
@@ -41,9 +42,10 @@ def get_report_customer_summary(job_id, task_id):
         for p2 in y:
             qbo_customer_data.append(p2)
 
+        customer_data = []
+                
         for i in range(0, len(xero_customer_data)):
             for j in range(0, len(qbo_customer_data)):
-                customer_data = []
                 if (xero_customer_data[i]["ContactName"] == qbo_customer_data[j]["FullyQualifiedName"]) or (qbo_customer_data[j]["FullyQualifiedName"].startswith(xero_customer_data[i]["ContactName"]) and qbo_customer_data[j]["FullyQualifiedName"].endswith("- C")) :
                     b = {}
                     b['code'] = xero_customer_data[i]['ContactID']
@@ -51,11 +53,14 @@ def get_report_customer_summary(job_id, task_id):
                     b['Xero'] = xero_customer_data[i]['xero_balance']
                     b['QBO'] = qbo_customer_data[j]["Balance"]
                     customer_data.append(b)
-            if len(customer_data) > 0:
-                final_report_cust_summary.insert_many(customer_data)
+                    print(customer_data,"customer_data-----------------")
+            
+        if len(customer_data) > 0:
+            print("Data Inserted to xero_report_customer table")
+            final_report_cust_summary.insert_many(customer_data)
 
-            step_name = "Reading data from xero customer Report"
-            write_task_execution_step(task_id, status=1, step=step_name)
+        step_name = "Reading data from xero customer Report"
+        write_task_execution_step(task_id, status=1, step=step_name)
 
     except Exception as ex:
         step_name = "Access token not valid"
@@ -86,9 +91,10 @@ def get_report_supplier_summary(job_id, task_id):
         for q2 in B:
             qbo_supplier_data.append(q2)
 
+        supplier_data = []
+                
         for i in range(0, len(xero_supplier_data)):
             for j in range(0, len(qbo_supplier_data)):
-                supplier_data = []
                 if xero_supplier_data[i]["ContactName"] == qbo_supplier_data[j]["Name"]:
                     b = {}
                     b['code'] = xero_supplier_data[i]['ContactID']
@@ -96,11 +102,14 @@ def get_report_supplier_summary(job_id, task_id):
                     b['Xero'] = xero_supplier_data[i]['xero_balance']
                     b['QBO'] = qbo_supplier_data[j]["Balance"]
                     supplier_data.append(b)
-            if len(supplier_data) > 0:
-                final_report_supp_summary.insert_many(supplier_data)
+                    print(supplier_data,"supp data -------------")
+        
+        if len(supplier_data) > 0:
+            print("data Inserted in table xero_report_supplier")
+            final_report_supp_summary.insert_many(supplier_data)
 
-            step_name = "Reading data from xero customer Report"
-            write_task_execution_step(task_id, status=1, step=step_name)
+        step_name = "Reading data from xero customer Report"
+        write_task_execution_step(task_id, status=1, step=step_name)
 
     except Exception as ex:
         step_name = "Access token not valid"
