@@ -954,11 +954,6 @@ class XeroToQbo(object):
                 get_report_supplier_summary(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Final Report"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                final_report()
-                write_task_execution_step(task.id, status=1, step=step_name)
-
                 delete_xero_current_trial_balance(job_id)
                 delete_qbo_current_trial_balance(job_id)
 
@@ -977,6 +972,11 @@ class XeroToQbo(object):
                 trial_balance_final_report(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
+                step_name = "Final Report"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                final_report()
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 update_task_execution_status(task.id, status=1, task_type="write")
             
             if "Depreciation" == task.function_name:
