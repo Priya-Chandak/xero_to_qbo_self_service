@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -106,111 +108,95 @@
 <body>
 
     <header>
-        <img src="/static/assets/img/Quickbooks-Emblem.png" alt="Infographic" style="width: 100%; max-width: 250px;">
+        <img src="../../static/assets/img/Quickbooks-Emblem.png" alt="Infographic" style="width: 100%; max-width: 250px;">
     </header>
 
     <div class="container">
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <h1>Migration report for Growth Farm</h1>
-                    <h3>Customer balances</h3>
+                    <h1>Migration Report For Growth Farm</h1>
+
+                    <!-- Account table -->
+                    <h3>Account Balances</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Customer_name</th>
+
+                                <th>Account_name</th>
                                 <th>XERO</th>
                                 <th>QBO</th>
                                 <!-- Add more columns as needed -->
                             </tr>
                         </thead>
                         <tbody>
+                            {% for entry in cust_data %}
                             <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
 
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
+                                <td>{{ entry.AccountName }}</td>
+                                <td>{{ entry.xero_balance }}</td>
+                                <td>{{ entry.qbo_balance }}</td>
                                 <!-- Add more rows and data as needed -->
                             </tr>
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-                            
-
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-                            
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
-
-                            <tr>
-                                <td>A11</td>
-                                <td>Test1</td>
-                                <td>23444</td>
-                                <td>23444</td>
-                                <!-- Add more rows and data as needed -->
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
+
+
+                    
+
+                    <h3>Customer Balances</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Customer_name</th>
+                                <th>XERO</th>
+                                <th>QBO-Online</th>
+                                <!-- Add more columns as needed -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in cust_data %}
+                            <tr>
+                                <td>{{ entry.code }}</td>
+                                <td>{{ entry.Customer_name }}</td>
+                                <td>{{ entry.Xero }}</td>
+                                <td>{{ entry.QBO }}</td>
+                                <!-- Add more rows and data as needed -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                    <!-- supplier table creation  -->
+
+                    <h3>Supplier Balances</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Customer_name</th>
+                                <th>XERO</th>
+                                <th>QBO-Online</th>
+                                <!-- Add more columns as needed -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in supp_data %}
+                            <tr>
+                                <td>{{ entry.code }}</td>
+                                <td>{{ entry.Customer_name }}</td>
+                                <td>{{ entry.Xero }}</td>
+                                <td>{{ entry.QBO }}</td>
+                                <!-- Add more rows and data as needed -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
 
 
                     <img src="/static/assets/img/businessman-time.jpg" alt="Businessman" class="responsive-image">

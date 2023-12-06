@@ -1,10 +1,12 @@
 import asyncio
 import base64
+from email import encoders
 import json
 import webbrowser
 import requests
 import random
 import string
+import os
 from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import *
@@ -13,7 +15,11 @@ from flask import Flask
 import urllib.parse
 import boto3
 import pdfkit
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
 
+from apps.authentication.routes import login
 
 from flask import Flask, render_template, current_app, redirect, request, url_for, session, g, flash, jsonify, Response, make_response
 from flask_login import login_required
@@ -33,6 +39,22 @@ def connect_output_tool():
     return render_template(
         "home/connect_output_tool.html"
     )
+
+
+@blueprint.route("/User_info", methods=["GET", "POST"])
+@login_required
+def User_info():
+
+    if request.method == "GET":
+
+        all_customer_info = CustomerInfo.query.all()
+
+        print(all_customer_info[0].Email, "print all email id's")
+
+        return render_template(
+            "home/end_user_info.html",
+            all_customer_info=all_customer_info
+        )
 
 
 @blueprint.route("/conversion_underway")
@@ -265,8 +287,8 @@ def connect_input_tool():
         job = Jobs()
 
         job_functions = ['Existing Chart of account', 'Chart of account', 'Customer', 'Supplier', 'Item', 'Job',
-                         'Journal', 'Spend Money', 'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation', 'Open Data','AR-AP','Trial Balance','Report']
-        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,Open Data,AR-AP,Trial Balance,Report"
+                         'Journal', 'Spend Money', 'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation', 'AR-AP', 'Report']
+        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,AR-AP,Report"
 
         # job_functions=['Item','Supplier']
         # job.functions = "Item,Supplier"
@@ -379,7 +401,8 @@ def create_auth_code():
         )
     else:
         return redirect("/connect_to_quickbooks")
-    
+
+
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
 def qbo_auth():
 
@@ -526,15 +549,16 @@ def data_access():
         )
     )
 
+
 @blueprint.route("/conversion_report/<int:job_id>")
 def conversion_report(job_id):
     dbname = get_mongodb_database()
     job_id = redis.get('my_key')
     print(job_id, type(job_id))
     function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment","Open Invoice","Open Bill"]
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
     table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment'],dbname['xero_open_invoice'],dbname['xero_open_bill']]
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
     print(condition1)
@@ -581,9 +605,9 @@ def conversion_report_data(job_id):
     # print(job_id,type(job_id))
 
     function_name = ["Existing COA", "Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment","Open Invoice","Open Bill","Open CreditNote","Open SupplierCredit"]
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
     table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment'],dbname['xero_open_invoice'],dbname['xero_open_bill'],dbname['xero_open_creditnote'],dbname['xero_open_suppliercredit']]
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
     # print(condition1)
@@ -904,10 +928,10 @@ def records(task_id, function_name):
 #     return Response(response.content, content_type=response.headers['content-type'])
 
 @blueprint.route("/customerinfo_email", methods=["GET", "POST"])
-def get_customerinfo_email():
+def get_customerinfo_email(job_id):
 
     customer_info_data = CustomerInfo.query.filter(
-        CustomerInfo.job_id == redis.get('my_key')).first()
+        CustomerInfo.job_id == job_id).first()
 
     print(customer_info_data.Email, "customer info email")
     customer_email = customer_info_data.Email
@@ -915,13 +939,24 @@ def get_customerinfo_email():
     return customer_email
 
 
+@blueprint.route("/customerinfo_progressemail1", methods=["GET", "POST"])
+def get_customerinfo_progressemail1():
+
+    customer_info_data = CustomerInfo.query.filter(
+        CustomerInfo.job_id == redis.get('my_key')).first()
+
+    print(customer_info_data.Email, "customer info email")
+    customer_email_progress = customer_info_data.Email
+
+    return customer_email_progress
+
+
 @blueprint.route("/sent_email_to_customer", methods=["GET", "POST"])
 def sent_email_to_customer():
-    # Specify your AWS access key and secret key directly
     aws_access_key_id = aws_access_key_id1
     aws_secret_access_key = aws_secret_access_key1
     region_name = region_name1
-    # Initialize Boto3 SQS client with the credentials
+
     sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
                        aws_secret_access_key=aws_secret_access_key)
     ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
@@ -939,7 +974,7 @@ def sent_email_to_customer():
     subject = f"Check Status of {file_name} from {start_date} to {end_date}"
     conversion_report_link = f"https://mmc.vishleshak.io/conversion_report/{redis.get('my_key')}"
     html_body = f"<html><body><p>Dear {first_name},</p><p>I hope this email finds you well. I wanted to provide you with an update on the status of the file named <strong>{file_name}</strong> that you are associated with. To view the progress and details, please click on the following link:</p><p><a href=\"{conversion_report_link}\">Check Status</a></p>    <p>This link will redirect you to a page where you can check the status of <strong>{file_name}</strong> between the specified start date of <strong>{start_date}</strong> and the end date of <strong>{end_date}</strong>.</p><p>Thank you</p><p>Best regards,<br>Ankit Mehta<br></body></html>"
-    recipient = get_customerinfo_email()
+    recipient = get_customerinfo_progressemail1()
 
     response = ses.send_email(
         Source='ankit@mmcconvert.com',
@@ -957,40 +992,39 @@ def sent_email_to_customer():
     return response
 
 
-@blueprint.route("/create_final_report", methods=["GET", "POST"])
-def create_final_report():
+@blueprint.route("/Create_final_report", methods=["GET", "POST"])
+def Create_final_report(job_id):
+
+    print(job_id, "print job id create final")
+
     cust_data = []
     supp_data = []
+    coa_data = []
     if request.method == "GET":
         dbname = get_mongodb_database()
 
-        cust_data1 = dbname["xero_report_customer"].count_documents(
-            {"job_id": redis.get('my_key')})
+        data1 = [{'code': '432debec-05a3-40b5-93fd-c3353437aa40', 'Customer_name': 'City of Gosnells', 'Xero': 1320.0, 'QBO': 0}, {'code': '130315ce-efda-4504-b60c-07334618f523', 'Customer_name': "Cat O'Connor", 'Xero': 460.0, 'QBO': 0}, {'code': '260736d8-404d-4b69-a3c1-9ae11a05aad4', 'Customer_name': 'City of Wanneroo', 'Xero': 1540.0, 'QBO': 0}, {'code': 'e749a40e-a93d-4e82-95cc-6b6cc5f69a0a', 'Customer_name': 'Camp Australia', 'Xero': 660.0, 'QBO': 0}, {'code': 'c702cea5-27d4-4808-adb6-0cf2f940786a', 'Customer_name': 'Department of Justice', 'Xero': 4400.0, 'QBO': 0}, {'code': '4a943ef3-fe47-4239-8e9b-da23b2a74de8', 'Customer_name': 'Jigalong Remote Community School', 'Xero': 3289.0, 'QBO': 0}, {'code': 'c15c23be-9141-49fb-98f2-d628e6fae081', 'Customer_name': 'City of Cockburn', 'Xero': 1980.0, 'QBO': 0}, {'code': '9c45858d-1491-4798-9979-9efb591e707a', 'Customer_name': 'Shire of Ashburton', 'Xero': 12168.79, 'QBO': 0}, {'code': '96512c31-d160-4fc4-b489-e336097b35b9', 'Customer_name': 'Shire of Carnarvon', 'Xero': 3289.0, 'QBO': 0},
+                 {'code': '5f2de916-c061-4a71-81f6-da34d6612c54', 'Customer_name': 'Tequiras Netball Club', 'Xero': 1500.0, 'QBO': 0}, {'code': 'e4451815-428a-49ad-b7d8-5515d1e92c9f', 'Customer_name': 'City of Karratha', 'Xero': 3289.0, 'QBO': 0}, {'code': 'ad4398bc-f291-4c8e-9f24-fc60bf0e5805', 'Customer_name': 'Anna Speranza', 'Xero': 550.0, 'QBO': 0}, {'code': '7f263aa8-6338-4742-ad7c-a378d349ba7b', 'Customer_name': 'Amanda Lohman', 'Xero': 900.0, 'QBO': 0}, {'code': '0b3302b0-9f5d-4988-baef-cf06a746cd3b', 'Customer_name': 'Treendale Farm', 'Xero': 1985.5, 'QBO': 0}, {'code': '547ee9f4-a054-4338-bc4c-a687537b89f6', 'Customer_name': 'Churchlands Primary School', 'Xero': 1210.0, 'QBO': 0}, {'code': 'c6f29bba-2df2-484b-8b07-feb9fc6a3fd1', 'Customer_name': 'Shire of Dardanup', 'Xero': 2475.0, 'QBO': 0}, {'code': 'b7972e36-e335-49dc-bf86-c81a78c20c1e', 'Customer_name': 'Applecross Primary School', 'Xero': 880.0, 'QBO': 0}, {'code': '14a37e61-1ef7-4ec0-ab1e-aa6f465aebe6', 'Customer_name': 'Dale Alcock Homes South West ABN 17071096350', 'Xero': 0.0, 'QBO': 0}]
 
-        supp_data1 = dbname["xero_report_customer"].count_documents(
-            {"job_id": redis.get('my_key')})
+        cust_data1 = dbname["xero_report_customer"].count_documents(
+            {"job_id": job_id})
+
+        supp_data1 = dbname["xero_report_supplier"].count_documents(
+            {"job_id": job_id})
+
+        chart_of_account1 = dbname["matched_trial_balance"].count_documents(
+            {"job_id": job_id})
 
         cust_data.append(cust_data1)
         supp_data.append(supp_data1)
-
-        return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data)
-
-
-# @blueprint.route("/generate_pdf", methods=["GET", "POST"])
-# def generate_pdf():
-#     rendered_template = render_template('create_final_report.html')
-
-#     pdf = pdfkit.from_string(rendered_template, False)
-
-#     response = make_response(pdf)
-#     response.headers['Content-Type'] = 'application/pdf'
-#     response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
-
-#     return response
+        coa_data.append(chart_of_account1)
+        
+        return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data)
 
 
-@blueprint.route("/final_report_email_to_customer", methods=["GET", "POST"])
-def final_report_email_to_customer():
+@blueprint.route("/final_report_email_to_customer/<int:job_id>", methods=["GET", "POST"])
+def final_report_email_to_customer(job_id):
+    print(job_id, "final report email job id")
     cust_data = []
     supp_data = []
     aws_access_key_id = aws_access_key_id1
@@ -1003,46 +1037,132 @@ def final_report_email_to_customer():
     queue_url = Queue_URI
 
     customer_info_data = CustomerInfo.query.filter(
-        CustomerInfo.job_id == redis.get('my_key')).first()
+        CustomerInfo.job_id == job_id).first()
 
     file_name = customer_info_data.Company
 
-    subject = f"Check Status of Final Report  {file_name}"
+    subject = f"Check Status of Final Report {file_name}"
 
     dbname = get_mongodb_database()
 
-    cust_data1 = dbname["xero_report_customer"].count_documents(
-        {"job_id": redis.get('my_key')})
+    recipient = get_customerinfo_email(job_id)
 
-    supp_data1 = dbname["xero_report_customer"].count_documents(
-        {"job_id": redis.get('my_key')})
+    msg = MIMEMultipart()
+    msg['Subject'] = subject
+    msg['From'] = 'ankit@mmcconvert.com'
+    msg['To'] = recipient
 
-    cust_data.append(cust_data1)
-    supp_data.append(supp_data1)
+    attachment_path = f"apps/static/reports/Report_{job_id}.pdf"
+    attachment_filename = f"{file_name}_finalReport.pdf"
 
-   
-    create_final_report_response = render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data)
+    with open(attachment_path, 'rb') as attachment_file:
+        attachment_data = attachment_file.read()
 
+    attachment = MIMEBase('application', 'octet-stream')
+    attachment.set_payload(attachment_data)
+    encoders.encode_base64(attachment)
+    attachment.add_header('Content-Disposition',
+                          f'attachment; filename="{attachment_filename}"')
+    msg.attach(attachment)
 
-    if isinstance(create_final_report_response, Response):
-        
-        create_final_report_content = create_final_report_response.data.decode('utf-8')
-    else:
-        create_final_report_content = str(create_final_report_response)
-
-    recipient = get_customerinfo_email()
-
-    response = ses.send_email(
-        Source='ankit@mmcconvert.com',
-        Destination={'ToAddresses': [recipient]},
-        Message={
-            'Subject': {'Data': subject},
-            'Body': {
-                'Html': {'Data': create_final_report_content}
-            }
-        }
-    )
+    response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
 
     sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
+    pdf_path = f"apps/static/reports/Report_{job_id}.pdf"
+    os.remove(pdf_path)
+
     return response
+
+    # response = ses.send_email(
+    #     Source='ankit@mmcconvert.com',
+    #     Destination={'ToAddresses': [recipient]},
+    #     Message={
+    #         'Subject': {'Data': subject},
+    #         'Body': {
+    #             'Html': {'Data': msg.as_string()}
+    #         }
+    #     }
+    # )
+
+    # sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
+
+    # return response
+
+
+@blueprint.route("/user_conversion_report/<int:job_id>")
+def user_conversion_report(job_id):
+    dbname = get_mongodb_database()
+    job_id = redis.get('my_key')
+    print(job_id, type(job_id))
+    function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
+    table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+
+    condition1 = {"job_id": f"{job_id}"}
+    print(condition1)
+    condition2 = {"job_id": f"{job_id}", "is_pushed": 1}
+    condition3 = {"job_id": f"{job_id}", "is_pushed": 0}
+
+    all_data = []
+    pushed_data = []
+    unpushed_data = []
+    s1 = []
+    f1 = []
+    for k in range(0, len(table_name)):
+        print(k)
+
+        all_data1 = table_name[k].count_documents(condition1)
+        pushed_data1 = table_name[k].count_documents(condition2)
+        unpushed_data1 = table_name[k].count_documents(condition3)
+        all_data.append(all_data1)
+        pushed_data.append(pushed_data1)
+        unpushed_data.append(unpushed_data1)
+        if all_data1 != 0:
+            success = pushed_data1/all_data1*100
+            fail = unpushed_data1/all_data1*100
+            s1.append(success)
+            f1.append(fail)
+
+        else:
+            success = 0
+            fail = 0
+            s1.append(success)
+            f1.append(fail)
+
+        if all_data1 == 0:
+            all_data1 = 100
+    # return jsonify(all_data,function_name);
+    return render_template("home/user_conversion_report.html", function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id)
+
+
+@blueprint.route("/report_generation/<int:job_id>", methods=["GET", "POST"])
+def report_generation(job_id):
+
+    create_final_report_response = Create_final_report(job_id)
+    job_id = job_id
+    print(job_id)
+    if isinstance(create_final_report_response, Response):
+
+        create_final_report_content = create_final_report_response.data.decode(
+            'utf-8')
+    else:
+        create_final_report_content = str(create_final_report_response)
+
+    options = {
+        'page-size': 'A4',
+        'margin-top': '10mm',
+        'margin-right': '10mm',
+        'margin-bottom': '10mm',
+        'margin-left': '10mm',
+    }
+
+    pdfkit.from_string(create_final_report_content,
+                       f"apps/static/reports/Report_{job_id}.pdf", options=options)
+
+    return redirect(
+        url_for(
+            ".User_info"
+        )
+    )

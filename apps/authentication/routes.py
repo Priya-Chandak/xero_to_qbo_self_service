@@ -13,12 +13,19 @@ def route_default():
     return redirect(url_for("home_blueprint.connect_input_tool"))
 
 
+@blueprint.route("/User_data")
+def default_user_data():
+    return redirect(url_for("home_blueprint.User_info"))
+
+
+
 # Login & Registration
 @blueprint.route("/login", methods=["GET", "POST"])
 def login():
+    print("login routes")
     login_form = LoginForm(request.form)
     if "login" in request.form:
-        # read form data
+        # read form da ta
         username = request.form["username"]
         password = request.form["password"]
         # Locate user
@@ -27,7 +34,7 @@ def login():
         # Check the password
         if user and verify_pass(password, user.password):
             login_user(user)
-            return redirect(url_for("authentication_blueprint.route_default"))
+            return redirect(url_for("authentication_blueprint.default_user_data"))
 
         # Something (user or pass) is not ok
         return render_template(
@@ -36,7 +43,9 @@ def login():
 
     if not current_user.is_authenticated:
         return render_template("accounts/login.html", form=login_form)
-    return redirect(url_for("home_blueprint.connect_input_tool"))
+        # return redirect(url_for("home_blueprint.User_info"))
+        
+    return redirect(url_for("home_blueprint.User_info"))
 
 
 @blueprint.route("/logout")

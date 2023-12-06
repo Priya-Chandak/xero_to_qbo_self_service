@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Datatables {% endblock %}
+
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mt-5">
+            <div class="card-header">
+                <h2><center>USER-DATA</center></h2>
+            </div>
+
+            <div class="table-responsive">
+                <div class="mx-auto" style="width: 90%;"> 
+                    <table id="basic-datatables" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>File_Name</th>
+                                <th>Start_data</th>
+                                <th>End_data</th>
+                                <th>Link</th>
+                                <th>Generate Report</th>
+                                <th>Preview_report</th>
+                                <th>Send Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in all_customer_info %}
+                            <tr>
+                                <td>{{item.First_Name}}</td>
+                                <td>{{item.Email}}</td>
+                                <td>{{item.Company}}</td>
+                                <td>{{item.start_date}}</td>
+                                <td>{{item.end_date}}</td>
+
+                                <td><a href="conversion_report/{{item.job_id}}">Check Status</a></td>
+                                <td>
+                                    <button id="generateReport"  class="btn btn-success"  onclick="generateReport('{{ item.job_id }}')">Generate Report</button>
+                                </td> 
+                                <td>
+                                 <a href="static/reports/Report_{{ item.job_id }}.pdf" class="btn btn-info">Preview Report</a>
+                                </td> 
+                                <td>
+                                    <button id="sendemail"  class="btn btn-success" onclick="sendemail('{{ item.job_id }}')">Send_Email</button>
+                                </td> 
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+
+{% block javascripts %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+
+function generateReport(jobId) {
+        $.ajax({
+            url: '/report_generation/' + jobId,
+            type: 'GET',
+            success: function(error) {
+                console.log('Send Email successfully:');
+                alert('Report generated successfully:')
+            }
+        });
+    }
+
+    function sendemail(jobId) {
+        $.ajax({
+            url: '/final_report_email_to_customer/' + jobId,
+            type: 'GET',
+            success: function(response) {
+                console.log('Send Email successfully:', response);
+            }
+        });
+    }
+</script>
+
+{% endblock javascripts %}
