@@ -831,9 +831,9 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                     if (xero_AP_Supplier[i]['ContactName'] == QBO_supplier[j]['DisplayName']) or (QBO_supplier[j]['DisplayName'].startswith(xero_AP_Supplier[i]['ContactName']) and ((QBO_supplier[j]['DisplayName']).endswith("- S") or (QBO_supplier[j]['DisplayName']).endswith("-S"))):
                     
                         queryset={}
-                        queryset['diff'] = True if float(xero_AP_Supplier[i]['xero_balance'])!=float(QBO_supplier[j]['qbo_balance']) else False
+                        queryset['diff'] = True if float(xero_AP_Supplier[i]['xero_balance'])!=float(QBO_supplier[j]['Balance']) else False
                         queryset["ContactName"] = xero_AP_Supplier[i]['ContactName']
-                        queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
+                        queryset["qbo_balance"] = QBO_supplier[j]['Balance']
                         queryset['job_id'] = job_id
                         try:
                             queryset['posting_type'] = "Credit" if float(xero_AP_Supplier[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
@@ -849,8 +849,8 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                             {
                                 "$set": 
                                 {
-                                    "qbo_balance": QBO_supplier[j]['qbo_balance'],
-                                    "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
+                                    "qbo_balance": QBO_supplier[j]['Balance'],
+                                    "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
                                     "diff": f"{queryset['diff']}",
                                     "posting_type":f"{queryset['posting_type']}",
                                     "diff_amount":f"{queryset['diff_amount']}"
@@ -879,7 +879,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                     {
                     "ContactName": f"{QBO_supplier[j]['DisplayName']}",
                     "qbo_balance": QBO_supplier[j]['Balance'],
-                    "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
+                    "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
                     "diff": f"{queryset['diff']}",
                     "posting_type":f"{queryset['posting_type']}",
                     "diff_amount":f"{queryset['diff_amount']}",
