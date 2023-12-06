@@ -694,11 +694,9 @@ def add_xero_open_trial_balance(job_id,task_id):
                                     
                             JournalEntryLineDetail['Entity'] = entity
                             
-                            print(QuerySet3,"QuerySet3----------")
                             break
 
                     elif QuerySet1[i]['bankid'] == xero_coa[k11]['AccountID'] and 'Accounts Payable' not in QuerySet1[i]['bankname'] and 'Accounts Receivable' not in QuerySet1[i]['bankname']:
-                        print("elif")
                         if 'AcctNum' in QBO_coa[j11]:
                             if xero_coa[k11]['Code'] == QBO_coa[j11]['AcctNum']:
                                 account['name'] = QBO_coa[j11]["FullyQualifiedName"]
@@ -707,86 +705,6 @@ def add_xero_open_trial_balance(job_id,task_id):
                                 QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                                 print(QuerySet3,"QuerySet3----------")
                                 continue
-
-                # if QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountSubType"] == 'AccountsPayable'):
-                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                #     account['value'] = QBO_coa[j11]["Id"]
-        
-                #     entity['Type'] = 'Vendor'
-                #     entity['EntityRef'] = EntityRef
-                #     for s1 in range(0,len(QBO_supplier)):
-                #         if QBO_supplier[s1]['DisplayName'] == 'Temp - S':
-                #             EntityRef['name'] = QBO_supplier[s1]['DisplayName']
-                #             EntityRef['value'] = QBO_supplier[s1]['Id']
-                
-                #     JournalEntryLineDetail["Entity"] = entity
-                #     # JournalEntryLineDetail['AccountRef'] = account
-                #     break
-        
-                # elif QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountSubType"] == 'AccountsReceivable'):
-                
-                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                #     account['value'] = QBO_coa[j11]["Id"]
-        
-                #     entity['Type'] = 'Customer'
-                #     entity['EntityRef'] = EntityRef
-                #     for c1 in range(0,len(QBO_customer)):
-                #         if QBO_customer[c1]['DisplayName'] == 'Temp - C':
-                #             EntityRef['name'] = QBO_customer[c1]['DisplayName']
-                #             EntityRef['value'] = QBO_customer[c1]['Id']
-                #     # JournalEntryLineDetail['AccountRef'] = account
-                #     JournalEntryLineDetail["Entity"] = entity
-                #     break
-                
-                    
-
-                # elif QuerySet1[i]['bankname'].split(" (")[0].replace(":","-") == (QBO_coa[j11]["FullyQualifiedName"]):
-                #     print("elif1--",QuerySet1[i]['bankname'])
-                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                #     account['value'] = QBO_coa[j11]["Id"]
-                #     # JournalEntryLineDetail['AccountRef'] = account
-                #     break
-
-                # elif 'AcctNum' in QBO_coa[j11]:
-                #     accname= QuerySet1[i]['bankname']
-                #     matches = re.findall(r'\((\w+)\)', accname)
-                #     print(matches)
-                #     if matches:
-                #         accnum = matches[0]
-                #         if accnum == QBO_coa[j11]['AcctNum']:
-                #             account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                #             account['value'] = QBO_coa[j11]["Id"]
-                            
-                #             if QBO_coa[j11]["AccountSubType"] == 'AccountsPayable':
-                #                 entity['Type'] = 'Vendor'
-                #                 entity['EntityRef'] = EntityRef
-                #                 for s1 in range(0,len(QBO_supplier)):
-                #                     if QBO_supplier[s1]['DisplayName'] == 'Temp - S':
-                #                         EntityRef['name'] = QBO_supplier[s1]['DisplayName']
-                #                         EntityRef['value'] = QBO_supplier[s1]['Id']
-                #                 JournalEntryLineDetail["Entity"] = entity
-                #                 break
-                    
-                #             elif QBO_coa[j11]["AccountSubType"] == 'AccountsReceivable':
-                #                 entity['Type'] = 'Customer'
-                #                 entity['EntityRef'] = EntityRef
-                #                 for c1 in range(0,len(QBO_customer)):
-                #                     if QBO_customer[c1]['DisplayName'] == 'Temp - C':
-                #                         EntityRef['name'] = QBO_customer[c1]['DisplayName']
-                #                         EntityRef['value'] = QBO_customer[c1]['Id']
-                #                 # JournalEntryLineDetail['AccountRef'] = account
-                #                 JournalEntryLineDetail["Entity"] = entity
-                #                 break
-                    
-                #             break
-
-                # elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
-                #     print("elif2-",QuerySet1[i]['bankname'])
-                    
-                #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                #     account['value'] = QBO_coa[j11]["Id"]
-                #     JournalEntryLineDetail['AccountRef'] = account
-                #     continue
 
                     
             QuerySet2['Line'].append(QuerySet3)
