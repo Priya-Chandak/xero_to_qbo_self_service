@@ -637,7 +637,6 @@ def add_xero_open_trial_balance(job_id,task_id):
         QuerySet2 = {"Line": []}
 
         for i in range(0, len(QuerySet1)):
-            print(i)
             date_object = datetime.strptime(start_date, '%Y-%m-%d')
             one_day_before = date_object - timedelta(days=1)
             journal_date1 = one_day_before.strftime('%Y-%m-%d')
@@ -699,14 +698,15 @@ def add_xero_open_trial_balance(job_id,task_id):
                             break
 
                     elif QuerySet1[i]['bankid'] == xero_coa[k11]['AccountID'] and 'Accounts Payable' not in QuerySet1[i]['bankname'] and 'Accounts Receivable' not in QuerySet1[i]['bankname']:
+                        print("elif")
                         if 'AcctNum' in QBO_coa[j11]:
                             if xero_coa[k11]['Code'] == QBO_coa[j11]['AcctNum']:
                                 account['name'] = QBO_coa[j11]["FullyQualifiedName"]
                                 account['value'] = QBO_coa[j11]["Id"]
                                 JournalEntryLineDetail['AccountRef'] = account
                                 QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
-                                # print(QuerySet3,"QuerySet3----------")
-                                break
+                                print(QuerySet3,"QuerySet3----------")
+                                continue
 
                 # if QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountSubType"] == 'AccountsPayable'):
                 #     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
@@ -934,7 +934,7 @@ def add_xero_current_trial_balance(job_id,task_id):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
                     account['value'] = QBO_coa[j11]["Id"]
                     JournalEntryLineDetail['AccountRef'] = account
-                    continue
+                    break
 
                 elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]

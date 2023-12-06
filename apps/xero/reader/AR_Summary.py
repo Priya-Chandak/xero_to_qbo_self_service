@@ -817,7 +817,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
         qbo_supplier=[]
         for k in range(0,len(QBO_supplier)):
             e={}
-            e['ContactName']=QBO_supplier[k]['DisplayName']
+            e['ContactName']=QBO_supplier[k]['FullyQualifiedName']
             e['qbo_balance']=QBO_supplier[k]['Balance']
             e['contact_id']=QBO_supplier[k]['Id']
             e['job_id']=job_id
@@ -865,8 +865,8 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                 print(j,len(QBO_supplier))
                 queryset={}
                 queryset['diff'] = True
-                queryset["ContactName"] = QBO_supplier[j]['DisplayName']
-                queryset["qbo_balance"] = QBO_supplier[j]['Balance']
+                queryset["ContactName"] = QBO_supplier[j]['ContactName']
+                queryset["qbo_balance"] = QBO_supplier[j]['qbo_balance']
                 queryset['job_id'] = job_id
                 try:
                     queryset['posting_type'] = "Debit" if float(queryset["qbo_balance"])<0 else "Credit"
@@ -877,9 +877,9 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
 
                 dbname["xero_AP_till_end_date"].insert_one(
                     {
-                    "ContactName": f"{QBO_supplier[j]['DisplayName']}",
-                    "qbo_balance": QBO_supplier[j]['Balance'],
-                    "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
+                    "ContactName": f"{QBO_supplier[j]['ContactName']}",
+                    "qbo_balance": QBO_supplier[j]['qbo_balance'],
+                    "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
                     "diff": f"{queryset['diff']}",
                     "posting_type":f"{queryset['posting_type']}",
                     "diff_amount":f"{queryset['diff_amount']}",
@@ -925,16 +925,15 @@ def get_qbo_trial_balance(job_id,task_id):
         print(data)
 
         trial_balance=[]
-        if 'Row' in data['Rows']:
-            for i in range(0,len(data['Rows']['Row'])-1):
-                queryset={}
-                queryset['job_id'] = job_id
-                queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
-                queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
-                queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
-                queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
-                print(queryset['debit'],queryset['credit'])
-                trial_balance.append(queryset)
+        for i in range(0,len(data['Rows']['Row'])-1):
+            queryset={}
+            queryset['job_id'] = job_id
+            queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
+            queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
+            queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
+            queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
+            print(queryset['debit'],queryset['credit'])
+            trial_balance.append(queryset)
                     
         if len(trial_balance)>0:
             QBO_Trial_Balance.insert_many(trial_balance)
@@ -972,16 +971,15 @@ def get_qbo_current_trial_balance(job_id,task_id):
         data=response.json()
 
         trial_balance=[]
-        if 'Row' in  data['Rows']:
-            for i in range(0,len(data['Rows']['Row'])-1):
-                queryset={}
-                queryset['job_id'] = job_id
-                queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
-                queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
-                queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
-                queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
-                print(queryset['debit'],queryset['credit'])
-                trial_balance.append(queryset)
+        for i in range(0,len(data['Rows']['Row'])-1):
+            queryset={}
+            queryset['job_id'] = job_id
+            queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
+            queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
+            queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
+            queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
+            print(queryset['debit'],queryset['credit'])
+            trial_balance.append(queryset)
                     
         if len(trial_balance)>0:
             QBO_Trial_Balance.insert_many(trial_balance)
@@ -1101,7 +1099,7 @@ def match_trial_balance(job_id,task_id):
         xero_trial_balance = dbname['xero_current_trial_balance']
         qbo_trial_balance = dbname['QBO_Current_Trial_Balance']
         unmatched_trial_balance = dbname['unmatched_trial_balance']
-
+        
         xero_trial_balance = dbname["xero_current_trial_balance"].find({"job_id":job_id})
         xero_trial_balance1 = []
         for p4 in xero_trial_balance:
@@ -1287,51 +1285,7 @@ def match_trial_balance(job_id,task_id):
                             print(queryset)
                             break
                 
-                # elif (xero_trial_balance1[i]['bankname'].split(" (")[0] == 'GST'):
-                #     print(xero_trial_balance1[i]['bankname'].split(" (")[0])
-                #     if qbo_trial_balance1[j]['bankname']=='GST Liabilities Payable':
-                #         print(qbo_trial_balance1[j]['bankname'])
-                #         print("matched")
-                #         queryset['bankname'] = xero_trial_balance1[i]['bankname']
-                #         if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
-                #             queryset['debit_diff'] = False
-                #             queryset['debit_diff_amount'] = 0
-                #         else:
-                #             queryset['debit_diff'] = True
-                #             queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
-                
-                #         if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
-                #             queryset['credit_diff'] = False
-                #             queryset['credit_diff_amount'] = 0
-                #         else:
-                #             queryset['credit_diff'] = True
-                #             queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
-                        
-                #         if queryset['credit_diff']==False and queryset['debit_diff']==False:
-                #             print("Both False so we can skip")
-                #         else:
-                #             dbname["xero_current_trial_balance"].update_one(
-                #             {
-                #             "bankname": f"{xero_trial_balance1[i]['bankname']}"
-                #             },
-                #             {
-                #                 "$set": 
-                #                 {
-                #                     "credit_diff": queryset['credit_diff'],
-                #                     "debit_diff":queryset['debit_diff'],
-                #                     "credit_diff_amount": queryset['credit_diff_amount'],
-                #                     "debit_diff_amount":queryset['debit_diff_amount'] ,
-                #                 }
-                #             }
-                #             )
-                        
-                #             unmatched_data.append(queryset)
-                #             print(queryset)
-                #             break
-
                 elif 'GST Liabilities Payable' not in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
-                # elif (xero_trial_balance1[i]['bankname'].split(" (")[0] == 'GST Liabilities Payable'):
-                #     print(xero_trial_balance1[i]['bankname'].split(" (")[0])
                     if qbo_trial_balance1[j]['bankname']=='GST':
                         print(qbo_trial_balance1[j]['bankname'])
                         print("matched")
@@ -1373,8 +1327,6 @@ def match_trial_balance(job_id,task_id):
                             break
 
                 elif 'GST Liabilities Payable' in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
-                # elif (xero_trial_balance1[i]['bankname'].split(" (")[0] == 'GST Liabilities Payable'):
-                #     print(xero_trial_balance1[i]['bankname'].split(" (")[0])
                     if qbo_trial_balance1[j]['bankname']=='GST Liabilities Payable':
                         print(qbo_trial_balance1[j]['bankname'])
                         print("matched")
@@ -1414,10 +1366,6 @@ def match_trial_balance(job_id,task_id):
                             unmatched_data.append(queryset)
                             print(queryset)
                             break
-                              
-               
-                                
-                    
                 
         if len(unmatched_data)>0:
             unmatched_trial_balance.insert_many(unmatched_data)
@@ -1430,3 +1378,68 @@ def match_trial_balance(job_id,task_id):
         traceback.print_exc()
         print(ex)
         sys.exit(0)
+
+
+def trial_balance_final_report(job_id,task_id):
+    try:
+        start_date, end_date = get_job_details(job_id)
+        dbname=get_mongodb_database()
+        xero_trial_balance = dbname['xero_current_trial_balance']
+        qbo_trial_balance = dbname['QBO_Current_Trial_Balance']
+        matched_trial_balance = dbname['matched_trial_balance']
+        
+        xero_trial_balance = dbname["xero_current_trial_balance"].find({"job_id":job_id})
+        xero_trial_balance1 = []
+        for p4 in xero_trial_balance:
+            xero_trial_balance1.append(p4)
+
+        qbo_trial_balance = dbname["QBO_Current_Trial_Balance"].find({"job_id":job_id})
+        qbo_trial_balance1 = []
+        for p4 in qbo_trial_balance:
+            qbo_trial_balance1.append(p4)
+
+        qbo_coa = dbname["QBO_COA"].find({"job_id":job_id})
+        qbo_coa1 = []
+        for p4 in qbo_coa:
+            qbo_coa1.append(p4)
+
+        xero_coa = dbname["xero_coa"].find({"job_id":job_id})
+        xero_coa1 = []
+        for p4 in xero_coa:
+            xero_coa1.append(p4)
+
+        
+        for i in range(0,len(xero_trial_balance1)):
+            for j in range(0,len(xero_coa1)):
+                for k in range(0,len(qbo_trial_balance1)):
+                    for m in range(0,len(qbo_coa1)):
+                        if xero_trial_balance1[i]['bankid'] == xero_coa1[j]['AccountID']:
+                            print("if1",xero_coa1[j]['Code'])
+                            if 'AcctNum' in qbo_coa1[m]:
+                                if xero_coa1[j]['Code'] == qbo_coa1[m]['AcctNum']:
+                                    if qbo_coa1[m]['Id'] == qbo_trial_balance1[k]['bankid']:
+                                        print("inside if")
+                                        dbname["matched_trial_balance"].insert_one(
+                                            {
+                                            "AccountName": qbo_coa1[m]['FullyQualifiedName'],
+                                            "qbo_credit_balance": qbo_trial_balance1[k]['credit'],
+                                            "qbo_debit_balance":qbo_trial_balance1[k]['debit'],
+                                            "xero_credit_balance": xero_trial_balance1[i]['credit'],
+                                            "xero_debit_balance":xero_trial_balance1[i]['debit'],
+                                            "qbo_balance": -float(qbo_trial_balance1[k]['debit']) if float(qbo_trial_balance1[k]['debit'])!=0 else float(qbo_trial_balance1[k]['credit']),
+                                            "xero_balance": -float(xero_trial_balance1[i]['debit']) if float(xero_trial_balance1[i]['debit'])!=0 else float(xero_trial_balance1[i]['credit']),
+                                            "job_id" :f"{job_id}"
+                                            }
+                                            )
+                                    
+        
+
+    except Exception as ex:
+        step_name = "Access token not valid"
+        write_task_execution_step(task_id, status=0, step=step_name)
+        update_task_execution_status( task_id, status=0, task_type="read")
+        import traceback
+        traceback.print_exc()
+        print(ex)
+        sys.exit(0)
+
