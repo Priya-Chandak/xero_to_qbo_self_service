@@ -48,12 +48,21 @@ def get_report_customer_summary(job_id, task_id):
             for j in range(0, len(qbo_customer_data)):
                 if (xero_customer_data[i]["ContactName"] == qbo_customer_data[j]["FullyQualifiedName"]) or (qbo_customer_data[j]["FullyQualifiedName"].startswith(xero_customer_data[i]["ContactName"]) and qbo_customer_data[j]["FullyQualifiedName"].endswith("- C")) :
                     b = {}
-                    b['code'] = xero_customer_data[i]['ContactID']
-                    b['Customer_name'] = xero_customer_data[i]['ContactName']
-                    b['Xero'] = xero_customer_data[i]['xero_balance']
-                    b['QBO'] = qbo_customer_data[j]["Balance"]
-                    customer_data.append(b)
-                    print(customer_data,"customer_data-----------------")
+                    if 'ContactID' in xero_customer_data[i]: 
+                        b['code'] = xero_customer_data[i]['ContactID']
+                        b['Customer_name'] = xero_customer_data[i]['ContactName']
+                        b['Xero'] = xero_customer_data[i]['xero_balance']
+                        b['QBO'] = qbo_customer_data[j]["Balance"]
+                        customer_data.append(b)
+                        print(customer_data,"customer_data-----------------")
+                    else:
+                        b['Customer_name'] = xero_customer_data[i]['ContactName']
+                        b['Xero'] = 0
+                        b['QBO'] = 0
+                        customer_data.append(b)
+                        print(customer_data,"customer_data-----------------")
+                    
+
             
         if len(customer_data) > 0:
             print("Data Inserted to xero_report_customer table")
@@ -97,12 +106,18 @@ def get_report_supplier_summary(job_id, task_id):
             for j in range(0, len(qbo_supplier_data)):
                 if xero_supplier_data[i]["ContactName"] == qbo_supplier_data[j]["Name"]:
                     b = {}
-                    b['code'] = xero_supplier_data[i]['ContactID']
-                    b['Customer_name'] = xero_supplier_data[i]['ContactName']
-                    b['Xero'] = xero_supplier_data[i]['xero_balance']
-                    b['QBO'] = qbo_supplier_data[j]["Balance"]
-                    supplier_data.append(b)
-                    print(supplier_data,"supp data -------------")
+                    if 'ContactID' in xero_supplier_data[i]:
+                        b['code'] = xero_supplier_data[i]['ContactID']
+                        b['Customer_name'] = xero_supplier_data[i]['ContactName']
+                        b['Xero'] = xero_supplier_data[i]['xero_balance']
+                        b['QBO'] = qbo_supplier_data[j]["Balance"]
+                        supplier_data.append(b)
+                        print(supplier_data,"supp data -------------")
+                    else:
+                        b['Customer_name'] = xero_supplier_data[i]['ContactName']
+                        b['Xero'] = 0
+                        b['QBO'] = 0
+                        supplier_data.append(b)
         
         if len(supplier_data) > 0:
             print("data Inserted in table xero_report_supplier")
