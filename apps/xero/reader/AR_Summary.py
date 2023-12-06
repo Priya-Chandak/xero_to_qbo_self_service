@@ -1418,18 +1418,34 @@ def trial_balance_final_report(job_id,task_id):
                                 if xero_coa1[j]['Code'] == qbo_coa1[m]['AcctNum']:
                                     if qbo_coa1[m]['Id'] == qbo_trial_balance1[k]['bankid']:
                                         print("data inserted")
-                                        dbname["matched_trial_balance"].insert_one(
+                                        dbname["matched_trial_balance"].update_one(
+                                            {"AccountName": qbo_coa1[m]['FullyQualifiedName']},
                                             {
-                                            "AccountName": qbo_coa1[m]['FullyQualifiedName'],
-                                            "qbo_credit_balance": qbo_trial_balance1[k]['credit'],
-                                            "qbo_debit_balance":qbo_trial_balance1[k]['debit'],
-                                            "xero_credit_balance": xero_trial_balance1[i]['credit'],
-                                            "xero_debit_balance":xero_trial_balance1[i]['debit'],
-                                            "qbo_balance": -float(qbo_trial_balance1[k]['debit']) if float(qbo_trial_balance1[k]['debit'])!=0 else float(qbo_trial_balance1[k]['credit']),
-                                            "xero_balance": -float(xero_trial_balance1[i]['debit']) if float(xero_trial_balance1[i]['debit'])!=0 else float(xero_trial_balance1[i]['credit']),
-                                            "job_id" :f"{job_id}"
-                                            }
-                                            )
+                                                "$set": {
+                                                    "qbo_credit_balance": qbo_trial_balance1[k]['credit'],
+                                                    "qbo_debit_balance": qbo_trial_balance1[k]['debit'],
+                                                    "xero_credit_balance": xero_trial_balance1[i]['credit'],
+                                                    "xero_debit_balance": xero_trial_balance1[i]['debit'],
+                                                    "qbo_balance": -float(qbo_trial_balance1[k]['debit']) if float(qbo_trial_balance1[k]['debit']) != 0 else float(qbo_trial_balance1[k]['credit']),
+                                                    "xero_balance": -float(xero_trial_balance1[i]['debit']) if float(xero_trial_balance1[i]['debit']) != 0 else float(xero_trial_balance1[i]['credit']),
+                                                    "job_id": f"{job_id}",
+                                                }
+                                            },
+                                            upsert=True
+                                        )
+                                        # dbname["matched_trial_balance"].insert_one(
+                                        #     {
+                                        #     "AccountName": qbo_coa1[m]['FullyQualifiedName'],
+                                        #     "qbo_credit_balance": qbo_trial_balance1[k]['credit'],
+                                        #     "qbo_debit_balance":qbo_trial_balance1[k]['debit'],
+                                        #     "xero_credit_balance": xero_trial_balance1[i]['credit'],
+                                        #     "xero_debit_balance":xero_trial_balance1[i]['debit'],
+                                        #     "qbo_balance": -float(qbo_trial_balance1[k]['debit']) if float(qbo_trial_balance1[k]['debit'])!=0 else float(qbo_trial_balance1[k]['credit']),
+                                        #     "xero_balance": -float(xero_trial_balance1[i]['debit']) if float(xero_trial_balance1[i]['debit'])!=0 else float(xero_trial_balance1[i]['credit']),
+                                        #     "job_id" :f"{job_id}",
+                                            
+                                        #     }
+                                        #     )
                                     
         
 
