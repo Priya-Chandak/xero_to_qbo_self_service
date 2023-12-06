@@ -925,15 +925,16 @@ def get_qbo_trial_balance(job_id,task_id):
         print(data)
 
         trial_balance=[]
-        for i in range(0,len(data['Rows']['Row'])-1):
-            queryset={}
-            queryset['job_id'] = job_id
-            queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
-            queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
-            queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
-            queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
-            print(queryset['debit'],queryset['credit'])
-            trial_balance.append(queryset)
+        if 'Row' in data['Rows']:
+            for i in range(0,len(data['Rows']['Row'])-1):
+                queryset={}
+                queryset['job_id'] = job_id
+                queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
+                queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
+                queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
+                queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
+                print(queryset['debit'],queryset['credit'])
+                trial_balance.append(queryset)
                     
         if len(trial_balance)>0:
             QBO_Trial_Balance.insert_many(trial_balance)
