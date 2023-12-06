@@ -1414,11 +1414,10 @@ def trial_balance_final_report(job_id,task_id):
                 for k in range(0,len(qbo_trial_balance1)):
                     for m in range(0,len(qbo_coa1)):
                         if xero_trial_balance1[i]['bankid'] == xero_coa1[j]['AccountID']:
-                            print("if1",xero_coa1[j]['Code'])
                             if 'AcctNum' in qbo_coa1[m]:
                                 if xero_coa1[j]['Code'] == qbo_coa1[m]['AcctNum']:
                                     if qbo_coa1[m]['Id'] == qbo_trial_balance1[k]['bankid']:
-                                        print("inside if")
+                                        print("data inserted")
                                         dbname["matched_trial_balance"].insert_one(
                                             {
                                             "AccountName": qbo_coa1[m]['FullyQualifiedName'],
