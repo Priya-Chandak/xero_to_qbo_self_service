@@ -977,7 +977,6 @@ class XeroToQbo(object):
                 trial_balance_final_report(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                
                 update_task_execution_status(task.id, status=1, task_type="write")
             
             if "Depreciation" == task.function_name:
