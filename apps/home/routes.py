@@ -669,9 +669,9 @@ def start_conversion_report_data(job_id):
 
    
     function_name = ["Existing COA", "Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment","Open Invoice","Open Bill"]
     table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment'],dbname['xero_open_invoice'],dbname['xero_open_bill']]
 
     condition1 = {"job_id": f"{job_id}"}
     # print(condition1)
