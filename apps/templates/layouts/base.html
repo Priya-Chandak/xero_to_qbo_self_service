@@ -77,11 +77,15 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        {% include 'includes/navigation.html' %}
-        {% include 'includes/sidebar.html' %}
-        <div class="col-md-9">
+
+      {% include 'includes/navigation.html' %}
+        
+ 
+        <div class="col-md-12">
+          
             {% block content %}{% endblock content %}
             {% include 'includes/footer.html' %}
+
         </div>
     </div>
 </div>
