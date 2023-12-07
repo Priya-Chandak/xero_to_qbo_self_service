@@ -30,7 +30,7 @@ from apps.home import blueprint
 from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep, ToolId, CustomerInfo, XeroQboTokens
 from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
-from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task #, report_generation_task
+from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task  #report_generation_task
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
@@ -85,11 +85,9 @@ def startJobByID():
     return render_template("home/conversion_underway.html")
 
 
-# @blueprint.route("/startReportGenerationByID", methods=["POST"])
-# def startReportGenerationByID():
-#     job_id = redis.get('my_key')
-#     print(job_id, "start job by id")
-#     # job_id = 1
+# @blueprint.route("/startReportGenerationByID/<int:job_id>", methods=["POST"])
+# def startReportGenerationByID(job_id):
+#     print(job_id)
 #     asyncio.run(report_generation_task(job_id))
 #     return "click report generation button"
 
@@ -1184,8 +1182,12 @@ def final_report_email_to_customer(job_id):
     msg['From'] = 'ankit@mmcconvert.com'
     msg['To'] = recipient
 
-    attachment_path = f"/static/reports/Report_{job_id}.pdf"
-    attachment_filename = f"{file_name}_finalReport.pdf"
+    file_name=f"Report_{job_id}.pdf"
+    pdf_path = os.path.join('apps','static', 'reports', file_name)
+        
+
+    attachment_path = pdf_path
+    attachment_filename = f"{file_name}_Final_Report.pdf"
 
     with open(attachment_path, 'rb') as attachment_file:
         attachment_data = attachment_file.read()
@@ -1201,9 +1203,10 @@ def final_report_email_to_customer(job_id):
 
     sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
-    pdf_path = f"/static/reports/Report_{job_id}.pdf"
-    
 
+    file_name=f"Report_{job_id}.pdf"
+    pdf_path = os.path.join('apps','static', 'reports', file_name)
+        
     if os.path.exists(pdf_path): 
         response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
         sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
@@ -1297,10 +1300,13 @@ def report_generation(job_id):
         'margin-right': '10mm',
         'margin-bottom': '10mm',
         'margin-left': '10mm',
+        "enable-local-file-access":""
     }
     try:
-        pdfkit.from_string(create_final_report_content,
-                        f"/static/reports/Report_{job_id}.pdf", options=options)
+        file_name=f"Report_{job_id}.pdf"
+        pdf_path = os.path.join('apps','static', 'reports', file_name)
+        print(pdf_path)
+        pdfkit.from_string(create_final_report_content,pdf_path, options=options,)
     except Exception as e:
         print(f"Error generating PDF: {e}")
 
