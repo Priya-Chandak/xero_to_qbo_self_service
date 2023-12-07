@@ -1298,9 +1298,11 @@ def report_generation(job_id):
         'margin-bottom': '10mm',
         'margin-left': '10mm',
     }
-
-    pdfkit.from_string(create_final_report_content,
-                       f"/static/reports/Report_{job_id}.pdf", options=options)
+    try:
+        pdfkit.from_string(create_final_report_content,
+                        f"/static/reports/Report_{job_id}.pdf", options=options)
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
 
     return redirect(
         url_for(
