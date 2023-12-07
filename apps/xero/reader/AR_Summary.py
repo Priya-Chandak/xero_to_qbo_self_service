@@ -1223,8 +1223,9 @@ def match_trial_balance(job_id,task_id):
             xero_coa1.append(p4)
         
         unmatched_data=[]
+        
         for i in range(0,len(xero_trial_balance1)):
-            print(i)
+            print(i,xero_trial_balance1[i]['bankname'].split(" (")[0])
             
             if xero_trial_balance1[i]['bankname'].split(" (")[0] in ['Payroll Wages & Salaries','Depreciation','Payroll  Wages & Salaries']:
                 print(xero_trial_balance1[i]['bankname'],"if")
@@ -1260,207 +1261,217 @@ def match_trial_balance(job_id,task_id):
                 
                 unmatched_data.append(queryset)
             
-            for j in range(0,len(qbo_trial_balance1)):
-                queryset={}
-                queryset['job_id']=job_id
+            else:
+                for j in range(0,len(qbo_trial_balance1)):
+                    print(j,xero_trial_balance1[i]['bankname'].split(" (")[1][:-1] + " " + xero_trial_balance1[i]['bankname'].split(" (")[0])
+                    queryset={}
+                    queryset['job_id']=job_id
 
-                if (xero_trial_balance1[i]['bankname'].split(" (")[1][:-1] + " " + xero_trial_balance1[i]['bankname'].split(" (")[0] == qbo_trial_balance1[j]['bankname']):
-                    print(xero_trial_balance1[i]['bankname'])
-                    queryset['bankname'] = xero_trial_balance1[i]['bankname']
-                    if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
-                        queryset['debit_diff'] = False
-                        queryset['debit_diff_amount'] = 0
-                    else:
-                        queryset['debit_diff'] = True
-                        queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
-            
-                    if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
-                        queryset['credit_diff'] = False
-                        queryset['credit_diff_amount'] = 0
-                    else:
-                        queryset['credit_diff'] = True
-                        queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                    if (xero_trial_balance1[i]['bankname'].split(" (")[0] == qbo_trial_balance1[j]['bankname']):
+                        print(xero_trial_balance1[i]['bankname'])
+                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                            queryset['debit_diff'] = False
+                            queryset['debit_diff_amount'] = 0
+                        else:
+                            queryset['debit_diff'] = True
+                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
+                
+                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                            queryset['credit_diff'] = False
+                            queryset['credit_diff_amount'] = 0
+                        else:
+                            queryset['credit_diff'] = True
+                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                        
+                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                            print("Both False so we can skip")
+                        # elif queryset['credit_diff']==True and queryset['debit_diff']==True:
+                        #     print("Revrese the entry")
+                        else:
+                            print(xero_trial_balance1[i]['bankname'], "to be update-------------")
+                            dbname["xero_current_trial_balance"].update_one(
+                            {
+                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                            },
+                            {
+                                "$set": 
+                                {
+                                    "credit_diff": queryset['credit_diff'],
+                                    "debit_diff":queryset['debit_diff'],
+                                    "credit_diff_amount": queryset['credit_diff_amount'],
+                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                }
+                            }
+                            )
+                        
+                            unmatched_data.append(queryset)
+
+                    elif 'Accounts Payable' in xero_trial_balance1[i]['bankname']:
+                        if 'Accounts Payable' in qbo_trial_balance1[j]['bankname']:
+                            print(qbo_trial_balance1[j]['bankname'])
+                            print("matched")
+                            queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                            if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                                queryset['debit_diff'] = False
+                                queryset['debit_diff_amount'] = 0
+                            else:
+                                queryset['debit_diff'] = True
+                                queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
                     
-                    if queryset['credit_diff']==False and queryset['debit_diff']==False:
-                        print("Both False so we can skip")
-                    # elif queryset['credit_diff']==True and queryset['debit_diff']==True:
-                    #     print("Revrese the entry")
-                    else:
-                        print(xero_trial_balance1[i]['bankname'], "to be update-------------")
-                        dbname["xero_current_trial_balance"].update_one(
-                        {
-                        "bankname": f"{xero_trial_balance1[i]['bankname']}"
-                        },
-                        {
-                            "$set": 
-                            {
-                                "credit_diff": queryset['credit_diff'],
-                                "debit_diff":queryset['debit_diff'],
-                                "credit_diff_amount": queryset['credit_diff_amount'],
-                                "debit_diff_amount":queryset['debit_diff_amount'] ,
-                              }
-                        }
-                        )
+                            if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                                queryset['credit_diff'] = False
+                                queryset['credit_diff_amount'] = 0
+                            else:
+                                queryset['credit_diff'] = True
+                                queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                            
+                            if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                                print("Both False so we can skip")
+                            else:
+                                print("else:----------",xero_trial_balance1[i]['bankname'])
+                                dbname["xero_current_trial_balance"].update_one(
+                                {
+                                "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                                },
+                                {
+                                    "$set": 
+                                    {
+                                        "credit_diff": queryset['credit_diff'],
+                                        "debit_diff":queryset['debit_diff'],
+                                        "credit_diff_amount": queryset['credit_diff_amount'],
+                                        "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                    }
+                                }
+                                )
+                            
+                                unmatched_data.append(queryset)
+                                print(queryset)
+                                break
+
+                    elif 'Accounts Receivable' in xero_trial_balance1[i]['bankname']:
+                        if 'Accounts Receivable' in qbo_trial_balance1[j]['bankname']:
+                            print(qbo_trial_balance1[j]['bankname'])
+                            print("matched")
+                            queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                            if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                                queryset['debit_diff'] = False
+                                queryset['debit_diff_amount'] = 0
+                            else:
+                                queryset['debit_diff'] = True
+                                queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
                     
-                        unmatched_data.append(queryset)
+                            if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                                queryset['credit_diff'] = False
+                                queryset['credit_diff_amount'] = 0
+                            else:
+                                queryset['credit_diff'] = True
+                                queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                            
+                            if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                                print("Both False so we can skip")
+                            else:
+                                dbname["xero_current_trial_balance"].update_one(
+                                {
+                                "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                                },
+                                {
+                                    "$set": 
+                                    {
+                                        "credit_diff": queryset['credit_diff'],
+                                        "debit_diff":queryset['debit_diff'],
+                                        "credit_diff_amount": queryset['credit_diff_amount'],
+                                        "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                    }
+                                }
+                                )
+                            
+                                unmatched_data.append(queryset)
+                                print(queryset)
+                                break
+                    
+                    elif 'GST Liabilities Payable' not in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
+                        if qbo_trial_balance1[j]['bankname']=='GST':
+                            print(qbo_trial_balance1[j]['bankname'])
+                            print("matched")
+                            queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                            if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                                queryset['debit_diff'] = False
+                                queryset['debit_diff_amount'] = 0
+                            else:
+                                queryset['debit_diff'] = True
+                                queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
+                    
+                            if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                                queryset['credit_diff'] = False
+                                queryset['credit_diff_amount'] = 0
+                            else:
+                                queryset['credit_diff'] = True
+                                queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                            
+                            if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                                print("Both False so we can skip")
+                            else:
+                                dbname["xero_current_trial_balance"].update_one(
+                                {
+                                "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                                },
+                                {
+                                    "$set": 
+                                    {
+                                        "credit_diff": queryset['credit_diff'],
+                                        "debit_diff":queryset['debit_diff'],
+                                        "credit_diff_amount": queryset['credit_diff_amount'],
+                                        "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                    }
+                                }
+                                )
+                            
+                                unmatched_data.append(queryset)
+                                print(queryset)
+                                break
 
-                elif 'Accounts Payable' in xero_trial_balance1[i]['bankname']:
-                    if 'Accounts Payable' in qbo_trial_balance1[j]['bankname']:
-                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
-                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
-                            queryset['debit_diff'] = False
-                            queryset['debit_diff_amount'] = 0
-                        else:
-                            queryset['debit_diff'] = True
-                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
-                
-                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
-                            queryset['credit_diff'] = False
-                            queryset['credit_diff_amount'] = 0
-                        else:
-                            queryset['credit_diff'] = True
-                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
-                        
-                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
-                            print("Both False so we can skip")
-                        else:
-                            print("else:----------",xero_trial_balance1[i]['bankname'])
-                            dbname["xero_current_trial_balance"].update_one(
-                            {
-                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
-                            },
-                            {
-                                "$set": 
+                    elif 'GST Liabilities Payable' in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
+                        if qbo_trial_balance1[j]['bankname']=='GST Liabilities Payable':
+                            print(qbo_trial_balance1[j]['bankname'])
+                            print("matched")
+                            queryset['bankname'] = xero_trial_balance1[i]['bankname']
+                            if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
+                                queryset['debit_diff'] = False
+                                queryset['debit_diff_amount'] = 0
+                            else:
+                                queryset['debit_diff'] = True
+                                queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
+                    
+                            if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
+                                queryset['credit_diff'] = False
+                                queryset['credit_diff_amount'] = 0
+                            else:
+                                queryset['credit_diff'] = True
+                                queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
+                            
+                            if queryset['credit_diff']==False and queryset['debit_diff']==False:
+                                print("Both False so we can skip")
+                            else:
+                                dbname["xero_current_trial_balance"].update_one(
                                 {
-                                    "credit_diff": queryset['credit_diff'],
-                                    "debit_diff":queryset['debit_diff'],
-                                    "credit_diff_amount": queryset['credit_diff_amount'],
-                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
-                                }
-                            }
-                            )
-                        
-                            unmatched_data.append(queryset)
-                            print(queryset)
-                            break
-
-                elif 'Accounts Receivable' in xero_trial_balance1[i]['bankname']:
-                    if 'Accounts Receivable' in qbo_trial_balance1[j]['bankname']:
-                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
-                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
-                            queryset['debit_diff'] = False
-                            queryset['debit_diff_amount'] = 0
-                        else:
-                            queryset['debit_diff'] = True
-                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
-                
-                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
-                            queryset['credit_diff'] = False
-                            queryset['credit_diff_amount'] = 0
-                        else:
-                            queryset['credit_diff'] = True
-                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
-                        
-                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
-                            print("Both False so we can skip")
-                        else:
-                            dbname["xero_current_trial_balance"].update_one(
-                            {
-                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
-                            },
-                            {
-                                "$set": 
+                                "bankname": f"{xero_trial_balance1[i]['bankname']}"
+                                },
                                 {
-                                    "credit_diff": queryset['credit_diff'],
-                                    "debit_diff":queryset['debit_diff'],
-                                    "credit_diff_amount": queryset['credit_diff_amount'],
-                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                    "$set": 
+                                    {
+                                        "credit_diff": queryset['credit_diff'],
+                                        "debit_diff":queryset['debit_diff'],
+                                        "credit_diff_amount": queryset['credit_diff_amount'],
+                                        "debit_diff_amount":queryset['debit_diff_amount'] ,
+                                    }
                                 }
-                            }
-                            )
-                        
-                            unmatched_data.append(queryset)
-                            print(queryset)
-                            break
-                
-                elif 'GST Liabilities Payable' not in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
-                    if qbo_trial_balance1[j]['bankname']=='GST':
-                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
-                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
-                            queryset['debit_diff'] = False
-                            queryset['debit_diff_amount'] = 0
-                        else:
-                            queryset['debit_diff'] = True
-                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
-                
-                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
-                            queryset['credit_diff'] = False
-                            queryset['credit_diff_amount'] = 0
-                        else:
-                            queryset['credit_diff'] = True
-                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
-                        
-                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
-                            print("Both False so we can skip")
-                        else:
-                            dbname["xero_current_trial_balance"].update_one(
-                            {
-                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
-                            },
-                            {
-                                "$set": 
-                                {
-                                    "credit_diff": queryset['credit_diff'],
-                                    "debit_diff":queryset['debit_diff'],
-                                    "credit_diff_amount": queryset['credit_diff_amount'],
-                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
-                                }
-                            }
-                            )
-                        
-                            unmatched_data.append(queryset)
-                            print(queryset)
-                            break
-
-                elif 'GST Liabilities Payable' in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
-                    if qbo_trial_balance1[j]['bankname']=='GST Liabilities Payable':
-                        queryset['bankname'] = xero_trial_balance1[i]['bankname']
-                        if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
-                            queryset['debit_diff'] = False
-                            queryset['debit_diff_amount'] = 0
-                        else:
-                            queryset['debit_diff'] = True
-                            queryset['debit_diff_amount'] = float(xero_trial_balance1[i]['debit'])-float(qbo_trial_balance1[j]['debit'])
-                
-                        if xero_trial_balance1[i]['credit'] == qbo_trial_balance1[j]['credit']:
-                            queryset['credit_diff'] = False
-                            queryset['credit_diff_amount'] = 0
-                        else:
-                            queryset['credit_diff'] = True
-                            queryset['credit_diff_amount'] = float(xero_trial_balance1[i]['credit'])-float(qbo_trial_balance1[j]['credit'])
-                        
-                        if queryset['credit_diff']==False and queryset['debit_diff']==False:
-                            print("Both False so we can skip")
-                        else:
-                            dbname["xero_current_trial_balance"].update_one(
-                            {
-                            "bankname": f"{xero_trial_balance1[i]['bankname']}"
-                            },
-                            {
-                                "$set": 
-                                {
-                                    "credit_diff": queryset['credit_diff'],
-                                    "debit_diff":queryset['debit_diff'],
-                                    "credit_diff_amount": queryset['credit_diff_amount'],
-                                    "debit_diff_amount":queryset['debit_diff_amount'] ,
-                                }
-                            }
-                            )
-                        
-                            unmatched_data.append(queryset)
-                            print(queryset)
-                            break
-                
+                                )
+                            
+                                unmatched_data.append(queryset)
+                                print(queryset)
+                                break
+                    
         if len(unmatched_data)>0:
             unmatched_trial_balance.insert_many(unmatched_data)
 
@@ -1472,6 +1483,7 @@ def match_trial_balance(job_id,task_id):
         traceback.print_exc()
         print(ex)
         sys.exit(0)
+
 
 
 def trial_balance_final_report(job_id,task_id):
