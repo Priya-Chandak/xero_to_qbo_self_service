@@ -537,6 +537,8 @@ class XeroToQbo(object):
             if "Open Data" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
+                delete_coa(job_id)
+                
                 step_name = "Reading qbo chart of data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id,task.id, "Chart of account")
@@ -684,7 +686,6 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=1, step=step_name)
                 update_task_execution_status(task.id, status=1, task_type="write")
                 
-
 
             if "AR-AP" == task.function_name:
 
@@ -893,11 +894,6 @@ class XeroToQbo(object):
                 get_xero_asset_types(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo chart of data"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                read_qbo_data(job_id,task.id, "Chart of account")
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
                 step_name = "Reading xero Depreciation"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_xero_journal(job_id,task.id)
@@ -952,6 +948,8 @@ class XeroToQbo(object):
                 get_qbo_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
+                delete_coa(job_id)
+
                 step_name = "Reading data from qbo chart of account"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id, task.id, "Chart of account")
@@ -994,6 +992,7 @@ class XeroToQbo(object):
                 get_qbo_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
+                delete_coa(job_id)
                 step_name = "Reading data from qbo chart of account"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id, task.id, "Chart of account")
