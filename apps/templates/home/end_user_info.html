@@ -83,19 +83,19 @@
 
 <script>
 
-    function generateReport(jobId) {
-        $.ajax({
-            url: '/report_generation/' + jobId,
-            type: 'GET',
-            success: function (response) {
-                console.log('Report generated successfully:');
-                alert('Report generated successfully.');
-            },
-            error: function (error) {
-                alert('Report generated successfully.');
-            }
-        });
-    }
+    // function generateReport(jobId) {
+    //     $.ajax({
+    //         url: '/report_generation/' + jobId,
+    //         type: 'GET',
+    //         success: function (response) {
+    //             console.log('Report generated successfully:');
+    //             alert('Report generated successfully.');
+    //         },
+    //         error: function (error) {
+    //             alert('Report generated successfully.');
+    //         }
+    //     });
+    // }
 
     function generateReport(jobId) {
         $.ajax({
@@ -103,10 +103,10 @@
             type: 'GET',
             success: function (response) {
                 console.log(':');
-                alert('Confirmed report generation ');
+                alert('Report generated successfully.');;
             },
             error: function (error) {
-                alert('Report generated successfully.');
+                alert('Error generating the report.');
             }
         });
     }
