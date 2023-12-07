@@ -569,11 +569,9 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                             }
                             )
                         qbo_ar.append(queryset)
-                        print(qbo_ar,"if--qbo_ar")
                         break
         else:
             for j in range(0,len(qbo_customer)):
-                print(j,len(qbo_customer))
                 queryset={}
                 queryset['diff'] = True
                 queryset["ContactName"] = qbo_customer[j]['ContactName']
@@ -598,7 +596,6 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                     }
                     )
                 qbo_ar.append(queryset)
-                print(qbo_ar,"else--qbo_ar")
                 
                     
          
@@ -859,7 +856,6 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                             }
                             )
                         qbo_ap.append(queryset)
-                        print(qbo_ap,"if--qbo_ap")
                         break
         else:
             for j in range(0,len(QBO_supplier)):
@@ -888,7 +884,6 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                     }
                     )
                 qbo_ap.append(queryset)
-                print(qbo_ap,"else--qbo_ap")
         
         if len(qbo_ap)>0:
             qbo_ap_summary.insert_many(qbo_ap)
@@ -1203,8 +1198,6 @@ def match_trial_balance(job_id,task_id):
 
                 elif 'Accounts Payable' in xero_trial_balance1[i]['bankname']:
                     if 'Accounts Payable' in qbo_trial_balance1[j]['bankname']:
-                        print(qbo_trial_balance1[j]['bankname'])
-                        print("matched")
                         queryset['bankname'] = xero_trial_balance1[i]['bankname']
                         if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
                             queryset['debit_diff'] = False
@@ -1245,8 +1238,6 @@ def match_trial_balance(job_id,task_id):
 
                 elif 'Accounts Receivable' in xero_trial_balance1[i]['bankname']:
                     if 'Accounts Receivable' in qbo_trial_balance1[j]['bankname']:
-                        print(qbo_trial_balance1[j]['bankname'])
-                        print("matched")
                         queryset['bankname'] = xero_trial_balance1[i]['bankname']
                         if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
                             queryset['debit_diff'] = False
@@ -1286,8 +1277,6 @@ def match_trial_balance(job_id,task_id):
                 
                 elif 'GST Liabilities Payable' not in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
                     if qbo_trial_balance1[j]['bankname']=='GST':
-                        print(qbo_trial_balance1[j]['bankname'])
-                        print("matched")
                         queryset['bankname'] = xero_trial_balance1[i]['bankname']
                         if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
                             queryset['debit_diff'] = False
@@ -1327,8 +1316,6 @@ def match_trial_balance(job_id,task_id):
 
                 elif 'GST Liabilities Payable' in xero_trial_balance1[i]['bankname'] and 'GST' in xero_trial_balance1[i]['bankname']:         
                     if qbo_trial_balance1[j]['bankname']=='GST Liabilities Payable':
-                        print(qbo_trial_balance1[j]['bankname'])
-                        print("matched")
                         queryset['bankname'] = xero_trial_balance1[i]['bankname']
                         if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
                             queryset['debit_diff'] = False

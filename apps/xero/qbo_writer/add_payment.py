@@ -374,8 +374,6 @@ def add_xero_bill_payment_as_journal(job_id,task_id):
                         if (xero_coa[j2]["Name"].strip().lower()== QBO_coa[j1]["FullyQualifiedName"].strip().lower()) or (xero_coa[j2]["Name"].replace(":","-")== QBO_coa[j1]["FullyQualifiedName"]):
                         
                             if QBO_coa[j1]["AccountType"] != "Bank":
-                                print("Not Bank",i)
-                                print(QBO_coa[j1]["AccountType"])
                                 payment_date = QuerySet1[i]["Date"]
                                 payment_date11 = int(payment_date[6:16])
                                 journal_date1 = datetime.utcfromtimestamp(

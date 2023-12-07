@@ -4,6 +4,7 @@ import redis
 def delete_coa(job_id):
     dbname = get_mongodb_database()
     dbname["QBO_COA"].delete_many({'job_id': f"{job_id}"})
+    print("deleted QBO COA")
     
 
 def delete_item(job_id):
