@@ -30,7 +30,7 @@ from apps.home import blueprint
 from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep, ToolId, CustomerInfo, XeroQboTokens
 from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
-from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task , #report_generation_task
+from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task  #report_generation_task
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
