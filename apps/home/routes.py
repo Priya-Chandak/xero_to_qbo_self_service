@@ -15,6 +15,7 @@ from flask import Flask
 import urllib.parse
 import boto3
 import pdfkit
+from sqlalchemy import desc
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -47,7 +48,7 @@ def User_info():
 
     if request.method == "GET":
 
-        all_customer_info = CustomerInfo.query.all()
+        all_customer_info = CustomerInfo.query.order_by(desc(CustomerInfo.id)).all()
 
         print(all_customer_info[0].Email, "print all email id's")
 
@@ -1201,7 +1202,16 @@ def final_report_email_to_customer(job_id):
     sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
     pdf_path = f"apps/static/reports/Report_{job_id}.pdf"
-    os.remove(pdf_path)
+    
+
+    if os.path.exists(pdf_path): 
+        response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
+        sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
+        os.remove(pdf_path)
+    else:
+        flash('Please generate pdf before send mail', 'error')
+
+
 
     return response
 

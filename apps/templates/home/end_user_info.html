@@ -11,22 +11,24 @@
     <div class="col-md-12">
         <div class="card mt-5">
             <div class="card-header">
-                <h2><center>USER-DATA</center></h2>
+                <h2>
+                    <center>USER-DATA</center>
+                </h2>
             </div>
 
             <div class="table-responsive">
-                <div class="mx-auto" style="width: 90%;"> 
+                <div class="mx-auto" style="width: 90%;">
                     <table id="basic-datatables" class="display table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>File_Name</th>
-                                <th>Start_data</th>
-                                <th>End_data</th>
+                                <th>File Name</th>
+                                <th>Start date</th>
+                                <th>End date</th>
                                 <th>Link</th>
                                 <th>Generate Report</th>
-                                <th>Preview_report</th>
+                                <th>Preview Report</th>
                                 <th>Send Email</th>
                             </tr>
                         </thead>
@@ -41,14 +43,17 @@
 
                                 <td><a href="start_conversion_report/{{item.job_id}}">Check Status</a></td>
                                 <td>
-                                    <button id="generateReport"  class="btn btn-success"  onclick="generateReport('{{ item.job_id }}')">Generate Report</button>
-                                </td> 
+                                    <button id="generateReport" class="btn btn-success"
+                                        onclick="generateReport('{{ item.job_id }}')">Generate Report</button>
+                                </td>
                                 <td>
-                                 <a href="static/reports/Report_{{ item.job_id }}.pdf" class="btn btn-info">Preview Report</a>
-                                </td> 
+                                    <a href="static/reports/Report_{{ item.job_id }}.pdf" class="btn btn-info">Preview
+                                        Report</a>
+                                </td>
                                 <td>
-                                    <button id="sendemail"  class="btn btn-success" onclick="sendemail('{{ item.job_id }}')">Send_Email</button>
-                                </td> 
+                                    <button id="sendemail" class="btn btn-success"
+                                        onclick="sendemail('{{ item.job_id }}')">Send Email</button>
+                                </td>
 
                             </tr>
                             {% endfor %}
@@ -70,13 +75,16 @@
 
 <script>
 
-function generateReport(jobId) {
+    function generateReport(jobId) {
         $.ajax({
             url: '/report_generation/' + jobId,
             type: 'GET',
-            success: function(error) {
-                console.log('Send Email successfully:');
-                alert('Report generated successfully:')
+            success: function (response) {
+                console.log('Report generated successfully:');
+                alert('Report generated successfully.');
+            },
+            error: function (error) {
+                alert('Report generated successfully.');
             }
         });
     }
@@ -85,10 +93,15 @@ function generateReport(jobId) {
         $.ajax({
             url: '/final_report_email_to_customer/' + jobId,
             type: 'GET',
-            success: function(response) {
-                alert("Send Email successfully:")
-                console.log('Send Email successfully:', response);
+
+            success: function (response) {
+                console.log('Send Email successfully::');
+                alert('Send Email successfully:');
+            },
+            error: function (error) {
+                alert('Please generate the PDF before sending the email.');
             }
+
         });
     }
 </script>
