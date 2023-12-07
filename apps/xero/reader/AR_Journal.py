@@ -859,10 +859,7 @@ def add_xero_current_trial_balance(job_id,task_id):
                     account['value'] = QBO_coa[j11]["Id"]
                     JournalEntryLineDetail['AccountRef'] = account
                     continue
-
-                
-
-                    
+    
             QuerySet2['Line'].append(QuerySet3)
         
         # print(retained_earning_amount)

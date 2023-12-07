@@ -27,7 +27,7 @@ def read_qbo_data(job_id, task_id, read_data_from_object):
                                    "url": url,
                                    "header": get_data_header})
 
-        if read_data_from_object == "Chart of account" or read_data_from_object == "Chart of account":
+        if read_data_from_object == "Chart of account":
             configurations.append({"job_id": job_id,
                                    "table_name": "QBO_COA",
                                    "task_id": task_id,
