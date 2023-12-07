@@ -632,9 +632,6 @@ class XeroToQbo(object):
                 add_xero_open_spend_overpayment_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                delete_bill(job_id)
-                delete_invoice(job_id)
-                
                 step_name = "Reading qbo Invoice"
                 write_task_execution_step(
                     task.id, status=2, step=step_name)
@@ -1322,8 +1319,6 @@ class XeroToQbo(object):
             if "Invoice Payment" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
-                delete_invoice(job_id)
-                
                 step_name = "Reading qbo Invoice"
                 write_task_execution_step(
                     task.id, status=2, step=step_name)
