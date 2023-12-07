@@ -1182,8 +1182,12 @@ def final_report_email_to_customer(job_id):
     msg['From'] = 'ankit@mmcconvert.com'
     msg['To'] = recipient
 
-    attachment_path = f"/static/reports/Report_{job_id}.pdf"
-    attachment_filename = f"{file_name}_finalReport.pdf"
+    file_name=f"Report_{job_id}.pdf"
+    pdf_path = os.path.join('apps','static', 'reports', file_name)
+        
+
+    attachment_path = pdf_path
+    attachment_filename = f"{file_name}_Final_Report.pdf"
 
     with open(attachment_path, 'rb') as attachment_file:
         attachment_data = attachment_file.read()
@@ -1199,9 +1203,10 @@ def final_report_email_to_customer(job_id):
 
     sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
-    pdf_path = f"/static/reports/Report_{job_id}.pdf"
-    
 
+    file_name=f"Report_{job_id}.pdf"
+    pdf_path = os.path.join('apps','static', 'reports', file_name)
+        
     if os.path.exists(pdf_path): 
         response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
         sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
@@ -1299,8 +1304,6 @@ def report_generation(job_id):
     }
     try:
         file_name=f"Report_{job_id}.pdf"
-        pdf_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'reports', file_name)
-        print(pdf_path)
         pdf_path = os.path.join('apps','static', 'reports', file_name)
         print(pdf_path)
         pdfkit.from_string(create_final_report_content,pdf_path, options=options,)
