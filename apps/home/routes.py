@@ -546,10 +546,10 @@ def data_access():
     )
 
 
-@blueprint.route("/conversion_report/<int:job_id>")
-def conversion_report(job_id):
+@blueprint.route("/start_conversion_report/<int:job_id>")
+def start_conversion_report(job_id):
     dbname = get_mongodb_database()
-    job_id = redis.get('my_key')
+
     print(job_id, type(job_id))
     function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
                      "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
@@ -560,6 +560,14 @@ def conversion_report(job_id):
     print(condition1)
     condition2 = {"job_id": f"{job_id}", "is_pushed": 1}
     condition3 = {"job_id": f"{job_id}", "is_pushed": 0}
+
+    company_info = CustomerInfo.query.filter(
+        CustomerInfo.job_id == job_id).first()
+
+    company_name = company_info.Company,
+    customer_email = company_info.Email,
+    start_date = company_info.start_date,
+    end_date = company_info.end_date,
 
     all_data = []
     pushed_data = []
@@ -590,7 +598,134 @@ def conversion_report(job_id):
         if all_data1 == 0:
             all_data1 = 100
     # return jsonify(all_data,function_name);
-    return render_template("home/conversion_report.html", function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id)
+    return render_template("home/conversion_report_for_start_conversion.html",function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id, company_name=company_name,
+                           customer_email=customer_email,
+                           start_date=start_date,
+                           end_date=end_date)
+
+
+@blueprint.route("/conversion_report/<int:job_id>")
+def conversion_report(job_id):
+    dbname = get_mongodb_database()
+    job_id = redis.get('my_key')
+    print(job_id, type(job_id))
+    function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
+    table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+
+    condition1 = {"job_id": f"{job_id}"}
+    print(condition1)
+    condition2 = {"job_id": f"{job_id}", "is_pushed": 1}
+    condition3 = {"job_id": f"{job_id}", "is_pushed": 0}
+
+    company_info = CustomerInfo.query.filter(
+        CustomerInfo.job_id == job_id).first()
+
+    company_name = company_info.Company,
+    customer_email = company_info.Email,
+    start_date = company_info.start_date,
+    end_date = company_info.end_date,
+
+    all_data = []
+    pushed_data = []
+    unpushed_data = []
+    s1 = []
+    f1 = []
+    for k in range(0, len(table_name)):
+        print(k)
+
+        all_data1 = table_name[k].count_documents(condition1)
+        pushed_data1 = table_name[k].count_documents(condition2)
+        unpushed_data1 = table_name[k].count_documents(condition3)
+        all_data.append(all_data1)
+        pushed_data.append(pushed_data1)
+        unpushed_data.append(unpushed_data1)
+        if all_data1 != 0:
+            success = pushed_data1/all_data1*100
+            fail = unpushed_data1/all_data1*100
+            s1.append(success)
+            f1.append(fail)
+
+        else:
+            success = 0
+            fail = 0
+            s1.append(success)
+            f1.append(fail)
+
+        if all_data1 == 0:
+            all_data1 = 100
+    # return jsonify(all_data,function_name);
+    return render_template("home/conversion_report.html", function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id, company_name=company_name,
+                           customer_email=customer_email,
+                           start_date=start_date,
+                           end_date=end_date)
+
+
+
+@blueprint.route("/start_conversion_report_data/<int:job_id>")
+def start_conversion_report_data(job_id):
+    dbname = get_mongodb_database()
+
+   
+    function_name = ["Existing COA", "Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
+    table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+
+    condition1 = {"job_id": f"{job_id}"}
+    # print(condition1)
+    condition2 = {"job_id": f"{job_id}", "is_pushed": 1}
+    condition3 = {"job_id": f"{job_id}", "is_pushed": 0}
+
+    company_info = CustomerInfo.query.filter(
+        CustomerInfo.job_id == job_id).first()
+
+
+    all_data = []
+    pushed_data = []
+    unpushed_data = []
+    s1 = []
+    f1 = []
+    for k in range(0, len(table_name)):
+        # print(k)
+
+        all_data1 = table_name[k].count_documents(condition1)
+        pushed_data1 = table_name[k].count_documents(condition2)
+        unpushed_data1 = table_name[k].count_documents(condition3)
+        all_data.append(all_data1)
+        pushed_data.append(pushed_data1)
+        unpushed_data.append(unpushed_data1)
+        if all_data1 != 0:
+            success = pushed_data1/all_data1*100
+            fail = unpushed_data1/all_data1*100
+            s1.append(success)
+            f1.append(fail)
+
+        else:
+            success = 0
+            fail = 0
+            s1.append(success)
+            f1.append(fail)
+
+        if all_data1 == 0:
+            all_data1 = 100
+
+    data_list = []
+
+    for i in range(len(function_name)):
+        item_dict = {
+            "company_name": company_info.Company,
+            "customer_email": company_info.Email,
+            "start_date": company_info.start_date,
+            "end_date": company_info.end_date, }
+
+        item_dict['function_name'] = function_name[i]
+        item_dict['values'] = s1[i]
+
+        data_list.append(item_dict)
+
+    return jsonify({'data': data_list})
 
 
 @blueprint.route("/conversion_report_data/<int:job_id>")
