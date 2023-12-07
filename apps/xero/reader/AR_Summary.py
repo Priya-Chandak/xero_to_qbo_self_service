@@ -144,6 +144,7 @@ def get_aged_receivable_summary_till_end_date(job_id,task_id):
                 "GET", main_url, headers=headers, data=payload)
             time.sleep(1)
             
+            print(response1)
             AR=[]
             # if response1.status_code == 200:
             #     a = response1.json()
@@ -1003,11 +1004,9 @@ def get_xero_trial_balance(job_id,task_id):
         xero_trial_balance = dbname['xero_trial_balance']
         payload, base_url, headers = get_settings_xero(job_id)
         
-        print(start_date,type(start_date))
         date_object = datetime.strptime(start_date, '%Y-%m-%d')
         one_day_before = date_object - timedelta(days=1)
         result_string = one_day_before.strftime('%Y-%m-%d')
-        print(result_string)
         y1=int(result_string[0:4])
         m1=int(result_string[5:7])
         d1=int(result_string[8:])
@@ -1016,7 +1015,7 @@ def get_xero_trial_balance(job_id,task_id):
         response1 = requests.request(
             "GET", main_url, headers=headers, data=payload)
             
-        print(main_url)
+        print(main_url,response1)
         a = response1.json()
         
         data=[]

@@ -754,6 +754,7 @@ def get_open_invoice(job_id,task_id):
 
 
 def get_open_invoice_till_end_date(job_id,task_id):
+    print("Inside get_open_invoice_till_end_date")
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -763,11 +764,9 @@ def get_open_invoice_till_end_date(job_id,task_id):
         xero_supplier = dbname['xero_open_supplier_end_date']
         payload, base_url, headers = get_settings_xero(job_id)
 
-        print(end_date,type(end_date))
         date_object = datetime.strptime(end_date, '%Y-%m-%d')
         result_string = date_object.strftime('%Y-%m-%d')
-        print(result_string)
-
+        
         if (start_date == '' and end_date == ''):
             main_url = f"{base_url}/Invoices?where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})"
             
@@ -782,23 +781,20 @@ def get_open_invoice_till_end_date(job_id,task_id):
         response1 = requests.request(
             "GET", main_url, headers=headers, data=payload)
         time.sleep(1)
-            
+        
+        print(response1.status_code)
         if response1.status_code == 200:
-            print("if")
             r1 = response1.json()
             r2 = r1['Invoices']
             no_of_records = len(r2)
             if no_of_records>0:
                 no_of_pages = (no_of_records // 100) + 1
-                print(no_of_pages)
                 invoice = []
                 bill = []
                 customer=[]
                 supplier=[]
-                print(no_of_records,no_of_pages,"======================")
-
+            
                 for pages in range(1, no_of_pages+1):
-                    print(pages)
                     if (start_date=='' and end_date==''): 
                         url = f"{base_url}/Invoices?page={pages}&unitdp=4"
                     else:
@@ -816,13 +812,8 @@ def get_open_invoice_till_end_date(job_id,task_id):
                             timestamp = int(match.group()) / 1000  # Convert milliseconds to seconds
                             date = datetime.utcfromtimestamp(timestamp)
 
-                            # Desired date "30-06-2023"
                             desired_date = date_object
 
-                            # Compare the dates
-                            # if date < desired_date:
-                            #     print("The result date less than 30-06-2023.")
-                          
                             if (JsonResponse1[i]['Status'] =='AUTHORISED') or (JsonResponse1[i]['Status'] == 'PAID' and date > desired_date) :
                                 QuerySet = {"Line": []}
                                 QuerySet["job_id"] = job_id

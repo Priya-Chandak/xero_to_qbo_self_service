@@ -787,7 +787,6 @@ class XeroToQbo(object):
 
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
-                
                 step_name = "Reading qbo AR Customer"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_ar_customer(job_id,task.id)
@@ -851,6 +850,7 @@ class XeroToQbo(object):
 
                 step_name = "Reading qbo Customer"
                 write_task_execution_step(task.id, status=2, step=step_name)
+                get_coa(job_id,task.id)
                 read_qbo_data(job_id,task.id, "Chart of account")
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
@@ -863,8 +863,6 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id,task.id, "Supplier")
                 write_task_execution_step(task.id, status=1, step=step_name)
-                
-                get_coa(job_id,task.id)
                 
                 step_name = "Reading QBO Trial Balance"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -972,11 +970,6 @@ class XeroToQbo(object):
                 trial_balance_final_report(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Final Report"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                final_report()
-                write_task_execution_step(task.id, status=1, step=step_name)
-
                 update_task_execution_status(task.id, status=1, task_type="write")
             
             if "Depreciation" == task.function_name:

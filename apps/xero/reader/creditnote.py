@@ -378,10 +378,11 @@ def get_open_creditnote_till_end_date(job_id,task_id):
             d1 = int(result_string[8:])
             main_url = f"{base_url}/CreditNotes?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})"
 
+        print(main_url)
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
         time.sleep(1)
         
-        print(response1)
+        print(response1.status_code,response1)
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1["CreditNotes"]
