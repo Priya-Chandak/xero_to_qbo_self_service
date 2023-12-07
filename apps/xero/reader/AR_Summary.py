@@ -945,22 +945,28 @@ def get_qbo_trial_balance(job_id,task_id):
         print(ex)
         sys.exit(0)
 
-def get_qbo_current_trial_balance(job_id,task_id):
+def get_qbo_current_trial_balance_before_conversion(job_id,task_id):
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
-        QBO_Trial_Balance = dbname['QBO_Current_Trial_Balance']
+        QBO_Trial_Balance = dbname['QBO_Current_Trial_Balance_Before_Conversion']
         
         date_object = datetime.strptime(end_date, '%Y-%m-%d')
-        # result_string = date_object.strftime('%Y-%m-%d')
-        result_string = date.today().strftime("%Y-%m-%d")
-
+        result_string = date_object.strftime('%Y-%m-%d')
+        
         y1=int(result_string[0:4])
         m1=int(result_string[5:7])
         d1=int(result_string[8:])
+
+        date_object1 = datetime.strptime(start_date, '%Y-%m-%d')
+        result_string1 = date_object1.strftime('%Y-%m-%d')
+        
+        y2=int(result_string1[0:4])
+        m2=int(result_string1[5:7])
+        d2=int(result_string1[8:])
             
-        url = f"{base_url}/reports/TrialBalance?&start_date={y1}-07-01&end_date={y1}-{m1}-{d1}&minorversion={minorversion}"
+        url = f"{base_url}/reports/TrialBalance?&start_date={y2}-{m2}-{d2}&end_date={y1}-{m1}-{d1}&minorversion={minorversion}"
         print(url)
         payload=""
         response = requests.request("GET", url, headers=headers, data=payload)
@@ -991,7 +997,59 @@ def get_qbo_current_trial_balance(job_id,task_id):
         print(ex)
         sys.exit(0)
 
-    
+
+def get_qbo_current_trial_balance_after_conversion(job_id,task_id):
+    try:
+        start_date, end_date = get_job_details(job_id)
+        dbname=get_mongodb_database()
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+        QBO_Trial_Balance = dbname['QBO_Current_Trial_Balance_After_Conversion']
+        
+        date_object = datetime.strptime(end_date, '%Y-%m-%d')
+        result_string = date_object.strftime('%Y-%m-%d')
+        
+        y1=int(result_string[0:4])
+        m1=int(result_string[5:7])
+        d1=int(result_string[8:])
+
+        date_object1 = datetime.strptime(start_date, '%Y-%m-%d')
+        result_string1 = date_object1.strftime('%Y-%m-%d')
+        
+        y2=int(result_string1[0:4])
+        m2=int(result_string1[5:7])
+        d2=int(result_string1[8:])
+            
+        url = f"{base_url}/reports/TrialBalance?&start_date={y2}-{m2}-{d2}&end_date={y1}-{m1}-{d1}&minorversion={minorversion}"
+        print(url)
+        payload=""
+        response = requests.request("GET", url, headers=headers, data=payload)
+        data=response.json()
+
+        trial_balance=[]
+        for i in range(0,len(data['Rows']['Row'])-1):
+            queryset={}
+            queryset['job_id'] = job_id
+            queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
+            queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
+            queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
+            queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
+            print(queryset['debit'],queryset['credit'])
+            trial_balance.append(queryset)
+                    
+        if len(trial_balance)>0:
+            QBO_Trial_Balance.insert_many(trial_balance)
+            print("QBO_Trial_Balance Created")
+
+                
+    except Exception as ex:
+        step_name = "Access token not valid"
+        write_task_execution_step(task_id, status=0, step=step_name)
+        update_task_execution_status( task_id, status=0, task_type="read")
+        import traceback
+        traceback.print_exc()
+        print(ex)
+        sys.exit(0)
+
 def get_xero_trial_balance(job_id,task_id):
     try:
         start_date, end_date = get_job_details(job_id)
@@ -1047,12 +1105,13 @@ def get_xero_current_trial_balance(job_id,task_id):
         payload, base_url, headers = get_settings_xero(job_id)
         
         print(start_date,type(start_date))
-        # date_object = datetime.strptime(end_date, '%Y-%m-%d')
-        result_string=date.today().strftime("%Y-%m-%d")
-        print(result_string)
+        date_object = datetime.strptime(end_date, '%Y-%m-%d')
+        result_string = date_object.strftime('%Y-%m-%d')
+        
         y1=int(result_string[0:4])
         m1=int(result_string[5:7])
         d1=int(result_string[8:])
+
         main_url = f"{base_url}/Reports/TrialBalance?date={y1}-{m1}-{d1}"
         print(main_url)
         response1 = requests.request(
@@ -1091,7 +1150,7 @@ def match_trial_balance(job_id,task_id):
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
         xero_trial_balance = dbname['xero_current_trial_balance']
-        qbo_trial_balance = dbname['QBO_Current_Trial_Balance']
+        qbo_trial_balance = dbname['QBO_Current_Trial_Balance_Before_Conversion']
         unmatched_trial_balance = dbname['unmatched_trial_balance']
         
         xero_trial_balance = dbname["xero_current_trial_balance"].find({"job_id":job_id})
@@ -1099,7 +1158,7 @@ def match_trial_balance(job_id,task_id):
         for p4 in xero_trial_balance:
             xero_trial_balance1.append(p4)
 
-        qbo_trial_balance = dbname["QBO_Current_Trial_Balance"].find({"job_id":job_id})
+        qbo_trial_balance = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find({"job_id":job_id})
         qbo_trial_balance1 = []
         for p4 in qbo_trial_balance:
             qbo_trial_balance1.append(p4)
@@ -1371,7 +1430,7 @@ def trial_balance_final_report(job_id,task_id):
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
         xero_trial_balance = dbname['xero_current_trial_balance']
-        qbo_trial_balance = dbname['QBO_Current_Trial_Balance']
+        qbo_trial_balance = dbname['QBO_Current_Trial_Balance_After_Conversion']
         matched_trial_balance = dbname['matched_trial_balance']
         
         xero_trial_balance = dbname["xero_current_trial_balance"].find({"job_id":job_id})
@@ -1379,7 +1438,7 @@ def trial_balance_final_report(job_id,task_id):
         for p4 in xero_trial_balance:
             xero_trial_balance1.append(p4)
 
-        qbo_trial_balance = dbname["QBO_Current_Trial_Balance"].find({"job_id":job_id})
+        qbo_trial_balance = dbname["QBO_Current_Trial_Balance_After_Conversion"].find({"job_id":job_id})
         qbo_trial_balance1 = []
         for p4 in qbo_trial_balance:
             qbo_trial_balance1.append(p4)
@@ -1403,7 +1462,6 @@ def trial_balance_final_report(job_id,task_id):
                             if 'AcctNum' in qbo_coa1[m]:
                                 if xero_coa1[j]['Code'] == qbo_coa1[m]['AcctNum']:
                                     if qbo_coa1[m]['Id'] == qbo_trial_balance1[k]['bankid']:
-                                        print("data inserted")
                                         dbname["matched_trial_balance"].update_one(
                                             {"AccountName": qbo_coa1[m]['FullyQualifiedName']},
                                             {
@@ -1419,20 +1477,7 @@ def trial_balance_final_report(job_id,task_id):
                                             },
                                             upsert=True
                                         )
-                                        # dbname["matched_trial_balance"].insert_one(
-                                        #     {
-                                        #     "AccountName": qbo_coa1[m]['FullyQualifiedName'],
-                                        #     "qbo_credit_balance": qbo_trial_balance1[k]['credit'],
-                                        #     "qbo_debit_balance":qbo_trial_balance1[k]['debit'],
-                                        #     "xero_credit_balance": xero_trial_balance1[i]['credit'],
-                                        #     "xero_debit_balance":xero_trial_balance1[i]['debit'],
-                                        #     "qbo_balance": -float(qbo_trial_balance1[k]['debit']) if float(qbo_trial_balance1[k]['debit'])!=0 else float(qbo_trial_balance1[k]['credit']),
-                                        #     "xero_balance": -float(xero_trial_balance1[i]['debit']) if float(xero_trial_balance1[i]['debit'])!=0 else float(xero_trial_balance1[i]['credit']),
-                                        #     "job_id" :f"{job_id}",
-                                            
-                                        #     }
-                                        #     )
-                                    
+                                        print("data inserted")
         
 
     except Exception as ex:

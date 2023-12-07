@@ -3,7 +3,9 @@ import redis
 
 def delete_coa(job_id):
     dbname = get_mongodb_database()
+    print(dbname["QBO_COA"].count_documents({'job_id': f"{job_id}"}))
     dbname["QBO_COA"].delete_many({'job_id': f"{job_id}"})
+    print(dbname["QBO_COA"].count_documents({'job_id': f"{job_id}"}))
     print("deleted QBO COA")
     
 
@@ -58,15 +60,4 @@ def delete_reckon_item(job_id):
 def delete_excel_reckon_bill(job_id):
     dbname = get_mongodb_database()
     dbname["excel_reckon_bill"].delete_many({'job_id': f"{job_id}"})
-    print("deleted-----------")
-
-def delete_xero_current_trial_balance(job_id):
-    dbname = get_mongodb_database()
-    dbname["xero_current_trial_balance"].delete_many({'job_id': f"{job_id}"})
-    print("deleted-----------")
-
-
-def delete_qbo_current_trial_balance(job_id):
-    dbname = get_mongodb_database()
-    dbname["QBO_Current_Trial_Balance"].delete_many({'job_id': f"{job_id}"})
     print("deleted-----------")
