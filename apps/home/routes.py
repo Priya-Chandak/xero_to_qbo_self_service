@@ -1301,7 +1301,7 @@ def report_generation(job_id):
         file_name=f"Report_{job_id}.pdf"
         pdf_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'reports', file_name)
         print(pdf_path)
-        pdf_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'apps','static', 'reports', file_name)
+        pdf_path = os.path.join('apps','static', 'reports', file_name)
         print(pdf_path)
         pdfkit.from_string(create_final_report_content,pdf_path, options=options,)
     except Exception as e:
