@@ -538,6 +538,8 @@ class XeroToQbo(object):
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
                 delete_coa(job_id)
+                delete_customer(job_id)
+                delete_supplier(job_id)
                 
                 step_name = "Reading qbo chart of data"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -691,6 +693,25 @@ class XeroToQbo(object):
 
                 update_task_execution_status(task.id, status=2, task_type="write")
                 
+                delete_coa(job_id)
+                delete_customer(job_id)
+                delete_supplier(job_id)
+                
+                step_name = "Reading qbo chart of data"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Chart of account")
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading qbo Customer"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Customer")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo supplier"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                read_qbo_data(job_id,task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 step_name = "Reading xero open Aged Receivable Summary"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_aged_receivable_summary(job_id,task.id)
@@ -762,12 +783,15 @@ class XeroToQbo(object):
             if "Trial Balance" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
 
-                step_name = "Reading qbo Customer"
+                delete_coa(job_id)
+                delete_customer(job_id)
+                delete_supplier(job_id)
+                
+                step_name = "Reading qbo chart of data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id,task.id)
                 read_qbo_data(job_id,task.id, "Chart of account")
                 write_task_execution_step(task.id, status=1, step=step_name)
-                
+
                 step_name = "Reading qbo Customer"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id,task.id, "Customer")
@@ -776,6 +800,11 @@ class XeroToQbo(object):
                 step_name = "Reading qbo supplier"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id,task.id, "Supplier")
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading Xero COA"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_coa(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Reading QBO Trial Balance"
