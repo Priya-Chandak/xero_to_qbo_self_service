@@ -1050,6 +1050,55 @@ def get_qbo_current_trial_balance_after_conversion(job_id,task_id):
         print(ex)
         sys.exit(0)
 
+def get_qbo_trial_balance(job_id,task_id):
+    try:
+        start_date, end_date = get_job_details(job_id)
+        dbname=get_mongodb_database()
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+        QBO_Trial_Balance = dbname['QBO_Trial_Balance']
+        
+        date_object = datetime.strptime(start_date, '%Y-%m-%d')
+        one_day_before = date_object - timedelta(days=1)
+        result_string = one_day_before.strftime('%Y-%m-%d')
+        print(result_string)
+        y1=int(result_string[0:4])
+        m1=int(result_string[5:7])
+        d1=int(result_string[8:])
+            
+        url = f"{base_url}/reports/TrialBalance?&start_date=2020-01-01&end_date={y1}-{m1}-{d1}&minorversion={minorversion}"
+        print(url)
+        payload=""
+        response = requests.request("GET", url, headers=headers, data=payload)
+        data=response.json()
+        print(data)
+
+        trial_balance=[]
+        for i in range(0,len(data['Rows']['Row'])-1):
+            queryset={}
+            queryset['job_id'] = job_id
+            queryset['bankname'] = data['Rows']['Row'][i]['ColData'][0]['value']
+            queryset['bankid'] = data['Rows']['Row'][i]['ColData'][0]['id']
+            queryset['debit']= 0 if data['Rows']['Row'][i]['ColData'][1]['value'] =='' else data['Rows']['Row'][i]['ColData'][1]['value'] 
+            queryset['credit']= 0 if data['Rows']['Row'][i]['ColData'][2]['value'] == '' else data['Rows']['Row'][i]['ColData'][2]['value'] 
+            print(queryset['debit'],queryset['credit'])
+            trial_balance.append(queryset)
+                    
+        if len(trial_balance)>0:
+            QBO_Trial_Balance.insert_many(trial_balance)
+            print("QBO_Trial_Balance Created")
+
+                
+    except Exception as ex:
+        step_name = "Access token not valid"
+        write_task_execution_step(task_id, status=0, step=step_name)
+        update_task_execution_status( task_id, status=0, task_type="read")
+        import traceback
+        traceback.print_exc()
+        print(ex)
+        sys.exit(0)
+
+
+
 def get_xero_trial_balance(job_id,task_id):
     try:
         start_date, end_date = get_job_details(job_id)
