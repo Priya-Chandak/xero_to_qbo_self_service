@@ -1184,7 +1184,7 @@ def final_report_email_to_customer(job_id):
     msg['From'] = 'ankit@mmcconvert.com'
     msg['To'] = recipient
 
-    attachment_path = f"apps/static/reports/Report_{job_id}.pdf"
+    attachment_path = f"/static/reports/Report_{job_id}.pdf"
     attachment_filename = f"{file_name}_finalReport.pdf"
 
     with open(attachment_path, 'rb') as attachment_file:
@@ -1201,7 +1201,7 @@ def final_report_email_to_customer(job_id):
 
     sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
-    pdf_path = f"apps/static/reports/Report_{job_id}.pdf"
+    pdf_path = f"/static/reports/Report_{job_id}.pdf"
     
 
     if os.path.exists(pdf_path): 
@@ -1298,9 +1298,11 @@ def report_generation(job_id):
         'margin-bottom': '10mm',
         'margin-left': '10mm',
     }
-
-    pdfkit.from_string(create_final_report_content,
-                       f"apps/static/reports/Report_{job_id}.pdf", options=options)
+    try:
+        pdfkit.from_string(create_final_report_content,
+                        f"/static/reports/Report_{job_id}.pdf", options=options)
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
 
     return redirect(
         url_for(
