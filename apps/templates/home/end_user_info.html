@@ -27,6 +27,7 @@
                                 <th>Start date</th>
                                 <th>End date</th>
                                 <th>Link</th>
+                                <!-- <th>Create Report</th> -->
                                 <th>Generate Report</th>
                                 <th>Preview Report</th>
                                 <th>Send Email</th>
@@ -42,14 +43,21 @@
                                 <td>{{item.end_date}}</td>
 
                                 <td><a href="start_conversion_report/{{item.job_id}}">Check Status</a></td>
+
+                                <!-- <td>
+                                    <button id="createreport" class="btn btn-success"
+                                        onclick="createreport('{{ item.job_id }}')">Create Report</button>
+                                </td> -->
+
                                 <td>
                                     <button id="generateReport" class="btn btn-success"
                                         onclick="generateReport('{{ item.job_id }}')">Generate Report</button>
                                 </td>
+
                                 <td>
-                                    <a href="static/reports/Report_{{ item.job_id }}.pdf" class="btn btn-info">Preview
-                                        Report</a>
+                                    <a href="#" class="btn btn-info" onclick="previewReport('{{ item.job_id }}')">Preview Report</a>
                                 </td>
+
                                 <td>
                                     <button id="sendemail" class="btn btn-success"
                                         onclick="sendemail('{{ item.job_id }}')">Send Email</button>
@@ -89,6 +97,20 @@
         });
     }
 
+    function generateReport(jobId) {
+        $.ajax({
+            url: '/report_generation/' + jobId,
+            type: 'GET',
+            success: function (response) {
+                console.log(':');
+                alert('Confirmed report generation ');
+            },
+            error: function (error) {
+                alert('Report generated successfully.');
+            }
+        });
+    }
+
     function sendemail(jobId) {
         $.ajax({
             url: '/final_report_email_to_customer/' + jobId,
@@ -103,6 +125,24 @@
             }
 
         });
+    }
+
+
+    function previewReport(jobId) {
+        var reportPath = "static/reports/Report_" + jobId + ".pdf";
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', reportPath, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    window.location.href = reportPath;
+                } else {
+                    alert('Report not available.');
+                }
+            }
+        };
+        xhr.send();
     }
 </script>
 
