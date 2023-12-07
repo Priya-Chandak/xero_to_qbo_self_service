@@ -30,7 +30,7 @@ from apps.home import blueprint
 from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep, ToolId, CustomerInfo, XeroQboTokens
 from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
-from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task #, report_generation_task
+from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task , report_generation_task
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
@@ -85,13 +85,11 @@ def startJobByID():
     return render_template("home/conversion_underway.html")
 
 
-# @blueprint.route("/startReportGenerationByID", methods=["POST"])
-# def startReportGenerationByID():
-#     job_id = redis.get('my_key')
-#     print(job_id, "start job by id")
-#     # job_id = 1
-#     asyncio.run(report_generation_task(job_id))
-#     return "click report generation button"
+@blueprint.route("/startReportGenerationByID/<int:job_id>", methods=["POST"])
+def startReportGenerationByID(job_id):
+    print(job_id)
+    asyncio.run(report_generation_task(job_id))
+    return "click report generation button"
 
 
 @blueprint.route("/task_execution_details/<int:task_id>")
@@ -1297,10 +1295,11 @@ def report_generation(job_id):
         'margin-right': '10mm',
         'margin-bottom': '10mm',
         'margin-left': '10mm',
+        "enable-local-file-access":""
     }
     try:
         pdfkit.from_string(create_final_report_content,
-                        f"/static/reports/Report_{job_id}.pdf", options=options)
+                        f"/static/reports/Report_{job_id}.pdf", options=options,)
     except Exception as e:
         print(f"Error generating PDF: {e}")
 
