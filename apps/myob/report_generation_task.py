@@ -61,7 +61,7 @@ from apps.xero.reader.payrun import get_payrun,get_payslip,get_payrun_setting
 from apps.xero.reader.depreciation import *
 from apps.xero.reader.add_payrun import add_xero_payrun
 from apps.xero.reader.invoice import get_invoice,get_invoice_customers,get_open_invoice
-from apps.xero.reader.AR_Summary import get_aged_receivable_summary, get_aged_payable_summary,get_qbo_ar_customer,get_qbo_ap_supplier, get_qbo_trial_balance, get_xero_trial_balance,match_trial_balance,get_xero_current_trial_balance,get_qbo_current_trial_balance
+from apps.xero.reader.AR_Summary import get_aged_receivable_summary, get_aged_payable_summary,get_qbo_ar_customer,get_qbo_ap_supplier, get_qbo_trial_balance, get_xero_trial_balance,match_trial_balance,get_xero_current_trial_balance,get_qbo_current_trial_balance_after_conversion
 from apps.xero.reader.AR_Journal import add_qbo_ar_journal, add_qbo_ap_journal, add_qbo_reverse_trial_balance, add_xero_open_trial_balance,add_xero_current_trial_balance
 from apps.xero.reader.bill import get_xero_bill, get_bill_suppliers
 from apps.xero.reader.items import get_items
@@ -294,7 +294,7 @@ class XeroToQboReports(object):
             
             step_name = "Reading QBO Trial Balance of today's date"
             write_task_execution_step(task.id, status=2, step=step_name)
-            get_qbo_current_trial_balance(job_id,task.id)
+            get_qbo_current_trial_balance_after_conversion(job_id,task.id)
             write_task_execution_step(task.id, status=1, step=step_name)
             
             step_name = "Reading xero trial balance"
