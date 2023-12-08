@@ -30,7 +30,7 @@ from apps.home import blueprint
 from apps.home.models import JobExecutionStatus, Task, TaskExecutionStatus, TaskExecutionStep, ToolId, CustomerInfo, XeroQboTokens
 from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
-from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task  #report_generation_task
+from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task, report_generation_task
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
@@ -48,12 +48,14 @@ def User_info():
 
     if request.method == "GET":
 
-        all_customer_info = CustomerInfo.query.order_by(desc(CustomerInfo.id)).all()
+        all_customer_info = CustomerInfo.query.order_by(
+            desc(CustomerInfo.id)).all()
 
         return render_template(
             "home/end_user_info.html",
             all_customer_info=all_customer_info
         )
+
 
 @blueprint.route("/conversion_underway")
 def conversion_underway():
@@ -82,11 +84,11 @@ def startJobByID():
     return render_template("home/conversion_underway.html")
 
 
-# @blueprint.route("/startReportGenerationByID/<int:job_id>", methods=["POST"])
-# def startReportGenerationByID(job_id):
-#     print(job_id)
-#     asyncio.run(report_generation_task(job_id))
-#     return "click report generation button"
+@blueprint.route("/startReportGenerationByID/<int:job_id>", methods=["POST"])
+def startReportGenerationByID(job_id):
+    print(job_id)
+    asyncio.run(report_generation_task(job_id))
+    return "click report generation button"
 
 
 @blueprint.route("/task_execution_details/<int:task_id>")
@@ -281,7 +283,8 @@ def connect_input_tool():
     if request.method == "POST":
         job = Jobs()
 
-        job_functions = ['Existing Chart of account', 'Chart of account', 'Customer', 'Supplier', 'Item', 'Job','Journal', 'Spend Money', 'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation','Open Data', 'AR-AP','Trial Balance', 'Report']
+        job_functions = ['Existing Chart of account', 'Chart of account', 'Customer', 'Supplier', 'Item', 'Job', 'Journal', 'Spend Money',
+                         'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation', 'Open Data', 'AR-AP', 'Trial Balance', 'Report']
         job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,Open Data,AR-AP,Trial Balance,Report"
 
         length = 10
@@ -594,7 +597,7 @@ def start_conversion_report(job_id):
         if all_data1 == 0:
             all_data1 = 100
     # return jsonify(all_data,function_name);
-    return render_template("home/conversion_report_for_start_conversion.html",function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id, company_name=company_name,
+    return render_template("home/conversion_report_for_start_conversion.html", function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id, company_name=company_name,
                            customer_email=customer_email,
                            start_date=start_date,
                            end_date=end_date)
@@ -605,11 +608,11 @@ def conversion_report(job_id):
     dbname = get_mongodb_database()
     job_id = redis.get('my_key')
     print(job_id, type(job_id))
-    
-    function_name = ["Existing COA","Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill","Open Invoice","Open Bill","Open Creditnote","Open Vendorcredit", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['existing_coa'],dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'],dbname['xero_open_invoice'],dbname['xero_open_bill'],dbname['xero_open_creditnote'],dbname['xero_open_suppliercredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+
+    function_name = ["Existing COA", "Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Open Invoice", "Open Bill", "Open Creditnote", "Open Vendorcredit", "Invoice Payment", "Bill Payment"]
+    table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_open_invoice'], dbname['xero_open_bill'], dbname['xero_open_creditnote'], dbname['xero_open_suppliercredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
     print(condition1)
@@ -659,16 +662,14 @@ def conversion_report(job_id):
                            end_date=end_date)
 
 
-
 @blueprint.route("/start_conversion_report_data/<int:job_id>")
 def start_conversion_report_data(job_id):
     dbname = get_mongodb_database()
 
-   
-    function_name = ["Existing COA","Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill","Open Invoice","Open Bill","Open Creditnote","Open Vendorcredit", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['existing_coa'],dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'],dbname['xero_open_invoice'],dbname['xero_open_bill'],dbname['xero_open_creditnote'],dbname['xero_open_suppliercredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+    function_name = ["Existing COA", "Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Open Invoice", "Open Bill", "Open Creditnote", "Open Vendorcredit", "Invoice Payment", "Bill Payment"]
+    table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_open_invoice'], dbname['xero_open_bill'], dbname['xero_open_creditnote'], dbname['xero_open_suppliercredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
     # print(condition1)
@@ -677,7 +678,6 @@ def start_conversion_report_data(job_id):
 
     company_info = CustomerInfo.query.filter(
         CustomerInfo.job_id == job_id).first()
-
 
     all_data = []
     pushed_data = []
@@ -1139,6 +1139,7 @@ def Create_final_report(job_id):
 
     return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data, qbo_img=qbo_img)
 
+
 @blueprint.route("/final_report_email_to_customer/<int:job_id>", methods=["GET", "POST"])
 def final_report_email_to_customer(job_id):
     print(job_id, "final report email job id")
@@ -1169,9 +1170,8 @@ def final_report_email_to_customer(job_id):
     msg['From'] = 'ankit@mmcconvert.com'
     msg['To'] = recipient
 
-    file_name=f"Report_{job_id}.pdf"
-    pdf_path = os.path.join('apps','static', 'reports', file_name)
-        
+    file_name = f"Report_{job_id}.pdf"
+    pdf_path = os.path.join('apps', 'static', 'reports', file_name)
 
     attachment_path = pdf_path
     attachment_filename = f"{file_name}_Final_Report.pdf"
@@ -1190,18 +1190,15 @@ def final_report_email_to_customer(job_id):
 
     # sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
+    file_name = f"Report_{job_id}.pdf"
+    pdf_path = os.path.join('apps', 'static', 'reports', file_name)
 
-    file_name=f"Report_{job_id}.pdf"
-    pdf_path = os.path.join('apps','static', 'reports', file_name)
-        
-    if os.path.exists(pdf_path): 
+    if os.path.exists(pdf_path):
         response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
         sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
         os.remove(pdf_path)
     else:
         flash('Please generate pdf before send mail', 'error')
-
-
 
     return response
 
@@ -1287,13 +1284,14 @@ def report_generation(job_id):
         'margin-right': '10mm',
         'margin-bottom': '10mm',
         'margin-left': '10mm',
-        "enable-local-file-access":""
+        "enable-local-file-access": ""
     }
     try:
-        file_name=f"Report_{job_id}.pdf"
-        pdf_path = os.path.join('apps','static', 'reports', file_name)
+        file_name = f"Report_{job_id}.pdf"
+        pdf_path = os.path.join('apps', 'static', 'reports', file_name)
         print(pdf_path)
-        pdfkit.from_string(create_final_report_content,pdf_path, options=options,)
+        pdfkit.from_string(create_final_report_content,
+                           pdf_path, options=options,)
     except Exception as e:
         print(f"Error generating PDF: {e}")
 

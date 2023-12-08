@@ -11,14 +11,12 @@ from redis import StrictRedis
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
-def post_qbo_settings(job_id):
+def post_qbo_for_report_settings(job_id):
     try:
-
-        job_id_from_redis = redis.get('my_key')
 
         url = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
         data1 = db.session.query(XeroQboTokens).filter(
-            XeroQboTokens.job_id == job_id_from_redis).first()
+            XeroQboTokens.job_id == job_id).first()
 
         redirect_uri = QBO_REDIRECT
         base_url1 = QBO_BaseURL

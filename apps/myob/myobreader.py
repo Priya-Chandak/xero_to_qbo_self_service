@@ -10,20 +10,22 @@ def read_data(job_id):
     try:
         input_tool = 1
         output_tool = 2
-        read_tasks = Task.query.filter(Task.job_id == job_id).filter(Task.read != 1).all()
+        read_tasks = Task.query.filter(
+            Task.job_id == job_id).filter(Task.read != 1).all()
         for task in read_tasks:
-            print("read task---------------------------------",task)
+            print("read task---------------------------------", task)
 
             if input_tool == 1 and output_tool == 2:
                 XeroToQbo.read_data(job_id, task)
             db.session.close()
 
         input_tool = 1
-        output_tool = 2 
-        
-        write_tasks = Task.query.filter(Task.job_id == job_id).filter(Task.write != 1).all()
+        output_tool = 2
+
+        write_tasks = Task.query.filter(
+            Task.job_id == job_id).filter(Task.write != 1).all()
         for task in write_tasks:
-            print("write task---------------------------------",task)
+            print("write task---------------------------------", task)
             if input_tool == 1 and output_tool == 2:
                 XeroToQbo.write_data(job_id, task)
 
@@ -31,28 +33,15 @@ def read_data(job_id):
     except Exception as ex:
         print(ex)
 
-# def read_reports(job_id):
-#     try:
-#         input_tool = 1
-#         output_tool = 2
-#         read_tasks = Task.query.filter(Task.job_id == job_id).filter(Task.read != 1).all()
-#         for task in read_tasks:
-#             print("read task---------------------------------",task)
 
-#             if input_tool == 1 and output_tool == 2:
-#                 XeroToQboReports.read_data(job_id, task)
-#             db.session.close()
+def read_reports(job_id):
+    try:
+        input_tool = 1
+        output_tool = 2
 
-#         input_tool = 1
-#         output_tool = 2 
-        
-#         # write_tasks = Task.query.filter(Task.job_id == job_id).filter(Task.write != 1).all()
-#         # for task in write_tasks:
-#         #     print("write task---------------------------------",task)
-#         #     if input_tool == 1 and output_tool == 2:
-#         #         XeroToQboReports.write_data(job_id, task)
+        if input_tool == 1 and output_tool == 2:
+            XeroToQboReports.read_data(job_id)
+        db.session.close()
 
-#         #     db.session.close()
-#     except Exception as ex:
-#         print(ex)
-
+    except Exception as ex:
+        print(ex)
