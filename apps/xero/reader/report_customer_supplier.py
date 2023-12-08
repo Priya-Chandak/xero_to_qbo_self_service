@@ -53,12 +53,14 @@ def get_report_customer_summary(job_id, task_id):
                         b['Customer_name'] = xero_customer_data[i]['ContactName']
                         b['Xero'] = xero_customer_data[i]['xero_balance']
                         b['QBO'] = qbo_customer_data[j]["Balance"]
+                        b['job_id']=job_id
                         customer_data.append(b)
                         print(customer_data,"customer_data-----------------")
                     else:
                         b['Customer_name'] = xero_customer_data[i]['ContactName']
                         b['Xero'] = 0
                         b['QBO'] = 0
+                        b['job_id']=job_id
                         customer_data.append(b)
                         print(customer_data,"customer_data-----------------")
                     
@@ -104,19 +106,21 @@ def get_report_supplier_summary(job_id, task_id):
                 
         for i in range(0, len(xero_supplier_data)):
             for j in range(0, len(qbo_supplier_data)):
-                if xero_supplier_data[i]["ContactName"] == qbo_supplier_data[j]["Name"]:
+                if xero_supplier_data[i]["ContactNaxero_report_supplierme"] == qbo_supplier_data[j]["Name"]:
                     b = {}
                     if 'ContactID' in xero_supplier_data[i]:
                         b['code'] = xero_supplier_data[i]['ContactID']
                         b['Customer_name'] = xero_supplier_data[i]['ContactName']
                         b['Xero'] = xero_supplier_data[i]['xero_balance']
                         b['QBO'] = qbo_supplier_data[j]["Balance"]
+                        b['job_id']=job_id
                         supplier_data.append(b)
                         print(supplier_data,"supp data -------------")
                     else:
                         b['Customer_name'] = xero_supplier_data[i]['ContactName']
                         b['Xero'] = 0
                         b['QBO'] = 0
+                        b['job_id']=job_id
                         supplier_data.append(b)
         
         if len(supplier_data) > 0:

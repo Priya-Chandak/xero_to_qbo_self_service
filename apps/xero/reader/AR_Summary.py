@@ -1534,7 +1534,7 @@ def trial_balance_final_report(job_id,task_id):
                                                     "xero_debit_balance": xero_trial_balance1[i]['debit'],
                                                     "qbo_balance": -float(qbo_trial_balance1[k]['debit']) if float(qbo_trial_balance1[k]['debit']) != 0 else float(qbo_trial_balance1[k]['credit']),
                                                     "xero_balance": -float(xero_trial_balance1[i]['debit']) if float(xero_trial_balance1[i]['debit']) != 0 else float(xero_trial_balance1[i]['credit']),
-                                                    "job_id": f"{job_id}",
+                                                    "job_id": job_id,
                                                 }
                                             },
                                             upsert=True
