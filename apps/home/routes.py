@@ -1124,45 +1124,22 @@ def sent_email_to_customer():
 
 @blueprint.route("/Create_final_report", methods=["GET", "POST"])
 def Create_final_report(job_id):
+    dbname = get_mongodb_database()
 
     print(job_id, "print job id create final")
 
-    if request.method == "GET":
-        dbname = get_mongodb_database()
-        cust_data = []
-        supp_data = []
-        coa_data = []
+    cust_data = list(dbname["xero_report_customer"].find({"job_id": job_id}))
+    supp_data = list(dbname["xero_report_supplier"].find({"job_id": job_id}))
+    coa_data = list(dbname["matched_trial_balance"].find({"job_id": job_id}))
 
-        data1 = [{'code': '432debec-05a3-40b5-93fd-c3353437aa40', 'Customer_name': 'City of Gosnells', 'Xero': 1320.0, 'QBO': 0}, {'code': '130315ce-efda-4504-b60c-07334618f523', 'Customer_name': "Cat O'Connor", 'Xero': 460.0, 'QBO': 0}, {'code': '260736d8-404d-4b69-a3c1-9ae11a05aad4', 'Customer_name': 'City of Wanneroo', 'Xero': 1540.0, 'QBO': 0}, {'code': 'e749a40e-a93d-4e82-95cc-6b6cc5f69a0a', 'Customer_name': 'Camp Australia', 'Xero': 660.0, 'QBO': 0}, {'code': 'c702cea5-27d4-4808-adb6-0cf2f940786a', 'Customer_name': 'Department of Justice', 'Xero': 4400.0, 'QBO': 0}, {'code': '4a943ef3-fe47-4239-8e9b-da23b2a74de8', 'Customer_name': 'Jigalong Remote Community School', 'Xero': 3289.0, 'QBO': 0}, {'code': 'c15c23be-9141-49fb-98f2-d628e6fae081', 'Customer_name': 'City of Cockburn', 'Xero': 1980.0, 'QBO': 0}, {'code': '9c45858d-1491-4798-9979-9efb591e707a', 'Customer_name': 'Shire of Ashburton', 'Xero': 12168.79, 'QBO': 0}, {'code': '96512c31-d160-4fc4-b489-e336097b35b9', 'Customer_name': 'Shire of Carnarvon', 'Xero': 3289.0, 'QBO': 0},
-                 {'code': '5f2de916-c061-4a71-81f6-da34d6612c54', 'Customer_name': 'Tequiras Netball Club', 'Xero': 1500.0, 'QBO': 0}, {'code': 'e4451815-428a-49ad-b7d8-5515d1e92c9f', 'Customer_name': 'City of Karratha', 'Xero': 3289.0, 'QBO': 0}, {'code': 'ad4398bc-f291-4c8e-9f24-fc60bf0e5805', 'Customer_name': 'Anna Speranza', 'Xero': 550.0, 'QBO': 0}, {'code': '7f263aa8-6338-4742-ad7c-a378d349ba7b', 'Customer_name': 'Amanda Lohman', 'Xero': 900.0, 'QBO': 0}, {'code': '0b3302b0-9f5d-4988-baef-cf06a746cd3b', 'Customer_name': 'Treendale Farm', 'Xero': 1985.5, 'QBO': 0}, {'code': '547ee9f4-a054-4338-bc4c-a687537b89f6', 'Customer_name': 'Churchlands Primary School', 'Xero': 1210.0, 'QBO': 0}, {'code': 'c6f29bba-2df2-484b-8b07-feb9fc6a3fd1', 'Customer_name': 'Shire of Dardanup', 'Xero': 2475.0, 'QBO': 0}, {'code': 'b7972e36-e335-49dc-bf86-c81a78c20c1e', 'Customer_name': 'Applecross Primary School', 'Xero': 880.0, 'QBO': 0}, {'code': '14a37e61-1ef7-4ec0-ab1e-aa6f465aebe6', 'Customer_name': 'Dale Alcock Homes South West ABN 17071096350', 'Xero': 0.0, 'QBO': 0}]
+    img_name = "Quickbooks-Emblem.png"
+    qbo_img = os.path.join('apps', 'static', 'assets', 'img', img_name)
 
-        cust_data1 = dbname["xero_report_customer"].find({"job_id": job_id})
+    print(len(cust_data), "print len of cust_data")
+    print(len(supp_data), "print len of supp_data")
+    print(len(coa_data), "print len of coa_data")
 
-
-        supp_data1 = dbname["xero_report_supplier"].find({"job_id": job_id})
-
-        chart_of_account1 = dbname["matched_trial_balance"].find({"job_id": job_id})
-
-        for coa in chart_of_account1:
-            coa_data.append(coa)
-        
-        print(coa_data,"print all data coa")
-
-        cust_data.append(cust_data1)
-        supp_data.append(supp_data1)
-        coa_data.append(chart_of_account1)
-
-
-        img_name="Quickbooks-Emblem.png"
-        qbo_img = os.path.join('apps','static', 'assets',"img", img_name)
-
-        print(len(cust_data),"print len of cust_data")
-        print(len(supp_data),"print len of supp_data")
-        print(len(coa_data),"print len of coa_data")
-            
-        
-        return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data,qbo_img=qbo_img)
-
+    return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data, qbo_img=qbo_img)
 
 @blueprint.route("/final_report_email_to_customer/<int:job_id>", methods=["GET", "POST"])
 def final_report_email_to_customer(job_id):
