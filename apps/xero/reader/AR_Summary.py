@@ -1267,7 +1267,8 @@ def match_trial_balance(job_id,task_id):
                     queryset={}
                     queryset['job_id']=job_id
 
-                    if (xero_trial_balance1[i]['bankname'].split(" (")[0] == qbo_trial_balance1[j]['bankname']):
+                    if (xero_trial_balance1[i]['bankname'].split(" (")[1][:-1] + " " + xero_trial_balance1[i]['bankname'].split(" (")[0] == qbo_trial_balance1[j]['bankname']):
+                    # if (xero_trial_balance1[i]['bankname'].split(" (")[0] == qbo_trial_balance1[j]['bankname']):
                         print(xero_trial_balance1[i]['bankname'])
                         queryset['bankname'] = xero_trial_balance1[i]['bankname']
                         if xero_trial_balance1[i]['debit'] == qbo_trial_balance1[j]['debit']:
