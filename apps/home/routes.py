@@ -1185,9 +1185,9 @@ def final_report_email_to_customer(job_id):
                           f'attachment; filename="{attachment_filename}"')
     msg.attach(attachment)
 
-    response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
+    # response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
 
-    sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
+    # sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
 
     file_name=f"Report_{job_id}.pdf"
