@@ -55,7 +55,6 @@ def User_info():
             all_customer_info=all_customer_info
         )
 
-
 @blueprint.route("/conversion_underway")
 def conversion_underway():
     job_id = redis.get('my_key')
@@ -1123,12 +1122,12 @@ def sent_email_to_customer():
 @blueprint.route("/Create_final_report", methods=["GET", "POST"])
 def Create_final_report(job_id):
     dbname = get_mongodb_database()
+    job_id1 = str(job_id)
+    print(job_id1, "print job id create final")
 
-    print(job_id, "print job id create final")
-
-    cust_data = list(dbname["xero_report_customer"].find({"job_id": job_id}))
-    supp_data = list(dbname["xero_report_supplier"].find({"job_id": job_id}))
-    coa_data = list(dbname["matched_trial_balance"].find({"job_id": job_id}))
+    cust_data = list(dbname["xero_report_customer"].find({"job_id": job_id1}))
+    supp_data = list(dbname["xero_report_supplier"].find({"job_id": job_id1}))
+    coa_data = list(dbname["matched_trial_balance"].find({"job_id": job_id1}))
 
     img_name = "Quickbooks-Emblem.png"
     qbo_img = os.path.join('apps', 'static', 'assets', 'img', img_name)
