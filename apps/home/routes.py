@@ -1148,8 +1148,17 @@ def Create_final_report(job_id):
         cust_data.append(cust_data1)
         supp_data.append(supp_data1)
         coa_data.append(chart_of_account1)
+
+
+        img_name="Quickbooks-Emblem.png"
+        qbo_img = os.path.join('apps','static', 'assets',"img", img_name)
+
+        print(len(cust_data),"print len of cust_data")
+        print(len(supp_data),"print len of supp_data")
+        print(len(coa_data),"print len of coa_data")
+            
         
-        return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data)
+        return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data,qbo_img=qbo_img)
 
 
 @blueprint.route("/final_report_email_to_customer/<int:job_id>", methods=["GET", "POST"])
