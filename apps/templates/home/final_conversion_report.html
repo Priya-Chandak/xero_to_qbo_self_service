@@ -141,15 +141,12 @@
                             {% endfor %}
                         </tbody>
                     </table>
-
-
                     
-
+                    <hr>
                     <h3>Customer Balances</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Code</th>
                                 <th>Customer_name</th>
                                 <th>XERO</th>
                                 <th>QBO-Online</th>
@@ -159,7 +156,6 @@
                         <tbody>
                             {% for entry in cust_data %}
                             <tr>
-                                <td>{{ entry.code }}</td>
                                 <td>{{ entry.Customer_name }}</td>
                                 <td>{{ entry.Xero }}</td>
                                 <td>{{ entry.QBO }}</td>
@@ -171,12 +167,11 @@
 
 
                     <!-- supplier table creation  -->
-
+                    <hr>
                     <h3>Supplier Balances</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Code</th>
                                 <th>Supplier_name</th>
                                 <th>XERO</th>
                                 <th>QBO-Online</th>
@@ -186,7 +181,6 @@
                         <tbody>
                             {% for entry in supp_data %}
                             <tr>
-                                <td>{{ entry.code }}</td>
                                 <td>{{ entry.Supplier_name }}</td>
                                 <td>{{ entry.Xero }}</td>
                                 <td>{{ entry.QBO }}</td>
