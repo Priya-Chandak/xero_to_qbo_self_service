@@ -1142,7 +1142,11 @@ def Create_final_report(job_id):
         supp_data1 = dbname["xero_report_supplier"].find({"job_id": job_id})
 
         chart_of_account1 = dbname["matched_trial_balance"].find({"job_id": job_id})
-        print(chart_of_account1)
+
+        for coa in chart_of_account1:
+            coa_data.append(coa)
+        
+        print(coa_data,"print all data coa")
 
         cust_data.append(cust_data1)
         supp_data.append(supp_data1)
