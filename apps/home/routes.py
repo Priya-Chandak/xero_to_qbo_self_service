@@ -50,8 +50,6 @@ def User_info():
 
         all_customer_info = CustomerInfo.query.order_by(desc(CustomerInfo.id)).all()
 
-        print(all_customer_info[0].Email, "print all email id's")
-
         return render_template(
             "home/end_user_info.html",
             all_customer_info=all_customer_info
