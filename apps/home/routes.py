@@ -1142,6 +1142,9 @@ def Create_final_report(job_id):
         CustomerInfo.job_id == job_id).first()
 
     file_name = customer_info_data.Company
+    start_date = customer_info_data.start_date
+    end_date = customer_info_data.end_date
+
 
     cust_data = list(dbname["xero_report_customer"].find({"job_id": job_id1}))
     supp_data = list(dbname["xero_report_supplier"].find({"job_id": job_id1}))
@@ -1154,7 +1157,7 @@ def Create_final_report(job_id):
     print(len(supp_data), "print len of supp_data")
     print(len(coa_data), "print len of coa_data")
 
-    return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data, qbo_img=qbo_img,file_name=file_name)
+    return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data, qbo_img=qbo_img,file_name=file_name,start_date=start_date,end_date=end_date)
 
 
 @blueprint.route("/final_report_email_to_customer/<int:job_id>", methods=["GET", "POST"])
