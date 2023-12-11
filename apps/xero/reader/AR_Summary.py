@@ -135,7 +135,6 @@ def get_aged_receivable_summary_till_end_date(job_id,task_id):
             y1=int(result_string[0:4])
             m1=int(result_string[5:7])
             d1=int(result_string[8:])
-            # main_url = f"{base_url}/Reports/AgedReceivablesByContact?contactId={xero_customer[i]['ContactID']}&fromDate=2020-01-01&toDate={y1}-{m1}-{d1}"
             main_url = f"{base_url}/Reports/AgedReceivablesByContact?contactId={xero_customer[i1]['ContactID']}&date={y1}-{m1}-{d1}"
                 
             print(main_url)

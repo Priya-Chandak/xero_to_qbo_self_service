@@ -35,21 +35,21 @@ def get_xero_asset_types(job_id,task_id):
         url = "https://api.xero.com/assets.xro/1.0/AssetTypes"
 
         response = requests.request("GET", url, headers=headers, data=payload)
+        if response.status_code == 200:
+            JsonResponse = response.json()
+            print(JsonResponse)
+            payrun_list=[]
+            payrun_list.append(JsonResponse)
 
-        JsonResponse = response.json()
-        print(JsonResponse)
-        payrun_list=[]
-        payrun_list.append(JsonResponse)
-
-        print(payrun_list)   
-        if JsonResponse != []:
-            e={}
-            e['job_id']=job_id
-            e['type']=JsonResponse[0]
-            xero_asset_types.insert_one(e)
-                    
-        step_name = "Reading data from xero asset types"
-        write_task_execution_step(task_id, status=1, step=step_name)
+            print(payrun_list)   
+            if JsonResponse != []:
+                e={}
+                e['job_id']=job_id
+                e['type']=JsonResponse[0]
+                xero_asset_types.insert_one(e)
+                        
+            step_name = "Reading data from xero asset types"
+            write_task_execution_step(task_id, status=1, step=step_name)
                         
 
     except Exception as ex:
@@ -132,7 +132,7 @@ def get_xero_journal(job_id,task_id):
 
 def get_xero_depreciation_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_payrun")
+        logger.info("Started executing xero -> qbowriter -> get_xero_depreciation_journal")
         
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

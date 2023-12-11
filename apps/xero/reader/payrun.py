@@ -30,37 +30,39 @@ def get_payrun(job_id,task_id):
 
         response = requests.request("GET", url, headers=headers, data=payload)
         print(response)
-        JsonResponse = response.json()
-        JsonResponse1 = JsonResponse['PayRuns']
-        payrun_list=[]
-        for i in range(0, len(JsonResponse1)):
-            payrun_list.append(JsonResponse1[i]['PayRunID'])
-
-        
-        all_payrun=[]
-        for j in range(0,len(payrun_list)):
-            url1=f"https://api.xero.com/payroll.xro/1.0/PayRuns/{payrun_list[j]}" 
-            time.sleep(1)
-            print(url1)
-            response = requests.request("GET", url1, headers=headers, data=payload)
-            print(response)
+        if response.status_code == 200:
             JsonResponse = response.json()
+            print(JsonResponse)
             JsonResponse1 = JsonResponse['PayRuns']
-            print(JsonResponse1)
-            queryset1={}
-            
-            queryset1['job_id']=job_id
-            queryset1['is_pushed']=0
-            queryset1['payrun'] = JsonResponse1[0]
-            print(queryset1,"------------")
-            all_payrun.append(queryset1)
+            payrun_list=[]
+            for i in range(0, len(JsonResponse1)):
+                payrun_list.append(JsonResponse1[i]['PayRunID'])
 
-        if len(all_payrun)>0:
-            xero_payrun.insert_many(all_payrun)
+            
+            all_payrun=[]
+            for j in range(0,len(payrun_list)):
+                url1=f"https://api.xero.com/payroll.xro/1.0/PayRuns/{payrun_list[j]}" 
+                time.sleep(1)
+                print(url1)
+                response = requests.request("GET", url1, headers=headers, data=payload)
+                print(response)
+                JsonResponse = response.json()
+                JsonResponse1 = JsonResponse['PayRuns']
+                print(JsonResponse1)
+                queryset1={}
                 
-        step_name = "Reading data from xero payrun"
-        write_task_execution_step(task_id, status=1, step=step_name)
+                queryset1['job_id']=job_id
+                queryset1['is_pushed']=0
+                queryset1['payrun'] = JsonResponse1[0]
+                print(queryset1,"------------")
+                all_payrun.append(queryset1)
+
+            if len(all_payrun)>0:
+                xero_payrun.insert_many(all_payrun)
                     
+            step_name = "Reading data from xero payrun"
+            write_task_execution_step(task_id, status=1, step=step_name)
+                        
 
     except Exception as ex:
         step_name = "Access token not valid"
@@ -128,21 +130,22 @@ def get_payrun_setting(job_id,task_id):
     
         response = requests.request("GET", url, headers=headers, data=payload)
 
-        JsonResponse = response.json()
-        JsonResponse1 = JsonResponse['Settings']['Accounts']
-        for i in range(0,len(JsonResponse1)):
-            queryset1={}
-            queryset1['job_id']=job_id
-            queryset1['AccountID'] = JsonResponse1[i]['AccountID']
-            queryset1['Type'] = JsonResponse1[i]['Type']
-            if 'Code' in JsonResponse1[i]:
-                queryset1['Code'] = JsonResponse1[i]['Code']
-            queryset1['Name'] = JsonResponse1[i]['Name']
-    
-            all_settings.append(queryset1)
+        if response.status_code == 200:
+            JsonResponse = response.json()
+            JsonResponse1 = JsonResponse['Settings']['Accounts']
+            for i in range(0,len(JsonResponse1)):
+                queryset1={}
+                queryset1['job_id']=job_id
+                queryset1['AccountID'] = JsonResponse1[i]['AccountID']
+                queryset1['Type'] = JsonResponse1[i]['Type']
+                if 'Code' in JsonResponse1[i]:
+                    queryset1['Code'] = JsonResponse1[i]['Code']
+                queryset1['Name'] = JsonResponse1[i]['Name']
         
-        if len(all_settings)>0:
-            xero_payrun_setting.insert_many(all_settings)
+                all_settings.append(queryset1)
+            
+            if len(all_settings)>0:
+                xero_payrun_setting.insert_many(all_settings)
 
     except Exception as ex:
         step_name = "Access token not valid"

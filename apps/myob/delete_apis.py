@@ -61,3 +61,13 @@ def delete_excel_reckon_bill(job_id):
     dbname = get_mongodb_database()
     dbname["excel_reckon_bill"].delete_many({'job_id': f"{job_id}"})
     print("deleted-----------")
+
+def delete_xero_ar(job_id):
+    dbname=get_mongodb_database()
+    dbname['xero_AR_till_end_date'].delete_many({'job_id': f"{job_id}"})
+    print("deleted-----------")
+
+def delete_xero_ap(job_id):
+    dbname=get_mongodb_database()
+    dbname['xero_AP_till_end_date'].delete_many({'job_id': f"{job_id}"})
+    print("deleted-----------")
