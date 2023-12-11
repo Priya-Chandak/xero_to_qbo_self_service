@@ -106,7 +106,7 @@ def get_report_supplier_summary(job_id, task_id):
                 
         for i in range(0, len(xero_supplier_data)):
             for j in range(0, len(qbo_supplier_data)):
-                if xero_supplier_data[i]["ContactName"] == qbo_supplier_data[j]["Name"]:
+                if xero_supplier_data[i]["ContactName"] == qbo_supplier_data[j]["DisplayName"]:
                     b = {}
                     if 'ContactID' in xero_supplier_data[i]:
                         b['code'] = xero_supplier_data[i]['ContactID']
