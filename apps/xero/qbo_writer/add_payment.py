@@ -163,6 +163,7 @@ def add_xero_invoice_payment(job_id,task_id):
                                     QuerySet4["LinkedTxn"].append(QuerySet5)
 
                                     payload = json.dumps(QuerySet2)
+                                    print(payload)
                                     post_data_in_qbo(url, headers, payload,dbname['xero_invoice_payment'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
                     
     except Exception as ex:
