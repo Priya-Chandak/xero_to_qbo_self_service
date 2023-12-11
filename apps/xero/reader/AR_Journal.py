@@ -705,6 +705,16 @@ def add_xero_open_trial_balance(job_id,task_id):
                                 QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                                 print(QuerySet3,"QuerySet3----------")
                                 continue
+                        else:
+                            if xero_coa[k11]['Name'] == QBO_coa[j11]['FullyQualifiedName']:
+                                account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                                account['value'] = QBO_coa[j11]["Id"]
+                                JournalEntryLineDetail['AccountRef'] = account
+                                QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                                print(QuerySet3,"QuerySet3----------")
+                                break
+                        
+
 
                     
             QuerySet2['Line'].append(QuerySet3)
