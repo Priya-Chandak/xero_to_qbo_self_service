@@ -760,12 +760,20 @@ def add_xero_current_trial_balance(job_id,task_id):
         JournalEntryLineDetail1={}
         RE={}
         
+        for j12 in range(0, len(QBO_coa)):
+            if (
+                    QBO_coa[j12]["AccountType"] == "Equity" and QBO_coa[j12]["Name"] == "Retained Earnings"
+                ):
+                    RE['name'] = QBO_coa[j12]["Name"]
+                    RE['value'] = QBO_coa[j12]["Id"]
+
+                    break
+            print(RE)
 
         for i in range(0, len(QuerySet1)):
             print(i)
             journal_date = date.today()
             journal_date1 = journal_date.strftime("%Y-%m-%d")
-            
             QuerySet3={}
             JournalEntryLineDetail={}
             entity={}
@@ -774,7 +782,7 @@ def add_xero_current_trial_balance(job_id,task_id):
             QuerySet3["DetailType"] = "JournalEntryLineDetail"
             QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
             QuerySet2["TxnDate"] = journal_date1
-
+            
             if QuerySet1[i]['debit_diff']==True and QuerySet1[i]['credit_diff']==True :
                 if QuerySet1[i]['debit_diff_amount'] < 0 :
                     JournalEntryLineDetail["PostingType"] = "Credit"
@@ -810,12 +818,6 @@ def add_xero_current_trial_balance(job_id,task_id):
             print(retained_earning_amount,"=retained_earning_amount")
             
             for j11 in range(0, len(QBO_coa)):
-                if (
-                        QBO_coa[j11]["AccountType"] == "Equity" and QBO_coa[j11]["Name"] == "Retained Earnings"
-                    ):
-                        RE['name'] = QBO_coa[j11]["Name"]
-                        RE['value'] = QBO_coa[j11]["Id"]
-                
                 account={}
             
                 if QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Payable'):
