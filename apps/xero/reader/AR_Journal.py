@@ -864,7 +864,7 @@ def add_xero_current_trial_balance(job_id,task_id):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
                     account['value'] = QBO_coa[j11]["Id"]
                     JournalEntryLineDetail['AccountRef'] = account
-                    break
+                    continue
 
                 elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]

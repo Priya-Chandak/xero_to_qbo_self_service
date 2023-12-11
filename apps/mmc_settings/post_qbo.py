@@ -38,7 +38,13 @@ def post_qbo_settings(job_id):
         response = requests.request("POST", url, headers=headers, data=payload)
         re = response.json()
         access_token1 = re["access_token"]
+        refresh_token1 = re["refresh_token"]
 
+        db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
+            {"qbo_access_token": access_token1})
+        db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
+            {"qbo_refresh_token": refresh_token1})
+        
         base_url = f"{base_url1}/v3/company/{data1.qbo_company_id}"
         headers = {
             "User-Agent": "QBOV3-OAuth2-Postman-Collection",
