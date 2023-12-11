@@ -1324,6 +1324,7 @@ def report_generation(job_id):
 @blueprint.route("/update_flag/<int:job_id>", methods=["GET", "POST"])
 def update_flag(job_id):
     dbname = get_mongodb_database()
+    job_id1=str(job_id)
 
     table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
                   dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
@@ -1331,7 +1332,7 @@ def update_flag(job_id):
     for k in range(0, len(table_name)):
         print(table_name[k])
 
-        table_name[k].update_many({'job_id': job_id}, {'$set': {'is_pushed': 1}})
+        table_name[k].update_many({'job_id': job_id1}, {'$set': {'is_pushed': 1}})
     
     return "Updated data"
     
