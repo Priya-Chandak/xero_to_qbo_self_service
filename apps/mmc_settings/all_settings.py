@@ -4,9 +4,9 @@ from apps import db
 from apps.home.models import Jobs, Tool
 from apps.mmc_settings.get_qbo import get_qbo_settings
 from apps.mmc_settings.get_xero import get_xero_settings
-from apps.mmc_settings.get_xero_for_report import get_xero_for_report_settings
+from apps.mmc_settings.get_xero_for_report import get_xero_setting_for_report
 from apps.mmc_settings.post_qbo import post_qbo_settings
-from apps.mmc_settings.post_qbo_for_report import post_qbo_for_report_settings
+from apps.mmc_settings.post_qbo_for_report import get_qbo_setting_for_report
 
 from apps.mmc_settings.post_xero import post_xero_settings
 from apps.myconstant import *
@@ -28,7 +28,7 @@ def get_settings_qbo_for_report(job_id):
     output_tool = 2
 
     if (output_tool == 2):
-        base_url, headers, company_id, minorversion, get_data_header, report_headers = post_qbo_for_report_settings(
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_qbo_setting_for_report(
             job_id)
         return base_url, headers, company_id, minorversion, get_data_header, report_headers
 
@@ -43,5 +43,5 @@ def get_settings_xero(job_id):
 def get_settings_xero_for_report(job_id):
     input_tool = 1
     if input_tool == 1:
-        payload, base_url, headers = get_xero_for_report_settings(job_id)
+        payload, base_url, headers = get_xero_setting_for_report(job_id)
         return payload, base_url, headers

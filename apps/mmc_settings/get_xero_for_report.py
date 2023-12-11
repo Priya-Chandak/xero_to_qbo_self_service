@@ -11,7 +11,7 @@ from apps.myconstant import *
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
-def get_xero_for_report_settings(job_id):
+def get_xero_setting_for_report(job_id):
     try:
         url = "https://identity.xero.com/connect/token?="
 

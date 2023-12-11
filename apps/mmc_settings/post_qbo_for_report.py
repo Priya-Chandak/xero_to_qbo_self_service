@@ -11,7 +11,7 @@ from redis import StrictRedis
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
-def post_qbo_for_report_settings(job_id):
+def get_qbo_setting_for_report(job_id):
     try:
 
         url = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
