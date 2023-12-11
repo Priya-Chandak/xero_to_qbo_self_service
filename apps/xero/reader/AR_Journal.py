@@ -688,7 +688,7 @@ def add_xero_open_trial_balance(job_id,task_id):
                             QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                             for s12 in range(0,len(QBO_supplier)):
                                 if QBO_supplier[s12]['DisplayName'] == 'Temp - S':
-                                    entity['Type'] = 'vendor'
+                                    entity['Type'] = 'Vendor'
                                     EntityRef['value'] = QBO_supplier[s12]['Id']
                                     entity['EntityRef'] = EntityRef
                                     
