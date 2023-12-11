@@ -1262,7 +1262,6 @@ def match_trial_balance(job_id,task_id):
             
             else:
                 for j in range(0,len(qbo_trial_balance1)):
-                    print(j,xero_trial_balance1[i]['bankname'].split(" (")[1][:-1] + " " + xero_trial_balance1[i]['bankname'].split(" (")[0])
                     queryset={}
                     queryset['job_id']=job_id
 
