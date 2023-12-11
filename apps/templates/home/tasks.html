@@ -13,8 +13,7 @@
         <div class="card mt-5">
             <div class="card-header">
                 <span>Tasks</span>
-                <button id='start_job' value="{{job_id}}" class="btn btn-primary pull-right">Start</button>
-                <a href="/job_execution_status/{{job_id}}" class="btn btn-primary pull-right">job execution status</a>
+                <button id='start_job' value="{{job_id}}" class="btn btn-primary pull-right">Start</button> 
                 {% if msg %}
                 <span class="text-success">{{ request.args.get('msg') }}</span>
                 {% endif %}

@@ -544,10 +544,22 @@ def data_access():
         )
     )
 
+@blueprint.route("/tasks/<int:job_id>")
+@login_required
+def tasks_by_job(job_id):
+    tasks = Task.query.filter(
+        Task.job_id == job_id
+    ).all()
+    return render_template("home/tasks.html", segment="tasks", data=tasks, job_id=job_id)
+
+
+
 
 @blueprint.route("/start_conversion_report/<int:job_id>")
 def start_conversion_report(job_id):
     dbname = get_mongodb_database()
+
+    job_id1=job_id
 
     print(job_id, type(job_id))
     function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
@@ -600,7 +612,7 @@ def start_conversion_report(job_id):
     return render_template("home/conversion_report_for_start_conversion.html", function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id, company_name=company_name,
                            customer_email=customer_email,
                            start_date=start_date,
-                           end_date=end_date)
+                           end_date=end_date,job_id1=job_id1)
 
 
 @blueprint.route("/conversion_report/<int:job_id>")
