@@ -644,6 +644,9 @@ class XeroToQbo(object):
                 get_qbo_bill_for_payments(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
+                delete_xero_coa(job_id)
+                get_coa(job_id)
+                
                 step_name = "Add Invoice Payment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_invoice_payment(job_id,task.id)
