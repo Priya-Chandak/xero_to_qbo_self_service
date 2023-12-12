@@ -45,7 +45,7 @@ def connect_output_tool():
     )
 
 
-@blueprint.route("/qbo_login")
+@blueprint.route("/qbo_login", methods=["GET", "POST"])
 def qbo_login():
     print("inside qbo login routes")
     return redirect("/connect_to_quickbooks")
