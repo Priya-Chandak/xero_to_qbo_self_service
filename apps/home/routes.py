@@ -7,10 +7,13 @@ import requests
 import random
 import string
 import os
+from bson import ObjectId
 from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import *
-from apps.util.qbo_util import get_pagination_for_records
+from apps.util.qbo_util import get_pagination_for_records,retry_payload_for_xero_to_qbo
+
+
 from flask import Flask
 import urllib.parse
 import boto3
@@ -1414,4 +1417,123 @@ def update_task_flag(task_id, function_name):
 
     table_data.update_many({'task_id': task_id}, {'$set': {'is_pushed': 1}})
 
+    return "Updated data"
+
+
+
+@blueprint.route("/retryPayload", methods=["POST"])
+@login_required
+def retryPayload():
+
+    dbname = get_mongodb_database()
+    task_id = request.form['task_id']
+    _id = request.form['_id']
+    payload1 = request.form['payload']
+    payload = json.loads(payload1)
+
+    task_details = db.session.query(Task).get(task_id)
+    job_id = task_details.job_id
+    # jobs, input_tool, output_tool = db.session.query(Jobs, tool1.account_type.label('input_tool'),
+    #                                                  tool2.account_type.label(
+    #                                                      'output_tool')
+    #                                                  ).join(tool1, Jobs.input_account_id == tool1.id
+    #                                                         ).join(tool2, Jobs.output_account_id == tool2.id
+    #                                                                ).filter(Jobs.id == job_id).first()
+
+    function_name = task_details.function_name
+    output_tool = 2
+    input_tool = 1
+
+    
+    if output_tool == 2:
+        if input_tool == 1:
+            base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo_for_report(
+                job_id)
+            status = retry_payload_for_xero_to_qbo(
+                job_id, payload, _id, task_id, function_name)
+
+            if status == 'success':
+                return json.dumps({'status': 'success'})
+            else:
+                return json.dumps({'status': 'error'})
+
+
+@blueprint.route("/update_flag_task_record/<int:task_id_id>/<string:_id>/<function_name>", methods=["GET", "POST"])
+def update_flag_task_record(task_id, function_name,_id):
+    dbname = get_mongodb_database()
+
+    if function_name == "Chart of account":
+        table_data = dbname['xero_classified_coa']
+
+    elif function_name == 'AR-AP':
+        table_data = dbname['AR']
+
+    elif function_name == 'Archieved Chart of account':
+        table_data = dbname['xero_classified_archived_coa']
+
+    elif function_name == 'Chart of account':
+        table_data = dbname['xero_classified_coa']
+
+    elif function_name == 'Existing Chart of account':
+        table_data = dbname['existing_coa']
+
+    elif function_name == 'Deleted Chart Of Account':
+        table_data = dbname['xero_deleted_coa']
+
+    elif function_name == 'Archieved Customer':
+        table_data = dbname['xero_archived_customer_in_invoice']
+
+    elif function_name == 'Archieved Supplier':
+        table_data = dbname['xero_archived_supplier']
+
+    elif function_name == 'Customer':
+        table_data = dbname['xero_customer']
+
+    elif function_name == 'Supplier':
+        table_data = dbname['xero_supplier']
+
+    elif function_name == 'Item':
+        table_data = dbname['xero_items']
+
+    elif function_name == 'Job':
+        table_data = dbname['xero_job']
+
+    elif function_name == 'Spend Money':
+        table_data = dbname['xero_spend_money']
+
+    elif function_name == 'Receive Money':
+        table_data = dbname['xero_receive_money']
+
+    elif function_name == 'Invoice':
+        table_data = dbname['xero_invoice']
+
+    elif function_name == 'Invoice CreditNote':
+        table_data = dbname['xero_creditnote']
+
+    elif function_name == 'Bill':
+        table_data = dbname['xero_bill']
+
+    elif function_name == 'Bill VendorCredit':
+        table_data = dbname['xero_vendorcredit']
+
+    elif function_name == 'Invoice Credit Memo Refund':
+        table_data = dbname['xero_credit_memo_refund_payment']
+
+    elif function_name == 'Bill Credit Memo Refund':
+        table_data = dbname['xero_supplier_credit_cash_refund']
+
+    elif function_name == 'Journal':
+        table_data = dbname['xero_manual_journal']
+
+    elif function_name == 'Invoice Payment':
+        table_data = dbname['xero_invoice_payment']
+
+    elif function_name == 'Bill Payment':
+        table_data = dbname['xero_bill_payment']
+
+    elif function_name == 'Bank Transfer':
+        table_data = dbname['xero_bank_transfer']
+
+    table_data.update_one({'_id': ObjectId(_id),'task_id':task_id}, {'$set': {'is_pushed': 1}})
+    
     return "Updated data"

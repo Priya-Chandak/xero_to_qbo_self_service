@@ -63,6 +63,7 @@
                         <th>Error</th>
                         <th>Payload</th>
                         <th>Push</th>
+                        <th>Mark As Done</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -85,6 +86,14 @@
                                 </div>
                             </div>
                         </td>
+                        <td>
+                            <button type="button" class="btn btn-success"
+                                        onclick="MarkAsDoneRecord('{{ item.task_id }}','{{item._id}},{{ function_name }}')">Mark As Done
+                                </button>
+
+                        </td>
+
+
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -153,6 +162,22 @@
             },
             error: function (error) {
                 alert('Field update task flag');
+            }
+
+        });
+    }
+    
+    function MarkAsDoneRecord(task_id,_id,Function_Name) {
+        $.ajax({
+            url: '/update_flag_task_record/' + task_id  + '/'+ Function_Name + '/' + _id,
+            type: 'GET',
+
+            success: function (response) {
+                console.log('Are you sure for update record flag');
+                alert('Are you sure for update record flag');
+            },
+            error: function (error) {
+                alert('Field update task  record flag');
             }
 
         });
