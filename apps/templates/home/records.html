@@ -131,6 +131,7 @@
             url: "/retryPayload",
             data: {task_id: task_id,payload:payloadData,_id:id},
                 success: function(data){
+                            console.log(data)
                             var result = $.parseJSON(data);
                             if(result.status=='success'){
 								alert("Record Pushed Successfully")

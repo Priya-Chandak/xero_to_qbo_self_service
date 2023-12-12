@@ -1425,11 +1425,16 @@ def update_task_flag(task_id, function_name):
 @login_required
 def retryPayload():
 
+    print("inside retry function")
+
     dbname = get_mongodb_database()
     task_id = request.form['task_id']
     _id = request.form['_id']
     payload1 = request.form['payload']
     payload = json.loads(payload1)
+    print(_id,"id-----------------")
+    print(payload1,"payload1--------------")
+    print(payload,"payload------------------------------")
 
     task_details = db.session.query(Task).get(task_id)
     job_id = task_details.job_id
