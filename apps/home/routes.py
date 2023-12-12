@@ -1458,7 +1458,7 @@ def retryPayload():
                 return json.dumps({'status': 'error'})
 
 
-@blueprint.route("/update_flag_task_record/<int:task_id>/<string:_id>/<function_name>", methods=["GET", "POST"])
+@blueprint.route("/update_flag_task_record/<int:task_id>/<function_name>/<string:_id>", methods=["GET", "POST"])
 def update_flag_task_record(task_id, function_name,_id):
     dbname = get_mongodb_database()
     print(task_id,"task_id---------------")
