@@ -45,6 +45,10 @@ def connect_output_tool():
     )
 
 
+@blueprint.route("/qbo_login",methods=["GET", "POST"])
+def qbo_login():
+    return redirect("/connect_to_quickbooks")
+ 
 @blueprint.route("/User_info", methods=["GET", "POST"])
 @login_required
 def User_info():
@@ -398,7 +402,12 @@ def create_auth_code():
             )
         )
     else:
-        return redirect("/connect_to_quickbooks")
+        return redirect(
+            url_for(
+                ".connect_output_tool"
+            )
+        )
+        # return redirect("/connect_to_quickbooks")
 
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
