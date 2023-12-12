@@ -12,6 +12,9 @@ def delete_xero_coa(job_id):
     dbname = get_mongodb_database()
     dbname["xero_coa"].delete_many({'job_id': f"{job_id}"})
      
+def delete_xero_classified_coa(job_id):
+    dbname = get_mongodb_database()
+    dbname["xero_classified_coa"].delete_many({'job_id': f"{job_id}"})
 
 def delete_item(job_id):
     

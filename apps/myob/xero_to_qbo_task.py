@@ -161,9 +161,7 @@ class XeroToQbo(object):
 
                 step_name = "Reading xero chart_of_account data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                results = dbname['xero_coa'].count_documents({"job_id": job_id})
-                if results == 0:
-                    get_coa(job_id, task.id)
+                get_coa(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading data from xero classified coa"
@@ -937,7 +935,7 @@ class XeroToQbo(object):
                 update_task_execution_status(task.id, status=2, task_type="write")
 
                 delete_coa(job_id)
-
+                
                 step_name = "Reading data from qbo chart of account"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 read_qbo_data(job_id, task.id, "Chart of account")
@@ -954,7 +952,13 @@ class XeroToQbo(object):
                 update_task_execution_status(task.id, status=2, task_type="write")
 
                 delete_coa(job_id)
-                
+                delete_xero_classified_coa(job_id)
+
+                step_name = "Reading data from xero classified coa"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_classified_coa(job_id, task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
                 step_name = "Reading data from qbo taxcode"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_taxcode(job_id, task.id)
@@ -969,8 +973,6 @@ class XeroToQbo(object):
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_tax(job_id, task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
-
-                delete_coa(job_id)
 
                 step_name = "Reading data from qbo chart of account"
                 write_task_execution_step(task.id, status=2, step=step_name)

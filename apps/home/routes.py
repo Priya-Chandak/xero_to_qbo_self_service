@@ -1352,9 +1352,6 @@ def update_task_flag(task_id, function_name):
     elif function_name == 'Archieved Chart of account':
         table_data = dbname['xero_classified_archived_coa']
 
-    elif function_name == 'Chart of account':
-        table_data = dbname['xero_classified_coa']
-
     elif function_name == 'Existing Chart of account':
         table_data = dbname['existing_coa']
 
