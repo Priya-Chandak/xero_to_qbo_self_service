@@ -47,9 +47,21 @@ def connect_output_tool():
 
 @blueprint.route("/qbo_login", methods=["GET", "POST"])
 def qbo_login():
-    print("inside qbo login routes")
-    return redirect("/connect_to_quickbooks")
- 
+    if  'checkbox' in request.form:
+        print("inside qbo login routes")
+        return redirect("/connect_to_quickbooks")
+    
+    else:
+        
+        flash('Please Enable the GST Settings in your QBO File First', 'error'),
+        return redirect(
+            
+            url_for(
+                ".connect_output_tool"
+            )
+        )
+        
+    
 @blueprint.route("/User_info", methods=["GET", "POST"])
 @login_required
 def User_info():
