@@ -1422,7 +1422,7 @@ def update_task_flag(task_id, function_name):
 
 
 @blueprint.route("/retryPayload", methods=["POST"])
-@login_required
+
 def retryPayload():
 
     print("inside retry function")
