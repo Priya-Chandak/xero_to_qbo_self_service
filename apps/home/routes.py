@@ -1461,7 +1461,8 @@ def retryPayload():
 @blueprint.route("/update_flag_task_record/<int:task_id>/<string:_id>/<function_name>", methods=["GET", "POST"])
 def update_flag_task_record(task_id, function_name,_id):
     dbname = get_mongodb_database()
-
+    print(task_id,function_name,_id)
+    
     if function_name == "Chart of account":
         table_data = dbname['xero_classified_coa']
 
