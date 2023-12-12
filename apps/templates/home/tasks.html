@@ -14,10 +14,7 @@
             <div class="card-header">
                 <span>Tasks</span>
 
-                <button id="markasdone" class="btn btn-info"
-                onclick="markasdone('{{ job_id }}')">Mark As All Done</button>
         
-                <button id='start_job' value="{{job_id}}" class="btn btn-primary pull-right">Start</button> 
                 {% if msg %}
                 <span class="text-success">{{ request.args.get('msg') }}</span>
                 {% endif %}

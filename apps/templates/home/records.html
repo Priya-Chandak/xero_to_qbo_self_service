@@ -41,7 +41,13 @@
     <div class="col-md-12">
         <div class="card mt-5">
             <div class="card-header">
+
                 <span>Records</span>
+
+                <button id="markasdonetask" class="btn btn-info"
+                onclick="markasdonetask('{{ task_id }}','{{function_name}}')">Mark All AS Done</button>
+        
+        
                 <p style="margin-left: 80%;">Successful : {{ successful_count }}/{{ total_records }}</p>
                 <p style="margin-left: 80%;">Failed : {{ error_count }}/{{ total_records }}</p>
                 {% if msg %}
@@ -135,6 +141,23 @@
                         }
                 });
     }
+
+    function markasdonetask(TaskId,Function_Name) {
+        $.ajax({
+            url: '/update_task_flag/' + TaskId  + '/'+ Function_Name,
+            type: 'GET',
+
+            success: function (response) {
+                console.log('Are you sure for update task flag');
+                alert('Are you sure for update task flag');
+            },
+            error: function (error) {
+                alert('Field update task flag');
+            }
+
+        });
+    }
+
 
 
 </script>

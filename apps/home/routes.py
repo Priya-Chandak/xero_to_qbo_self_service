@@ -544,6 +544,7 @@ def data_access():
         )
     )
 
+
 @blueprint.route("/tasks/<int:job_id>")
 @login_required
 def tasks_by_job(job_id):
@@ -553,13 +554,11 @@ def tasks_by_job(job_id):
     return render_template("home/tasks.html", segment="tasks", data=tasks, job_id=job_id)
 
 
-
-
 @blueprint.route("/start_conversion_report/<int:job_id>")
 def start_conversion_report(job_id):
     dbname = get_mongodb_database()
 
-    job_id1=job_id
+    job_id1 = job_id
 
     print(job_id, type(job_id))
     function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
@@ -612,7 +611,7 @@ def start_conversion_report(job_id):
     return render_template("home/conversion_report_for_start_conversion.html", function_name=function_name, data1=all_data, data2=pushed_data, data3=unpushed_data, success=s1, fail=f1, job_id=job_id, company_name=company_name,
                            customer_email=customer_email,
                            start_date=start_date,
-                           end_date=end_date,job_id1=job_id1)
+                           end_date=end_date, job_id1=job_id1)
 
 
 @blueprint.route("/conversion_report/<int:job_id>")
@@ -836,7 +835,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='AR-AP')
 
         if function_name == 'Archieved Chart of account':
 
@@ -845,7 +844,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Archieved Chart of account')
 
         if function_name == 'Chart of account':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -853,7 +852,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Chart of account')
 
         if function_name == 'Existing Chart of account':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -861,7 +860,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Existing Chart of account')
 
         if function_name == 'Deleted Chart Of Account':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -869,7 +868,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Deleted Chart Of Account')
 
         if function_name == 'Archieved Customer':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -877,7 +876,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Archieved Customer')
 
         if function_name == 'Archieved Supplier':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -885,7 +884,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Archieved Supplier')
 
         if function_name == 'Customer':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -893,7 +892,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Customer')
 
         if function_name == 'Supplier':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -901,7 +900,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Supplier')
 
         if function_name == 'Item':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -909,7 +908,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Item')
 
         if function_name == 'Job':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -917,7 +916,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Job')
 
         if function_name == 'Spend Money':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -925,7 +924,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Spend Money')
 
         if function_name == 'Receive Money':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -933,7 +932,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Receive Money')
 
         if function_name == 'Invoice':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -941,7 +940,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Invoice')
 
         if function_name == 'Invoice CreditNote':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -949,7 +948,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Invoice CreditNote')
 
         if function_name == 'Bill':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -957,7 +956,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Bill')
 
         if function_name == 'Bill VendorCredit':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -965,7 +964,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Bill VendorCredit')
 
         if function_name == 'Invoice Credit Memo Refund':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -973,7 +972,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Invoice Credit Memo Refund')
 
         if function_name == 'Bill Credit Memo Refund':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -981,7 +980,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Bill Credit Memo Refund')
 
         if function_name == 'Journal':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -989,7 +988,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Journal')
 
         if function_name == 'Invoice Payment':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -997,7 +996,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Invoice Payment')
 
         if function_name == 'Bill Payment':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -1005,7 +1004,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Bill Payment')
 
         if function_name == 'Bank Transfer':
             page, per_page, total_records, successful_count, error_count, data = get_pagination_for_records(
@@ -1013,7 +1012,7 @@ def records(task_id, function_name):
             data1 = []
             for i in data:
                 data1.append(i)
-            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count)
+            return render_template("home/records.html", data1=data1, page=page, per_page=per_page, total_records=total_records, successful_count=successful_count, error_count=error_count, task_id=task_id, function_name='Bank Transfer')
 
 # @blueprint.route("/connect_to_qbo")
 # def connect_to_qbo():
@@ -1145,7 +1144,6 @@ def Create_final_report(job_id):
     start_date = customer_info_data.start_date
     end_date = customer_info_data.end_date
 
-
     cust_data = list(dbname["xero_report_customer"].find({"job_id": job_id1}))
     supp_data = list(dbname["xero_report_supplier"].find({"job_id": job_id1}))
     coa_data = list(dbname["matched_trial_balance"].find({"job_id": job_id1}))
@@ -1157,7 +1155,7 @@ def Create_final_report(job_id):
     print(len(supp_data), "print len of supp_data")
     print(len(coa_data), "print len of coa_data")
 
-    return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data, qbo_img=qbo_img,file_name=file_name,start_date=start_date,end_date=end_date)
+    return render_template("home/final_conversion_report.html", cust_data=cust_data, supp_data=supp_data, coa_data=coa_data, qbo_img=qbo_img, file_name=file_name, start_date=start_date, end_date=end_date)
 
 
 @blueprint.route("/final_report_email_to_customer/<int:job_id>", methods=["GET", "POST"])
@@ -1321,10 +1319,11 @@ def report_generation(job_id):
         )
     )
 
+
 @blueprint.route("/update_flag/<int:job_id>", methods=["GET", "POST"])
 def update_flag(job_id):
     dbname = get_mongodb_database()
-    job_id1=str(job_id)
+    job_id1 = str(job_id)
 
     table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
                   dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
@@ -1332,8 +1331,90 @@ def update_flag(job_id):
     for k in range(0, len(table_name)):
         print(table_name[k])
 
-        table_name[k].update_many({'job_id': job_id1}, {'$set': {'is_pushed': 1}})
-    
+        table_name[k].update_many({'job_id': job_id1}, {
+                                  '$set': {'is_pushed': 1}})
+
     return "Updated data"
-    
-    
+
+
+@blueprint.route("/update_task_flag/<int:task_id>/<function_name>", methods=["GET", "POST"])
+def update_task_flag(task_id, function_name):
+    print(task_id, "task id print -----")
+    print(function_name, "function name print")
+    dbname = get_mongodb_database()
+
+    if function_name == "Chart of account":
+        table_data = dbname['xero_classified_coa']
+
+    elif function_name == 'AR-AP':
+        table_data = dbname['AR']
+
+    elif function_name == 'Archieved Chart of account':
+        table_data = dbname['xero_classified_archived_coa']
+
+    elif function_name == 'Chart of account':
+        table_data = dbname['xero_classified_coa']
+
+    elif function_name == 'Existing Chart of account':
+        table_data = dbname['existing_coa']
+
+    elif function_name == 'Deleted Chart Of Account':
+        table_data = dbname['xero_deleted_coa']
+
+    elif function_name == 'Archieved Customer':
+        table_data = dbname['xero_archived_customer_in_invoice']
+
+    elif function_name == 'Archieved Supplier':
+        table_data = dbname['xero_archived_supplier']
+
+    elif function_name == 'Customer':
+        table_data = dbname['xero_customer']
+
+    elif function_name == 'Supplier':
+        table_data = dbname['xero_supplier']
+
+    elif function_name == 'Item':
+        table_data = dbname['xero_items']
+
+    elif function_name == 'Job':
+        table_data = dbname['xero_job']
+
+    elif function_name == 'Spend Money':
+        table_data = dbname['xero_spend_money']
+
+    elif function_name == 'Receive Money':
+        table_data = dbname['xero_receive_money']
+
+    elif function_name == 'Invoice':
+        table_data = dbname['xero_invoice']
+
+    elif function_name == 'Invoice CreditNote':
+        table_data = dbname['xero_creditnote']
+
+    elif function_name == 'Bill':
+        table_data = dbname['xero_bill']
+
+    elif function_name == 'Bill VendorCredit':
+        table_data = dbname['xero_vendorcredit']
+
+    elif function_name == 'Invoice Credit Memo Refund':
+        table_data = dbname['xero_credit_memo_refund_payment']
+
+    elif function_name == 'Bill Credit Memo Refund':
+        table_data = dbname['xero_supplier_credit_cash_refund']
+
+    elif function_name == 'Journal':
+        table_data = dbname['xero_manual_journal']
+
+    elif function_name == 'Invoice Payment':
+        table_data = dbname['xero_invoice_payment']
+
+    elif function_name == 'Bill Payment':
+        table_data = dbname['xero_bill_payment']
+
+    elif function_name == 'Bank Transfer':
+        table_data = dbname['xero_bank_transfer']
+
+    table_data.update_many({'task_id': task_id}, {'$set': {'is_pushed': 1}})
+
+    return "Updated data"
