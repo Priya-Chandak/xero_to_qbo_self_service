@@ -12,8 +12,8 @@ from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import *
 from apps.util.qbo_util import get_pagination_for_records,retry_payload_for_xero_to_qbo
-
-
+from apps import *
+from dotenv import load_dotenv
 from flask import Flask
 import urllib.parse
 import boto3
@@ -36,6 +36,13 @@ from apps.mmc_settings.all_settings import *
 from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task, report_generation_task
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+aws_access_key_id1 = os.getenv('aws_access_key_id2')
+aws_secret_access_key1 = os.getenv('aws_secret_access_key2')
+region_name1 = os.getenv('region_name2')
 
 @blueprint.route("/connect_output_tool")
 def connect_output_tool():
