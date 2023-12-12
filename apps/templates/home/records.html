@@ -88,7 +88,7 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-success"
-                                        onclick="MarkAsDoneRecord('{{ item.task_id }}','{{item._id}},{{ function_name }}')">Mark As Done
+                                        onclick="MarkAsDoneRecord('{{ item.task_id }}','{{ function_name }}','{{item._id}}')">Mark As Done
                                 </button>
 
                         </td>
@@ -167,7 +167,7 @@
         });
     }
     
-    function MarkAsDoneRecord(task_id,_id,Function_Name) {
+    function MarkAsDoneRecord(task_id,Function_Name,_id) {
         $.ajax({
             url: '/update_flag_task_record/' + task_id  + '/'+ Function_Name + '/' + _id,
             type: 'GET',
