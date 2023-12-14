@@ -357,6 +357,9 @@ def connect_input_tool():
         db.session.add(customer_info)
         db.session.commit()
 
+        mail_send = sent_email_to_customer()
+        print(mail_send)
+    
         return redirect(
             url_for(
                 ".xero_connect"
