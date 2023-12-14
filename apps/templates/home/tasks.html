@@ -13,6 +13,8 @@
         <div class="card mt-5">
             <div class="card-header">
                 <span>Tasks</span>
+                <button id='start_job' value="{{job_id}}" class="btn btn-primary pull-right">Start</button>
+               
 
         
                 {% if msg %}
@@ -127,6 +129,40 @@
 
         });
     }
+
+
+    $(document).ready(function() {
+		
+        $('#start_job').click(function() {
+            var job_id =  $("#start_job").val();
+            $.ajax({
+            type: 'POST',
+            url: "/startJobByID",
+            data: {job_id: job_id},
+                success: function(data){
+                            var result = $.parseJSON(data);
+                            if(result.status=='success'){
+                                    $("#ajax-alert").addClass("alert alert-success").text('Job has been started successfully!!');
+                                    $("#ajax-alert").alert();
+                                    $("#ajax-alert").fadeTo(5000, 5000).slideUp(5000, function(){
+                                    });
+                            }else{
+                                $("#ajax-alert").addClass("alert alert-danger").text('Something went wrong!!');
+                                $("#ajax-alert").alert();
+                                $("#ajax-alert").fadeTo(5000, 5000).slideUp(5000, function(){
+                                });
+                            }
+                        },
+                // error:function(xhr,status,error){
+                //     alert("job failed due to invalid access token")
+
+                // }
+                });
+		});
+
+
+    });
+
 
 
 
