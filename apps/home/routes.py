@@ -40,12 +40,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-aws_access_key_id1 = os.getenv('aws_access_key_id2')
-print(aws_access_key_id1,"aws_access_key_id1----------")
-aws_secret_access_key1 = os.getenv('aws_secret_access_key2')
-print(aws_secret_access_key1,"aws_secret_access_key1---------")
-region_name1 = os.getenv('region_name2')
-print(region_name1,"region_name1-----------------")
+aws_access_key_id1 = os.environ['aws_access_key_id2']
+aws_secret_access_key1 =os.environ['aws_secret_access_key2']
+region_name1 = os.environ['region_name2']
+
 
 @blueprint.route("/connect_output_tool")
 def connect_output_tool():
@@ -1127,10 +1125,11 @@ def get_customerinfo_progressemail1():
 
 @blueprint.route("/sent_email_to_customer", methods=["GET", "POST"])
 def sent_email_to_customer():
-    aws_access_key_id = aws_access_key_id1
-    aws_secret_access_key = aws_secret_access_key1
-    region_name = region_name1
 
+    aws_access_key_id = os.environ['aws_access_key_id2']
+    aws_secret_access_key =os.environ['aws_secret_access_key2']
+    region_name = os.environ['region_name2']
+    
     sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
                        aws_secret_access_key=aws_secret_access_key)
     ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
@@ -1198,9 +1197,10 @@ def final_report_email_to_customer(job_id):
     print(job_id, "final report email job id")
     cust_data = []
     supp_data = []
-    aws_access_key_id = aws_access_key_id1
-    aws_secret_access_key = aws_secret_access_key1
-    region_name = region_name1
+
+    aws_access_key_id = os.environ['aws_access_key_id2']
+    aws_secret_access_key =os.environ['aws_secret_access_key2']
+    region_name = os.environ['region_name2']
     sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
                        aws_secret_access_key=aws_secret_access_key)
     ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
