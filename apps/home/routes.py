@@ -98,8 +98,8 @@ def conversion_underway():
 @blueprint.route("/startJobByID", methods=["POST"])
 def startJobByID():
     print("isnide startjob by id")
-    mail_send = sent_email_to_customer()
-    print(mail_send)
+    # mail_send = sent_email_to_customer()
+    # print(mail_send)
     # final_report = final_report_email_to_customer()
     # print(final_report)
     # pdf_create=generate_pdf()
@@ -357,9 +357,7 @@ def connect_input_tool():
         db.session.add(customer_info)
         db.session.commit()
 
-        mail_send = sent_email_to_customer()
-        print(mail_send)
-    
+        
         return redirect(
             url_for(
                 ".xero_connect"
