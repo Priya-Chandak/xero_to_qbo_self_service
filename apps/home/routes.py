@@ -41,8 +41,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 aws_access_key_id1 = os.getenv('aws_access_key_id2')
+print(aws_access_key_id1,"aws_access_key_id1----------")
 aws_secret_access_key1 = os.getenv('aws_secret_access_key2')
+print(aws_secret_access_key1,"aws_secret_access_key1---------")
 region_name1 = os.getenv('region_name2')
+print(region_name1,"region_name1-----------------")``
 
 @blueprint.route("/connect_output_tool")
 def connect_output_tool():
