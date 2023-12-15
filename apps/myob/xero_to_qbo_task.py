@@ -782,6 +782,7 @@ class XeroToQbo(object):
                 update_task_execution_status(task.id, status=2, task_type="write")
 
                 delete_coa(job_id)
+                delete_xero_coa(job_id)
                 delete_customer(job_id)
                 delete_supplier(job_id)
                 
