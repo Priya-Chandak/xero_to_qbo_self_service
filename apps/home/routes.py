@@ -316,8 +316,8 @@ def connect_input_tool():
         job = Jobs()
 
         job_functions = ['Existing Chart of account', 'Chart of account', 'Customer', 'Supplier', 'Item', 'Job', 'Journal', 'Spend Money',
-                         'Receive Money', 'Bank Transfer', 'Bill', 'Invoice', 'Payrun', 'Depreciation', 'Open Data', 'AR-AP', 'Trial Balance', 'Report']
-        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Invoice,Payrun,Depreciation,Open Data,AR-AP,Trial Balance,Report"
+                         'Receive Money', 'Bank Transfer', 'Bill','Bill VendorCredit', 'Invoice','Invoice CreditNote', 'Payrun', 'Depreciation', 'Open Data', 'AR-AP', 'Trial Balance', 'Report']
+        job.functions = "Existing Chart of account,Chart of account,Customer,Supplier,Item,Job,Journal,Spend Money,Receive Money,Bank Transfer,Bill,Bill VendorCredit,Invoice,Invoice CreditNote,Payrun,Depreciation,Open Data,AR-AP,Trial Balance,Report"
 
         length = 10
         job.name = ''.join(random.choice(
@@ -599,10 +599,10 @@ def start_conversion_report(job_id):
     job_id1 = job_id
 
     print(job_id, type(job_id))
-    function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+    function_name = ["Existing COA","Chart of Account","Customer","Supplier", "Item", "Spend Money",
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice","Invoice Creditnote", "Bill","Bill Vendorcredit", "Invoice Payment", "Bill Payment"]
+    table_name = [dbname['existing_coa'],dbname['xero_classified_coa'], dbname['xero_customer'], dbname['xero_supplier'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'],dbname['xero_creditnote'], dbname['xero_bill'],dbname['xero_vendorcredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
     print(condition1)
@@ -658,10 +658,10 @@ def conversion_report(job_id):
     job_id = redis.get('my_key')
     print(job_id, type(job_id))
 
-    function_name = ["Existing COA", "Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
-                     "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Open Invoice", "Open Bill", "Open Creditnote", "Open Vendorcredit", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
-                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_open_invoice'], dbname['xero_open_bill'], dbname['xero_open_creditnote'], dbname['xero_open_suppliercredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
+    function_name = ["Existing COA","Chart of Account","Customer","Supplier", "Item", "Spend Money",
+                     "Receive Money", "Bank Transfer", "Journal", "Invoice","Invoice Creditnote", "Bill","Bill Vendorcredit", "Invoice Payment", "Bill Payment"]
+    table_name = [dbname['existing_coa'],dbname['xero_classified_coa'], dbname['xero_customer'], dbname['xero_supplier'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+                  dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'],dbname['xero_creditnote'], dbname['xero_bill'],dbname['xero_vendorcredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
     print(condition1)
