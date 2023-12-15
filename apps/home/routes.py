@@ -106,10 +106,14 @@ def startJobByID():
     # print(pdf_create,"created pdf file ")
 
     job_id = redis.get('my_key')
+    
     print(job_id, "start job by id")
     # job_id = 1
     asyncio.run(read_myob_write_qbo_task(job_id))
     return render_template("home/conversion_underway.html")
+
+
+
 
 
 @blueprint.route("/startReportGenerationByID/<int:job_id>", methods=["POST"])
