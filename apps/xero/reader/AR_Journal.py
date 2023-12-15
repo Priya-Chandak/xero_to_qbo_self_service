@@ -806,7 +806,7 @@ def add_xero_open_trial_balance(job_id,task_id):
 
 def add_xero_current_trial_balance(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
+        logger.info("Started executing xero -> qbowriter -> add_xero_current_trial_balance")
         
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -891,6 +891,7 @@ def add_xero_current_trial_balance(job_id,task_id):
             
             print(retained_earning_amount,"=retained_earning_amount")
             
+            print(QuerySet1[i]['bankname'])
             for j11 in range(0, len(QBO_coa)):
                 if (
                         QBO_coa[j11]["AccountType"] == "Equity" and QBO_coa[j11]["Name"] == "Retained Earnings"
@@ -930,7 +931,7 @@ def add_xero_current_trial_balance(job_id,task_id):
                     JournalEntryLineDetail["Entity"] = entity
                     break
 
-                elif QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["FullyQualifiedName"]):
+                elif QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["FullyQualifiedName"]) and ('Accounts Payable' not in QuerySet1[i]['bankname'].split(" (")[0]) and ('Accounts Receivable' not in QuerySet1[i]['bankname'].split(" (")[0]):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
                     account['value'] = QBO_coa[j11]["Id"]
                     JournalEntryLineDetail['AccountRef'] = account
