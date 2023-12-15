@@ -892,13 +892,16 @@ def add_xero_current_trial_balance(job_id,task_id):
             print(retained_earning_amount,"=retained_earning_amount")
             
             print(QuerySet1[i]['bankname'])
-            for j11 in range(0, len(QBO_coa)):
+            for j12 in range(0, len(QBO_coa)):
                 if (
-                        QBO_coa[j11]["AccountType"] == "Equity" and QBO_coa[j11]["Name"] == "Retained Earnings"
+                        QBO_coa[j12]["AccountType"] == "Equity" and QBO_coa[j12]["Name"] == "Retained Earnings"
                     ):
-                        RE['name'] = QBO_coa[j11]["Name"]
-                        RE['value'] = QBO_coa[j11]["Id"]
-                
+                        RE['name'] = QBO_coa[j12]["Name"]
+                        RE['value'] = QBO_coa[j12]["Id"]
+                        print(RE,"RE--------------------------------")
+                        break
+
+            for j11 in range(0, len(QBO_coa)):
                 account={}
             
                 if QuerySet1[i]['bankname'].split(" (")[0] == (QBO_coa[j11]["AccountType"]) and (QBO_coa[j11]["AccountType"] == 'Accounts Payable'):
