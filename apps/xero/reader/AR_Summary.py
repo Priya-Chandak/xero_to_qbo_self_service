@@ -1179,7 +1179,8 @@ def get_xero_current_trial_balance(job_id,task_id):
                 queryset['debit']= 0 if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][3]['Value']=='' else a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][3]['Value']
                 queryset['credit']=0 if a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value']=='' else a['Reports'][0]['Rows'][i]['Rows'][j]['Cells'][4]['Value']
                 
-                data.append(queryset)    
+                if queryset not in data:
+                    data.append(queryset)    
                 
         if len(data)>0:
             xero_trial_balance.insert_many(data)

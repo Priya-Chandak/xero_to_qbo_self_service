@@ -889,7 +889,7 @@ def add_xero_current_trial_balance(job_id,task_id):
         QuerySet2['Line'].append(retained_earning)
 
         payload = json.dumps(QuerySet2)
-        print(payload,"payload--------------------------------")
+        print(payload,"xero current trial balance--------------------------------")
 
         url = f"{base_url}/journalentry?minorversion=14"
         print(url)
