@@ -1155,7 +1155,7 @@ def sent_email_to_customer():
     recipient = get_customerinfo_progressemail1()
 
     response = ses.send_email(
-        Source='ankit@mmcconvert.com',
+        Source='qboxero9@gmail.com',
         Destination={'ToAddresses': [recipient]},
         Message={
             'Subject': {'Data': subject},
@@ -1225,7 +1225,7 @@ def final_report_email_to_customer(job_id):
 
     msg = MIMEMultipart()
     msg['Subject'] = subject
-    msg['From'] = 'ankit@mmcconvert.com'
+    msg['From'] = 'qboxero9@gmail.com'
     msg['To'] = recipient
 
     file_name = f"Report_{job_id}.pdf"
@@ -1261,7 +1261,7 @@ def final_report_email_to_customer(job_id):
     return response
 
     # response = ses.send_email(
-    #     Source='ankit@mmcconvert.com',
+    #     Source='qboxero9@gmail.com',
     #     Destination={'ToAddresses': [recipient]},
     #     Message={
     #         'Subject': {'Data': subject},
