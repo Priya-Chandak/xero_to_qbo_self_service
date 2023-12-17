@@ -589,8 +589,8 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                     "qbo_balance": QBO_customer[j]['qbo_balance'],
                     "QBO_ContactID":QBO_customer[j]['contact_id'],
                     "diff": queryset['diff'],
-                    "posting_type":queryset['posting_type']",
-                    "diff_amount":queryset['diff_amount']"
+                    "posting_type":queryset['posting_type'],
+                    "diff_amount":queryset['diff_amount']
                     "job_id" :job_id
                     }
                     )
