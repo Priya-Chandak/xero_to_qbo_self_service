@@ -1155,7 +1155,7 @@ def sent_email_to_customer():
     recipient = get_customerinfo_progressemail1()
 
     response = ses.send_email(
-        Source='ankit@mmcconvert.com',
+        Source='qboxero9@gmail.com',
         Destination={'ToAddresses': [recipient]},
         Message={
             'Subject': {'Data': subject},
@@ -1206,6 +1206,8 @@ def final_report_email_to_customer(job_id):
     aws_access_key_id = os.environ['aws_access_key_id2']
     aws_secret_access_key =os.environ['aws_secret_access_key2']
     region_name = os.environ['region_name2']
+
+    print(aws_access_key_id,aws_secret_access_key,region_name)
     sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
                        aws_secret_access_key=aws_secret_access_key)
     ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
@@ -1225,7 +1227,7 @@ def final_report_email_to_customer(job_id):
 
     msg = MIMEMultipart()
     msg['Subject'] = subject
-    msg['From'] = 'ankit@mmcconvert.com'
+    msg['From'] = 'qboxero9@gmail.com'
     msg['To'] = recipient
 
     file_name = f"Report_{job_id}.pdf"
@@ -1261,7 +1263,7 @@ def final_report_email_to_customer(job_id):
     return response
 
     # response = ses.send_email(
-    #     Source='ankit@mmcconvert.com',
+    #     Source='qboxero9@gmail.com',
     #     Destination={'ToAddresses': [recipient]},
     #     Message={
     #         'Subject': {'Data': subject},
