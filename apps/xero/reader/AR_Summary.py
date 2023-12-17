@@ -560,10 +560,10 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                                 "$set": 
                                 {
                                     "qbo_balance": QBO_customer[j]['qbo_balance'],
-                                    "QBO_ContactID":f"{QBO_customer[j]['contact_id']}",
-                                    "diff": f"{queryset['diff']}",
-                                    "posting_type":f"{queryset['posting_type']}",
-                                    "diff_amount":f"{queryset['diff_amount']}"
+                                    "QBO_ContactID":QBO_customer[j]['contact_id'],
+                                    "diff": queryset['diff'],
+                                    "posting_type":queryset['posting_type']",
+                                    "diff_amount":queryset['diff_amount']"
                                 }
                             }
                             )
@@ -585,13 +585,13 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
 
                 dbname["xero_AR_till_end_date"].insert_one(
                     {
-                    "ContactName": f"{qbo_customer[j]['ContactName']}",
-                    "qbo_balance": qbo_customer[j]['qbo_balance'],
-                    "QBO_ContactID":f"{qbo_customer[j]['contact_id']}",
-                    "diff": f"{queryset['diff']}",
-                    "posting_type":f"{queryset['posting_type']}",
-                    "diff_amount":f"{queryset['diff_amount']}",
-                    "job_id" :f"{job_id}"
+                    "ContactName": qbo_customer[j]['ContactName'],
+                    "qbo_balance": QBO_customer[j]['qbo_balance'],
+                    "QBO_ContactID":QBO_customer[j]['contact_id'],
+                    "diff": queryset['diff'],
+                    "posting_type":queryset['posting_type']",
+                    "diff_amount":queryset['diff_amount']"
+                    "job_id" :job_id
                     }
                     )
                 qbo_ar.append(queryset)
@@ -678,10 +678,10 @@ def get_qbo_ap_supplier(job_id,task_id):
                             "$set": 
                             {
                                 "qbo_balance": QBO_supplier[j]['qbo_balance'],
-                                "QBO_ContactID":f"{QBO_supplier[j]['contact_id']}",
-                                "diff": f"{queryset['diff']}",
-                                "posting_type":f"{queryset['posting_type']}",
-                                "diff_amount":f"{queryset['diff_amount']}"
+                                "QBO_ContactID":QBO_supplier[j]['contact_id'],
+                                "diff": queryset['diff'],
+                                "posting_type":queryset['posting_type'],
+                                "diff_amount":queryset['diff_amount']
                             }
                         }
                         )
@@ -847,10 +847,10 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
                                 "$set": 
                                 {
                                     "qbo_balance": QBO_supplier[j]['Balance'],
-                                    "QBO_ContactID":f"{QBO_supplier[j]['Id']}",
-                                    "diff": f"{queryset['diff']}",
-                                    "posting_type":f"{queryset['posting_type']}",
-                                    "diff_amount":f"{queryset['diff_amount']}"
+                                    "QBO_ContactID":QBO_supplier[j]['Id'],
+                                    "diff": queryset['diff'],
+                                    "posting_type":queryset['posting_type'],
+                                    "diff_amount":queryset['diff_amount']
                                 }
                             }
                             )
