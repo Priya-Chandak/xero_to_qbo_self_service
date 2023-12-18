@@ -512,7 +512,7 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
         for p5 in QBO_Customer:
             QBO_customer.append(p5)
 
-        qbo_ar=[]
+        qbo_ar=[]   
         date_object1 = datetime.strptime(end_date, '%Y-%m-%d')
         result_string = date_object1.strftime('%Y-%m-%d')
 

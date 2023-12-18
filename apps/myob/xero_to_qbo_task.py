@@ -745,15 +745,6 @@ class XeroToQbo(object):
                 get_open_creditnote_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo AR Customer till date"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_ar_customer_till_date(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-                
-                step_name = "Reading qbo AP Supplier till date"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_qbo_ap_supplier_till_end_date(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Reading xero open Aged Receivable Summary till end date"
                 write_task_execution_step(task.id, status=2, step=step_name)
@@ -763,6 +754,16 @@ class XeroToQbo(object):
                 step_name = "Reading xero open Aged Payable Summary till end date"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_aged_payable_summary_till_end_date(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo AR Customer till date"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_ar_customer_till_date(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
+                step_name = "Reading qbo AP Supplier till date"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_qbo_ap_supplier_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Add AR journal"
