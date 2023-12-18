@@ -95,34 +95,36 @@ def add_open_xero_vendorcredit(job_id,task_id):
                                 for j2 in range(0, len(xero_items)):
                                     if ("ItemCode" in final_bill[i]["Line"][j]) and (
                                         "AccountCode" in final_bill[i]["Line"][j]
-                                    ) and ("ItemCode" in final_bill[i]["Line"][j])!=None:
-                                        print(final_bill[i]["Line"][j]["ItemCode"],final_bill[i]["Line"][j]["ItemCode"]==None)
-                                        if (
-                                            final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
-                                            == xero_items[j2]["Code"]
-                                        ):
+                                    ):
+                                        if (final_bill[i]["Line"][j]["ItemCode"])!=None:
+                                            print(final_bill[i]["Line"][j]["ItemCode"],final_bill[i]["Line"][j]["ItemCode"]==None)
                                             if (
-                                                xero_items[j2]["Name"]
-                                                + "-"
-                                                + final_bill[i]["Line"][j][
-                                                    "AccountCode"
-                                                ]
-                                                == QBO_item[j1]["Name"]
+                                                final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
+                                                == xero_items[j2]["Code"]
                                             ):
-                                                ItemRef["value"] = QBO_item[j1]["Id"]
+                                                if (
+                                                    xero_items[j2]["Name"]
+                                                    + "-"
+                                                    + final_bill[i]["Line"][j][
+                                                        "AccountCode"
+                                                    ]
+                                                    == QBO_item[j1]["Name"]
+                                                ):
+                                                    ItemRef["value"] = QBO_item[j1]["Id"]
 
                                     elif ("ItemCode" in final_bill[i]["Line"][j]) and (
                                         ("AccountCode" not in final_bill[i]["Line"][j])
-                                    ) and ("ItemCode" in final_bill[i]["Line"][j])!=None:
-                                        if (
-                                            final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
-                                            == xero_items[j2]["Code"]
-                                        ):
+                                    ):
+                                        if (final_bill[i]["Line"][j]['ItemCode'])!=None:
                                             if (
-                                                xero_items[j2]["Name"]
-                                                == QBO_item[j1]["Name"]
+                                                final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
+                                                == xero_items[j2]["Code"]
                                             ):
-                                                ItemRef["value"] = QBO_item[j1]["Id"]
+                                                if (
+                                                    xero_items[j2]["Name"]
+                                                    == QBO_item[j1]["Name"]
+                                                ):
+                                                    ItemRef["value"] = QBO_item[j1]["Id"]
 
                             # QuerySet2['Qty'] = final_bill[i]['Line'][j]['Quantity']
                             # QuerySet2['UnitPrice'] = final_bill[i]['Line'][j]['UnitAmount']
