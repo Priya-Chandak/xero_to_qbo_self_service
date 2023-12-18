@@ -291,7 +291,7 @@ def add_open_xero_vendorcredit(job_id,task_id):
                                         + final_bill[i]["supplier_invoice_no"]
                                     )
                             else:
-                                QuerySet["DocNumber"] = final_bill[i]["Inv_No"][0:15]+final_bill[i]["Inv_ID"][-6:]
+                                QuerySet["DocNumber"] = final_bill[i]["Inv_No"][0:15]+"-"+final_bill[i]["Inv_ID"][-5:]
 
                             if "Comment" in final_bill[i]:
                                 QuerySet["PrivateNote"] = final_bill[i]["Comment"]
