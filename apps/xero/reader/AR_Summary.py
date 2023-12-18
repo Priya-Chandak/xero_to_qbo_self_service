@@ -523,12 +523,12 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
         data=response.json()
 
         qbo_customer=[]
-        for k in range(0,len(QBO_customer)):
-            if QBO_customer[k]['Balance'] != 0:
+        for k1 in range(0,len(QBO_customer)):
+            if QBO_customer[k1]['Balance'] != 0:
                 e={}
-                e['ContactName']=QBO_customer[k]['DisplayName']
-                e['qbo_balance']=QBO_customer[k]['Balance']
-                e['contact_id']=QBO_customer[k]['Id']
+                e['ContactName']=QBO_customer[k1]['DisplayName']
+                e['qbo_balance']=QBO_customer[k1]['Balance']
+                e['contact_id']=QBO_customer[k1]['Id']
                 e['job_id']=job_id
                 print(e)
                 qbo_customer.append(e)
@@ -537,13 +537,13 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
 
         if len(Xero_AR_Customer)>0:
             for i in range(0,len(Xero_AR_Customer)):
-                for j in range(0,len(QBO_customer)):
-                    if (Xero_AR_Customer[i]['ContactName'] == QBO_customer[j]['ContactName']) or (QBO_customer[j]['ContactName'].startswith(Xero_AR_Customer[i]['ContactName']) and ((QBO_customer[j]['ContactName']).endswith("- C") or (QBO_customer[j]['ContactName']).endswith("-C"))):
+                for j in range(0,len(qbo_customer)):
+                    if (Xero_AR_Customer[i]['ContactName'] == qbo_customer[j]['ContactName']) or (qbo_customer[j]['ContactName'].startswith(Xero_AR_Customer[i]['ContactName']) and ((qbo_customer[j]['ContactName']).endswith("- C") or (qbo_customer[j]['ContactName']).endswith("-C"))):
                     
                         queryset={}
-                        queryset['diff'] = True if float(Xero_AR_Customer[i]['xero_balance'])!=float(QBO_customer[j]['qbo_balance']) else False
+                        queryset['diff'] = True if float(Xero_AR_Customer[i]['xero_balance'])!=float(qbo_customer[j]['qbo_balance']) else False
                         queryset["ContactName"] = Xero_AR_Customer[i]['ContactName']
-                        queryset["qbo_balance"] = QBO_customer[j]['qbo_balance']
+                        queryset["qbo_balance"] = qbo_customer[j]['qbo_balance']
                         queryset['job_id'] = job_id
                         try:
                             queryset['posting_type'] = "Credit" if float(Xero_AR_Customer[i]['xero_balance']) < float(queryset["qbo_balance"]) else "Debit"
@@ -559,8 +559,8 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                             {
                                 "$set": 
                                 {
-                                    "qbo_balance": QBO_customer[j]['qbo_balance'],
-                                    "QBO_ContactID":QBO_customer[j]['contact_id'],
+                                    "qbo_balance": qbo_customer[j]['qbo_balance'],
+                                    "QBO_ContactID":qbo_customer[j]['contact_id'],
                                     "diff": queryset['diff'],
                                     "posting_type":queryset['posting_type'],
                                     "diff_amount":queryset['diff_amount']
@@ -586,8 +586,8 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
                 dbname["xero_AR_till_end_date"].insert_one(
                     {
                     "ContactName": qbo_customer[j]['ContactName'],
-                    "qbo_balance": QBO_customer[j]['qbo_balance'],
-                    "QBO_ContactID":QBO_customer[j]['contact_id'],
+                    "qbo_balance": qbo_customer[j]['qbo_balance'],
+                    "QBO_ContactID":qbo_customer[j]['contact_id'],
                     "diff": queryset['diff'],
                     "posting_type":queryset['posting_type'],
                     "diff_amount":queryset['diff_amount'],
