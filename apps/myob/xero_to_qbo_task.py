@@ -745,32 +745,32 @@ class XeroToQbo(object):
                 get_open_creditnote_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading qbo AR Customer"
+                step_name = "Reading qbo AR Customer till date"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_ar_customer_till_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Reading qbo AP Supplier"
+                step_name = "Reading qbo AP Supplier till date"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_qbo_ap_supplier_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Reading xero open Aged Receivable Summary"
+                step_name = "Reading xero open Aged Receivable Summary till end date"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_aged_receivable_summary_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading xero open Aged Payable Summary"
+                step_name = "Reading xero open Aged Payable Summary till end date"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_aged_payable_summary_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Reading qbo AR Customer"
+                step_name = "Add AR journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_qbo_ar_journal_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Reading qbo AR Customer"
+                step_name = "Add AP journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_qbo_ap_journal_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
