@@ -96,6 +96,7 @@ def add_open_xero_vendorcredit(job_id,task_id):
                                     if ("ItemCode" in final_bill[i]["Line"][j]) and (
                                         "AccountCode" in final_bill[i]["Line"][j]
                                     ) and ("ItemCode" in final_bill[i]["Line"][j])!=None:
+                                        print(final_bill[i]["Line"][j]["ItemCode"],final_bill[i]["Line"][j]["ItemCode"]==None)
                                         if (
                                             final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
                                             == xero_items[j2]["Code"]
@@ -329,12 +330,12 @@ def add_open_xero_vendorcredit(job_id,task_id):
 
                             QuerySet["VendorRef"] = QuerySet4
 
-                            # QuerySet2['ClassRef'] = QuerySet5
+                            QuerySet2['ClassRef'] = QuerySet5
 
-                            # for j2 in range(0, len(QBO_class)):
-                            #     if final_bill[i]['Line'][j]['Job'] == QBO_class[j2]['Name']:
-                            #         QuerySet5['value'] = QBO_class[j2]['Id']
-                            #         QuerySet5['name'] = QBO_class[j2]['Name']
+                            for j2 in range(0, len(QBO_class)):
+                                if final_bill[i]['Line'][j]['Job'] == QBO_class[j2]['Name']:
+                                    QuerySet5['value'] = QBO_class[j2]['Id']
+                                    QuerySet5['name'] = QBO_class[j2]['Name']
 
                             if "AccountCode" in final_bill[i]["Line"][j]:
                                 QuerySet["Line"].append(QuerySet1)
