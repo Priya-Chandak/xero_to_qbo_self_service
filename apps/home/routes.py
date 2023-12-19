@@ -98,8 +98,8 @@ def conversion_underway():
 @blueprint.route("/startJobByID", methods=["POST"])
 def startJobByID():
     print("isnide startjob by id")
-    # mail_send = sent_email_to_customer()
-    # print(mail_send)
+    mail_send = sent_email_to_customer()
+    print(mail_send)
     # final_report = final_report_email_to_customer()
     # print(final_report)
     # pdf_create=generate_pdf()
@@ -781,9 +781,9 @@ def conversion_report_data(job_id):
     job_id = redis.get('my_key')
     # print(job_id,type(job_id))
 
-    function_name = ["Existing COA", "Chart of Account", "Customer", "Supplier", "Item", "Spend Money",
+    function_name = ["Existing COA", "Chart of Account", "Customer", "Supplier", "Item","Class", "Spend Money",
                      "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Open Invoice", "Open Bill", "Open Creditnote", "Open Vendorcredit", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_customer'], dbname['xero_supplier'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+    table_name = [dbname['existing_coa'], dbname['xero_classified_coa'], dbname['xero_customer'], dbname['xero_supplier'], dbname['xero_items'],dbname['xero_job'], dbname['xero_spend_money'], dbname['xero_receive_money'],
                   dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_open_invoice'], dbname['xero_open_bill'], dbname['xero_open_creditnote'], dbname['xero_open_suppliercredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
