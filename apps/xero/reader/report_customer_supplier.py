@@ -35,8 +35,8 @@ def get_report_customer_summary(job_id, task_id):
         xero_customer_data = []
         for p1 in x:
             xero_customer_data.append(p1)
+        
         qbo_customer = dbname['QBO_Customer']
-
         y = qbo_customer.find({"job_id": job_id})
         qbo_customer_data = []
         for p2 in y:
@@ -54,7 +54,7 @@ def get_report_customer_summary(job_id, task_id):
                         b['Customer_name'] = xero_customer_data[i]['ContactName']
                         # b['Xero'] = xero_customer_data[i]['xero_balance']
                         b['Xero'] = float(xero_customer_data[i]['diff_amount'])
-                        b['QBO'] = qbo_customer_data[j]["qbo_balance"]
+                        b['QBO'] = qbo_customer_data[j]["Balance"]
                         b['job_id']=job_id
                         customer_data.append(b)
                         print(customer_data,"customer_data-----------------")
