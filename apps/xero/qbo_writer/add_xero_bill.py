@@ -457,9 +457,10 @@ def add_xero_bill(job_id,task_id):
                                         
                                         QuerySet2['ClassRef'] = QuerySet5
                                         for j2 in range(0, len(QBO_class)):
-                                            if final_bill[i]['Line'][j]['Job'] == QBO_class[j2]['Name']:
+                                            if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
                                                 QuerySet5['value'] = QBO_class[j2]['Id']
                                                 QuerySet5['name'] = QBO_class[j2]['Name']
+                                                break
                                     else:
                                         if 'ItemCode' not in final_bill[i]['Line'][j]:
                                             print("Service Bill")
@@ -874,12 +875,13 @@ def add_xero_bill(job_id,task_id):
                                     # QuerySet['TxnTaxDetail'] = b1
                                     
 
-                                    # QuerySet2['ClassRef'] = QuerySet5
+                                    QuerySet2['ClassRef'] = QuerySet5
 
-                                    # for j2 in range(0, len(QBO_class)):
-                                    #     if final_bill[i]['Line'][j]['Job'] == QBO_class[j2]['Name']:
-                                    #         QuerySet5['value'] = QBO_class[j2]['Id']
-                                    #         QuerySet5['name'] = QBO_class[j2]['Name']
+                                    for j2 in range(0, len(QBO_class)):
+                                        if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
+                                            QuerySet5['value'] = QBO_class[j2]['Id']
+                                            QuerySet5['name'] = QBO_class[j2]['Name']
+                                            break
                                 
                                     QuerySet['Line'].append(QuerySet1)
 
