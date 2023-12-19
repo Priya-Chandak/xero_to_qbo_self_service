@@ -599,9 +599,9 @@ def start_conversion_report(job_id):
     job_id1 = job_id
 
     print(job_id, type(job_id))
-    function_name = ["Existing COA","Chart of Account","Customer","Supplier", "Item", "Spend Money",
+    function_name = ["Existing COA","Chart of Account","Customer","Supplier","Class", "Item", "Spend Money",
                      "Receive Money", "Bank Transfer", "Journal", "Invoice","Invoice Creditnote", "Bill","Bill Vendorcredit", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['existing_coa'],dbname['xero_classified_coa'], dbname['xero_customer'], dbname['xero_supplier'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+    table_name = [dbname['existing_coa'],dbname['xero_classified_coa'], dbname['xero_customer'], dbname['xero_supplier'],dbname['xero_job'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
                   dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'],dbname['xero_creditnote'], dbname['xero_bill'],dbname['xero_vendorcredit'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
@@ -1283,9 +1283,9 @@ def user_conversion_report(job_id):
     dbname = get_mongodb_database()
     job_id = redis.get('my_key')
     print(job_id, type(job_id))
-    function_name = ["Chart of Account", "Supplier", "Customer", "Item", "Spend Money",
+    function_name = ["Chart of Account", "Customer", "Supplier","Class", "Item", "Spend Money",
                      "Receive Money", "Bank Transfer", "Journal", "Invoice", "Bill", "Invoice Payment", "Bill Payment"]
-    table_name = [dbname['xero_classified_coa'], dbname['xero_supplier'], dbname['xero_customer'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
+    table_name = [dbname['xero_classified_coa'], dbname['xero_customer'], dbname['xero_supplier'],dbname['xero_job'], dbname['xero_items'], dbname['xero_spend_money'], dbname['xero_receive_money'],
                   dbname['xero_bank_transfer'], dbname['xero_manual_journal'], dbname['xero_invoice'], dbname['xero_bill'], dbname['xero_invoice_payment'], dbname['xero_bill_payment']]
 
     condition1 = {"job_id": f"{job_id}"}
