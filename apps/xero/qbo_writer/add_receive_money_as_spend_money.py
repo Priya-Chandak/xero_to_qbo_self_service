@@ -171,8 +171,8 @@ def add_xero_negative_received_money(job_id, task_id):
                         QuerySet3['AccountBasedExpenseLineDetail'] = QuerySet4
 
                         for j2 in range(0, len(QBO_Class)):
-                            if 'job' in QuerySet[i]['Line'][j] and QuerySet[i]['Line'][j]['job'] != None:
-                                if QuerySet[i]['Line'][j]['job'] == QBO_Class[j2]['Name']:
+                            if 'TrackingName' in QuerySet[i]['Line'][j] and QuerySet[i]['Line'][j]['TrackingName'] != None:
+                                if QuerySet[i]['Line'][j]['TrackingName'] == QBO_Class[j2]['Name']:
                                     QuerySet7['value'] = QBO_Class[j2]['Id']
                                     QuerySet7['name'] = QBO_Class[j2]['Name']
 

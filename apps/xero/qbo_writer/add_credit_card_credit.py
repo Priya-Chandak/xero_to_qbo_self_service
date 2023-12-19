@@ -173,7 +173,7 @@ def add_xero_credit_card_credit(job_id,task_id):
                             QuerySet3["DetailType"] = "AccountBasedExpenseLineDetail"
                             QuerySet3["AccountBasedExpenseLineDetail"] = QuerySet4
 
-                            c1=db["QBO_Class"].find({"Name": line_item.get("job"),'job_id':job_id})
+                            c1=db["QBO_Class"].find({"Name": line_item.get("TrackingName"),'job_id':job_id})
                             for c in c1:
                                 QuerySet7['value'] = c.get('Id')
                                 QuerySet7['name'] = c.get('Name')
