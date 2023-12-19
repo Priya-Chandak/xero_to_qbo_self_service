@@ -1128,10 +1128,14 @@ def get_customerinfo_progressemail1():
 @blueprint.route("/sent_email_to_customer", methods=["GET", "POST"])
 def sent_email_to_customer():
 
-    aws_access_key_id = os.environ['aws_access_key_id2']
-    aws_secret_access_key =os.environ['aws_secret_access_key2']
-    region_name = os.environ['region_name2']
+    # aws_access_key_id = os.environ['aws_access_key_id2']
+    # aws_secret_access_key =os.environ['aws_secret_access_key2']
+    # region_name = os.environ['region_name2']
 
+    aws_access_key_id = "AKIARCRYGACAEYCZ3KHL"
+    aws_secret_access_key = "BLEVb0AeXDeG3Ok5DvLCcNf7ywhryfOpXLLPJuYcGNKq"
+    region_name = "us-east-2"
+    
     print(aws_access_key_id,"aws_access_key_id","AKIARCRYGACAEYCZ3KHL")
     print(aws_secret_access_key,"aws_secret_access_key")
     print(region_name,"region_name")
