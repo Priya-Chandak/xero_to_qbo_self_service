@@ -1131,6 +1131,10 @@ def sent_email_to_customer():
     aws_access_key_id = os.environ['aws_access_key_id2']
     aws_secret_access_key =os.environ['aws_secret_access_key2']
     region_name = os.environ['region_name2']
+
+    print(aws_access_key_id,"aws_access_key_id","AKIARCRYGACAEYCZ3KHL")
+    print(aws_secret_access_key,"aws_secret_access_key")
+    print(region_name,"region_name")
     
     sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
                        aws_secret_access_key=aws_secret_access_key)
