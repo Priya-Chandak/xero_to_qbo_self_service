@@ -24,6 +24,11 @@ def add_xero_invoice(job_id,task_id):
 
         xero_invoice = dbname["xero_invoice"].find({"job_id":job_id})
 
+        multiple_invoice = []
+        for p1 in xero_invoice:
+            multiple_invoice.append(p1)
+        non_items = []
+        
         m1=[]
         for m in range(0,len(multiple_invoice)):
             # if multiple_invoice[m]['LineAmountTypes']=="Exclusive":
@@ -57,11 +62,7 @@ def add_xero_invoice(job_id,task_id):
         for p5 in QBO_Customer:
             QBO_customer.append(p5)
 
-        multiple_invoice = []
-        for p1 in xero_invoice:
-            multiple_invoice.append(p1)
-        non_items = []
-
+        
         # multiple_invoice=multiple_invoice
         
         for i in range(0, len(multiple_invoice)):
