@@ -336,9 +336,11 @@ def add_open_xero_vendorcredit(job_id,task_id):
                             QuerySet2['ClassRef'] = QuerySet5
 
                             for j2 in range(0, len(QBO_class)):
-                                if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
-                                    QuerySet5['value'] = QBO_class[j2]['Id']
-                                    QuerySet5['name'] = QBO_class[j2]['Name']
+                                if 'TrackingID' in final_bill[i]['Line'][j]: 
+                                    if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
+                                        QuerySet5['value'] = QBO_class[j2]['Id']
+                                        QuerySet5['name'] = QBO_class[j2]['Name']
+                                        break
 
                             if "AccountCode" in final_bill[i]["Line"][j]:
                                 QuerySet["Line"].append(QuerySet1)

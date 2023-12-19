@@ -200,11 +200,11 @@ def add_xero_open_invoice(job_id,task_id):
                                                 ItemRef1["value"] = QBO_item[p4]["Id"]
                                                 break
                     
-                    if "job" in multiple_invoice[i]["Line"][j]:
+                    if "TrackingID" in multiple_invoice[i]["Line"][j]:
                         for p41 in range(0, len(QBO_class)):
-                            if multiple_invoice[i]["Line"][j]["job"] is not None:
+                            if multiple_invoice[i]["Line"][j]["TrackingID"] is not None:
                                 if (
-                                    multiple_invoice[i]["Line"][j]["job"]
+                                    multiple_invoice[i]["Line"][j]["TrackingID"]
                                     == QBO_class[p41]["Name"]
                                 ):
                                     ClassRef["name"] = QBO_class[p41]["Name"]

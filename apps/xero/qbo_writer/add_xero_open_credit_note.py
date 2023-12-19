@@ -227,10 +227,10 @@ def add_xero_open_credit_note(job_id,task_id):
                         
                         
                     for p4 in range(0, len(QBO_class)):
-                        if "job" in multiple_invoice[i]["Line"][j]: 
-                            if multiple_invoice[i]["Line"][j]["job"] is not None:
+                        if "TrackingID" in multiple_invoice[i]["Line"][j]: 
+                            if multiple_invoice[i]["Line"][j]["TrackingID"] is not None:
                                 if (
-                                    multiple_invoice[i]["Line"][j]["job"]
+                                    multiple_invoice[i]["Line"][j]["TrackingID"]
                                     == QBO_class[p4]["Name"]
                                 ):
                                     ClassRef["name"] = QBO_class[p4]["Name"]

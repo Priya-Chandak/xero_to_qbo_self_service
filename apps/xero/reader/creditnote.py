@@ -265,7 +265,8 @@ def get_open_creditnote(job_id,task_id):
 
                                 if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
                                     QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
-                                    
+                                else:
+                                    QuerySet1['TrackingID']=None   
                                 if "Quantity" in JsonResponse1[i]["LineItems"][j]:
                                     QuerySet1["Quantity"] = JsonResponse1[i]["LineItems"][j][
                                         "Quantity"
@@ -456,7 +457,8 @@ def get_open_creditnote_till_end_date(job_id,task_id):
 
                                 if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
                                     QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
-                                    
+                                else:
+                                    QuerySet1['TrackingID']=None  
                                 if "Quantity" in JsonResponse1[i]["LineItems"][j]:
                                     QuerySet1["Quantity"] = JsonResponse1[i]["LineItems"][j][
                                         "Quantity"

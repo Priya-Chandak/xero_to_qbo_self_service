@@ -227,7 +227,7 @@ def add_xero_credit_note(job_id,task_id):
                         
                         
                     for p4 in range(0, len(QBO_class)):
-                        if "job" in multiple_invoice[i]["Line"][j]: 
+                        if "TrackingID" in multiple_invoice[i]["Line"][j]: 
                             if multiple_invoice[i]["Line"][j]["TrackingID"] is not None:
                                 if (
                                     multiple_invoice[i]["Line"][j]["TrackingID"]

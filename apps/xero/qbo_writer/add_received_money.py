@@ -185,11 +185,13 @@ def add_xero_receive_money(job_id,task_id):
                                     QuerySet3['DepositLineDetail'] = QuerySet4
 
                                     QuerySet4['ClassRef'] = QuerySet7
-                                    for j2 in range(0, len(QBO_Class)):
-                                        if QuerySet[i]['Line'][j]['TrackingName'] != None:
-                                            if QuerySet[i]['Line'][j]['TrackingName'] == QBO_Class[j2]['Name']:
-                                                QuerySet7['value'] = QBO_Class[j2]['Id']
-                                                QuerySet7['name'] = QBO_Class[j2]['Name']
+                                    if 'TrackingName' in QuerySet[i]['Line'][j]:
+                                        for j2 in range(0, len(QBO_Class)):
+                                            if QuerySet[i]['Line'][j]['TrackingName'] != None:
+                                                if QuerySet[i]['Line'][j]['TrackingName'] == QBO_Class[j2]['Name']:
+                                                    QuerySet7['value'] = QBO_Class[j2]['Id']
+                                                    QuerySet7['name'] = QBO_Class[j2]['Name']
+                                                    break
 
                                     
                                     
