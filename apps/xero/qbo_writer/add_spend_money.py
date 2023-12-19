@@ -52,7 +52,6 @@ def add_xero_spend_money(job_id,task_id):
 
         for transaction in spend_money:
             if transaction["TotalAmount"] >= 0:
-                print(transaction.get("ContactName"))
                 _id= transaction.get('_id')
                 task_id = transaction.get('task_id')
                 line_items = transaction.get("Line")
@@ -129,8 +128,6 @@ def add_xero_spend_money(job_id,task_id):
                             taxrate = x.get("Rate")
                             taxrate1 = taxrate
                     
-                    # QuerySet1['PrivateNote'] = transaction['memo']
-
                     if transaction["LineAmountTypes"] == "Inclusive":
                         QuerySet1["GlobalTaxCalculation"] = "TaxInclusive"
                         QuerySet4['TaxCodeRef'] = QuerySet8
@@ -173,12 +170,16 @@ def add_xero_spend_money(job_id,task_id):
                     for c in c1:
                         QuerySet7['value'] = c.get('Id')
                         QuerySet7['name'] = c.get('Name')
+                        print(QuerySet7,"QBO Class-------------------------------------------------------")
+                        break
+                    QuerySet4["Classref"] = QuerySet7
+
 
                     a1=db["QBO_COA"].find({"AcctNum": line_item.get("AccountCode"),'job_id':job_id})
                     for x in a1:
                         QuerySet5["value"] = x.get("Id")
                         QuerySet5["name"] = x.get("Name")
-                    print(QuerySet5)
+                    
                     QuerySet4["AccountRef"] = QuerySet5
 
                         
