@@ -113,9 +113,6 @@ def startJobByID():
     return render_template("home/conversion_underway.html")
 
 
-
-
-
 @blueprint.route("/startReportGenerationByID/<int:job_id>", methods=["POST"])
 def startReportGenerationByID(job_id):
     print(job_id)
