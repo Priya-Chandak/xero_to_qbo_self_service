@@ -670,7 +670,7 @@ def add_xero_open_trial_balance(job_id,task_id):
                             JournalEntryLineDetail['AccountRef'] = account
                             QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                             for c12 in range(0,len(QBO_customer)):
-                                if QBO_customer[c12]['FullyQualifiedName'] == 'Temp - C':
+                                if QBO_customer[c12]['DisplayName'] == 'Temp - C':
                                     entity['Type'] = 'Customer'
                                     EntityRef['value'] = QBO_customer[c12]['Id']
                                     entity['EntityRef'] = EntityRef
@@ -687,7 +687,7 @@ def add_xero_open_trial_balance(job_id,task_id):
                             JournalEntryLineDetail['AccountRef'] = account
                             QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
                             for s12 in range(0,len(QBO_supplier)):
-                                if QBO_supplier[s12]['FullyQualifiedName'] == 'Temp - S':
+                                if QBO_supplier[s12]['DisplayName'] == 'Temp - S':
                                     entity['Type'] = 'Vendor'
                                     EntityRef['value'] = QBO_supplier[s12]['Id']
                                     entity['EntityRef'] = EntityRef
