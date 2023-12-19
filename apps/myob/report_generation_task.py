@@ -8,7 +8,6 @@ from apps.myob.delete_apis import *
 from apps.xero.reader.AR_Summary import get_aged_receivable_summary, get_aged_payable_summary,get_qbo_ar_customer,get_qbo_ap_supplier, get_xero_trial_balance,match_trial_balance,get_xero_current_trial_balance,get_qbo_current_trial_balance_before_conversion,get_qbo_current_trial_balance_after_conversion, get_aged_payable_summary_till_end_date,get_aged_receivable_summary_till_end_date, get_qbo_ar_customer_till_date,get_qbo_ap_supplier_till_end_date,trial_balance_final_report,get_qbo_trial_balance
 
 
-
 class XeroToQboReports(object):
     @staticmethod
     def read_data(job_id,task):
