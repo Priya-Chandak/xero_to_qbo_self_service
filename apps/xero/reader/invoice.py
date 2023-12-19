@@ -108,7 +108,9 @@ def get_invoice(job_id,task_id):
                                     QuerySet1['LineAmount'] = JsonResponse1[i]['LineItems'][j]['LineAmount']
                                 if 'Tracking' in JsonResponse1[i]['LineItems'][j] and len(JsonResponse1[i]['LineItems'][j]['Tracking']):
                                     QuerySet1['TrackingID'] = JsonResponse1[i]['LineItems'][j]['Tracking'][0]['Option']
-                            
+                                else:
+                                    QuerySet1['TrackingID']=None
+
                                 if 'AccountCode' in JsonResponse1[i]['LineItems'][j]:
                                     QuerySet1['AccountCode'] = JsonResponse1[i]['LineItems'][j]['AccountCode']
                                 if 'Quantity' in JsonResponse1[i]['LineItems'][j]:

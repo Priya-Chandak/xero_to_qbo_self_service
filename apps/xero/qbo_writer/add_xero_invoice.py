@@ -24,13 +24,13 @@ def add_xero_invoice(job_id,task_id):
 
         xero_invoice = dbname["xero_invoice"].find({"job_id":job_id})
 
-        # m1=[]
-        # for m in range(0,len(multiple_invoice)):
-        #     # if multiple_invoice[m]['LineAmountTypes']=="Exclusive":
-        #     # if multiple_invoice[m]['Inv_No'] in ['21186']:
-        #     m1.append(multiple_invoice[m])        
+        m1=[]
+        for m in range(0,len(multiple_invoice)):
+            # if multiple_invoice[m]['LineAmountTypes']=="Exclusive":
+            if multiple_invoice[m]['Inv_No'] in ['I-IV00000003125']:
+                m1.append(multiple_invoice[m])        
         
-        # multiple_invoice = m1
+        multiple_invoice = m1
 
         QBO_Item = dbname["QBO_Item"].find({"job_id":job_id})
         QBO_item = []
@@ -62,7 +62,7 @@ def add_xero_invoice(job_id,task_id):
             multiple_invoice.append(p1)
         non_items = []
 
-        multiple_invoice=multiple_invoice
+        # multiple_invoice=multiple_invoice
         
         for i in range(0, len(multiple_invoice)):
             print(multiple_invoice[i]['Inv_No'])
@@ -207,7 +207,7 @@ def add_xero_invoice(job_id,task_id):
                                                 ItemRef1["value"] = QBO_item[p4]["Id"]
                                                 break
                     
-                    if "job" in multiple_invoice[i]["Line"][j]:
+                    if "TrackingID" in multiple_invoice[i]["Line"][j]:
                         for p41 in range(0, len(QBO_class)):
                             if multiple_invoice[i]["Line"][j]["TrackingID"] is not None:
                                 if (
@@ -216,8 +216,9 @@ def add_xero_invoice(job_id,task_id):
                                 ):
                                     ClassRef["name"] = QBO_class[p41]["Name"]
                                     ClassRef["value"] = QBO_class[p41]["Id"]
-                                else:
-                                    pass
+                                    break    
+                                
+                                
 
                     for p5 in range(0, len(QBO_coa)):
                         if "AccountCode" in multiple_invoice[i]["Line"][j]:
