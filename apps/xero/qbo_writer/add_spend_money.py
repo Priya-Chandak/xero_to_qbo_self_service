@@ -172,7 +172,7 @@ def add_xero_spend_money(job_id,task_id):
                         QuerySet7['name'] = c.get('Name')
                         print(QuerySet7,"QBO Class-------------------------------------------------------")
                         break
-                    QuerySet4["Classref"] = QuerySet7
+                    QuerySet4["ClassRef"] = QuerySet7
 
 
                     a1=db["QBO_COA"].find({"AcctNum": line_item.get("AccountCode"),'job_id':job_id})
