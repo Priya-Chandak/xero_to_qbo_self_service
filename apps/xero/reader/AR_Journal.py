@@ -698,7 +698,6 @@ def add_xero_open_trial_balance(job_id,task_id):
                             break
 
                     elif QuerySet1[i]['bankid'] == xero_coa[k11]['AccountID'] and 'Accounts Payable' not in QuerySet1[i]['bankname'] and 'Accounts Receivable' not in QuerySet1[i]['bankname']:
-                        print("elif")
                         if 'AcctNum' in QBO_coa[j11]:
                             if xero_coa[k11]['Code'] == QBO_coa[j11]['AcctNum']:
                                 account['name'] = QBO_coa[j11]["FullyQualifiedName"]

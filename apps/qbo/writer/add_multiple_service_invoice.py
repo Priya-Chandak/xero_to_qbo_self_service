@@ -95,13 +95,11 @@ def add_multiple_service_invoice1(job_id, task_id):
                 if "customer_name" in multiple_invoice[i]:
                     if multiple_invoice[i]["customer_name"].lower().strip() == QBO_customer[p1][
                         "DisplayName"].lower().strip():
-                        print("if")
                         CustomerRef["value"] = QBO_customer[p1]["Id"]
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
                         break
                     elif (QBO_customer[p1]["DisplayName"]).startswith(multiple_invoice[i]["customer_name"]) and (
                             (QBO_customer[p1]["DisplayName"]).endswith("- C")):
-                        print("elif")
                         CustomerRef["value"] = QBO_customer[p1]["Id"]
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
                         break
