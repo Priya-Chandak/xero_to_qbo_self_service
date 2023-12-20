@@ -220,7 +220,7 @@ def add_xero_journal(job_id,task_id):
                     QuerySet4['TaxCodeRef'] = QuerySet15
                     QuerySet4['TaxAmount'] = QuerySet1[i]['Line'][j]['TaxAmount']
                     sales_tax = sales_tax + QuerySet4['TaxAmount']
-                    QuerySet7['ClassRef'] = QuerySet9
+                    QuerySet4['ClassRef'] = QuerySet9
                     for j2 in range(0, len(QBO_class)):
                         if 'TrackingID' in QuerySet1[i]['Line'][j]: 
                             if QuerySet1[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
