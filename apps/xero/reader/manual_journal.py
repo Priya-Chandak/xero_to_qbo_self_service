@@ -82,7 +82,11 @@ def get_manual_journal(job_id, task_id):
                                 QuerySet1["AccountID"] = JsonResponse1[i]["JournalLines"][j][
                                     "AccountID"
                                 ]
-
+                                if 'Tracking' in JsonResponse1[i]["JournalLines"][j] and len(JsonResponse1[i]["JournalLines"][j]['Tracking'])>0:
+                                    QuerySet1["TrackingID"]=JsonResponse1[i]["JournalLines"][j]['Tracking'][0]['Option']
+                                else:
+                                    QuerySet1["TrackingID"]=None
+                                    
                                 QuerySet["Line"].append(QuerySet1)
 
                             arr.append(QuerySet)

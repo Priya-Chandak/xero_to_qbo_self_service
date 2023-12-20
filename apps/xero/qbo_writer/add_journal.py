@@ -93,6 +93,7 @@ def add_xero_journal(job_id,task_id):
                 QuerySet13 = {}
                 QuerySet14 = {}
                 QuerySet15 = {}
+                classref={}
 
                 QuerySet2['TxnTaxDetail'] = QuerySet10
                 # QuerySet2['DocNumber'] = QuerySet1[i]['Referrence_No']
@@ -219,7 +220,14 @@ def add_xero_journal(job_id,task_id):
                     QuerySet4['TaxCodeRef'] = QuerySet15
                     QuerySet4['TaxAmount'] = QuerySet1[i]['Line'][j]['TaxAmount']
                     sales_tax = sales_tax + QuerySet4['TaxAmount']
-                    QuerySet4['ClassRef'] = QuerySet9
+                    QuerySet7['ClassRef'] = QuerySet9
+                    for j2 in range(0, len(QBO_class)):
+                        if 'TrackingID' in QuerySet1[i]['Line'][j]: 
+                            if QuerySet1[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
+                                QuerySet9['value'] = QBO_class[j2]['Id']
+                                QuerySet9['name'] = QBO_class[j2]['Name']
+                                print("class----------------",QuerySet9)
+                                break
                     QuerySet2['Line'].append(QuerySet3)
 
                 elif QuerySet1[i]['Line'][j]['LineAmount'] < 0:
@@ -259,11 +267,19 @@ def add_xero_journal(job_id,task_id):
                                 QuerySet8['name'] = QBO_coa[k1]["Name"]
                                 break
 
+                    QuerySet7['ClassRef'] = QuerySet9
+                    for j2 in range(0, len(QBO_class)):
+                        if 'TrackingID' in QuerySet1[i]['Line'][j]: 
+                            if QuerySet1[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
+                                QuerySet9['value'] = QBO_class[j2]['Id']
+                                QuerySet9['name'] = QBO_class[j2]['Name']
+                                print("class----------------",QuerySet9)
+                                break
+
                     QuerySet7['AccountRef'] = QuerySet8
                     QuerySet7['TaxCodeRef'] = QuerySet15
                     QuerySet7['TaxAmount'] = abs(QuerySet1[i]['Line'][j]['TaxAmount'])
                     purchase_tax = purchase_tax + QuerySet7['TaxAmount']
-                    QuerySet7['ClassRef'] = QuerySet9
                     QuerySet2['Line'].append(QuerySet6)
 
 
