@@ -350,7 +350,7 @@ def get_open_creditnote_till_end_date(job_id,task_id):
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
         xero_creditnote = dbname["xero_open_creditnote_till_end_date"]
-        xero_suppliercredit = dbname["xero_open_supplier_till_end_datecredit_till_end_date"]
+        xero_suppliercredit = dbname["xero_open_suppliercredit_till_end_date"]
         
         xero_customer = dbname['xero_open_customer_till_end_date']
         x = xero_customer.find({"job_id":job_id})
