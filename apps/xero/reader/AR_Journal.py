@@ -939,6 +939,13 @@ def add_xero_current_trial_balance(job_id,task_id):
                     JournalEntryLineDetail['AccountRef'] = account
                     break
 
+                elif QuerySet1[i]['bankname'].split(" (")[0]=='GST':
+                    if QBO_coa[j11]["FullyQualifiedName"]=='GST Liabilities Payable':
+                        account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                        account['value'] = QBO_coa[j11]["Id"]
+                        JournalEntryLineDetail['AccountRef'] = account
+                        break
+
                 elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
                     account['value'] = QBO_coa[j11]["Id"]
