@@ -840,6 +840,7 @@ def add_xero_current_trial_balance(job_id,task_id):
         retained_earning={}
         JournalEntryLineDetail1={}
         RE={}
+        account1={}
         
 
         for i in range(0, len(QuerySet1)):
@@ -900,6 +901,14 @@ def add_xero_current_trial_balance(job_id,task_id):
                         print(RE,"RE--------------------------------")
                         break
 
+                if QuerySet1[i]['bankname'].split(" (")[0]=='GST':
+                    if QBO_coa[j12]["FullyQualifiedName"]=='GST Liabilities Payable':
+                        print("if qbo true------------------------------")
+                        account1['name'] = QBO_coa[j12]["FullyQualifiedName"]
+                        account1['value'] = QBO_coa[j12]["Id"]
+                        JournalEntryLineDetail['AccountRef'] = account1
+                        break
+
             for j11 in range(0, len(QBO_coa)):
                 account={}
             
@@ -939,12 +948,14 @@ def add_xero_current_trial_balance(job_id,task_id):
                     JournalEntryLineDetail['AccountRef'] = account
                     break
 
-                elif QuerySet1[i]['bankname'].split(" (")[0]=='GST':
-                    if QBO_coa[j11]["FullyQualifiedName"]=='GST Liabilities Payable':
-                        account['name'] = QBO_coa[j11]["FullyQualifiedName"]
-                        account['value'] = QBO_coa[j11]["Id"]
-                        JournalEntryLineDetail['AccountRef'] = account
-                        break
+                # elif QuerySet1[i]['bankname'].split(" (")[0]=='GST':
+                #     print("GST",QuerySet1[i]['bankname'].split(" (")[0])
+                #     if QBO_coa[j11]["FullyQualifiedName"]=='GST Liabilities Payable':
+                #         print("if qbo true------------------------------")
+                #         account['name'] = QBO_coa[j11]["FullyQualifiedName"]
+                #         account['value'] = QBO_coa[j11]["Id"]
+                #         JournalEntryLineDetail['AccountRef'] = account
+                #         break
 
                 elif QBO_coa[j11]["FullyQualifiedName"].startswith(QuerySet1[i]['bankname'].split(" (")[0]):
                     account['name'] = QBO_coa[j11]["FullyQualifiedName"]
@@ -968,6 +979,11 @@ def add_xero_current_trial_balance(job_id,task_id):
         retained_earning['JournalEntryLineDetail'] = JournalEntryLineDetail1
         retained_earning["Amount"] = abs(retained_earning_amount)
         JournalEntryLineDetail1['AccountRef'] = RE
+
+        if account1!={}:
+            JournalEntryLineDetail1['AccountRef'] = account1
+
+            
 
         QuerySet2['Line'].append(retained_earning)
 
