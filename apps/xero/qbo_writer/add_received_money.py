@@ -88,6 +88,7 @@ def add_xero_receive_money(job_id,task_id):
                                     QuerySet10 = {}
                                     QuerySet11 = {}
                                     QuerySet12 = {}
+                                    QuerySet13 = {}
 
                                     taxrate1 = 0
                                     for j4 in range(0, len(QBO_tax)):
@@ -184,13 +185,13 @@ def add_xero_receive_money(job_id,task_id):
                                     QuerySet3['DetailType'] = "DepositLineDetail"
                                     QuerySet3['DepositLineDetail'] = QuerySet4
 
-                                    QuerySet4['ClassRef'] = QuerySet7
+                                    QuerySet4['ClassRef'] = QuerySet13
                                     if 'TrackingName' in QuerySet[i]['Line'][j]:
                                         for j2 in range(0, len(QBO_Class)):
                                             if QuerySet[i]['Line'][j]['TrackingName'] != None:
                                                 if QuerySet[i]['Line'][j]['TrackingName'] == QBO_Class[j2]['Name']:
-                                                    QuerySet7['value'] = QBO_Class[j2]['Id']
-                                                    QuerySet7['name'] = QBO_Class[j2]['Name']
+                                                    QuerySet13['value'] = QBO_Class[j2]['Id']
+                                                    QuerySet13['name'] = QBO_Class[j2]['Name']
                                                     break
 
                                     
