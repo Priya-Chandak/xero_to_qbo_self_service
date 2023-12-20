@@ -136,6 +136,14 @@ def add_xero_open_bill(job_id,task_id):
                                         taxrate1 = 0
                                         QuerySet2['Qty'] = final_bill[i]['Line'][j]['Quantity']
                                         
+                                        QuerySet2['ClassRef'] = QuerySet5
+                                        for j2 in range(0, len(QBO_class)):
+                                            if 'TrackingID' in final_bill[i]['Line'][j]: 
+                                                if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
+                                                    QuerySet5['value'] = QBO_class[j2]['Id']
+                                                    QuerySet5['name'] = QBO_class[j2]['Name']
+                                                    print("class----------------",QuerySet5)
+                                                    break
 
                                         for k1 in range(0, len(QBO_tax)):
                                             if (final_bill[i]['Line'][j]['TaxType'] == 'BASEXCLUDED')or (final_bill[i]['Line'][j]['TaxType'] == None) or (final_bill[i]['Line'][j]['TaxType'] == "NONE"):
@@ -456,15 +464,9 @@ def add_xero_open_bill(job_id,task_id):
                                         # QuerySet['TxnTaxDetail'] = b1
                                         QuerySet['Line'].append(QuerySet1)
                                         
-                                        QuerySet2['ClassRef'] = QuerySet5
-                                        for j2 in range(0, len(QBO_class)):
-                                            if 'TrackingID' in final_bill[i]['Line'][j]: 
-                                                if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
-                                                    QuerySet5['value'] = QBO_class[j2]['Id']
-                                                    QuerySet5['name'] = QBO_class[j2]['Name']
-                                                    print("class----------------",QuerySet5)
-                                                    break
+                                        
                                     else:
+
                                         if 'ItemCode' not in final_bill[i]['Line'][j]:
                                             print("Service Bill")
                                             QuerySet1 = {}
@@ -489,6 +491,15 @@ def add_xero_open_bill(job_id,task_id):
                                             QuerySet['TotalAmt'] = abs(
                                                 final_bill[i]['TotalAmount'])
                                             taxrate1 = 0
+
+                                            QuerySet2['ClassRef'] = QuerySet5
+                                            for j2 in range(0, len(QBO_class)):
+                                                if 'TrackingID' in final_bill[i]['Line'][j]: 
+                                                    if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
+                                                        QuerySet5['value'] = QBO_class[j2]['Id']
+                                                        QuerySet5['name'] = QBO_class[j2]['Name']
+                                                        print("class----------------",QuerySet5)
+                                                        break
 
                                             for k1 in range(0, len(QBO_tax)):
                                                 if (final_bill[i]['Line'][j]['TaxType'] == 'BASEXCLUDED')or (final_bill[i]['Line'][j]['TaxType'] == None) or (final_bill[i]['Line'][j]['TaxType'] == "NONE"):
@@ -698,7 +709,16 @@ def add_xero_open_bill(job_id,task_id):
                                     QuerySet['TotalAmt'] = abs(
                                         final_bill[i]['TotalAmount'])
                                     taxrate1 = 0
-                                    
+
+                                    QuerySet2['ClassRef'] = QuerySet5
+                                    for j2 in range(0, len(QBO_class)):
+                                        if 'TrackingID' in final_bill[i]['Line'][j]: 
+                                            if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
+                                                QuerySet5['value'] = QBO_class[j2]['Id']
+                                                QuerySet5['name'] = QBO_class[j2]['Name']
+                                                print("class----------------",QuerySet5)
+                                                break
+                                
                                     for j1 in range(0, len(QBO_item)):
                                         if ('ItemCode' in final_bill[i]['Line'][j]) and ('AccountCode' in final_bill[i]['Line'][j]):
                                             if final_bill[i]['Line'][j]['ItemCode'] == xero_items[j2]['Code']:
@@ -877,16 +897,6 @@ def add_xero_open_bill(job_id,task_id):
                                     # QuerySet['TxnTaxDetail'] = b1
                                     
 
-                                    QuerySet2['ClassRef'] = QuerySet5
-
-                                    for j2 in range(0, len(QBO_class)):
-                                        if 'TrackingID' in final_bill[i]['Line'][j]:
-                                            if final_bill[i]['Line'][j]['TrackingID'] == QBO_class[j2]['Name']:
-                                                QuerySet5['value'] = QBO_class[j2]['Id']
-                                                QuerySet5['name'] = QBO_class[j2]['Name']
-                                                print("classs--------------------",QuerySet5)
-                                                break
-                                
                                     QuerySet['Line'].append(QuerySet1)
 
                                 vendor_credit_arr.append(QuerySet)
