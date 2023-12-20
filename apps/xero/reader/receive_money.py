@@ -158,6 +158,9 @@ def get_xero_receive_money(job_id, task_id):
                                     else:
                                         QuerySet1["TrackingName"] = None
                                         QuerySet1["TrackingID"] = None
+                                else:
+                                    QuerySet1["TrackingName"] = None
+                                    QuerySet1["TrackingID"] = None
 
                                 QuerySet["Line"].append(QuerySet1)
 
