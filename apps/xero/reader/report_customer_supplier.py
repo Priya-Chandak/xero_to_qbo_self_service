@@ -54,7 +54,7 @@ def get_report_customer_summary(job_id, task_id):
                             # b['code'] = xero_customer_data[i]['ContactID']
                             b['Customer_name'] = xero_customer_data[i]['ContactName']
                             # b['Xero'] = xero_customer_data[i]['xero_balance']
-                            b['Xero'] = float(xero_customer_data[i]['diff_amount'])
+                            b['Xero'] = float(xero_customer_data[i]['xero_balance'])
                             b['QBO'] = qbo_customer_data[j]["Balance"]
                             b['job_id']=job_id
                             customer_data.append(b)
