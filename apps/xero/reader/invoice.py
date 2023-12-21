@@ -761,10 +761,10 @@ def get_open_invoice_till_end_date(job_id,task_id):
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
-        xero_invoice = dbname['xero_open_invoice_end_date']
-        xero_bill = dbname['xero_open_bill_end_date']
-        xero_customer = dbname['xero_open_customer_end_date']
-        xero_supplier = dbname['xero_open_supplier_end_date']
+        xero_invoice = dbname['xero_open_invoice_till_end_date']
+        xero_bill = dbname['xero_open_bill_till_end_date']
+        xero_customer = dbname['xero_open_customer_till_end_date']
+        xero_supplier = dbname['xero_open_supplier_till_end_date']
         payload, base_url, headers = get_settings_xero(job_id)
 
         date_object = datetime.strptime(end_date, '%Y-%m-%d')

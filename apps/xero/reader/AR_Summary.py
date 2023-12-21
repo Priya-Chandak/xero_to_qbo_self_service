@@ -55,16 +55,6 @@ def get_aged_receivable_summary(job_id,task_id):
             time.sleep(1)
             
             AR=[]
-            # if response1.status_code == 200:
-            #     a = response1.json()
-            #     b={}
-            #     b['job_id'] = job_id
-            #     b['ContactID'] = xero_customer[i]['ContactID']
-            #     b['ContactName'] = xero_customer[i]['ContactName']
-            #     if a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['RowType']=="SummaryRow":
-            #         b['xero_balance']=a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'][len(a['Reports'][0]['Rows'][(len(a['Reports'][0]['Rows'])-1)]['Rows'][0]['Cells'])-1]["Value"]
-            #         AR.append(b)
-
             if response1.status_code == 200:
                 a = response1.json()
                 total=0
@@ -96,8 +86,6 @@ def get_aged_receivable_summary(job_id,task_id):
                 b['xero_balance']=due
                 AR.append(b)
 
-            # print(AR,"AR---------------------------------")  
-            
             if len(AR)>0:
                 xero_ar_summary.insert_many(AR)
                 

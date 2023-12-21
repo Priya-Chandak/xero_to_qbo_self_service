@@ -740,11 +740,10 @@ class XeroToQbo(object):
                 add_qbo_ap_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Reading Data Till date"
+                step_name = "Reading Invoice Data Till date"
                 get_open_invoice_till_end_date(job_id,task.id)
                 get_open_creditnote_till_end_date(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
-
                 
                 step_name = "Reading xero open Aged Receivable Summary till end date"
                 write_task_execution_step(task.id, status=2, step=step_name)
