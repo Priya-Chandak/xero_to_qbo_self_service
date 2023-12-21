@@ -891,27 +891,27 @@ def add_xero_current_trial_balance(job_id,task_id):
             
             print(retained_earning_amount,"=retained_earning_amount")
             
-            print(QuerySet1[i]['bankname'])
-            for j12 in range(0, len(QBO_coa)):
-                if (
-                        QBO_coa[j12]["AccountType"] == "Equity" and QBO_coa[j12]["Name"] == "Retained Earnings"
-                    ):
-                        RE['name'] = QBO_coa[j12]["Name"]
-                        RE['value'] = QBO_coa[j12]["Id"]
-                        print(RE,"RE--------------------------------")
-                        break
-                
-                print(QuerySet1[i]['bankname'].split(" (")[0],QuerySet1[i]['bankname'].split(" (")[0]=='GST')
-                if QuerySet1[i]['bankname'].split(" (")[0]=='GST':
-                    print("if1-------------------------")
-                    if QBO_coa[j12]["FullyQualifiedName"]=='GST Liabilities Payable':
-                        print("if2--------------------")
-                        print("if qbo true------------------------------")
-                        account1['name'] = QBO_coa[j12]["FullyQualifiedName"]
-                        account1['value'] = QBO_coa[j12]["Id"]
-                        JournalEntryLineDetail['AccountRef'] = account1
-                        print(account1)
-                        break
+            if QuerySet1[i]['bankname'].split(" (")[0]=='GST':
+                for j12 in range(0, len(QBO_coa)):
+                    if (
+                            QBO_coa[j12]["AccountType"] == "Equity" and QBO_coa[j12]["Name"] == "Retained Earnings"
+                        ):
+                            RE['name'] = QBO_coa[j12]["Name"]
+                            RE['value'] = QBO_coa[j12]["Id"]
+                            print(RE,"RE--------------------------------")
+                            break
+                    
+                    print(QuerySet1[i]['bankname'].split(" (")[0],QuerySet1[i]['bankname'].split(" (")[0]=='GST')
+                    if QuerySet1[i]['bankname'].split(" (")[0]=='GST':
+                        print("if1-------------------------")
+                        if QBO_coa[j12]["FullyQualifiedName"]=='GST Liabilities Payable':
+                            print(QBO_coa[j12]["FullyQualifiedName"],"if2--------------------")
+                            print("if qbo------------------------------")
+                            account1['name'] = QBO_coa[j12]["FullyQualifiedName"]
+                            account1['value'] = QBO_coa[j12]["Id"]
+                            JournalEntryLineDetail['AccountRef'] = account1
+                            print(account1)
+                            break
 
             for j11 in range(0, len(QBO_coa)):
                 account={}
