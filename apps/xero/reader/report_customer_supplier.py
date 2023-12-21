@@ -46,26 +46,27 @@ def get_report_customer_summary(job_id, task_id):
                 
         for i in range(0, len(xero_customer_data)):
             for j in range(0, len(qbo_customer_data)):
-                if (xero_customer_data[i]["ContactName"] == qbo_customer_data[j]["FullyQualifiedName"]) or (qbo_customer_data[j]["FullyQualifiedName"].startswith(xero_customer_data[i]["ContactName"]) and qbo_customer_data[j]["FullyQualifiedName"].endswith("- C")) :
-                    b = {}
-                    # if 'ContactID' in xero_customer_data[i]: 
-                    if 'ContactName' in xero_customer_data[i]: 
-                        # b['code'] = xero_customer_data[i]['ContactID']
-                        b['Customer_name'] = xero_customer_data[i]['ContactName']
-                        # b['Xero'] = xero_customer_data[i]['xero_balance']
-                        b['Xero'] = float(xero_customer_data[i]['diff_amount'])
-                        b['QBO'] = qbo_customer_data[j]["Balance"]
-                        b['job_id']=job_id
-                        customer_data.append(b)
-                        print(customer_data,"customer_data-----------------")
-                    else:
-                        b['Customer_name'] = xero_customer_data[i]['ContactName']
-                        b['Xero'] = 0
-                        b['QBO'] = 0
-                        b['job_id']=job_id
-                        customer_data.append(b)
-                        print(customer_data,"customer_data-----------------")
-                    
+                if 'diff_amount' in xero_customer_data[i]: 
+                    if (xero_customer_data[i]["ContactName"] == qbo_customer_data[j]["FullyQualifiedName"]) or (qbo_customer_data[j]["FullyQualifiedName"].startswith(xero_customer_data[i]["ContactName"]) and qbo_customer_data[j]["FullyQualifiedName"].endswith("- C")) :
+                        b = {}
+                        # if 'ContactID' in xero_customer_data[i]: 
+                        if 'ContactName' in xero_customer_data[i]: 
+                            # b['code'] = xero_customer_data[i]['ContactID']
+                            b['Customer_name'] = xero_customer_data[i]['ContactName']
+                            # b['Xero'] = xero_customer_data[i]['xero_balance']
+                            b['Xero'] = float(xero_customer_data[i]['diff_amount'])
+                            b['QBO'] = qbo_customer_data[j]["Balance"]
+                            b['job_id']=job_id
+                            customer_data.append(b)
+                            print(customer_data,"customer_data-----------------")
+                        else:
+                            b['Customer_name'] = xero_customer_data[i]['ContactName']
+                            b['Xero'] = 0
+                            b['QBO'] = 0
+                            b['job_id']=job_id
+                            customer_data.append(b)
+                            print(customer_data,"customer_data-----------------")
+                        
 
             
         if len(customer_data) > 0:
