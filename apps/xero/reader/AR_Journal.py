@@ -900,13 +900,17 @@ def add_xero_current_trial_balance(job_id,task_id):
                         RE['value'] = QBO_coa[j12]["Id"]
                         print(RE,"RE--------------------------------")
                         break
-
+                
+                print(QuerySet1[i]['bankname'].split(" (")[0],QuerySet1[i]['bankname'].split(" (")[0]=='GST')
                 if QuerySet1[i]['bankname'].split(" (")[0]=='GST':
+                    print("if1-------------------------")
                     if QBO_coa[j12]["FullyQualifiedName"]=='GST Liabilities Payable':
+                        print("if2--------------------")
                         print("if qbo true------------------------------")
                         account1['name'] = QBO_coa[j12]["FullyQualifiedName"]
                         account1['value'] = QBO_coa[j12]["Id"]
                         JournalEntryLineDetail['AccountRef'] = account1
+                        print(account1)
                         break
 
             for j11 in range(0, len(QBO_coa)):
