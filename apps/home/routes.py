@@ -435,6 +435,7 @@ def create_auth_code():
 
 @blueprint.route("/qbo_auth", methods=["GET", "POST"])
 def qbo_auth():
+    print("Inside qbo_auth--------------------------------------------")
 
     # CLIENT_ID = 'ABAngR99FX2swGqJy3xeHfeRfVtSJjHqlowjadjeGIg4W0mIdz'
     # CLIENT_SECRET = 'EC2abKy1uhHQcEpIDZy7EerH8i8hKl9gJ1ARGILE'
@@ -527,6 +528,7 @@ def get_xerocompany_data():
 
 @blueprint.route("/data_access", methods=["GET", "POST"])
 def data_access():
+    Print("Inside data Access Funciton--------------------------------------------------")
 
     token_endpoint = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
 
