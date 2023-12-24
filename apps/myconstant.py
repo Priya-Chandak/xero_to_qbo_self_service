@@ -18,8 +18,11 @@ JOB_STATUS_SUCCESSFUL = '1'
 JOB_STATUS_IN_PROGRESS = '2'
 JOB_STATUS_NOT_STARTED = '3'
 JOB_STATUS_FAILED = '4'
-XERO_REDIRECT = "https://mmc.vishleshak.io/create_auth_code"
-QBO_REDIRECT = "https://mmc.vishleshak.io/data_access"
+# XERO_REDIRECT = "https://mmc.vishleshak.io/create_auth_code"
+# QBO_REDIRECT = "https://mmc.vishleshak.io/data_access"
+XERO_REDIRECT = "https://xerotoqbo.mmcconvert.com/create_auth_code"
+QBO_REDIRECT = "https://xerotoqbo.mmcconvert.com/data_access"
+
 # XERO_REDIRECT='http://localhost:5000/create_auth_code'
 # QBO_REDIRECT='http://localhost:5000/data_access'
 XERO_CI = "BDDDE967BCF943098B8A44E164AE1A74"
