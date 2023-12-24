@@ -450,6 +450,7 @@ def qbo_auth():
     # REDIRECT_URI = 'http://localhost:5000/data_access'
 
     REDIRECT_URI = QBO_REDIRECT
+    print(REDIRECT_URI)
 
     # auth_url=f"https://accounts.intuit.com/app/sign-in?redirect_uri={REDIRECT_URI}&app_group=QBO&asset_alias=Intuit.accounting.core.qbowebapp&app_environment=prod"
 
@@ -536,6 +537,7 @@ def data_access():
     # CLIENT_ID = 'ABpWOUWtcEG1gCun5dQbQNfc7dvyalw5qVF97AkJQcn5Lh09o6'
     # CLIENT_SECRET = 'LepyjXTADW592Dq5RYUP8UbGLcH5xtqDQhrf2xJN'
     redirect_uri = QBO_REDIRECT
+    print(redirect_uri)
     CLIENT_ID = f"{CLIENT_ID1}"
     CLIENT_SECRET = f"{CLIENT_SECRET1}"
     clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
@@ -1155,7 +1157,7 @@ def sent_email_to_customer():
     end_date = customer_info_data.end_date
 
     subject = f"Check Status of {file_name} from {start_date} to {end_date}"
-    conversion_report_link = f"https://mmc.vishleshak.io/conversion_report/{redis.get('my_key')}"
+    conversion_report_link = f"https://xerotoqbo.mmcconvert.com/conversion_report/{redis.get('my_key')}"
     html_body = f"<html><body><p>Dear {first_name},</p><p>I hope this email finds you well. I wanted to provide you with an update on the status of the file named <strong>{file_name}</strong> that you are associated with. To view the progress and details, please click on the following link:</p><p><a href=\"{conversion_report_link}\">Check Status</a></p>    <p>This link will redirect you to a page where you can check the status of <strong>{file_name}</strong> between the specified start date of <strong>{start_date}</strong> and the end date of <strong>{end_date}</strong>.</p><p>Thank you</p><p>Best regards,<br>Ankit Mehta<br></body></html>"
     recipient = get_customerinfo_progressemail1()
 
