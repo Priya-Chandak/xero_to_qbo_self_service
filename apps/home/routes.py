@@ -182,20 +182,28 @@ def Task_Execution_Status(task_id):
 def xero_connect():
 
     client_id = XERO_CI
-    client_secret = XERO_CS
+    # client_secret = XERO_CS
     redirect_uri = XERO_REDIRECT
     # scope = "email%20profile%20openid%20accounting.reports.read%20payroll.employees%20payroll.employees.read%20accounting.settings%20accounting.transactions%20accounting.transactions.read%20accounting.contacts%20offline_access"
     scope = XERO_SCOPE
     CLIENT_ID = f"{client_id}"
-    CLIENT_SECRET = f"{client_secret}"
-    clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
-    encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
-    auth_code = "%s" % encoded_u
+    # CLIENT_SECRET = f"{client_secret}"
+    # clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
+    # encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
+    # auth_code = "%s" % encoded_u
 
-    auth_url = ('''https://login.xero.com/identity/connect/authorize?''' +
+    # auth_url = ('''https://login.xero.com/identity/connect/authorize?''' +
+    #             '''response_type=code''' +
+    #             '''&client_id=''' + client_id +
+    #             '''&client_secret=''' + client_secret +
+    #             '''&redirect_uri=''' + redirect_uri +
+    #             '''&scope=''' + scope +
+    #             '''&state=123456''')
+    
+
+    auth_url = ('''https://login.xero.com/authorize?''' +
                 '''response_type=code''' +
                 '''&client_id=''' + client_id +
-                '''&client_secret=''' + client_secret +
                 '''&redirect_uri=''' + redirect_uri +
                 '''&scope=''' + scope +
                 '''&state=123456''')
