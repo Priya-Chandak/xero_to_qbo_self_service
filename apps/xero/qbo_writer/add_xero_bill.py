@@ -212,7 +212,10 @@ def add_xero_bill(job_id,task_id):
 
                                             
 
-                                        QuerySet['DocNumber'] = final_bill[i]['Inv_No'][0:21] if final_bill[i]['Inv_No'] not in key_list else final_bill[i]['Inv_No'][0:14]+"-"+final_bill[i]['Inv_ID'][-6:]
+                                        if final_bill[i]['Inv_No']!='':
+                                            QuerySet['DocNumber'] = final_bill[i]['Inv_No'][0:21] if final_bill[i]['Inv_No'] not in key_list else final_bill[i]['Inv_No'][0:14]+"-"+final_bill[i]['Inv_ID'][-6:]
+                                        else:
+                                            QuerySet['DocNumber']=final_bill[i]['Inv_ID'][-6:]
 
                                         if 'Comment' in final_bill[i]:
                                             QuerySet['PrivateNote'] = final_bill[i]['Comment']
@@ -557,8 +560,11 @@ def add_xero_bill(job_id,task_id):
                                                 QuerySet['GlobalTaxCalculation'] = 'TaxExcluded'
                                                 QuerySet1['Amount'] = final_bill[i]['Line'][j]['LineAmount']
                                             
-                                            QuerySet['DocNumber'] = final_bill[i]['Inv_No'][0:21] if final_bill[i]['Inv_No'] not in key_list else final_bill[i]['Inv_No'][0:14]+"-"+final_bill[i]['Inv_ID'][-6:]
-
+                                            if final_bill[i]['Inv_No'] != "":
+                                                QuerySet['DocNumber'] = final_bill[i]['Inv_No'][0:21] if final_bill[i]['Inv_No'] not in key_list else final_bill[i]['Inv_No'][0:14]+"-"+final_bill[i]['Inv_ID'][-6:]
+                                            else:
+                                                QuerySet['DocNumber'] = final_bill[i]['Inv_ID'][-6:]
+                                            
                                             if 'Comment' in final_bill[i]:
                                                 QuerySet['PrivateNote'] = final_bill[i]['Comment']
 

@@ -295,6 +295,16 @@ def add_xero_bill_payment(job_id,task_id):
                                                 VendorRef = QBO_Bill1[k12]['VendorRef']
                                                 break
 
+                                            elif (
+                                                QuerySet1[i]["InvoiceID"][-6:]
+                                                == QBO_Bill1[k12]["DocNumber"]
+                                            ):
+                                                QuerySet5["TxnId"] = QBO_Bill1[k12][
+                                                    "Id"
+                                                ]
+                                                VendorRef = QBO_Bill1[k12]['VendorRef']
+                                                break
+
                                             elif QuerySet1[i]["InvoiceNumber"][0:21]==QBO_Bill1[k12]["DocNumber"][0:21]:
                                                 QuerySet5["TxnId"] = QBO_Bill1[k12][
                                                     "Id"

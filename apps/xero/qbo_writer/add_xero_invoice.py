@@ -95,6 +95,14 @@ def add_xero_invoice(job_id,task_id):
                         CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
                         break
                     elif (
+                        multiple_invoice[i]["ContactName"].replace(":","-")
+                        == QBO_customer[p1]["DisplayName"]
+                    ):
+                        CustomerRef["value"] = QBO_customer[p1]["Id"]
+                        CustomerRef["name"] = QBO_customer[p1]["DisplayName"]
+                        break
+                    
+                    elif (
                         multiple_invoice[i]["ContactName"]
                         == QBO_customer[p1]["DisplayName"]
                     ):
