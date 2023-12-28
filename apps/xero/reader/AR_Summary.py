@@ -1188,7 +1188,7 @@ def match_trial_balance(job_id,task_id):
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
         xero_trial_balance = dbname['xero_current_trial_balance']
-        qbo_trial_balance = dbname['QBO_Current_Trial_Balance']
+        qbo_trial_balance = dbname['QBO_Current_Trial_Balance_Before_Conversion']
         unmatched_trial_balance = dbname['unmatched_trial_balance']
         
         xero_trial_balance = dbname["xero_current_trial_balance"].find({"job_id":job_id})
@@ -1196,7 +1196,7 @@ def match_trial_balance(job_id,task_id):
         for p4 in xero_trial_balance:
             xero_trial_balance1.append(p4)
 
-        qbo_trial_balance = dbname["QBO_Current_Trial_Balance"].find({"job_id":job_id})
+        qbo_trial_balance = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find({"job_id":job_id})
         qbo_trial_balance1 = []
         for p4 in qbo_trial_balance:
             qbo_trial_balance1.append(p4)
@@ -1266,7 +1266,7 @@ def match_trial_balance(job_id,task_id):
                 qbo_bank_id = qbo_bank_record.get("Id") if qbo_bank_record else None
                 qbo_bank_name = qbo_bank_record.get("Name") if qbo_bank_record else None
                 
-                qbo_balance_record = dbname["QBO_Current_Trial_Balance"].find_one({"job_id": job_id, "bankname": qbo_bank_name})
+                qbo_balance_record = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find_one({"job_id": job_id, "bankname": qbo_bank_name})
                 qbo_balance_id = qbo_balance_record.get("bankid") if qbo_balance_record else None
                 qbo_balance_name = qbo_balance_record.get("bankname") if qbo_balance_record else None
                 qbo_balance_debit = qbo_balance_record.get("debit") if qbo_balance_record else None
@@ -1305,7 +1305,7 @@ def match_trial_balance(job_id,task_id):
                 qbo_bank_id = qbo_bank_record.get("Id") if qbo_bank_record else None
                 qbo_bank_name = qbo_bank_record.get("Name") if qbo_bank_record else None
                 
-                qbo_balance_record = dbname["QBO_Current_Trial_Balance"].find_one({"job_id": job_id, "bankid": qbo_bank_id})
+                qbo_balance_record = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find_one({"job_id": job_id, "bankid": qbo_bank_id})
                 qbo_balance_id = qbo_balance_record.get("bankid") if qbo_balance_record else None
                 qbo_balance_name = qbo_balance_record.get("bankname") if qbo_balance_record else None
                 qbo_balance_debit = qbo_balance_record.get("debit") if qbo_balance_record else None
