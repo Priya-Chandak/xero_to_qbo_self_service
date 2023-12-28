@@ -72,134 +72,136 @@ def get_xero_open_overpayment(job_id,task_id):
                     print(url)
                     response = requests.request("GET", url, headers=headers, data=payload)
                     JsonResponse = response.json()
+                    print(JsonResponse)
                     JsonResponse1 = JsonResponse["BankTransactions"]
+                    if len(JsonResponse1)>0:
 
-                    for i in range(0, len(JsonResponse1)):
-                        if (
-                            JsonResponse1[i]["Status"] != "DELETED"
-                        ):
-                            QuerySet = {"Line": []}
-                            QuerySet["job_id"] = job_id
-                            QuerySet["task_id"] = task_id
-                            QuerySet["is_pushed"] = 0
-                            QuerySet["error"] = None
-                            QuerySet["payload"] = None
-                            # QuerySet['Name'] = JsonResponse1[i]['Contact']['Name']
-                            QuerySet["Date"] = JsonResponse1[i]["DateString"]
-                            QuerySet["LineAmountTypes"] = JsonResponse1[i]["LineAmountTypes"]
-                            QuerySet["HasAttachments"] = JsonResponse1[i]["HasAttachments"]
-                            QuerySet["TotalAmount"] = JsonResponse1[i]["Total"]
-                            QuerySet["IsReconciled"] = JsonResponse1[i]["IsReconciled"]
-                            QuerySet["Status"] = JsonResponse1[i]["Status"]
+                        for i in range(0, len(JsonResponse1)):
+                            if (
+                                JsonResponse1[i]["Status"] != "DELETED"
+                            ):
+                                QuerySet = {"Line": []}
+                                QuerySet["job_id"] = job_id
+                                QuerySet["task_id"] = task_id
+                                QuerySet["is_pushed"] = 0
+                                QuerySet["error"] = None
+                                QuerySet["payload"] = None
+                                # QuerySet['Name'] = JsonResponse1[i]['Contact']['Name']
+                                QuerySet["Date"] = JsonResponse1[i]["DateString"]
+                                QuerySet["LineAmountTypes"] = JsonResponse1[i]["LineAmountTypes"]
+                                QuerySet["HasAttachments"] = JsonResponse1[i]["HasAttachments"]
+                                QuerySet["TotalAmount"] = JsonResponse1[i]["Total"]
+                                QuerySet["IsReconciled"] = JsonResponse1[i]["IsReconciled"]
+                                QuerySet["Status"] = JsonResponse1[i]["Status"]
 
-                            if "TotalTax" in JsonResponse1[i]:
-                                QuerySet["TotalTax"] = JsonResponse1[i]["TotalTax"]
-                            if "SubTotal" in JsonResponse1[i]:
-                                QuerySet["SubTotal"] = JsonResponse1[i]["SubTotal"]
-                            if "BankAccount" in JsonResponse1[i]:
-                                QuerySet["BankAccountID"] = JsonResponse1[i]["BankAccount"][
-                                    "AccountID"
-                                ]
-                                QuerySet["BankAccountName"] = JsonResponse1[i]["BankAccount"][
-                                    "Name"
-                                ]
-                            if "Contact" in JsonResponse1[i]:
-                                QuerySet["ContactName"] = JsonResponse1[i]["Contact"]["Name"]
-                            if "Type" in JsonResponse1[i]:
-                                QuerySet["Type"] = JsonResponse1[i]["Type"]
-                            if "BankTransactionID" in JsonResponse1[i]:
-                                QuerySet["BankTransactionID"] = JsonResponse1[i][
-                                    "BankTransactionID"
-                                ]
+                                if "TotalTax" in JsonResponse1[i]:
+                                    QuerySet["TotalTax"] = JsonResponse1[i]["TotalTax"]
+                                if "SubTotal" in JsonResponse1[i]:
+                                    QuerySet["SubTotal"] = JsonResponse1[i]["SubTotal"]
+                                if "BankAccount" in JsonResponse1[i]:
+                                    QuerySet["BankAccountID"] = JsonResponse1[i]["BankAccount"][
+                                        "AccountID"
+                                    ]
+                                    QuerySet["BankAccountName"] = JsonResponse1[i]["BankAccount"][
+                                        "Name"
+                                    ]
+                                if "Contact" in JsonResponse1[i]:
+                                    QuerySet["ContactName"] = JsonResponse1[i]["Contact"]["Name"]
+                                if "Type" in JsonResponse1[i]:
+                                    QuerySet["Type"] = JsonResponse1[i]["Type"]
+                                if "BankTransactionID" in JsonResponse1[i]:
+                                    QuerySet["BankTransactionID"] = JsonResponse1[i][
+                                        "BankTransactionID"
+                                    ]
 
-                            if "Reference" in JsonResponse1[i]:
-                                QuerySet["Reference"] = JsonResponse1[i]["Reference"]
-                            else:
-                                QuerySet["Reference"] = None
-
-                            for j in range(0, len(JsonResponse1[i]["LineItems"])):
-                                QuerySet1 = {}
-
-                                if "Description" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["Description"] = JsonResponse1[i]["LineItems"][j][
-                                        "Description"
-                                    ]
-                                if "UnitAmount" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["Unit_Price"] = JsonResponse1[i]["LineItems"][j][
-                                        "UnitAmount"
-                                    ]
-                                if "AccountCode" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["AccountCode"] = JsonResponse1[i]["LineItems"][j][
-                                        "AccountCode"
-                                    ]
-                                if "LineAmount" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["LineAmount"] = JsonResponse1[i]["LineItems"][j][
-                                        "LineAmount"
-                                    ]
-                                if "TaxAmount" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["TaxAmount"] = JsonResponse1[i]["LineItems"][j][
-                                        "TaxAmount"
-                                    ]
-                                if "Quantity" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["Quantity"] = JsonResponse1[i]["LineItems"][j][
-                                        "Quantity"
-                                    ]
-                                if "ItemCode" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["ItemCode"] = JsonResponse1[i]["LineItems"][j][
-                                        "ItemCode"
-                                    ]
-                                if "TaxType" in JsonResponse1[i]["LineItems"][j]:
-                                    QuerySet1["TaxType"] = JsonResponse1[i]["LineItems"][j][
-                                        "TaxType"
-                                    ]
+                                if "Reference" in JsonResponse1[i]:
+                                    QuerySet["Reference"] = JsonResponse1[i]["Reference"]
                                 else:
-                                    QuerySet1["TaxType"] = None
+                                    QuerySet["Reference"] = None
 
-                                if ("Tracking" in JsonResponse1[i]["LineItems"][j]) and len(
-                                    JsonResponse1[i]["LineItems"][j]["Tracking"]
-                                ) > 0:
-                                    if (
-                                        JsonResponse1[i]["LineItems"][j]["Tracking"] != {}
-                                    ) and (
-                                        JsonResponse1[i]["LineItems"][j]["Tracking"] is not None
-                                    ):
-                                        QuerySet1["TrackingName"] = JsonResponse1[i][
-                                            "LineItems"
-                                        ][j]["Tracking"][0]["Option"]
-                                        QuerySet1["TrackingID"] = JsonResponse1[i]["LineItems"][
-                                            j
-                                        ]["Tracking"][0]["TrackingCategoryID"]
+                                for j in range(0, len(JsonResponse1[i]["LineItems"])):
+                                    QuerySet1 = {}
+
+                                    if "Description" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["Description"] = JsonResponse1[i]["LineItems"][j][
+                                            "Description"
+                                        ]
+                                    if "UnitAmount" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["Unit_Price"] = JsonResponse1[i]["LineItems"][j][
+                                            "UnitAmount"
+                                        ]
+                                    if "AccountCode" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["AccountCode"] = JsonResponse1[i]["LineItems"][j][
+                                            "AccountCode"
+                                        ]
+                                    if "LineAmount" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["LineAmount"] = JsonResponse1[i]["LineItems"][j][
+                                            "LineAmount"
+                                        ]
+                                    if "TaxAmount" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["TaxAmount"] = JsonResponse1[i]["LineItems"][j][
+                                            "TaxAmount"
+                                        ]
+                                    if "Quantity" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["Quantity"] = JsonResponse1[i]["LineItems"][j][
+                                            "Quantity"
+                                        ]
+                                    if "ItemCode" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["ItemCode"] = JsonResponse1[i]["LineItems"][j][
+                                            "ItemCode"
+                                        ]
+                                    if "TaxType" in JsonResponse1[i]["LineItems"][j]:
+                                        QuerySet1["TaxType"] = JsonResponse1[i]["LineItems"][j][
+                                            "TaxType"
+                                        ]
                                     else:
-                                        QuerySet1["TrackingName"] = None
-                                        QuerySet1["TrackingID"] = None
+                                        QuerySet1["TaxType"] = None
 
-                                QuerySet["Line"].append(QuerySet1)
+                                    if ("Tracking" in JsonResponse1[i]["LineItems"][j]) and len(
+                                        JsonResponse1[i]["LineItems"][j]["Tracking"]
+                                    ) > 0:
+                                        if (
+                                            JsonResponse1[i]["LineItems"][j]["Tracking"] != {}
+                                        ) and (
+                                            JsonResponse1[i]["LineItems"][j]["Tracking"] is not None
+                                        ):
+                                            QuerySet1["TrackingName"] = JsonResponse1[i][
+                                                "LineItems"
+                                            ][j]["Tracking"][0]["Option"]
+                                            QuerySet1["TrackingID"] = JsonResponse1[i]["LineItems"][
+                                                j
+                                            ]["Tracking"][0]["TrackingCategoryID"]
+                                        else:
+                                            QuerySet1["TrackingName"] = None
+                                            QuerySet1["TrackingID"] = None
 
-                            if JsonResponse1[i]["Type"] == "SPEND-OVERPAYMENT":
-                                QuerySet["table_name"] = "xero_open_spend_overpayment" 
-                                spend_overpayment.append(QuerySet)
-                                supp={}
-                                supp['ContactName'] = JsonResponse1[i]['Contact']['Name']
-                                supp['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
-                                supp['Type'] = "AP"
-                                supp['job_id'] = job_id
+                                    QuerySet["Line"].append(QuerySet1)
 
-                                if supp not in data2:
-                                    supplier.append(supp)
+                                if JsonResponse1[i]["Type"] == "SPEND-OVERPAYMENT":
+                                    QuerySet["table_name"] = "xero_open_spend_overpayment" 
+                                    spend_overpayment.append(QuerySet)
+                                    supp={}
+                                    supp['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                    supp['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                    supp['Type'] = "AP"
+                                    supp['job_id'] = job_id
 
-                            if JsonResponse1[i]["Type"] == "RECEIVE-OVERPAYMENT":
-                                QuerySet["table_name"] = "xero_open_receive_overpayment" 
-                                receive_overpayment.append(QuerySet)
-                                cust={}
-                                cust['ContactName'] = JsonResponse1[i]['Contact']['Name']
-                                cust['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
-                                cust['Type'] = "AR"
-                                cust['job_id'] = job_id
+                                    if supp not in data2:
+                                        supplier.append(supp)
 
-                                if cust not in data1:
-                                    customer.append(cust)
-                                else:
-                                    print("cust4",cust)
+                                if JsonResponse1[i]["Type"] == "RECEIVE-OVERPAYMENT":
+                                    QuerySet["table_name"] = "xero_open_receive_overpayment" 
+                                    receive_overpayment.append(QuerySet)
+                                    cust={}
+                                    cust['ContactName'] = JsonResponse1[i]['Contact']['Name']
+                                    cust['ContactID'] = JsonResponse1[i]['Contact']['ContactID']
+                                    cust['Type'] = "AR"
+                                    cust['job_id'] = job_id
+
+                                    if cust not in data1:
+                                        customer.append(cust)
+                                    else:
+                                        print("cust4",cust)
                         
                 if len(spend_overpayment) > 0:
                     xero_open_spend_overpayment.insert_many(spend_overpayment)
