@@ -63,14 +63,6 @@ def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
         for p7 in XERO_COA:
             xero_coa1.append(p7)
 
-        # m1=[]
-        # for m in range(0,len(received_money1)):
-        #     # if multiple_invoice[m]['LineAmountTypes']=="Exclusive":
-        #     if received_money1[m]['SubTotal'] == -742.21:
-        #         m1.append(received_money1[m])
-        
-        # QuerySet = m1
-        
         QuerySet = received_money1
         for i in range(0, len(QuerySet)):
             if QuerySet[i]['TotalAmount']<0:
@@ -155,18 +147,7 @@ def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
 
                                 QuerySet1['DepositToAccountRef'] = QuerySet2
 
-                                # for j1 in range(0,len(QBO_COA)):
-                                #     for j11 in range(0,len(xero_coa1)):
-                                #         if QuerySet[i]['BankAccountID'] == xero_coa1[j11]['AccountID']:
-                                #             if xero_coa1[j11]['Name'].lower().strip() == QBO_COA[j1]['Name'].lower().strip():
-                                #                 QuerySet2['name'] = QBO_COA[j1]['Name']
-                                #                 QuerySet2['value'] = QBO_COA[j1]['Id']  
-                                #             elif QBO_COA[j1]['Name'].startswith(xero_coa1[j11]['Name']) and QBO_COA[j1]['Name'].endswith(xero_coa1[j11]['Code']):
-                                #                 QuerySet2['name'] = QBO_COA[j1]['Name']
-                                #                 QuerySet2['value'] = QBO_COA[j1]['Id']
-
-                                # QuerySet1['PrivateNote'] = QuerySet[i]['notes']
-
+                               
                                 QuerySet1['TxnDate'] = QuerySet[i]['Date']
                                 QuerySet3['Amount'] = abs(round(
                                     (QuerySet[i]['Line'][j]['LineAmount'])/(100+taxrate1)*100, 2))
