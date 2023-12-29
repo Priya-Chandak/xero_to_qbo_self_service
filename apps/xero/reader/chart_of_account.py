@@ -11,6 +11,7 @@ import logging
 
 def get_coa(job_id, task_id):
     log_config1=log_config(job_id)
+    print(log_config1,"log_config1-----------------------")
     try:
         logging.info('Inside GET XERO COA - Started')
 
