@@ -108,8 +108,8 @@ def startJobByID():
     mail_send = sent_email_to_customer()
     print(mail_send)
 
-    create_logfiles=create_logfile()
-    print(create_logfiles)
+    create_logfile=create_logfile()
+    print(create_logfile)
 
     # final_report = final_report_email_to_customer()
     # print(final_report)
@@ -1663,7 +1663,7 @@ def create_logfile():
         job_id = redis.get('my_key')
         print(job_id)
         file_name = f"Xero_To_Qbo_{job_id}.log"
-        logfile_path = os.path.join('apps', 'static', 'logfiles', file_name)
+        logfile_path = os.path.join('apps', 'static', 'logfile', file_name)
         print(logfile_path)
 
 
