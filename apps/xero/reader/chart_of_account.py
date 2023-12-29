@@ -5,11 +5,15 @@ import requests
 from apps.home.data_util import write_task_execution_step, update_task_execution_status
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
+from apps.util.log_file import log_config
+from apps.util.log_config
 
 
 def get_coa(job_id, task_id):
-    print("Inside coa")
+    log_config1=log_config(job_id)
     try:
+        logging.info('Inside GET XERO COA - Started')
+
         dbname = get_mongodb_database()
         xero_coa = dbname["xero_coa"]
         payload, base_url, headers = get_settings_xero(job_id)
@@ -18,7 +22,7 @@ def get_coa(job_id, task_id):
         main_url = f"{base_url}/Accounts"
         print(main_url)
 
-        response1 = requests.request("GET", main_url, headers=headers, data=payload)
+        response1 = requests.request("GET", main_url1, headers=headers, data=payload)
         print(response1,"foa coa")
         if response1.status_code == 200:
             JsonResponse = response1.json()
@@ -46,10 +50,13 @@ def get_coa(job_id, task_id):
 
             step_name = "Reading data from xero chart of account"
             write_task_execution_step(task_id, status=1, step=step_name)
+            logging.info('Inside GET XERO COA - Completed')
+
 
     except Exception as ex:
-        print("------------------------------")
         step_name = "Access token not valid"
+        logging.error(ex, exc_info=True)
+
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
