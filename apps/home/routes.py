@@ -7,6 +7,13 @@ import requests
 import random
 import string
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import string
+import hashlib
+import base64
+import secrets
 from bson import ObjectId
 from redis import StrictRedis
 from apps.util.db_mongo import get_mongodb_database
@@ -98,8 +105,8 @@ def conversion_underway():
 @blueprint.route("/startJobByID", methods=["POST"])
 def startJobByID():
     print("isnide startjob by id")
-    # mail_send = sent_email_to_customer()
-    # print(mail_send)
+    mail_send = sent_email_to_customer()
+    print(mail_send)
     # final_report = final_report_email_to_customer()
     # print(final_report)
     # pdf_create=generate_pdf()
@@ -1139,24 +1146,27 @@ def get_customerinfo_progressemail1():
 @blueprint.route("/sent_email_to_customer", methods=["GET", "POST"])
 def sent_email_to_customer():
 
-    # aws_access_key_id = os.environ['aws_access_key_id2']
-    # aws_secret_access_key =os.environ['aws_secret_access_key2']
-    # region_name = os.environ['region_name2']
+    ses_smtp_server = 'email-smtp.us-east-2.amazonaws.com'  
+    ses_smtp_port = 587
+    ses_smtp_username =  os.environ['aws_access_key_id2']
+    ses_smtp_password = os.environ['aws_secret_access_key2']
 
-    aws_access_key_id = "AKIARCRYGACAEYCZ3KHL"
-    aws_secret_access_key = "BLEVb0AeXDeG3Ok5DvLCcNf7ywhryfOpXLLPJuYcGNKq"
-    region_name = "us-east-2"
-    
-    print(aws_access_key_id,"aws_access_key_id","AKIARCRYGACAEYCZ3KHL")
-    print(aws_secret_access_key,"aws_secret_access_key")
-    print(region_name,"region_name")
-    
+   
+
+    aws_access_key_id = os.environ['aws_access_key_id2']
+    aws_secret_access_key = os.environ['aws_secret_access_key2']
+    region_name = os.environ['region_name2']
+
     sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
-                       aws_secret_access_key=aws_secret_access_key)
-    ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
-                       aws_secret_access_key=aws_secret_access_key)
-    queue_url = Queue_URI
+                    aws_secret_access_key=aws_secret_access_key)
 
+    ses_smtp_connection = smtplib.SMTP(ses_smtp_server, ses_smtp_port)
+    ses_smtp_connection.starttls() 
+    ses_smtp_connection.login(ses_smtp_username, ses_smtp_password)
+
+    ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
+                    aws_secret_access_key=aws_secret_access_key)
+    
     customer_info_data = CustomerInfo.query.filter(
         CustomerInfo.job_id == redis.get('my_key')).first()
 
@@ -1170,18 +1180,61 @@ def sent_email_to_customer():
     html_body = f"<html><body><p>Dear {first_name},</p><p>I hope this email finds you well. I wanted to provide you with an update on the status of the file named <strong>{file_name}</strong> that you are associated with. To view the progress and details, please click on the following link:</p><p><a href=\"{conversion_report_link}\">Check Status</a></p>    <p>This link will redirect you to a page where you can check the status of <strong>{file_name}</strong> between the specified start date of <strong>{start_date}</strong> and the end date of <strong>{end_date}</strong>.</p><p>Thank you</p><p>Best regards,<br>Ankit Mehta<br></body></html>"
     recipient = get_customerinfo_progressemail1()
 
-    response = ses.send_email(
-        Source='qboxero9@gmail.com',
-        Destination={'ToAddresses': [recipient]},
-        Message={
-            'Subject': {'Data': subject},
-            'Body': {
-                'Html': {'Data': html_body}
-            }
-        }
-    )
 
-    sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
+    message = MIMEMultipart()
+    message['From'] = 'qboxero9@gmail.com'
+    message['To'] = recipient
+    message['Subject'] = subject
+
+    message.attach(MIMEText(html_body, 'html'))
+
+    response=ses_smtp_connection.sendmail('qboxero9@gmail.com', recipient, message.as_string())
+    ses_smtp_connection.quit()
+
+
+    # aws_access_key_id = os.environ['aws_access_key_id2']
+    # aws_secret_access_key =os.environ['aws_secret_access_key2']
+    # region_name = os.environ['region_name2']
+
+    # aws_access_key_id = "AKIARCRYGACAEYCZ3KHL"
+    # aws_secret_access_key = "BLEVb0AeXDeG3Ok5DvLCcNf7ywhryfOpXLLPJuYcGNKq"
+    # region_name = "us-east-2"
+    
+    # print(aws_access_key_id,"aws_access_key_id","AKIARCRYGACAEYCZ3KHL")
+    # print(aws_secret_access_key,"aws_secret_access_key")
+    # print(region_name,"region_name")
+    
+    # sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
+    #                    aws_secret_access_key=aws_secret_access_key)
+    # ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
+    #                    aws_secret_access_key=aws_secret_access_key)
+    # queue_url = Queue_URI
+
+    # customer_info_data = CustomerInfo.query.filter(
+    #     CustomerInfo.job_id == redis.get('my_key')).first()
+
+    # file_name = customer_info_data.Company
+    # first_name = customer_info_data.First_Name
+    # start_date = customer_info_data.start_date
+    # end_date = customer_info_data.end_date
+
+    # subject = f"Check Status of {file_name} from {start_date} to {end_date}"
+    # conversion_report_link = f"https://xerotoqbo.mmcconvert.com/conversion_report/{redis.get('my_key')}"
+    # html_body = f"<html><body><p>Dear {first_name},</p><p>I hope this email finds you well. I wanted to provide you with an update on the status of the file named <strong>{file_name}</strong> that you are associated with. To view the progress and details, please click on the following link:</p><p><a href=\"{conversion_report_link}\">Check Status</a></p>    <p>This link will redirect you to a page where you can check the status of <strong>{file_name}</strong> between the specified start date of <strong>{start_date}</strong> and the end date of <strong>{end_date}</strong>.</p><p>Thank you</p><p>Best regards,<br>Ankit Mehta<br></body></html>"
+    # recipient = get_customerinfo_progressemail1()
+
+    # response = ses.send_email(
+    #     Source='qboxero9@gmail.com',
+    #     Destination={'ToAddresses': [recipient]},
+    #     Message={
+    #         'Subject': {'Data': subject},
+    #         'Body': {
+    #             'Html': {'Data': html_body}
+    #         }
+    #     }
+    # )
+
+    # sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
 
     return response
 
@@ -1219,17 +1272,28 @@ def final_report_email_to_customer(job_id):
     cust_data = []
     supp_data = []
 
+
+    ses_smtp_server = 'email-smtp.us-east-2.amazonaws.com'  
+    ses_smtp_port = 587
+    ses_smtp_username =  os.environ['aws_access_key_id2']
+    ses_smtp_password = os.environ['aws_secret_access_key2']
+
+   
+
     aws_access_key_id = os.environ['aws_access_key_id2']
-    aws_secret_access_key =os.environ['aws_secret_access_key2']
+    aws_secret_access_key = os.environ['aws_secret_access_key2']
     region_name = os.environ['region_name2']
 
-    print(aws_access_key_id,aws_secret_access_key,region_name)
     sqs = boto3.client('sqs', region_name=region_name, aws_access_key_id=aws_access_key_id,
-                       aws_secret_access_key=aws_secret_access_key)
-    ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
-                       aws_secret_access_key=aws_secret_access_key)
-    queue_url = Queue_URI
+                    aws_secret_access_key=aws_secret_access_key)
 
+    ses_smtp_connection = smtplib.SMTP(ses_smtp_server, ses_smtp_port)
+    ses_smtp_connection.starttls() 
+    ses_smtp_connection.login(ses_smtp_username, ses_smtp_password)
+
+    ses = boto3.client('ses', region_name=region_name, aws_access_key_id=aws_access_key_id,
+                    aws_secret_access_key=aws_secret_access_key)
+    
     customer_info_data = CustomerInfo.query.filter(
         CustomerInfo.job_id == job_id).first()
 
@@ -1270,28 +1334,14 @@ def final_report_email_to_customer(job_id):
     pdf_path = os.path.join('apps', 'static', 'reports', file_name)
 
     if os.path.exists(pdf_path):
-        response = ses.send_raw_email(RawMessage={'Data': msg.as_string()})
-        sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
+        response=ses_smtp_connection.sendmail('qboxero9@gmail.com', recipient, msg.as_string())
+        ses_smtp_connection.quit()
         os.remove(pdf_path)
     else:
         flash('Please generate pdf before send mail', 'error')
 
     return response
 
-    # response = ses.send_email(
-    #     Source='qboxero9@gmail.com',
-    #     Destination={'ToAddresses': [recipient]},
-    #     Message={
-    #         'Subject': {'Data': subject},
-    #         'Body': {
-    #             'Html': {'Data': msg.as_string()}
-    #         }
-    #     }
-    # )
-
-    # sqs.send_message(QueueUrl=queue_url, MessageBody=subject)
-
-    # return response
 
 
 @blueprint.route("/user_conversion_report/<int:job_id>")
