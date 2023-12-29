@@ -108,8 +108,8 @@ def startJobByID():
     mail_send = sent_email_to_customer()
     print(mail_send)
 
-    create_logfile=create_logfile()
-    print(create_logfile)
+    create_logfile1=create_logfile()
+    print(create_logfile1)
 
     # final_report = final_report_email_to_customer()
     # print(final_report)
