@@ -915,17 +915,17 @@ class XeroToQbo(object):
                 get_xero_asset_types(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading xero Depreciation"
+                step_name = "Reading xero Journals"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_xero_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading xero Depreciation"
+                step_name = "Reading xero Depreciation Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 get_xero_depreciation_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
-                step_name = "Reading xero Depreciation"
+                step_name = "Add Xero Depreciation as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
                 add_xero_depreciation_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
