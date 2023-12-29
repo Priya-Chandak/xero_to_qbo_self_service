@@ -107,6 +107,10 @@ def startJobByID():
     print("isnide startjob by id")
     mail_send = sent_email_to_customer()
     print(mail_send)
+
+    create_logfiles=create_logfile()
+    print(create_logfiles)
+    
     # final_report = final_report_email_to_customer()
     # print(final_report)
     # pdf_create=generate_pdf()
@@ -1650,3 +1654,16 @@ def update_flag_task_record(task_id, function_name,_id):
     table_data.update_one({'_id': ObjectId(_id),'task_id':task_id}, {'$set': {'is_pushed': 1}})
     
     return "Updated data"
+
+
+
+
+def create_logfile():
+    try:
+        job_id = redis.get('my_key')
+        file_name = f"Xero_To_Qbo_{job_id}.log"
+        logfile_path = os.path.join('apps', 'static', 'logfile', file_name)
+        print(logfile_path)
+       
+    except Exception as e:
+        print(f"Error execution time: {e}")
