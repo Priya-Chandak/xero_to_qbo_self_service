@@ -493,10 +493,8 @@ def get_open_invoice(job_id,task_id):
         print(result_string)
 
         if (start_date == '' and end_date == ''):
-            # main_url = f"{base_url}/Invoices?unitdp=4"
             main_url = f"{base_url}/Invoices?where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})"
-            
-
+          
         else:
             y1=int(result_string[0:4])
             m1=int(result_string[5:7])
@@ -507,8 +505,6 @@ def get_open_invoice(job_id,task_id):
             # main_url = f"{base_url}/Invoices?unitdp=4&where=Date%3E%3DDateTime({y1}%2C{m1}%2C{d1})%20AND%20Date%3C%3DDateTime({y2}%2C{m2}%2C{d2})"
             main_url = f"{base_url}/Invoices?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})"
 
-        # print(main_url)
-        
         response1 = requests.request(
             "GET", main_url, headers=headers, data=payload)
         time.sleep(1)
@@ -779,13 +775,11 @@ def get_open_invoice_till_end_date(job_id,task_id):
             d1=int(result_string[8:])
             main_url = f"{base_url}/Invoices?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})"
 
-        print(main_url)
         
         response1 = requests.request(
             "GET", main_url, headers=headers, data=payload)
         time.sleep(1)
         
-        print(response1.status_code)
         if response1.status_code == 200:
             r1 = response1.json()
             r2 = r1['Invoices']
@@ -806,6 +800,7 @@ def get_open_invoice_till_end_date(job_id,task_id):
                     print(url)
                     response = requests.request(
                         "GET", url, headers=headers, data=payload)
+                    time.sleep(1)
                     JsonResponse = response.json()
                     JsonResponse1 = JsonResponse['Invoices']
                     for i in range(0, len(JsonResponse1)):

@@ -71,6 +71,7 @@ def get_xero_open_overpayment(job_id,task_id):
 
                     print(url)
                     response = requests.request("GET", url, headers=headers, data=payload)
+                    time.sleep(1)
                     JsonResponse = response.json()
                     print(JsonResponse)
                     JsonResponse1 = JsonResponse["BankTransactions"]

@@ -212,6 +212,7 @@ def get_open_creditnote(job_id,task_id):
                         url = f"{base_url}/CreditNotes?where=Date%3C%3DDateTime({y1}%2C{m1}%2C{d1})&page={pages}"
 
                     response = requests.request("GET", url, headers=headers, data=payload)
+                    time.sleep(1)
                     JsonResponse = response.json()
                     JsonResponse1 = JsonResponse["CreditNotes"]
 
@@ -405,6 +406,7 @@ def get_open_creditnote_till_end_date(job_id,task_id):
 
                     response = requests.request("GET", url, headers=headers, data=payload)
                     JsonResponse = response.json()
+                    time.sleep(1)
                     JsonResponse1 = JsonResponse["CreditNotes"]
 
                     for i in range(0, len(JsonResponse1)):

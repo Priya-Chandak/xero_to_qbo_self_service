@@ -66,6 +66,7 @@ def get_xero_payment(job_id,task_id):
                     print(main_url)
                     response = requests.request("GET", main_url, headers=headers, data=payload)
                     JsonResponse = response.json()
+                    time.sleep(1)
                     JsonResponse1 = JsonResponse["Payments"]
 
                     for i in range(0, len(JsonResponse1)):
