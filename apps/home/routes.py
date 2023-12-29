@@ -110,7 +110,7 @@ def startJobByID():
 
     create_logfiles=create_logfile()
     print(create_logfiles)
-    
+
     # final_report = final_report_email_to_customer()
     # print(final_report)
     # pdf_create=generate_pdf()
@@ -377,7 +377,6 @@ def connect_input_tool():
         db.session.add(customer_info)
         db.session.commit()
 
-        
         return redirect(
             url_for(
                 ".xero_connect"
@@ -1660,10 +1659,18 @@ def update_flag_task_record(task_id, function_name,_id):
 
 def create_logfile():
     try:
+
         job_id = redis.get('my_key')
+        print(job_id)
         file_name = f"Xero_To_Qbo_{job_id}.log"
-        logfile_path = os.path.join('apps', 'static', 'logfile', file_name)
+        logfile_path = os.path.join('apps', 'static', 'logfiles', file_name)
         print(logfile_path)
+
+
+        with open(logfile_path, 'w') as file:
+            pass
+
+        print(f"Log file {logfile_path} created successfully.")
        
     except Exception as e:
         print(f"Error execution time: {e}")
