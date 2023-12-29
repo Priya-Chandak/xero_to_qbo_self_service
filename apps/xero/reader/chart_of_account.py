@@ -23,7 +23,7 @@ def get_coa(job_id, task_id):
         main_url = f"{base_url}/Accounts"
         print(main_url)
 
-        response1 = requests.request("GET", main_url1, headers=headers, data=payload)
+        response1 = requests.request("GET", main_url, headers=headers, data=payload)
         print(response1,"foa coa")
         if response1.status_code == 200:
             JsonResponse = response1.json()
