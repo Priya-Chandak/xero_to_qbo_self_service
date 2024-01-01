@@ -79,6 +79,8 @@ def get_xero_settings(job_id):
             "Authorization": f"Bearer {data1.xero_access_token}",
         }
 
+        base_url = "https://api.xero.com/api.xro/2.0"
+            
         main_url = f"{base_url}/Accounts"
         print(main_url)
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
@@ -110,7 +112,6 @@ def get_xero_settings(job_id):
 
             db.session.commit()
 
-            base_url = "https://api.xero.com/api.xro/2.0"
             payload = ""
             headers = {
                 "Content-Type": "application/json",
@@ -120,7 +121,6 @@ def get_xero_settings(job_id):
             }
         else:
             print("token not expired -----------------------------------")
-            base_url = "https://api.xero.com/api.xro/2.0"
             payload = ""
             headers = {
                 "Content-Type": "application/json",
