@@ -10,6 +10,7 @@ import logging
 
 
 def get_coa(job_id, task_id):
+    
     log_config1=log_config(job_id)
     print(log_config1,"log_config1-----------------------")
     try:
@@ -20,7 +21,7 @@ def get_coa(job_id, task_id):
         payload, base_url, headers = get_settings_xero(job_id)
         print(payload, base_url, headers)
 
-        main_url = f"{base_url}/Accounts"
+        main_url1 = f"{base_url}/Accounts"
         print(main_url)
 
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
