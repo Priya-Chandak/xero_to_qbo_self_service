@@ -69,38 +69,63 @@ def get_xero_settings(job_id):
         clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
         encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
         auth_code = "%s" % encoded_u
-        payload = {'grant_type': 'refresh_token',
-                   'refresh_token': f'{data1.xero_refresh_token}',
-                   'client_id': f'{client_id}',
-                   }
-        headers = {
-            'Authorization': "Basic" "  " + f'{auth_code}',
-        }
-        response = requests.request("POST", url, headers=headers, data=payload)
-        re = response.json()
-        new_access_token = re['access_token']
-        new_refresh_token = re['refresh_token']
 
-        db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
-            {"xero_access_token": new_access_token})
-        db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
-            {"xero_refresh_token": new_refresh_token})
-        
-        # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
-        #     {"xero_access_token": new_access_token})
-        # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
-        #     {"xero_refresh_token": new_refresh_token})
-
-        db.session.commit()
-
-        base_url = "https://api.xero.com/api.xro/2.0"
         payload = ""
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
             "Xero-Tenant-Id": f"{data1.xero_company_id}",
-            "Authorization": f"Bearer {new_access_token}",
+            "Authorization": f"Bearer {data1.xero_access_token}",
         }
+
+        main_url = f"{base_url}/Accounts"
+        response1 = requests.request("GET", main_url, headers=headers, data=payload)
+        print(response1.status_code,"========================================================")
+        if response1.status_code != 200:
+            print("token expired-------------------", response1.status_code)
+            payload = {'grant_type': 'refresh_token',
+                    'refresh_token': f'{data1.xero_refresh_token}',
+                    'client_id': f'{client_id}',
+                    }
+            headers = {
+                'Authorization': "Basic" "  " + f'{auth_code}',
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+            re = response.json()
+            new_access_token = re['access_token']
+            new_refresh_token = re['refresh_token']
+
+            db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
+                {"xero_access_token": new_access_token})
+            db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
+                {"xero_refresh_token": new_refresh_token})
+            
+            # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+            #     {"xero_access_token": new_access_token})
+            # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
+            #     {"xero_refresh_token": new_refresh_token})
+
+            db.session.commit()
+
+            base_url = "https://api.xero.com/api.xro/2.0"
+            payload = ""
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Xero-Tenant-Id": f"{data1.xero_company_id}",
+                "Authorization": f"Bearer {new_access_token}",
+            }
+        else:
+            print("token not expired -----------------------------------")
+            base_url = "https://api.xero.com/api.xro/2.0"
+            payload = ""
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Xero-Tenant-Id": f"{data1.xero_company_id}",
+                "Authorization": f"Bearer {data1.xero_access_token}",
+            }
 
         return payload, base_url, headers
 
