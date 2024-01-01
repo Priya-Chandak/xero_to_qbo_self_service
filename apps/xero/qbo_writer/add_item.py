@@ -14,6 +14,7 @@ import logging
 
 
 def add_xero_item(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item -> add_xero_item")
 
@@ -236,10 +237,11 @@ def add_xero_item(job_id,task_id):
 
             
     except Exception as ex:
-        traceback.print_exc()
+        logging.error(ex, exc_info=True)
         
 
 def add_duplicate_item(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item -> add_duplicate_item")
 
@@ -446,5 +448,4 @@ def add_duplicate_item(job_id,task_id):
 
             
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item -> add_duplicate_item", ex)
-        
+        logging.error(ex, exc_info=True)    

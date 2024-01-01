@@ -13,6 +13,7 @@ from collections import Counter
 
 
 def add_xero_bill(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         if (start_date != '' and end_date != ''):
@@ -917,8 +918,4 @@ def add_xero_bill(job_id,task_id):
                 print("This is Deleted or Voided Bill")
 
     except Exception as ex:
-        print("------------------------------")
-        import traceback
-        traceback.print_exc()
-        add_job_status(job_id, ex, "error")
-        print(ex)
+        logging.error(ex, exc_info=True)

@@ -10,9 +10,11 @@ from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import get_start_end_dates_of_job
 from apps.util.qbo_util import post_data_in_qbo
+import logging
 
 
 def add_xero_bank_transfer(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
@@ -75,6 +77,7 @@ def add_xero_bank_transfer(job_id, task_id):
                                  item['TransferNumber'])
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         print("------------------------------")
         import traceback
         traceback.print_exc()

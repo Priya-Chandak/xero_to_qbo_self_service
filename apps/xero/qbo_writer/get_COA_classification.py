@@ -6,6 +6,7 @@ import logging
 
 
 def get_xero_classified_coa(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
 
@@ -123,10 +124,10 @@ def get_xero_classified_coa(job_id, task_id):
             print("No data")
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa", ex)
-
+        logging.error(ex, exc_info=True)
 
 def get_xero_classified_archived_coa(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
 
@@ -241,4 +242,4 @@ def get_xero_classified_archived_coa(job_id, task_id):
         classified_coa.insert_many(list2)
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa", ex)
+        logging.error(ex, exc_info=True)

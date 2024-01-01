@@ -9,6 +9,7 @@ import logging
 
 
 def add_xero_job(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_job -> add_xero_job")
 
@@ -37,4 +38,4 @@ def add_xero_job(job_id, task_id):
 
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_job -> add_xero_job", ex)
+        logging.error(ex, exc_info=True)

@@ -9,6 +9,7 @@ import logging
 
 
 def get_qbo_invoice_for_payments(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
 
         logging.info("Started executing xero -> qbowriter -> Get All QBO Invoice")
@@ -45,13 +46,11 @@ def get_qbo_invoice_for_payments(job_id, task_id):
 
 
     except Exception as ex:
-        print("------------------------------")
-        import traceback
-        traceback.print_exc()
-        print(ex)
+        logging.error(ex, exc_info=True)
 
 
 def get_qbo_bill_for_payments(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
 
         logging.info("Started executing xero -> qbowriter -> Get All QBO Bill")
@@ -88,7 +87,4 @@ def get_qbo_bill_for_payments(job_id, task_id):
 
 
     except Exception as ex:
-        print("------------------------------")
-        import traceback
-        traceback.print_exc()
-        print(ex)
+        logging.error(ex, exc_info=True)

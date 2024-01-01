@@ -9,6 +9,7 @@ import logging
 
 
 def add_xero_chart_account(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account")
 
@@ -41,13 +42,15 @@ def add_xero_chart_account(job_id, task_id):
                                  QuerySet1[j]["Name"])
 
             except Exception as ex:
-                print(ex)
-
+                logging.error(ex, exc_info=True)
+               
+               
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account", ex)
 
 
 def add_xero_archived_chart_account(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account")
 
@@ -80,7 +83,8 @@ def add_xero_archived_chart_account(job_id, task_id):
                                  QuerySet1[j]["Name"])
 
             except Exception as ex:
-                print(ex)
-
+                logging.error(ex, exc_info=True)
+               
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account", ex)
+        logging.error(ex, exc_info=True)
+        

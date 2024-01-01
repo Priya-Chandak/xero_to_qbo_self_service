@@ -12,6 +12,7 @@ import logging
 
 
 def add_xero_spend_money(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logger.info(
             "Started executing xero -> qbowriter -> add_spend_money -> add_xero_spend_money")
@@ -232,6 +233,4 @@ def add_xero_spend_money(job_id,task_id):
                 
                         
     except Exception as ex:
-        logger.error(
-            "Error in xero -> qbowriter -> add_spend_money -> add_xero_spend_money", ex)
-        
+        logging.error(ex, exc_info=True)

@@ -15,6 +15,7 @@ import logging
 
 
 def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logger.info(
             "Started executing xero -> qbowriter -> add_spend_money -> add_xero_negative_spend_money_as_receive_money")
@@ -244,11 +245,10 @@ def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
                                 post_data_in_qbo(deposit_url, headers, payload,xero_spend_money1,_id, job_id,task_id, id_or_name_value_for_error)
                             
     except Exception as ex:
-        logger.error(
-            "Error in xero -> qbowriter -> add_negative_spend_money -> add_xero_negative_spend_money_as_receive_money", ex)
-        
+        logging.error(ex, exc_info=True)
 
 def add_xero_spend_money_as_credit_card_credit(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logger.info(
             "Started executing xero -> qbowriter -> add_spend_money -> add_xero_spend_money_as_credit_card_credit")
@@ -445,5 +445,4 @@ def add_xero_spend_money_as_credit_card_credit(job_id,task_id):
                         
                                     
     except Exception as ex:
-        logger.error(
-            "Error in xero -> qbowriter  -> add_xero_spend_money_as_credit_card_credit", ex)
+        logging.error(ex, exc_info=True)

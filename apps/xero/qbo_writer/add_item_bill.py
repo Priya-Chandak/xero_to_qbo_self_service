@@ -13,6 +13,7 @@ import logging
 
 
 def add_xero_item_bill(job_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_bill -> add_xero_item_bill")
 
@@ -1354,4 +1355,4 @@ def add_xero_item_bill(job_id):
                 pass
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item_bill -> add_xero_item_bill", ex)
+        logging.error(ex, exc_info=True)

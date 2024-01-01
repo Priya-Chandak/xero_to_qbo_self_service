@@ -9,6 +9,7 @@ import logging
 
 
 def get_used_archived_suppliers(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter ->  get_used_archived_suppliers")
         dbname = get_mongodb_database()
@@ -24,10 +25,10 @@ def get_used_archived_suppliers(job_id, task_id):
             xero_archived_supplier_in_bill1.insert_many(result)
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> get_used_archived_customers", ex)
-
+        logging.error(ex, exc_info=True)
 
 def add_xero_archieved_supplier(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_archived_supplier")
 
@@ -110,4 +111,4 @@ def add_xero_archieved_supplier(job_id, task_id):
 
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_supplier -> add_xero_archived_supplier", ex)
+        logging.error(ex, exc_info=True)

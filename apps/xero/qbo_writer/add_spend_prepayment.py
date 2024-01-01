@@ -12,6 +12,7 @@ import logging
 
 
 def add_spend_prepayment(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_spend_prepayment -> add_spend_prepayment")
 
@@ -375,10 +376,10 @@ def add_spend_prepayment(job_id, task_id):
                                  QuerySet1[i]["Reference"])
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_spend_prepayment -> add_spend_prepayment", ex)
-
+        logging.error(ex, exc_info=True)
 
 def add_spend_overpayment(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_spend_prepayment -> add_spend_overpayment")
 
@@ -762,4 +763,4 @@ def add_spend_overpayment(job_id, task_id):
                                  QuerySet1[i]["Reference"])
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_spend_prepayment -> add_spend_overpayment", ex)
+        logging.error(ex, exc_info=True)

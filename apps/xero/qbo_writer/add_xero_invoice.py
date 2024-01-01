@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 import math
 
 def add_xero_invoice(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_invoice -> add_xero_invoice")
 
@@ -1060,5 +1061,4 @@ def add_xero_invoice(job_id,task_id):
                 pass
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice -> add_xero_invoice", ex)
-        
+        logging.error(ex, exc_info=True)

@@ -7,10 +7,11 @@ from apps.home.models import Jobs, JobExecutionStatus
 from pymongo import MongoClient
 from datetime import datetime, timedelta, timezone
 from apps.util.qbo_util import post_data_in_qbo
-
+import logging
 
 
 def add_xero_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         if (start_date != '' and end_date != ''):
@@ -351,6 +352,7 @@ def add_xero_journal(job_id,task_id):
                 post_data_in_qbo(url, headers, payload,journal1,_id, job_id,task_id, QuerySet1[i]["ManualJournalID"])
                             
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         print("------------------------------")
         import traceback
         traceback.print_exc()

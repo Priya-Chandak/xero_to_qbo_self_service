@@ -15,6 +15,7 @@ import logging
 
 
 def add_xero_credit_note(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note")
 
@@ -971,10 +972,10 @@ def add_xero_credit_note(job_id,task_id):
                 
         
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note", ex)
-        
+        logging.error(ex, exc_info=True)
 
 def add_xero_open_credit_memo_cash_refund_as_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_open_credit_memo_cash_refund_as_journal")
 
@@ -1110,5 +1111,4 @@ def add_xero_open_credit_memo_cash_refund_as_journal(job_id,task_id):
                                 post_data_in_qbo(url, headers, payload,dbname['xero_open_credit_memo_cash_refund'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
                 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_open_credit_memo_cash_refund", ex)
-
+        logging.error(ex, exc_info=True)

@@ -14,6 +14,7 @@ from apps.util.qbo_util import post_data_in_qbo
 import logging
 
 def add_open_xero_invoice_payment(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_invoice_payment")
 
@@ -166,11 +167,12 @@ def add_open_xero_invoice_payment(job_id,task_id):
                                     post_data_in_qbo(url, headers, payload,dbname['xero_open_invoice_payment'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
                     
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+        logging.error(ex, exc_info=True)
         
 
 
 def add_open_xero_bill_payment(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_payment -> add_xero_bill_payment")
 
@@ -317,10 +319,11 @@ def add_open_xero_bill_payment(job_id,task_id):
                                     post_data_in_qbo(url, headers, payload,dbname['xero_open_bill_payment'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
                             
     except Exception as ex:
-        traceback.print_exc()
+        logging.error(ex, exc_info=True)
         
 
 def add_xero_open_receive_overpayment_cash_refund_as_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -448,11 +451,12 @@ def add_xero_open_receive_overpayment_cash_refund_as_journal(job_id,task_id):
                             post_data_in_qbo(url, headers, payload,dbname['xero_open_receive_overpayment_cash_refund'],_id, job_id,task_id, QuerySet1[i]['AccountCode'])
             
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> xero_open_receive_overpayment_cash_refund", ex)
-
+        logging.error(ex, exc_info=True)
+        
 
 
 def add_xero_open_spend_overpayment_cash_refund_as_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -581,10 +585,11 @@ def add_xero_open_spend_overpayment_cash_refund_as_journal(job_id,task_id):
                             post_data_in_qbo(url, headers, payload,dbname['xero_open_spend_overpayment_cash_refund'],_id, job_id,task_id, QuerySet1[i]['AccountCode'])
                             
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> xero_supplier_credit_cash_refund", ex)
-
+        logging.error(ex, exc_info=True)
+    
 
 def add_xero_creditnote_payment_refund_as_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_creditnote_payment_refund_as_journal")
 
@@ -716,5 +721,5 @@ def add_xero_creditnote_payment_refund_as_journal(job_id,task_id):
                                 post_data_in_qbo(url, headers, payload,dbname['xero_credit_memo_cash_refund'],_id, job_id,task_id, QuerySet1[i]['InvoiceNumber'])
                 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_credit_memo_cash_refund", ex)
-
+        logging.error(ex, exc_info=True)
+       

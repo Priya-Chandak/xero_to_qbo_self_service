@@ -5,9 +5,10 @@ from apps.home.data_util import add_job_status, get_job_details
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
-
+import logging
 
 def add_xero_negative_received_money(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         if (start_date != '' and end_date != ''):
@@ -225,8 +226,4 @@ def add_xero_negative_received_money(job_id, task_id):
 
 
     except Exception as ex:
-        print("------------------------------")
-        import traceback
-        traceback.print_exc()
-        add_job_status(job_id, ex)
-        print(ex)
+        logging.error(ex, exc_info=True)

@@ -9,9 +9,10 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 from apps.util.qbo_util import post_data_in_qbo
 
 from datetime import datetime, timedelta, timezone
-
+import logging
 
 def add_xero_receive_money(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         if (start_date != '' and end_date != ''):
@@ -279,8 +280,4 @@ def add_xero_receive_money(job_id,task_id):
                                     
                 
     except Exception as ex:
-        print("------------------------------")
-        import traceback
-        traceback.print_exc()
-        
-        print(ex)
+        logging.error(ex, exc_info=True)

@@ -13,6 +13,7 @@ import logging
 
 
 def add_service_xero_purchase_order(job_id):
+    log_config1=log_config(job_id)
     try:
         logger.info(
             "Started executing xero -> qbowriter -> add_service_purchase_order -> add_service_xero_purchase_order")
@@ -574,4 +575,4 @@ def add_service_xero_purchase_order(job_id):
                 )
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_service_purchase_order -> add_service_xero_purchase_order", ex)
+        logging.error(ex, exc_info=True)

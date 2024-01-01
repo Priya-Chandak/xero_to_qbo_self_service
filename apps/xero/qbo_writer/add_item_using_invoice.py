@@ -12,6 +12,7 @@ import logging
 
 
 def get_list_of_items_from_qbo(job_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> get_list_of_items_from_qbo")
 
@@ -59,11 +60,12 @@ def get_list_of_items_from_qbo(job_id):
             qbo_item_for_invoice.insert_many(arr)
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item_purchase_order -> add_xero_item_purchase_order", ex)
+        logging.error(ex, exc_info=True)
         
 
 
 def get_list_of_items_from_xero_invoice(job_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> get_list_of_items_from_xero_invoice")
 
@@ -100,11 +102,12 @@ def get_list_of_items_from_xero_invoice(job_id):
             new_items_for_xero_invoice.insert_many(arr)
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> get_list_of_items_from_xero_invoice", ex)
+        logging.error(ex, exc_info=True)
         
 
 
 def create_item_xero_invoice_accountcode(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
 
@@ -185,10 +188,11 @@ def create_item_xero_invoice_accountcode(job_id,task_id):
                 res1 = json.loads(response.text)
           
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode", ex)
+        logging.error(ex, exc_info=True)
         
 
 def create_item_xero_creditnote_accountcode(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_creditnote_accountcode")
 
@@ -270,10 +274,11 @@ def create_item_xero_creditnote_accountcode(job_id,task_id):
                 res1 = json.loads(response.text)
           
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode", ex)
-
+        logging.error(ex, exc_info=True)
+    
 
 def create_item_from_xero_invoice_acccode_itemcode(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode")
 
@@ -402,13 +407,12 @@ def create_item_from_xero_invoice_acccode_itemcode(job_id,task_id):
                 res1 = json.loads(response.text)
            
     except Exception as ex:
-        logger.error(
-            "Error in xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode",
-            ex)
+        logging.error(ex, exc_info=True)
         
 
 def create_item_from_xero_creditnote_acccode_itemcode(job_id,task_id):
     
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_creditnote_acccode_itemcode")
 
@@ -528,13 +532,12 @@ def create_item_from_xero_creditnote_acccode_itemcode(job_id,task_id):
                 res1 = json.loads(response.text)
            
     except Exception as ex:
-        logger.error(
-            "Error in xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_creditnote_acccode_itemcode",
-            ex)
+        logging.error(ex, exc_info=True)
         
 
 
 def create_item_from_xero_bill_acccode_itemcode(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode")
 
@@ -653,12 +656,11 @@ def create_item_from_xero_bill_acccode_itemcode(job_id,task_id):
                 res1 = json.loads(response.text)
            
     except Exception as ex:
-        logger.error(
-            "Error in xero -> qbowriter -> add_item_using_bill -> create_item_from_xero_invoice_acccode_itemcode",
-            ex)
-
+        logging.error(ex, exc_info=True)
+        
 
 def create_item_xero_bill_accountcode(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
 
@@ -738,10 +740,11 @@ def create_item_xero_bill_accountcode(job_id,task_id):
                 res1 = json.loads(response.text)
           
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode", ex)
-
+        logging.error(ex, exc_info=True)
+      
 
 def create_item_xero_vendorcredit_accountcode(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
 
@@ -821,11 +824,12 @@ def create_item_xero_vendorcredit_accountcode(job_id,task_id):
                 res1 = json.loads(response.text)
           
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode", ex)
-
+        logging.error(ex, exc_info=True)
+       
 
 
 def create_item_from_xero_vendorcredit_acccode_itemcode(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_invoice_acccode_itemcode")
 
@@ -944,7 +948,5 @@ def create_item_from_xero_vendorcredit_acccode_itemcode(job_id,task_id):
                 res1 = json.loads(response.text)
            
     except Exception as ex:
-        logger.error(
-            "Error in xero -> qbowriter -> add_item_using_bill -> create_item_from_xero_invoice_acccode_itemcode",
-            ex)
-
+        logging.error(ex, exc_info=True)
+      

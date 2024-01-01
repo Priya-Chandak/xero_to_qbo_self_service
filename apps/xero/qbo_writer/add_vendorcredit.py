@@ -16,6 +16,7 @@ import logging
 
 
 def add_vendorcredit(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_vendorcredit -> add_vendorcredit")
 
@@ -355,5 +356,4 @@ def add_vendorcredit(job_id,task_id):
                         post_data_in_qbo(url1, headers, payload,db['xero_vendorcredit'],_id, job_id,task_id, final_bill[i]['Inv_No'])
                 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_vendorcredit -> add_vendorcredit", ex)
-        
+        logging.error(ex, exc_info=True)

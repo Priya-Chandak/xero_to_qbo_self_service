@@ -11,6 +11,7 @@ import logging
 
 
 def add_xero_supplier(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_supplier")
 
@@ -113,6 +114,7 @@ def add_xero_supplier(job_id, task_id):
 
 
 def add_default_xero_supplier(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_supplier")
 
@@ -132,4 +134,4 @@ def add_default_xero_supplier(job_id,task_id):
         print(response)
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_supplier -> add_xero_supplier", ex)
+        logging.error(ex, exc_info=True)
