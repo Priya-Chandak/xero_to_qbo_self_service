@@ -80,7 +80,7 @@ def get_xero_journal(job_id,task_id):
         main_url = f"https://api.xero.com/api.xro/2.0/Journals?offset={offset}"
         print(main_url)
         time.sleep(1)
-        response1 = requests.request("GET", main_url, headers=headers, data=payload)
+        response1 = requests.request("GET", main_url, headers=headers, data=payload, timeout=3)
         if response1.status_code == 200:
             r1 = response1.json()
             jsonresponse = r1["Journals"]
