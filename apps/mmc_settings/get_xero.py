@@ -230,7 +230,7 @@ def get_xero_settings(job_id):
                 {"xero_refresh_token": new_refresh_token})
             
             db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
-                {"created_at": datetime.now})
+                {"created_at": datetime.now()})
             
             # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
             #     {"xero_access_token": new_access_token})

@@ -42,7 +42,8 @@ from apps.home.models import MyobSettings
 from apps.mmc_settings.all_settings import *
 from apps.tasks.myob_to_qbo_task import read_myob_write_qbo_task, report_generation_task
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
-
+import datetime
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -430,6 +431,7 @@ def create_auth_code():
     token_data.job_id = redis.get('my_key')
     token_data.xero_access_token = response.json().get("access_token")
     token_data.xero_refresh_token = response.json().get("refresh_token")
+    token_data.created_at = datetime.now()
     db.session.add(token_data)
     db.session.commit()
 

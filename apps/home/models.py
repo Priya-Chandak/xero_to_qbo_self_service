@@ -189,7 +189,7 @@ class XeroQboTokens(db.Model):
     qbo_access_token = db.Column(db.String(4000))
     qbo_refresh_token = db.Column(db.String(4000))
     qbo_company_id = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    created_at = db.Column(db.DateTime)
 
     # created_at = db.Column(db.DateTime(timezone=True))
 
