@@ -34,6 +34,7 @@ def get_settings_qbo_for_report(job_id):
 
 
 def get_settings_xero(job_id):
+    print("get_settings_xero---------------------------------")
     input_tool = 1
     if input_tool == 1:
         payload, base_url, headers = get_xero_settings(job_id)
