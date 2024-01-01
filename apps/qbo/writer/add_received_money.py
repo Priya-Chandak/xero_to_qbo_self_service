@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def add_received_money(job_id, task_id):
-    logger.info("Started executing myob -> qbowriter ->  add_received_money")
+    logging.info("Started executing myob -> qbowriter ->  add_received_money")
 
     try:
         start_date, end_date = get_job_details(job_id)

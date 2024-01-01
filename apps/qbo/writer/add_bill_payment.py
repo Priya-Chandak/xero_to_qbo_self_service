@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def add_bill_payment(job_id, task_id):
-    logger.info("Started executing myob -> qbo -> add_bill_payment")
+    logging.info("Started executing myob -> qbo -> add_bill_payment")
 
     try:
         db = get_mongodb_database()

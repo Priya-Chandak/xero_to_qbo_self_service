@@ -143,7 +143,7 @@ def get_creditnote(job_id,task_id):
                 write_task_execution_step(task_id, status=1, step=step_name)
                 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -336,7 +336,7 @@ def get_open_creditnote(job_id,task_id):
                 write_task_execution_step(task_id, status=1, step=step_name)
                 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -527,7 +527,7 @@ def get_open_creditnote_till_end_date(job_id,task_id):
                 write_task_execution_step(task_id, status=1, step=step_name)
                 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback

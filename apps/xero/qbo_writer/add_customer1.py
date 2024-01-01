@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def add_xero_customer(job_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_customer1 -> add_xero_customer")
+        logging.info("Started executing xero -> qbowriter -> add_customer1 -> add_xero_customer")
 
         db = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

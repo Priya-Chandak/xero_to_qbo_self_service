@@ -76,7 +76,6 @@ from apps.xero.reader.purchase_order import get_xero_purchase_order
 from apps.xero.reader.quotes import get_xero_quotes
 from apps.xero.reader.spend_money import get_xero_spend_money
 from apps.xero.reader.receive_money import get_xero_receive_money
-
 from apps.xero.reader.tax import get_xero_tax
 from apps.util.db_mongo import get_mongodb_database
 from apps.myconstant import JOB_STATUS_IN_PROGRESS

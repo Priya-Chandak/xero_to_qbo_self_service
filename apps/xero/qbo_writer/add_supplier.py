@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def add_xero_supplier(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_supplier")
+        logging.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_supplier")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -114,7 +114,7 @@ def add_xero_supplier(job_id, task_id):
 
 def add_default_xero_supplier(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_supplier")
+        logging.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_supplier")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

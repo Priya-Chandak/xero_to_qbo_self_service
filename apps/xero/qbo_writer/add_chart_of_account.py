@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def add_xero_chart_account(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account")
+        logging.info("Started executing xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -49,7 +49,7 @@ def add_xero_chart_account(job_id, task_id):
 
 def add_xero_archived_chart_account(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account")
+        logging.info("Started executing xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

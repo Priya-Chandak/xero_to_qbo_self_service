@@ -10,7 +10,7 @@ from apps.util.qbo_util import post_data_in_qbo
 
 def get_used_archived_customers(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter ->  get_used_archived_customers")
+        logging.info("Started executing xero -> qbowriter ->  get_used_archived_customers")
         dbname = get_mongodb_database()
         xero_archived_customer_in_invoice1 = dbname['xero_archived_customer_in_invoice']
 
@@ -29,7 +29,7 @@ def get_used_archived_customers(job_id, task_id):
 
 def add_xero_archieved_customer(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_customer -> add_xero_archived_customer")
+        logging.info("Started executing xero -> qbowriter -> add_customer -> add_xero_archived_customer")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

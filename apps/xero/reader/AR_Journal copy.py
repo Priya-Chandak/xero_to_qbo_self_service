@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def add_qbo_ar_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_AR_journal")
+        logging.info("Started executing xero -> qbowriter -> add_xero_AR_journal")
         start_date, end_date = get_job_details(job_id)
         
         dbname = get_mongodb_database()
@@ -137,7 +137,7 @@ def add_qbo_ar_journal(job_id,task_id):
 
 def add_qbo_ap_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_AP_journal")
+        logging.info("Started executing xero -> qbowriter -> add_xero_AP_journal")
         start_date, end_date = get_job_details(job_id)
         
         dbname = get_mongodb_database()
@@ -258,7 +258,7 @@ def add_qbo_ap_journal(job_id,task_id):
 
 def add_qbo_reverse_trial_balance(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
+        logging.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
         start_date, end_date = get_job_details(job_id)
         
         dbname = get_mongodb_database()
@@ -356,7 +356,7 @@ def add_qbo_reverse_trial_balance(job_id,task_id):
 
 def add_xero_open_trial_balance(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
+        logging.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
         start_date, end_date = get_job_details(job_id)
         
         dbname = get_mongodb_database()
@@ -477,7 +477,7 @@ def add_xero_open_trial_balance(job_id,task_id):
 
 def add_xero_current_trial_balance(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
+        logging.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
         
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

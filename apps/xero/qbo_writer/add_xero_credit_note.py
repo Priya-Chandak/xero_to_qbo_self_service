@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def add_xero_credit_note(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note")
+        logging.info("Started executing xero -> qbowriter -> add_xero_credit_note -> add_xero_credit_note")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         db = get_mongodb_database()
@@ -976,7 +976,7 @@ def add_xero_credit_note(job_id,task_id):
 
 def add_xero_open_credit_memo_cash_refund_as_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_open_credit_memo_cash_refund_as_journal")
+        logging.info("Started executing xero -> qbowriter -> add_xero_open_credit_memo_cash_refund_as_journal")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

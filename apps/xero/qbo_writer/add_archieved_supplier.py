@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def get_used_archived_suppliers(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter ->  get_used_archived_suppliers")
+        logging.info("Started executing xero -> qbowriter ->  get_used_archived_suppliers")
         dbname = get_mongodb_database()
         xero_archived_supplier_in_bill1 = dbname['xero_archived_supplier_in_bill']
 
@@ -29,7 +29,7 @@ def get_used_archived_suppliers(job_id, task_id):
 
 def add_xero_archieved_supplier(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_archived_supplier")
+        logging.info("Started executing xero -> qbowriter -> add_supplier -> add_xero_archived_supplier")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def get_qbo_invoice_for_payments(job_id, task_id):
     try:
 
-        logger.info("Started executing xero -> qbowriter -> Get All QBO Invoice")
+        logging.info("Started executing xero -> qbowriter -> Get All QBO Invoice")
 
         db1 = get_mongodb_database()
         QBO_Invoice = db1['QBO_Invoice']
@@ -54,7 +54,7 @@ def get_qbo_invoice_for_payments(job_id, task_id):
 def get_qbo_bill_for_payments(job_id, task_id):
     try:
 
-        logger.info("Started executing xero -> qbowriter -> Get All QBO Bill")
+        logging.info("Started executing xero -> qbowriter -> Get All QBO Bill")
 
         db1 = get_mongodb_database()
         QBO_Bill = db1['QBO_Bill']

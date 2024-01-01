@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def add_xero_invoice_payment(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_invoice_payment")
+        logging.info("Started executing xero -> qbowriter -> add_xero_invoice_payment")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -173,7 +173,7 @@ def add_xero_invoice_payment(job_id,task_id):
 
 def add_xero_bill_payment(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_payment -> add_xero_bill_payment")
+        logging.info("Started executing xero -> qbowriter -> add_payment -> add_xero_bill_payment")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -593,7 +593,7 @@ def add_xero_supplier_credit_cash_refund_as_journal(job_id,task_id):
 
 def add_xero_invoice_payment_as_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_invoice_payment_as_journal")
+        logging.info("Started executing xero -> qbowriter -> add_xero_invoice_payment_as_journal")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -994,7 +994,7 @@ def add_xero_spend_overpayment_cash_refund_as_journal(job_id,task_id):
 
 def add_xero_creditnote_payment_refund_as_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_creditnote_payment_refund_as_journal")
+        logging.info("Started executing xero -> qbowriter -> add_xero_creditnote_payment_refund_as_journal")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

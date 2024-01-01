@@ -10,7 +10,7 @@ import requests
 
 def add_xero_customer(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_customer -> add_xero_customer")
+        logging.info("Started executing xero -> qbowriter -> add_customer -> add_xero_customer")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -102,7 +102,7 @@ def add_xero_customer(job_id, task_id):
 
 def add_default_xero_customer(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_customer -> add_xero_customer")
+        logging.info("Started executing xero -> qbowriter -> add_customer -> add_xero_customer")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def get_xero_classified_coa(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
+        logging.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
 
         dbname = get_mongodb_database()
         coa = dbname["xero_coa"]
@@ -128,7 +128,7 @@ def get_xero_classified_coa(job_id, task_id):
 
 def get_xero_classified_archived_coa(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
+        logging.info("Started executing xero -> qbowriter -> get_COA_classification -> get_xero_classified_coa")
 
         dbname = get_mongodb_database()
         coa = dbname["xero_archived_coa"]

@@ -53,7 +53,7 @@ def get_xero_asset_types(job_id,task_id):
                         
 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -122,7 +122,7 @@ def get_xero_journal(job_id,task_id):
             
             
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -133,7 +133,7 @@ def get_xero_journal(job_id,task_id):
 
 def get_xero_depreciation_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> get_xero_depreciation_journal")
+        logging.info("Started executing xero -> qbowriter -> get_xero_depreciation_journal")
         
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -176,7 +176,7 @@ def get_xero_depreciation_journal(job_id,task_id):
             xero_depreciation_journal.insert_many(depreciation_journal)
     
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -187,7 +187,7 @@ def get_xero_depreciation_journal(job_id,task_id):
 
 def add_xero_depreciation_journal(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_xero_depreciation_journal")
+        logging.info("Started executing xero -> qbowriter -> add_xero_depreciation_journal")
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         
         dbname = get_mongodb_database()

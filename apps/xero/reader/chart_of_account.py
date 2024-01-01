@@ -12,7 +12,6 @@ import logging
 def get_coa(job_id, task_id):
     
     log_config1=log_config(job_id)
-    print(log_config1,"log_config1-----------------------")
     try:
         logging.info('Inside GET XERO COA - Started')
 
@@ -21,7 +20,7 @@ def get_coa(job_id, task_id):
         payload, base_url, headers = get_settings_xero(job_id)
         print(payload, base_url, headers)
 
-        main_url1 = f"{base_url}/Accounts"
+        main_url = f"{base_url}/Accounts"
         print(main_url)
 
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
@@ -56,7 +55,7 @@ def get_coa(job_id, task_id):
 
 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         logging.error(ex, exc_info=True)
 
         write_task_execution_step(task_id, status=0, step=step_name)

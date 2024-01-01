@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def add_credit_card_credit(job_id, task_id):
     try:
-        logger.info("Started executing myob -> qbowriter ->  add_credit_card_credit")
+        logging.info("Started executing myob -> qbowriter ->  add_credit_card_credit")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)

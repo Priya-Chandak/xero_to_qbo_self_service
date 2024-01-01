@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def add_spend_prepayment(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_spend_prepayment -> add_spend_prepayment")
+        logging.info("Started executing xero -> qbowriter -> add_spend_prepayment -> add_spend_prepayment")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         db = get_mongodb_database()
@@ -380,7 +380,7 @@ def add_spend_prepayment(job_id, task_id):
 
 def add_spend_overpayment(job_id, task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_spend_prepayment -> add_spend_overpayment")
+        logging.info("Started executing xero -> qbowriter -> add_spend_prepayment -> add_spend_overpayment")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
         db = get_mongodb_database()

@@ -65,7 +65,7 @@ def get_payrun(job_id,task_id):
                         
 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -108,7 +108,7 @@ def get_payslip(job_id,task_id):
             xero_payslip.insert_many(all_payrun)
 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -148,7 +148,7 @@ def get_payrun_setting(job_id,task_id):
                 xero_payrun_setting.insert_many(all_settings)
 
     except Exception as ex:
-        step_name = "Access token not valid"
+        step_name = "Something went wrong"
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback

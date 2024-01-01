@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def get_list_of_items_from_qbo(job_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> get_list_of_items_from_qbo")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> get_list_of_items_from_qbo")
 
         dbname = get_mongodb_database()
 
@@ -65,7 +65,7 @@ def get_list_of_items_from_qbo(job_id):
 
 def get_list_of_items_from_xero_invoice(job_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> get_list_of_items_from_xero_invoice")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> get_list_of_items_from_xero_invoice")
 
         dbname = get_mongodb_database()
 
@@ -106,7 +106,7 @@ def get_list_of_items_from_xero_invoice(job_id):
 
 def create_item_xero_open_invoice_accountcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
 
         dbname = get_mongodb_database()
 
@@ -190,7 +190,7 @@ def create_item_xero_open_invoice_accountcode(job_id,task_id):
 
 def create_item_xero_open_creditnote_accountcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_creditnote_accountcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_creditnote_accountcode")
 
         dbname = get_mongodb_database()
 
@@ -275,7 +275,7 @@ def create_item_xero_open_creditnote_accountcode(job_id,task_id):
 
 def create_item_from_xero_open_invoice_acccode_itemcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -410,7 +410,7 @@ def create_item_from_xero_open_invoice_acccode_itemcode(job_id,task_id):
 def create_item_from_xero_open_creditnote_acccode_itemcode(job_id,task_id):
     
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_creditnote_acccode_itemcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_creditnote_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -536,7 +536,7 @@ def create_item_from_xero_open_creditnote_acccode_itemcode(job_id,task_id):
 
 def create_item_from_xero_open_bill_acccode_itemcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
@@ -660,7 +660,7 @@ def create_item_from_xero_open_bill_acccode_itemcode(job_id,task_id):
 
 def create_item_xero_bill_accountcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_bill -> create_item_xero_invoice_accountcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_bill -> create_item_xero_invoice_accountcode")
 
         dbname = get_mongodb_database()
 
@@ -743,7 +743,7 @@ def create_item_xero_bill_accountcode(job_id,task_id):
 
 def create_item_xero_open_vendorcredit_accountcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_xero_invoice_accountcode")
 
         dbname = get_mongodb_database()
 
@@ -827,7 +827,7 @@ def create_item_xero_open_vendorcredit_accountcode(job_id,task_id):
 
 def create_item_from_xero_open_vendorcredit_acccode_itemcode(job_id,task_id):
     try:
-        logger.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
+        logging.info("Started executing xero -> qbowriter -> add_item_using_invoice -> create_item_from_xero_open_invoice_acccode_itemcode")
 
         dbname = get_mongodb_database()
         base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
