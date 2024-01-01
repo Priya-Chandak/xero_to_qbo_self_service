@@ -163,46 +163,8 @@ def get_xero_settings(job_id):
         data1 = db.session.query(XeroQboTokens).filter(
             XeroQboTokens.job_id == job_id_from_redis).first()
 
-        # keys = (
-        #     db.session.query(Jobs, ToolSettings.keys, ToolSettings.values, ToolSettings.id)
-        #     .join(Tool, Jobs.input_account_id == Tool.id)
-        #     .join(ToolSettings, ToolSettings.tool_id == Tool.id)
-        #     .filter(Jobs.id == job_id)
-        #     .all()
-        # )
-
-        # data1 = (
-        #     db.session.query(ToolSettings.id, Tool.tool_name, Tool.account_type, Tool.id, ToolSettings.keys,
-        #                      ToolSettings.values)
-        #     .join(Tool, ToolSettings.tool_id == Tool.id)
-        #     .filter(Tool.account_type == "Xero")
-        #     .all())
-
-        # for row in keys:
-        #     if row[1] == "client_id":
-        #         client_id = row[2]
-        #     if row[1] == "client_secret":
-        #         client_secret = row[2]
-        #     if row[1] == "company_file_uri":
-        #         company_file_uri = row[2]
-        #     if row[1] == "xero-tenant-id":
-        #         xero_tenant_id = row[2]
-        #     if row[1] == "refresh_token":
-        #         refresh_token = row[2]
-        #         refresh_token_data_id = row[3]
-        #     if row[1] == "access_token":
-        #         access_token = row[2]
-        #         access_token_data_id = row[3]
-        #     if row[1] == "re_directURI":
-        #         re_directURI = row[2]
-        #     if row[1] == "scopes":
-        #         scopes = row[2]
-        #     if row[1] == "state":
-        #         state = row[2]
-
         difference_of_time = (datetime.now() - data1.created_at).seconds
-        print(difference_of_time,"difference_of_time--------------------")
-        if difference_of_time >= 120:
+        if difference_of_time >= 1200:
 
             client_id = XERO_CI
             client_secret = XERO_CS
@@ -232,11 +194,6 @@ def get_xero_settings(job_id):
             db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
                 {"created_at": datetime.now()})
             
-            # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
-            #     {"xero_access_token": new_access_token})
-            # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
-            #     {"xero_refresh_token": new_refresh_token})
-
             db.session.commit()
 
             base_url = "https://api.xero.com/api.xro/2.0"
