@@ -137,6 +137,21 @@ class XeroToQbo(object):
             if "Depreciation" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="read")
                 
+                step_name = "Reading xero Depreciation"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_asset_types(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero Journals"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+
+                step_name = "Reading xero Depreciation Journal"
+                write_task_execution_step(task.id, status=2, step=step_name)
+                get_xero_depreciation_journal(job_id,task.id)
+                write_task_execution_step(task.id, status=1, step=step_name)
+                
                 update_task_execution_status(task.id, status=1, task_type="read")
             
 
@@ -908,21 +923,6 @@ class XeroToQbo(object):
 
             if "Depreciation" == task.function_name:
                 update_task_execution_status(task.id, status=2, task_type="write")
-                
-                step_name = "Reading xero Depreciation"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_asset_types(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero Journals"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_journal(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
-
-                step_name = "Reading xero Depreciation Journal"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_depreciation_journal(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Add Xero Depreciation as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
