@@ -5,7 +5,7 @@ import requests
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 
-logger = logging.getLogger(__name__)
+import logging
 
 
 def get_qbo_invoice_for_payments(job_id, task_id):

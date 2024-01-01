@@ -2,7 +2,7 @@ import logging
 
 from apps.util.db_mongo import get_mongodb_database
 
-logger = logging.getLogger(__name__)
+import logging
 
 
 def get_xero_classified_coa(job_id, task_id):

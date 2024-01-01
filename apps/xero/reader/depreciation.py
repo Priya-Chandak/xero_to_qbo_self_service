@@ -15,7 +15,7 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 import re
 from apps.mmc_settings.all_settings import *
 import logging
-logger = logging.getLogger(__name__)
+import logging
 
 from apps.home.data_util import add_job_status,get_job_details
 from apps.util.db_mongo import get_mongodb_database

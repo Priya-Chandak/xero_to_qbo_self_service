@@ -10,7 +10,7 @@ from apps.util.qbo_util import post_data_in_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import get_start_end_dates_of_job
 import logging
-logger = logging.getLogger(__name__)
+import logging
 
 
 

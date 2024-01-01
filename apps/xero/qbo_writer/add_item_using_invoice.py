@@ -7,7 +7,7 @@ from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 
-logger = logging.getLogger(__name__)
+import logging
 
 
 

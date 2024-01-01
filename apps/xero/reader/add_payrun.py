@@ -23,7 +23,7 @@ from datetime import date
 from apps.util.qbo_util import post_data_in_qbo
 from apps.util.qbo_util import get_start_end_dates_of_job
 import logging
-logger = logging.getLogger(__name__)
+import logging
 
 
 def add_xero_payrun(job_id,task_id):

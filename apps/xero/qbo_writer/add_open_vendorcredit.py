@@ -11,7 +11,7 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 from apps.util.qbo_util import post_data_in_qbo
 
 
-logger = logging.getLogger(__name__)
+import logging
 
 
 def add_open_xero_vendorcredit(job_id,task_id):

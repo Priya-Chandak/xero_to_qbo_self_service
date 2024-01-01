@@ -7,13 +7,12 @@ from datetime import *
 import requests
 from apps.home.data_util import add_job_status,get_job_details
 
-
 from apps.home.data_util import add_job_status
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 import re
-logger = logging.getLogger(__name__)
+import logging
 
 def add_qbo_ar_journal(job_id,task_id):
     try:

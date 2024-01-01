@@ -4,7 +4,7 @@ import logging
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 
-logger = logging.getLogger(__name__)
+import logging
 from apps.util.qbo_util import post_data_in_qbo
 
 

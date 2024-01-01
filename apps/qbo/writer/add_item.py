@@ -7,7 +7,7 @@ from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
-logger = logging.getLogger(__name__)
+import logging
 
 
 def add_duplicate_item(job_id, task_id):
