@@ -70,7 +70,7 @@ def get_xero_settings(job_id):
         clientIdSecret = CLIENT_ID + ':' + CLIENT_SECRET
         encoded_u = base64.b64encode(clientIdSecret.encode()).decode()
         auth_code = "%s" % encoded_u
-
+        print(data1.xero_access_token,"data1.xero_access_token-----------------------")
         payload = ""
         headers = {
             "Content-Type": "application/json",
@@ -100,11 +100,14 @@ def get_xero_settings(job_id):
             new_access_token = re['access_token']
             new_refresh_token = re['refresh_token']
 
+            print(new_access_token,"new_access_token--------------------------------------")
+
             db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
                 {"xero_access_token": new_access_token})
             db.session.query(XeroQboTokens).filter_by(job_id=job_id_from_redis).update(
                 {"xero_refresh_token": new_refresh_token})
             
+            print("new token updated")
             # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
             #     {"xero_access_token": new_access_token})
             # db.session.query(XeroQboTokens).filter_by(XeroQboTokens.job_id==job_id_from_redis).update(
