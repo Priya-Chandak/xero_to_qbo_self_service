@@ -11,7 +11,7 @@ from apps.home.models import Tool, ToolSettings, XeroQboTokens
 from apps.myconstant import *
 import logging
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
-
+import time
 
 def get_xero_settings(job_id):
     print("inside get_xero_settings------------------------------")
@@ -84,6 +84,7 @@ def get_xero_settings(job_id):
         main_url = f"{base_url}/Accounts"
         print(main_url)
         response1 = requests.request("GET", main_url, headers=headers, data=payload)
+        time.sleep(1)
         print(response1.status_code,"========================================================")
         if response1.status_code != 200:
             print("token expired-------------------", response1.status_code)
