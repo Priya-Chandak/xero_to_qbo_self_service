@@ -17,9 +17,10 @@ from apps.home.data_util import  write_task_execution_step,update_task_execution
 import sys
 import time
 from datetime import datetime, timedelta
-
+import logging
 
 def get_payrun(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -66,6 +67,7 @@ def get_payrun(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -75,6 +77,7 @@ def get_payrun(job_id,task_id):
 
 
 def get_payslip(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -109,6 +112,7 @@ def get_payslip(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -118,6 +122,7 @@ def get_payslip(job_id,task_id):
 
 
 def get_payrun_setting(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         dbname=get_mongodb_database()
         xero_payrun_setting = dbname["xero_payrun_setting"]
@@ -149,6 +154,7 @@ def get_payrun_setting(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback

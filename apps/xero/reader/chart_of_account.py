@@ -67,6 +67,7 @@ def get_coa(job_id, task_id):
 
 
 def get_archieved_coa(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         dbname = get_mongodb_database()
         xero_coa = dbname["xero_archived_coa"]
@@ -113,5 +114,6 @@ def get_archieved_coa(job_id, task_id):
 
     except Exception as ex:
         print("------------------------------")
+        logging.error(ex, exc_info=True)
         import traceback
         traceback.print_exc()

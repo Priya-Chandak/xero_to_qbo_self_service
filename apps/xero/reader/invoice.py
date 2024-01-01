@@ -12,7 +12,7 @@ from sqlalchemy.orm import aliased
 import requests
 import re
 from apps.mmc_settings.all_settings import *
-
+import logging
 from apps.home.data_util import add_job_status,get_job_details
 from apps.util.db_mongo import get_mongodb_database
 from apps.home.data_util import  write_task_execution_step,update_task_execution_status
@@ -23,6 +23,7 @@ from datetime import datetime, timedelta
 
 
 def get_invoice(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -153,6 +154,7 @@ def get_invoice(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -162,6 +164,7 @@ def get_invoice(job_id,task_id):
 
 
 def get_all_xero_invoice_for_payment(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         dbname=get_mongodb_database()
         xero_invoice = dbname['xero_invoice']
@@ -276,6 +279,7 @@ def get_all_xero_invoice_for_payment(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -285,6 +289,7 @@ def get_all_xero_invoice_for_payment(job_id,task_id):
 
 
 def get_all_xero_bill_for_payment(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         dbname=get_mongodb_database()
         xero_invoice = dbname['xero_invoice']
@@ -393,6 +398,7 @@ def get_all_xero_bill_for_payment(job_id,task_id):
                   
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         print("------------------------------")
         import traceback
         traceback.print_exc()
@@ -400,6 +406,7 @@ def get_all_xero_bill_for_payment(job_id,task_id):
 
 
 def get_invoice_customers(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -470,6 +477,7 @@ def get_invoice_customers(job_id,task_id):
                     
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         print("------------------------------")
         import traceback
         traceback.print_exc()
@@ -477,6 +485,7 @@ def get_invoice_customers(job_id,task_id):
 
 
 def get_open_invoice(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -744,6 +753,7 @@ def get_open_invoice(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -753,6 +763,7 @@ def get_open_invoice(job_id,task_id):
 
 
 def get_open_invoice_till_end_date(job_id,task_id):
+    log_config1=log_config(job_id)
     print("Inside get_open_invoice_till_end_date")
     try:
         start_date, end_date = get_job_details(job_id)
@@ -1006,6 +1017,7 @@ def get_open_invoice_till_end_date(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status(task_id, status=0, task_type="read")
         import traceback

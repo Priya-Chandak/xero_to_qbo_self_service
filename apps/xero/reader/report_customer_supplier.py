@@ -20,9 +20,11 @@ import sys
 import time
 from datetime import datetime, timedelta
 from datetime import date
+import logging
 
 
 def get_report_customer_summary(job_id, task_id):
+    log_config1=log_config(job_id)
     print("get_report_customer_summary")
     try:
         start_date, end_date = get_job_details(job_id)
@@ -78,6 +80,7 @@ def get_report_customer_summary(job_id, task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status(task_id, status=0, task_type="read")
         import traceback
@@ -87,6 +90,7 @@ def get_report_customer_summary(job_id, task_id):
 
 
 def get_report_supplier_summary(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
@@ -135,6 +139,7 @@ def get_report_supplier_summary(job_id, task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status(task_id, status=0, task_type="read")
         import traceback

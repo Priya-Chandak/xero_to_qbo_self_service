@@ -23,6 +23,8 @@ from datetime import date
 
 
 def get_aged_receivable_summary(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -95,6 +97,7 @@ def get_aged_receivable_summary(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -104,6 +107,8 @@ def get_aged_receivable_summary(job_id,task_id):
 
 
 def get_aged_receivable_summary_till_end_date(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -185,6 +190,7 @@ def get_aged_receivable_summary_till_end_date(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -193,6 +199,8 @@ def get_aged_receivable_summary_till_end_date(job_id,task_id):
         sys.exit(0)
 
 def get_aged_payable_summary(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -292,6 +300,7 @@ def get_aged_payable_summary(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -300,6 +309,8 @@ def get_aged_payable_summary(job_id,task_id):
         sys.exit(0)
 
 def get_aged_payable_summary_till_end_date(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -387,6 +398,7 @@ def get_aged_payable_summary_till_end_date(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -396,6 +408,8 @@ def get_aged_payable_summary_till_end_date(job_id,task_id):
 
 
 def get_qbo_ar_customer(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -475,6 +489,7 @@ def get_qbo_ar_customer(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -484,6 +499,8 @@ def get_qbo_ar_customer(job_id,task_id):
 
 
 def get_qbo_ar_customer_till_date(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -593,6 +610,7 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -604,6 +622,8 @@ def get_qbo_ar_customer_till_date(job_id,task_id):
 
 
 def get_qbo_ap_supplier(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -764,6 +784,7 @@ def get_qbo_ap_supplier(job_id,task_id):
     
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -772,6 +793,8 @@ def get_qbo_ap_supplier(job_id,task_id):
         sys.exit(0)
 
 def get_qbo_ap_supplier_till_end_date(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -877,6 +900,7 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
     
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -886,6 +910,8 @@ def get_qbo_ap_supplier_till_end_date(job_id,task_id):
 
 
 def get_qbo_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -925,6 +951,7 @@ def get_qbo_trial_balance(job_id,task_id):
                 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -933,6 +960,8 @@ def get_qbo_trial_balance(job_id,task_id):
         sys.exit(0)
 
 def get_qbo_current_trial_balance_before_conversion(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -977,6 +1006,7 @@ def get_qbo_current_trial_balance_before_conversion(job_id,task_id):
                 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -986,6 +1016,8 @@ def get_qbo_current_trial_balance_before_conversion(job_id,task_id):
 
 
 def get_qbo_current_trial_balance_after_conversion(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -1030,6 +1062,7 @@ def get_qbo_current_trial_balance_after_conversion(job_id,task_id):
                 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -1038,6 +1071,8 @@ def get_qbo_current_trial_balance_after_conversion(job_id,task_id):
         sys.exit(0)
 
 def get_qbo_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -1078,6 +1113,7 @@ def get_qbo_trial_balance(job_id,task_id):
                 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -1088,6 +1124,8 @@ def get_qbo_trial_balance(job_id,task_id):
 
 
 def get_xero_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -1126,6 +1164,7 @@ def get_xero_trial_balance(job_id,task_id):
             
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -1135,6 +1174,8 @@ def get_xero_trial_balance(job_id,task_id):
 
 
 def get_xero_current_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -1175,6 +1216,7 @@ def get_xero_current_trial_balance(job_id,task_id):
             
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -1184,6 +1226,8 @@ def get_xero_current_trial_balance(job_id,task_id):
 
 
 def match_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -1378,6 +1422,7 @@ def match_trial_balance(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -1387,6 +1432,8 @@ def match_trial_balance(job_id,task_id):
 
 
 def trial_balance_final_report(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -1443,6 +1490,7 @@ def trial_balance_final_report(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback

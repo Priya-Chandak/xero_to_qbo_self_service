@@ -17,6 +17,8 @@ import logging
 import logging
 
 def add_qbo_ar_journal(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_AR_journal")
         start_date, end_date = get_job_details(job_id)
@@ -134,9 +136,11 @@ def add_qbo_ar_journal(job_id,task_id):
         print(response.text)
             
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+        logging.error(ex, exc_info=True)
 
 def add_qbo_ap_journal(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_AP_journal")
         start_date, end_date = get_job_details(job_id)
@@ -254,10 +258,11 @@ def add_qbo_ap_journal(job_id,task_id):
         print(response.text)
             
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
-
+        logging.error(ex, exc_info=True)
 
 def add_qbo_reverse_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         logging.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
         start_date, end_date = get_job_details(job_id)
@@ -351,11 +356,12 @@ def add_qbo_reverse_trial_balance(job_id,task_id):
         print(response.text)
                 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
-
+        logging.error(ex, exc_info=True)
 
 
 def add_xero_open_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         logging.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
         start_date, end_date = get_job_details(job_id)
@@ -473,10 +479,11 @@ def add_xero_open_trial_balance(job_id,task_id):
         print(response.text)
                 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
-
+        logging.error(ex, exc_info=True)
 
 def add_xero_current_trial_balance(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         logging.info("Started executing xero -> qbowriter -> add_qbo_reverse_trial_balance")
         
@@ -643,4 +650,4 @@ def add_xero_current_trial_balance(job_id,task_id):
         print(response.text)
                 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+        logging.error(ex, exc_info=True)

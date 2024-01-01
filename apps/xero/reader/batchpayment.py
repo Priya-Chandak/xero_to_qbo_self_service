@@ -5,9 +5,10 @@ import requests
 from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-
+import logging
 
 def get_xero_invoice_batchpayment(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
@@ -63,10 +64,12 @@ def get_xero_invoice_batchpayment(job_id, task_id):
                         xero_invoice_batchpayment.insert_many(invoice_batchpayment)
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         traceback.print_exc()
 
 
 def get_xero_bill_batchpayment(job_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname = get_mongodb_database()
@@ -118,4 +121,5 @@ def get_xero_bill_batchpayment(job_id):
                         xero_bill_batchpayment.insert_many(bill_batchpayment)
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         traceback.print_exc()

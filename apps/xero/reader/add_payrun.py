@@ -27,6 +27,8 @@ import logging
 
 
 def add_xero_payrun(job_id,task_id):
+    log_config1=log_config(job_id)
+    
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_payrun")
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
@@ -202,4 +204,4 @@ def add_xero_payrun(job_id,task_id):
             # print(response.text)
                 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+        logging.error(ex, exc_info=True)

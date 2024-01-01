@@ -9,6 +9,7 @@ from apps.util.qbo_util import post_data_in_qbo
 
 
 def add_xero_archieved_customer(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_customer -> add_xero_archived_customer")
 
@@ -102,4 +103,4 @@ def add_xero_archieved_customer(job_id, task_id):
                              customer.get('Name'))
 
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_customer -> add_xero_archived_customer", ex)
+        logging.error(ex, exc_info=True)

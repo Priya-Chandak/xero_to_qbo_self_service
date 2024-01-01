@@ -6,11 +6,12 @@ from apps.home.data_util import write_task_execution_step, update_task_execution
 from apps.mmc_settings.all_settings import *
 # from apps.db_mongo_connection.db_mongo import get_mongodb_database
 from apps.util.db_mongo import get_mongodb_database
-
+import logging
 
 # job_url = f"{base_url}/GeneralLedger/account?$top=100&$skip=0"
 
 def get_xero_archived_supplier(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         dbname = get_mongodb_database()
 
@@ -314,6 +315,7 @@ def get_xero_archived_supplier(job_id, task_id):
     except Exception as ex:
         print("------------------------------")
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status(task_id, status=0, task_type="read")
         import traceback

@@ -4,9 +4,10 @@ import requests
 
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
-
+import logging
 
 def get_xero_employee(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
         dbname = get_mongodb_database()
         Collection = dbname["xero_employee"]
@@ -53,4 +54,5 @@ def get_xero_employee(job_id, task_id):
             Collection.insert_many(arr)
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         traceback.print_exc()

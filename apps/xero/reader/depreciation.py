@@ -23,9 +23,10 @@ from apps.home.data_util import  write_task_execution_step,update_task_execution
 import sys
 import time
 from datetime import datetime, timedelta
-
+import logging
 
 def get_xero_asset_types(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         start_date, end_date = get_job_details(job_id)
         dbname=get_mongodb_database()
@@ -54,6 +55,7 @@ def get_xero_asset_types(job_id,task_id):
 
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -63,6 +65,7 @@ def get_xero_asset_types(job_id,task_id):
 
 offset=0
 def get_xero_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         global offset
         start_date, end_date = get_job_details(job_id)
@@ -123,6 +126,7 @@ def get_xero_journal(job_id,task_id):
             
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -132,6 +136,7 @@ def get_xero_journal(job_id,task_id):
         
 
 def get_xero_depreciation_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> get_xero_depreciation_journal")
         
@@ -177,6 +182,7 @@ def get_xero_depreciation_journal(job_id,task_id):
     
     except Exception as ex:
         step_name = "Something went wrong"
+        logging.error(ex, exc_info=True)
         write_task_execution_step(task_id, status=0, step=step_name)
         update_task_execution_status( task_id, status=0, task_type="read")
         import traceback
@@ -186,6 +192,7 @@ def get_xero_depreciation_journal(job_id,task_id):
 
 
 def add_xero_depreciation_journal(job_id,task_id):
+    log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_depreciation_journal")
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
@@ -255,4 +262,5 @@ def add_xero_depreciation_journal(job_id,task_id):
                     print(response.text)
                     
     except Exception as ex:
-        logger.error("Error in xero -> qbowriter -> add_xero_invoice_payment", ex)
+
+        logging.error(ex, exc_info=True)

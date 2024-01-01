@@ -2,10 +2,12 @@
 import traceback
 
 from apps.util.db_mongo import get_mongodb_database
-
+import logging
 
 def get_classified_bill(job_id, task_id):
+    log_config1=log_config(job_id)
     try:
+
         db = get_mongodb_database()
         xero_bill = db["xero_bill"].find()
         xero_bill1 = []
@@ -38,4 +40,5 @@ def get_classified_bill(job_id, task_id):
             db["xero_service_bill"].insert_many(xero_service_bill1)
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         traceback.print_exc()
