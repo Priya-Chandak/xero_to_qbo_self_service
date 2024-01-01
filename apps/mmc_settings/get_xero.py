@@ -3,15 +3,19 @@ import traceback
 
 import requests
 from redis import StrictRedis
+from apps.util.log_file import log_config
 
 from apps import db
 from apps.home.models import Jobs
 from apps.home.models import Tool, ToolSettings, XeroQboTokens
 from apps.myconstant import *
+import logging
 redis = StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 
 def get_xero_settings(job_id):
+    log_config1=log_config(job_id)
+    
     try:
         url = "https://identity.xero.com/connect/token?="
 
@@ -101,4 +105,5 @@ def get_xero_settings(job_id):
         return payload, base_url, headers
 
     except Exception as ex:
+        logging.error(ex, exc_info=True)
         traceback.print_exc()
