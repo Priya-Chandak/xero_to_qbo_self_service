@@ -13,8 +13,8 @@ def log_config(job_id):
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(formatter)
 
-    logger.addHandler(file_handler)
+    # logger.addHandler(file_handler)
 
-    return logger
+    return file_handler
 
 
