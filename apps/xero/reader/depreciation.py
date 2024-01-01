@@ -121,6 +121,7 @@ def get_xero_journal(job_id,task_id):
 
             if len(arr)>0 :
                 xero_journal.insert_many(arr)
+                dbname.client.close()
 
             if len(jsonresponse)==100:
                 offset = offset+100
