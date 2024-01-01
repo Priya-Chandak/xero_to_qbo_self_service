@@ -79,8 +79,8 @@ def get_xero_journal(job_id,task_id):
         
         main_url = f"https://api.xero.com/api.xro/2.0/Journals?offset={offset}"
         print(main_url)
-        response1 = requests.request("GET", main_url, headers=headers, data=payload)
         time.sleep(1)
+        response1 = requests.request("GET", main_url, headers=headers, data=payload)
         if response1.status_code == 200:
             r1 = response1.json()
             jsonresponse = r1["Journals"]
@@ -121,7 +121,7 @@ def get_xero_journal(job_id,task_id):
 
             if len(arr)>0 :
                 xero_journal.insert_many(arr)
-                dbname.client.close()
+                
 
             if len(jsonresponse)==100:
                 offset = offset+100
