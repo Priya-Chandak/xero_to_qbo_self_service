@@ -201,7 +201,6 @@ def get_xero_settings(job_id):
         #         state = row[2]
 
         difference_of_time = (datetime.now() - data1.created_at).seconds
-        print(data1.created_at,"data1.created_at------------------")
         print(difference_of_time,"difference_of_time--------------------")
         if difference_of_time >= 120:
 
