@@ -1,3 +1,4 @@
+from apps.util.log_file import log_config
 import logging
 
 import requests
@@ -5,6 +6,7 @@ import requests
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 
+from apps.util.log_file import log_config
 import logging
 
 

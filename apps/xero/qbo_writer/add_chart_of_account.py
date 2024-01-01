@@ -1,10 +1,12 @@
 import json
+from apps.util.log_file import log_config
 import logging
 
 from apps.mmc_settings.all_settings import get_settings_qbo
 from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 
+from apps.util.log_file import log_config
 import logging
 
 
@@ -44,7 +46,7 @@ def add_xero_chart_account(job_id, task_id):
             except Exception as ex:
                 logging.error(ex, exc_info=True)
                
-               
+
     except Exception as ex:
         logger.error("Error in xero -> qbowriter -> add_chart_of_account -> add_xero_chart_account", ex)
 

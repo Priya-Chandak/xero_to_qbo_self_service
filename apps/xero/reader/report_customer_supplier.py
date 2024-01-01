@@ -20,6 +20,7 @@ import sys
 import time
 from datetime import datetime, timedelta
 from datetime import date
+from apps.util.log_file import log_config
 import logging
 
 

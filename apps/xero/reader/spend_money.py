@@ -7,6 +7,7 @@ from apps.home.data_util import write_task_execution_step, update_task_execution
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
 import time
+from apps.util.log_file import log_config
 import logging
 
 def get_xero_spend_money(job_id, task_id):

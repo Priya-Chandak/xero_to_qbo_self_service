@@ -14,7 +14,9 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 
 import re
 from apps.mmc_settings.all_settings import *
+from apps.util.log_file import log_config
 import logging
+from apps.util.log_file import log_config
 import logging
 
 from apps.home.data_util import add_job_status,get_job_details
@@ -23,6 +25,7 @@ from apps.home.data_util import  write_task_execution_step,update_task_execution
 import sys
 import time
 from datetime import datetime, timedelta
+from apps.util.log_file import log_config
 import logging
 
 def get_xero_asset_types(job_id,task_id):

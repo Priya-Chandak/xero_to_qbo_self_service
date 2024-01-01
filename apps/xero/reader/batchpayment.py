@@ -5,6 +5,7 @@ import requests
 from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import *
 from apps.util.db_mongo import get_mongodb_database
+from apps.util.log_file import log_config
 import logging
 
 def get_xero_invoice_batchpayment(job_id, task_id):

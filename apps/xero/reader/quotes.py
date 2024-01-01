@@ -1,6 +1,7 @@
 import traceback
 
 import requests
+from apps.util.log_file import log_config
 import logging
 from apps.home.data_util import get_job_details
 from apps.mmc_settings.all_settings import *

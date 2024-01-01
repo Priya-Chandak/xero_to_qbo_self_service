@@ -1,3 +1,4 @@
+from apps.util.log_file import log_config
 import logging
 import os
 

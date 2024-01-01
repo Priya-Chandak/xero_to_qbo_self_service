@@ -10,6 +10,7 @@ from apps.home.data_util import  write_task_execution_step,update_task_execution
 import sys
 from datetime import datetime, timedelta
 import time
+from apps.util.log_file import log_config
 import logging
 
 

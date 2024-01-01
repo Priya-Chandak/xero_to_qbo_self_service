@@ -1,4 +1,5 @@
 import json
+from apps.util.log_file import log_config
 import logging
 from datetime import datetime
 import requests
@@ -9,6 +10,7 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 from apps.util.qbo_util import post_data_in_qbo
 
 
+from apps.util.log_file import log_config
 import logging
 
 from datetime import datetime, timedelta, timezone

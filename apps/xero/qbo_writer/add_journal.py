@@ -7,6 +7,7 @@ from apps.home.models import Jobs, JobExecutionStatus
 from pymongo import MongoClient
 from datetime import datetime, timedelta, timezone
 from apps.util.qbo_util import post_data_in_qbo
+from apps.util.log_file import log_config
 import logging
 
 

@@ -2,6 +2,7 @@
 import traceback
 
 from apps.util.db_mongo import get_mongodb_database
+from apps.util.log_file import log_config
 import logging
 
 def get_classified_bill(job_id, task_id):

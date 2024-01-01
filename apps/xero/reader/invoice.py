@@ -12,6 +12,7 @@ from sqlalchemy.orm import aliased
 import requests
 import re
 from apps.mmc_settings.all_settings import *
+from apps.util.log_file import log_config
 import logging
 from apps.home.data_util import add_job_status,get_job_details
 from apps.util.db_mongo import get_mongodb_database

@@ -8,6 +8,7 @@ from apps.util.db_mongo import get_mongodb_database
 from apps.home.data_util import  write_task_execution_step,update_task_execution_status
 import sys
 from datetime import datetime, timedelta
+from apps.util.log_file import log_config
 import logging
 import time
 

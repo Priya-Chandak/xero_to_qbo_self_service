@@ -1,4 +1,5 @@
 import json
+from apps.util.log_file import log_config
 import logging
 import re
 
@@ -7,6 +8,7 @@ from apps.util.db_mongo import get_mongodb_database
 from apps.util.qbo_util import post_data_in_qbo
 import requests
 
+from apps.util.log_file import log_config
 import logging
 
 

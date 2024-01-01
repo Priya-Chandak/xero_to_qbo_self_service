@@ -17,6 +17,7 @@ from apps.home.data_util import  write_task_execution_step,update_task_execution
 import sys
 import time
 from datetime import datetime, timedelta
+from apps.util.log_file import log_config
 import logging
 
 def get_payrun(job_id,task_id):
