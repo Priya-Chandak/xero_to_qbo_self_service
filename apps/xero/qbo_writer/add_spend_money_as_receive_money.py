@@ -12,14 +12,13 @@ from apps.util.qbo_util import get_start_end_dates_of_job
 from apps.util.log_file import log_config
 import logging
 from apps.util.log_file import log_config
-import logging
 
 
 
 def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
     log_config1=log_config(job_id)
     try:
-        logger.info(
+        logging.info(
             "Started executing xero -> qbowriter -> add_spend_money -> add_xero_negative_spend_money_as_receive_money")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
@@ -85,6 +84,7 @@ def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
                                 QuerySet5 = {}
                                 QuerySet6 = {}
                                 QuerySet7 = {}
+                                QuerySet71 = {}
                                 QuerySet8 = {}
 
                                 QuerySet10 = {}
@@ -165,14 +165,13 @@ def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
                                 QuerySet3['DetailType'] = "DepositLineDetail"
                                 QuerySet3['DepositLineDetail'] = QuerySet4
 
-                                QuerySet4['ClassRef'] = QuerySet7
+                                QuerySet4['ClassRef'] = QuerySet71
                                 for j2 in range(0, len(QBO_Class)):
                                     if QuerySet[i]['Line'][j]['TrackingName'] != None:
                                         if QuerySet[i]['Line'][j]['TrackingName'] == QBO_Class[j2]['Name']:
-                                            QuerySet7['value'] = QBO_Class[j2]['Id']
-                                            QuerySet7['name'] = QBO_Class[j2]['Name']
-
-                                
+                                            QuerySet71['value'] = QBO_Class[j2]['Id']
+                                            QuerySet71['name'] = QBO_Class[j2]['Name']
+                                            break
                                 
                                 for j31 in range(0, len(QBO_Customer)):
                                     if QBO_Customer[j31]["DisplayName"].startswith(QuerySet[i]["ContactName"]) and QBO_Customer[j31]["DisplayName"].endswith(" - C"):
@@ -252,7 +251,7 @@ def add_xero_negative_spend_money_as_receive_money(job_id,task_id):
 def add_xero_spend_money_as_credit_card_credit(job_id,task_id):
     log_config1=log_config(job_id)
     try:
-        logger.info(
+        logging.info(
             "Started executing xero -> qbowriter -> add_spend_money -> add_xero_spend_money_as_credit_card_credit")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
