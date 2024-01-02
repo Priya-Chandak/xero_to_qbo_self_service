@@ -63,6 +63,7 @@ def get_xero_classified_coa(job_id, task_id):
                 elif (
                         list1[i]["AccountType"] == "EXPENSE"
                         or list1[i]["AccountType"] == "OVERHEADS"
+                        or list1[i]["AccountType"] == "DEPRECIATN"
                 ):
                     QuerySet1["AccountType"] = "Expense"
                     QuerySet1["AccountSubType"] = "OfficeGeneralAdministrativeExpenses"
@@ -184,10 +185,8 @@ def get_xero_classified_archived_coa(job_id, task_id):
                 elif (
                         list1[i]["AccountType"] == "EXPENSE"
                         or list1[i]["AccountType"] == "OVERHEADS"
+                        or list1[i]["AccountType"]== "DEPRECIATN"
                 ):
-                    QuerySet1["AccountType"] = "Expense"
-                    QuerySet1["AccountSubType"] = "OfficeGeneralAdministrativeExpenses"
-                elif list1[i]["AccountType"] in ["EXPENSE", "DEPRECIATN"]:
                     QuerySet1["AccountType"] = "Expense"
                     QuerySet1["AccountSubType"] = "OfficeGeneralAdministrativeExpenses"
                 elif (
