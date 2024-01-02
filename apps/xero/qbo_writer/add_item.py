@@ -280,7 +280,8 @@ def add_duplicate_item(job_id,task_id):
 
         b = []
         for i in range(0, len(a)):
-            b.append(a[i]["Name"])
+            if 'Name' in a[i]:
+                b.append(a[i]["Name"])
         a1 = {i: b.count(i) for i in b}
 
         b1 = []

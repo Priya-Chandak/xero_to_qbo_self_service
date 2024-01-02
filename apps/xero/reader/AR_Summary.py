@@ -20,7 +20,8 @@ import sys
 import time
 from datetime import datetime, timedelta
 from datetime import date
-
+import logging
+from apps.util.log_file import log_config
 
 def get_aged_receivable_summary(job_id,task_id):
     log_config1=log_config(job_id)
