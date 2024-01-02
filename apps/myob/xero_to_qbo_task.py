@@ -586,17 +586,17 @@ class XeroToQbo(object):
 
                 step_name = "Reading xero open invoices"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_invoice(job_id,task.id)
+                # add_xero_open_invoice(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Open Credit Note data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_credit_note(job_id,task.id)
+                # add_xero_open_credit_note(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading Xero COA"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                get_coa(job_id,task.id)
+                # get_coa(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Reading Xero Archived COA"
@@ -606,42 +606,42 @@ class XeroToQbo(object):
 
                 step_name = "Add xero open bill"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_bill(job_id,task.id)
+                # add_xero_open_bill(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Add Vendor Credit data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_open_xero_vendorcredit(job_id,task.id)
+                # add_open_xero_vendorcredit(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Add Spend Money Overpayment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_open_spend_overpayment(job_id,task.id)
+                # add_open_spend_overpayment(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Receive Money Overpayment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_open_receive_overpayment(job_id,task.id)
+                # add_open_receive_overpayment(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Open Supplier Credit Cash Refund data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_supplier_credit_cash_refund_as_journal(job_id,task.id)
+                # add_xero_open_supplier_credit_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Open Supplier Credit Cash Refund data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_credit_memo_cash_refund_as_journal(job_id,task.id)
+                # add_xero_open_credit_memo_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Open Receive Overpayment Cash Refund data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_receive_overpayment_cash_refund_as_journal(job_id,task.id)
+                # add_xero_open_receive_overpayment_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Open Spend Overpayment Cash Refund data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_open_spend_overpayment_cash_refund_as_journal(job_id,task.id)
+                # add_xero_open_spend_overpayment_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Reading qbo Invoice"
@@ -661,42 +661,42 @@ class XeroToQbo(object):
                 
                 step_name = "Add Invoice Payment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_invoice_payment(job_id,task.id)
+                # add_xero_invoice_payment(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Invoice Payment as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_invoice_payment_as_journal(job_id,task.id)
+                # add_xero_invoice_payment_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Creditnote Payment as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_creditnote_payment_refund_as_journal(job_id,task.id)
+                # add_xero_creditnote_payment_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 
                 step_name = "Add Bill Payment data"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_bill_payment(job_id,task.id)
+                # add_xero_bill_payment(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Bill Payment as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_bill_payment_as_journal(job_id,task.id)
+                # add_xero_bill_payment_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add vendor Credit Cash Refund as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_supplier_credit_cash_refund_as_journal(job_id,task.id)
+                # add_xero_supplier_credit_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Receive Money Over Payment Cash Refund as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_receive_overpayment_cash_refund_as_journal(job_id,task.id)
+                # add_xero_receive_overpayment_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
                 step_name = "Add Spend Money Over Payment Cash Refund as Journal"
                 write_task_execution_step(task.id, status=2, step=step_name)
-                add_xero_spend_overpayment_cash_refund_as_journal(job_id,task.id)
+                # add_xero_spend_overpayment_cash_refund_as_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
                 update_task_execution_status(task.id, status=1, task_type="write")
                 
