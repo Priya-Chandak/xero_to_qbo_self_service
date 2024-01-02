@@ -9,6 +9,8 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta, timezone
 from apps.util.qbo_util import post_data_in_qbo
 from collections import Counter
+from apps.util.log_file import log_config
+import logging
 
 
 

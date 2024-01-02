@@ -16,7 +16,7 @@ import logging
 def add_xero_spend_money(job_id,task_id):
     log_config1=log_config(job_id)
     try:
-        logger.info(
+        logging.info(
             "Started executing xero -> qbowriter -> add_spend_money -> add_xero_spend_money")
 
         start_date1, end_date1 = get_start_end_dates_of_job(job_id)
