@@ -49,6 +49,10 @@ def get_xero_asset_types(job_id,task_id):
             if JsonResponse != []:
                 e={}
                 e['job_id']=job_id
+                e['is_pushed'] = 0
+                e['task_id'] = task_id
+                e['error'] = None
+                e['payload'] = None
                 e['type']=JsonResponse[0]
                 xero_asset_types.insert_one(e)
                         
@@ -109,6 +113,10 @@ def get_xero_journal(job_id, task_id):
                         e={'Lines':[]}
                         e1={}
                         e['job_id']=job_id
+                        e['is_pushed'] = 0
+                        e['task_id'] = task_id
+                        e['error'] = None
+                        e['payload'] = None
                         e['JournalID'] = jsonresponse[i]['JournalID']
                         e['JournalDate'] = xero_journal_date1
                         e['JournalNumber'] = jsonresponse[i]['JournalNumber']
@@ -177,6 +185,10 @@ def get_xero_depreciation_journal(job_id,task_id):
                 if set(line_Acc) == set(acc_list):
                     e={}
                     e['job_id']=job_id
+                    e['is_pushed'] = 0
+                    e['task_id'] = task_id
+                    e['error'] = None
+                    e['payload'] = None
                     e['journal']=xero_journal[i]
                     depreciation_journal.append(e)
 
