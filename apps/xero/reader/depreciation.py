@@ -66,78 +66,78 @@ def get_xero_asset_types(job_id,task_id):
         print(ex)
         sys.exit(0)
 
-offset=0
-def get_xero_journal(job_id,task_id):
-    log_config1=log_config(job_id)
+offset = 0
+client = None  # MongoClient instance outside the function
+
+def initialize_mongo_client():
+    global client
+    if client is None:
+        client = get_mongodb_database()
+
+def get_xero_journal(job_id, task_id):
+    log_config1 = log_config(job_id)
     try:
         global offset
+        initialize_mongo_client()  # Ensure the MongoDB client is initialized
+
         start_date, end_date = get_job_details(job_id)
-        dbname = get_mongodb_database()
-        xero_journal = dbname["xero_journal"]
+        xero_journal = client["xero_journal"]
 
         payload, base_url, headers = get_settings_xero(job_id)
-        
+
         main_url = f"https://api.xero.com/api.xro/2.0/Journals?offset={offset}"
         print(main_url)
         time.sleep(1)
-        response1 = requests.request("GET", main_url, headers=headers, data=payload, timeout=3)
+        response1 = requests.request("GET", main_url, headers=headers, data=payload)
+        
         if response1.status_code == 200:
             r1 = response1.json()
             jsonresponse = r1["Journals"]
-            arr=[]
-            
+            arr = []
+
             if len(jsonresponse) != 0:
-                
-                for i in range(0,len(jsonresponse)):
-                    if 'SourceType' not in jsonresponse[i]:
-                        date_string = jsonresponse[i]['JournalDate']
-                        match = re.search(r'\d+', date_string)
-                        if match:
-                            timestamp = int(match.group())
-                            timestamp /= 1000
-                            datetime_obj = datetime.utcfromtimestamp(timestamp)
-                            xero_journal_date1 = datetime_obj.strftime("%Y-%m-%d")
-                        
-                        e={'Lines':[]}
-                        e1={}
-                        e['job_id']=job_id
-                        e['JournalID'] = jsonresponse[i]['JournalID']
-                        e['JournalDate'] = xero_journal_date1
-                        e['JournalNumber'] = jsonresponse[i]['JournalNumber']
-                        # e['Reference'] = jsonresponse[i]['Reference']
-                        for j in range(0,len(jsonresponse[i]['JournalLines'])):
+                for i in range(0, len(jsonresponse)):
+                    for i in range(0,len(jsonresponse)):
+                        if 'SourceType' not in jsonresponse[i]:
+                            date_string = jsonresponse[i]['JournalDate']
+                            match = re.search(r'\d+', date_string)
+                            if match:
+                                timestamp = int(match.group())
+                                timestamp /= 1000
+                                datetime_obj = datetime.utcfromtimestamp(timestamp)
+                                xero_journal_date1 = datetime_obj.strftime("%Y-%m-%d")
+                            
+                            e={'Lines':[]}
                             e1={}
-                            e1['AccountID'] = jsonresponse[i]['JournalLines'][j]['AccountID']
-                            if 'AccountCode' in jsonresponse[i]['JournalLines'][j]:
-                                e1['AccountCode'] = jsonresponse[i]['JournalLines'][j]['AccountCode']
-                            e1['AccountType'] = jsonresponse[i]['JournalLines'][j]['AccountType']
-                            e1['AccountName'] = jsonresponse[i]['JournalLines'][j]['AccountName']
-                            e1['Description'] = jsonresponse[i]['JournalLines'][j]['Description']
-                            e1['NetAmount'] = jsonresponse[i]['JournalLines'][j]['NetAmount']
-                            e1['GrossAmount'] = jsonresponse[i]['JournalLines'][j]['GrossAmount']
-                            e['Lines'].append(e1)
-                        
-                        arr.append(e)
+                            e['job_id']=job_id
+                            e['JournalID'] = jsonresponse[i]['JournalID']
+                            e['JournalDate'] = xero_journal_date1
+                            e['JournalNumber'] = jsonresponse[i]['JournalNumber']
+                            # e['Reference'] = jsonresponse[i]['Reference']
+                            for j in range(0,len(jsonresponse[i]['JournalLines'])):
+                                e1={}
+                                e1['AccountID'] = jsonresponse[i]['JournalLines'][j]['AccountID']
+                                if 'AccountCode' in jsonresponse[i]['JournalLines'][j]:
+                                    e1['AccountCode'] = jsonresponse[i]['JournalLines'][j]['AccountCode']
+                                e1['AccountType'] = jsonresponse[i]['JournalLines'][j]['AccountType']
+                                e1['AccountName'] = jsonresponse[i]['JournalLines'][j]['AccountName']
+                                e1['Description'] = jsonresponse[i]['JournalLines'][j]['Description']
+                                e1['NetAmount'] = jsonresponse[i]['JournalLines'][j]['NetAmount']
+                                e1['GrossAmount'] = jsonresponse[i]['JournalLines'][j]['GrossAmount']
+                                e['Lines'].append(e1)
+                            
+                            arr.append(e)
 
-            if len(arr)>0 :
+            if len(arr) > 0:
                 xero_journal.insert_many(arr)
-                
 
-            if len(jsonresponse)==100:
-                offset = offset+100
-                get_xero_journal(job_id,task_id)
-            
-            
+            if len(jsonresponse) == 100:
+                offset = offset + 100
+                get_xero_journal(job_id, task_id)
+
     except Exception as ex:
-        step_name = "Something went wrong"
         logging.error(ex, exc_info=True)
-        write_task_execution_step(task_id, status=0, step=step_name)
-        update_task_execution_status( task_id, status=0, task_type="read")
-        import traceback
-        traceback.print_exc()
-        print(ex)
-        sys.exit(0)
-        
+
 
 def get_xero_depreciation_journal(job_id,task_id):
     log_config1=log_config(job_id)
