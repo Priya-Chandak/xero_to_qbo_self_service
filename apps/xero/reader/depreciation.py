@@ -97,36 +97,35 @@ def get_xero_journal(job_id, task_id):
 
             if len(jsonresponse) != 0:
                 for i in range(0, len(jsonresponse)):
-                    for i in range(0,len(jsonresponse)):
-                        if 'SourceType' not in jsonresponse[i]:
-                            date_string = jsonresponse[i]['JournalDate']
-                            match = re.search(r'\d+', date_string)
-                            if match:
-                                timestamp = int(match.group())
-                                timestamp /= 1000
-                                datetime_obj = datetime.utcfromtimestamp(timestamp)
-                                xero_journal_date1 = datetime_obj.strftime("%Y-%m-%d")
-                            
-                            e={'Lines':[]}
+                    if 'SourceType' not in jsonresponse[i]:
+                        date_string = jsonresponse[i]['JournalDate']
+                        match = re.search(r'\d+', date_string)
+                        if match:
+                            timestamp = int(match.group())
+                            timestamp /= 1000
+                            datetime_obj = datetime.utcfromtimestamp(timestamp)
+                            xero_journal_date1 = datetime_obj.strftime("%Y-%m-%d")
+                        
+                        e={'Lines':[]}
+                        e1={}
+                        e['job_id']=job_id
+                        e['JournalID'] = jsonresponse[i]['JournalID']
+                        e['JournalDate'] = xero_journal_date1
+                        e['JournalNumber'] = jsonresponse[i]['JournalNumber']
+                        # e['Reference'] = jsonresponse[i]['Reference']
+                        for j in range(0,len(jsonresponse[i]['JournalLines'])):
                             e1={}
-                            e['job_id']=job_id
-                            e['JournalID'] = jsonresponse[i]['JournalID']
-                            e['JournalDate'] = xero_journal_date1
-                            e['JournalNumber'] = jsonresponse[i]['JournalNumber']
-                            # e['Reference'] = jsonresponse[i]['Reference']
-                            for j in range(0,len(jsonresponse[i]['JournalLines'])):
-                                e1={}
-                                e1['AccountID'] = jsonresponse[i]['JournalLines'][j]['AccountID']
-                                if 'AccountCode' in jsonresponse[i]['JournalLines'][j]:
-                                    e1['AccountCode'] = jsonresponse[i]['JournalLines'][j]['AccountCode']
-                                e1['AccountType'] = jsonresponse[i]['JournalLines'][j]['AccountType']
-                                e1['AccountName'] = jsonresponse[i]['JournalLines'][j]['AccountName']
-                                e1['Description'] = jsonresponse[i]['JournalLines'][j]['Description']
-                                e1['NetAmount'] = jsonresponse[i]['JournalLines'][j]['NetAmount']
-                                e1['GrossAmount'] = jsonresponse[i]['JournalLines'][j]['GrossAmount']
-                                e['Lines'].append(e1)
-                            
-                            arr.append(e)
+                            e1['AccountID'] = jsonresponse[i]['JournalLines'][j]['AccountID']
+                            if 'AccountCode' in jsonresponse[i]['JournalLines'][j]:
+                                e1['AccountCode'] = jsonresponse[i]['JournalLines'][j]['AccountCode']
+                            e1['AccountType'] = jsonresponse[i]['JournalLines'][j]['AccountType']
+                            e1['AccountName'] = jsonresponse[i]['JournalLines'][j]['AccountName']
+                            e1['Description'] = jsonresponse[i]['JournalLines'][j]['Description']
+                            e1['NetAmount'] = jsonresponse[i]['JournalLines'][j]['NetAmount']
+                            e1['GrossAmount'] = jsonresponse[i]['JournalLines'][j]['GrossAmount']
+                            e['Lines'].append(e1)
+                        
+                        arr.append(e)
 
             if len(arr) > 0:
                 xero_journal.insert_many(arr)
