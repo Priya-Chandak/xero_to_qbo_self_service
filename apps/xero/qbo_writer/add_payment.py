@@ -116,23 +116,6 @@ def add_xero_invoice_payment(job_id,task_id):
                                             break
                                         
                                 
-                                    # a11=dbname["QBO_Customer"].find({"DisplayName": QuerySet1[i]["Contact"],'job_id':job_id})
-                                    # a12=dbname["QBO_Customer"].find({"DisplayName": QuerySet1[i]["Contact"]+" - C",'job_id':job_id})
-                                    # a13=dbname["QBO_Customer"].find({"DisplayName": QuerySet1[i]["Contact"].upper(),'job_id':job_id})
-                                    
-                                    # for x3 in a11:
-                                    #     CustomerRef["name"] = x3.get("DisplayName")
-                                    #     CustomerRef["value"] = x3.get("Id")
-                                    #     break
-                                    # for x32 in a13:
-                                    #     CustomerRef["name"] = x32.get("DisplayName")
-                                    #     CustomerRef["value"] = x32.get("Id")
-                                    #     break
-                                    # for x31 in a12:
-                                    #     CustomerRef["name"] = x31.get("DisplayName")
-                                    #     CustomerRef["value"] = x31.get("Id")
-                                    #     break
-
                                         
                                     QuerySet2["TotalAmt"] = QuerySet1[i]["BankAmount"]
                                     QuerySet4["Amount"] = QuerySet1[i]["BankAmount"]
@@ -151,10 +134,19 @@ def add_xero_invoice_payment(job_id,task_id):
                                             ):
                                                 QuerySet5["TxnId"] = QBO_Invoice1[k12]["Id"]
                                                 QuerySet5["TxnType"] = "Invoice"
+                                                break
                                                 
+                                            elif (
+                                                QuerySet1[i]["InvoiceNumber"].strip()
+                                                == QBO_Invoice1[k12]["DocNumber"].strip()
+                                            ):
+                                                QuerySet5["TxnId"] = QBO_Invoice1[k12]["Id"]
+                                                QuerySet5["TxnType"] = "Invoice"
+                                                break
                                             elif QBO_Invoice1[k12]["DocNumber"].startswith(QuerySet1[i]["InvoiceNumber"][0:14]) and QBO_Invoice1[k12]["DocNumber"].endswith(QuerySet1[i]["InvoiceID"][-6:]):
                                                 QuerySet5["TxnId"] = QBO_Invoice1[k12]["Id"]
                                                 QuerySet5["TxnType"] = "Invoice"
+                                                break
 
                                     
                                     QuerySet2["DepositToAccountRef"] = QuerySet6
@@ -245,27 +237,6 @@ def add_xero_bill_payment(job_id,task_id):
                                     ]
                                     BankAccountRef["value"] = QBO_COA1[j1]["Id"]
 
-                                    # for s1 in range(0, len(supplier1)):
-                                    #     if (
-                                    #         QuerySet1[i]["Contact"]
-                                    #         == supplier1[s1]["DisplayName"]
-                                    #     ):
-                                    #         VendorRef["name"] = supplier1[s1][
-                                    #             "DisplayName"
-                                    #         ]
-                                    #         VendorRef["value"] = supplier1[s1]["Id"]
-                                    #         break
-                                    #     elif supplier1[s1]["DisplayName"].startswith(
-                                    #         QuerySet1[i]["Contact"]
-                                    #     ) and supplier1[s1]["DisplayName"].endswith(
-                                    #         "- S"
-                                    #     ):
-                                    #         VendorRef["name"] = supplier1[s1][
-                                    #             "DisplayName"
-                                    #         ]
-                                    #         VendorRef["value"] = supplier1[s1]["Id"]
-                                    #         continue
-                                        
                                     QuerySet2["TotalAmt"] = QuerySet1[i]["BankAmount"]
                                     QuerySet4["Amount"] = QuerySet1[i]["BankAmount"]
                                     payment_date = QuerySet1[i]["Date"]
@@ -295,7 +266,15 @@ def add_xero_bill_payment(job_id,task_id):
                                                 ]
                                                 VendorRef = QBO_Bill1[k12]['VendorRef']
                                                 break
-
+                                            elif (
+                                                QuerySet1[i]["InvoiceNumber"].strip()
+                                                == QBO_Bill1[k12]["DocNumber"].strip()
+                                            ):
+                                                QuerySet5["TxnId"] = QBO_Bill1[k12][
+                                                    "Id"
+                                                ]
+                                                VendorRef = QBO_Bill1[k12]['VendorRef']
+                                                break
                                             elif (
                                                 QuerySet1[i]["InvoiceID"][-6:]
                                                 == QBO_Bill1[k12]["DocNumber"]
