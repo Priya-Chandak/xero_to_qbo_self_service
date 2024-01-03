@@ -10,6 +10,8 @@ from apps import db
 from apps.myconstant import *
 from sqlalchemy.orm import aliased
 import requests
+from apps.util.qbo_util import post_data_in_qbo
+
 from apps.util.qbo_util import get_start_end_dates_of_job
 
 import re
@@ -206,7 +208,7 @@ def get_xero_depreciation_journal(job_id,task_id):
         sys.exit(0)
 
 
-def add_xero_depreciation_journal(job_id,task_id):
+def add_xero_depreciation_journal1(job_id,task_id):
     log_config1=log_config(job_id)
     try:
         logging.info("Started executing xero -> qbowriter -> add_xero_depreciation_journal")
@@ -277,5 +279,74 @@ def add_xero_depreciation_journal(job_id,task_id):
                     print(response.text)
                     
     except Exception as ex:
+        logging.error(ex, exc_info=True)
 
+def add_xero_depreciation_journal(job_id,task_id):
+    log_config1=log_config(job_id)
+    
+    try:
+        logging.info("Started executing xero -> qbowriter -> add_xero_depreciation_journal")
+        start_date1, end_date1 = get_start_end_dates_of_job(job_id)
+        
+        dbname = get_mongodb_database()
+        base_url, headers, company_id, minorversion, get_data_header, report_headers = get_settings_qbo(job_id)
+
+        url = f"{base_url}/journalentry?minorversion={minorversion}"
+
+        print(url)
+        xero_depreciation_journal1 = dbname["xero_journal"].find({"job_id":job_id})
+        xero_depreciation_journal = []
+        for p1 in xero_depreciation_journal1:
+            xero_depreciation_journal.append(p1)
+
+        QBO_COA = dbname["QBO_COA"].find({"job_id":job_id})
+        QBO_coa = []
+        for p2 in QBO_COA:
+            QBO_coa.append(p2)
+
+       
+        QuerySet11 = xero_depreciation_journal
+
+            
+        for i in range(0, len(QuerySet11)):
+            _id = QuerySet11[i]['_id'] 
+            task_id = QuerySet11[i]['task_id']
+            
+            QuerySet2 = {"Line": []}
+        
+            QuerySet1=QuerySet11[i]['Lines']
+            QuerySet2["DocNumber"] = f"Depreciation-{QuerySet11[i]['JournalNumber']}"
+            QuerySet2["TxnDate"] = QuerySet11[i]['JournalDate']
+                
+            for j in range(0,len(QuerySet11[i]['Lines'])):
+                account={}
+                
+                for j11 in range(0, len(QBO_coa)):
+                    if QuerySet1[j]['AccountName'] == QBO_coa[j11]['Name']:
+                        account['value'] = QBO_coa[j11]['Id']
+                        account['name'] = QBO_coa[j11]['Name']
+                
+                JournalEntryLineDetail={}
+                QuerySet3={}
+                QuerySet3["DetailType"] = "JournalEntryLineDetail"
+                if QuerySet1[j]['NetAmount'] >0:
+                    JournalEntryLineDetail["PostingType"] = "Debit"
+                else:
+                    JournalEntryLineDetail["PostingType"] = "Credit"
+
+                QuerySet3["Amount"] = abs(QuerySet1[j]['NetAmount'])
+                JournalEntryLineDetail['AccountRef'] = account
+                QuerySet3['JournalEntryLineDetail'] = JournalEntryLineDetail
+                QuerySet2['Line'].append(QuerySet3)
+            payload = json.dumps(QuerySet2)
+          
+            journal_date = QuerySet11[i]['JournalDate'][0:10]
+            journal_date1 = datetime.strptime(journal_date, "%Y-%m-%d")
+            
+            if start_date1 is not None and end_date1 is not None:
+                if (journal_date1 >= start_date1) and (journal_date1 <= end_date1):
+                    post_data_in_qbo(url, headers, payload, dbname["xero_journal"], _id, job_id, task_id, QuerySet11[i]['JournalID'])
+                                    
+                    
+    except Exception as ex:
         logging.error(ex, exc_info=True)

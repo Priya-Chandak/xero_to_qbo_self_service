@@ -147,10 +147,10 @@ class XeroToQbo(object):
                 get_xero_journal(job_id,task.id)
                 write_task_execution_step(task.id, status=1, step=step_name)
 
-                step_name = "Reading xero Depreciation Journal"
-                write_task_execution_step(task.id, status=2, step=step_name)
-                get_xero_depreciation_journal(job_id,task.id)
-                write_task_execution_step(task.id, status=1, step=step_name)
+                # step_name = "Reading xero Depreciation Journal"
+                # write_task_execution_step(task.id, status=2, step=step_name)
+                # get_xero_depreciation_journal(job_id,task.id)
+                # write_task_execution_step(task.id, status=1, step=step_name)
                 
                 update_task_execution_status(task.id, status=1, task_type="read")
             
