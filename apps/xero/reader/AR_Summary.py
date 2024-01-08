@@ -1258,169 +1258,68 @@ def match_trial_balance(job_id,task_id):
         
         unmatched_data=[]
         
+        for j in range(0,len(qbo_trial_balance1)):
+            queryset={}
+            queryset['job_id']=job_id
+            if qbo_trial_balance1[j]['bankname'] == 'GST Liabilities Payable':
+                qbo_trial_balance_id1 = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find_one({"job_id": job_id, "bankname": qbo_trial_balance1[j]['bankname']})
+                
+                if qbo_trial_balance_id1!= None:
+                    queryset['debit_diff']=True if qbo_trial_balance_id1.get("credit")!=0 else False
+                    queryset['credit_diff']=True if qbo_trial_balance_id1.get("debit")!=0 else False
+                    queryset['debit_diff_amount']=float(qbo_trial_balance_id1.get("credit"))
+                    queryset['credit_diff_amount']=float(qbo_trial_balance_id1.get("debit"))
+                    queryset['bankname']=qbo_trial_balance_id1.get('bankname')
+                    queryset['job_id']=job_id
+                    print(queryset,"queryset---------------")
+                    unmatched_data.append(queryset)
+                    break
+
         for i in range(0,len(xero_trial_balance1)):
             queryset={}
             queryset['job_id']=job_id
 
-            xero_bank_record = dbname["xero_coa"].find_one({"job_id": job_id, "AccountID": xero_trial_balance1[i]['bankid']})
-            xero_bank_name = xero_bank_record.get("Name") if xero_bank_record else None
+            xero_bank_id = dbname["xero_coa"].find_one({"job_id": job_id, "AccountID": xero_trial_balance1[i]['bankid']})
+            xero_bank_name = xero_bank_id.get("Name")
+            xero_bank_code = xero_bank_id.get("Code")
+            xero_bank_system_acc = xero_bank_id.get("SystemAccount")
+            if xero_bank_system_acc == 'CREDITORS':
+                qbo_bank_accnum = dbname["QBO_COA"].find_one({"job_id": job_id, "AccountSubType": 'AccountsPayable'})
+                queryset['bankname']=qbo_bank_accnum.get('Name')
+
+            elif xero_bank_system_acc == 'DEBTORS':
+                qbo_bank_accnum = dbname["QBO_COA"].find_one({"job_id": job_id, "AccountSubType": 'AccountsReceivable'})
+                queryset['bankname']=qbo_bank_accnum.get('Name')
+
+            else:
+                qbo_bank_accnum = dbname["QBO_COA"].find_one({"job_id": job_id, "AcctNum": str(xero_bank_code)})
+                queryset['bankname']=xero_bank_name
+
+            qbo_bank_id = qbo_bank_accnum.get('Id')
+            qbo_trial_balance_id = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find_one({"job_id": job_id, "bankid": str(qbo_bank_id)})
+            xero_debit = float(xero_trial_balance1[i]['debit']) if xero_trial_balance1[i]['debit']!=None else 0
+            xero_credit = float(xero_trial_balance1[i]['credit']) if xero_trial_balance1[i]['credit']!=None else 0
+            qbo_bank_name = qbo_trial_balance_id.get("bankname") if qbo_trial_balance_id!=None else 0
+            qbo_debit = float(qbo_trial_balance_id.get("debit")) if qbo_trial_balance_id!=None else 0
+            qbo_credit = float(qbo_trial_balance_id.get("credit")) if qbo_trial_balance_id!=None else 0
+            debit_diff_amount = xero_debit - qbo_debit
+            credit_diff_amount = xero_credit - qbo_credit
+            debit_diff = True if debit_diff_amount>0 or credit_diff_amount<0 else False
+            credit_diff = True if debit_diff_amount<0 or credit_diff_amount>0 else False
+            queryset['debit_diff']=debit_diff
+            queryset['credit_diff']=credit_diff
+            queryset['debit_diff_amount']=debit_diff_amount
+            queryset['credit_diff_amount']=credit_diff_amount
             
-            if xero_bank_name == 'Accounts Receivable':
-                qbo_bank_record = dbname["QBO_COA"].find_one({"job_id": job_id, "AccountSubType": "AccountsReceivable"}) 
-
-                qbo_bank_id = qbo_bank_record.get("Id") if qbo_bank_record else None
-                qbo_bank_name = qbo_bank_record.get("Name") if qbo_bank_record else None
-                
-                qbo_balance_record = dbname["QBO_Current_Trial_Balance"].find_one({"job_id": job_id, "bankname": qbo_bank_name})
-                qbo_balance_id = qbo_balance_record.get("bankid") if qbo_balance_record else None
-                qbo_balance_name = qbo_balance_record.get("bankname") if qbo_balance_record else None
-                qbo_balance_debit = qbo_balance_record.get("debit") if qbo_balance_record else None
-                qbo_balance_credit = qbo_balance_record.get("credit") if qbo_balance_record else None
-                
-                xero_balance_debit = xero_trial_balance1[i]['debit']
-                xero_balance_credit = xero_trial_balance1[i]['credit']
-
-                if xero_balance_debit==None:
-                    xero_balance_debit=0
-                if xero_balance_credit==None:
-                    xero_balance_credit=0
-                if qbo_balance_debit==None:
-                    qbo_balance_debit=0
-                if qbo_balance_credit==None:
-                    qbo_balance_credit=0
-
-
-                debit_diff=float(xero_balance_debit)-float(qbo_balance_debit)
-                credit_diff=float(xero_balance_credit)-float(qbo_balance_credit)
-
-                queryset['bankname'] = qbo_bank_name
-                queryset['bankid'] = qbo_bank_id
-                queryset['debit_diff_amount']= abs(debit_diff)
-                queryset['credit_diff_amount']= abs(credit_diff)
-                queryset['debit_diff']= True if debit_diff!=0 else False
-                queryset['credit_diff']= True if credit_diff!=0 else False
-
-                if queryset['debit_diff']==False and queryset['credit_diff']== False:
-                    pass
-                else:
-                    unmatched_data.append(queryset)
-
-            elif xero_bank_name == 'Accounts Payable':
-                qbo_bank_record = dbname["QBO_COA"].find_one({"job_id": job_id, "AccountSubType": "AccountsPayable"}) 
-                
-                qbo_bank_id = qbo_bank_record.get("Id") if qbo_bank_record else None
-                qbo_bank_name = qbo_bank_record.get("Name") if qbo_bank_record else None
-                
-                qbo_balance_record = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find_one({"job_id": job_id, "bankname": qbo_bank_name})
-                qbo_balance_id = qbo_balance_record.get("bankid") if qbo_balance_record else None
-                qbo_balance_name = qbo_balance_record.get("bankname") if qbo_balance_record else None
-                qbo_balance_debit = qbo_balance_record.get("debit") if qbo_balance_record else None
-                qbo_balance_credit = qbo_balance_record.get("credit") if qbo_balance_record else None
-                
-                xero_balance_debit = xero_trial_balance1[i]['debit']
-                xero_balance_credit = xero_trial_balance1[i]['credit']
-
-                if xero_balance_debit==None:
-                    xero_balance_debit=0
-                if xero_balance_credit==None:
-                    xero_balance_credit=0
-                if qbo_balance_debit==None:
-                    qbo_balance_debit=0
-                if qbo_balance_credit==None:
-                    qbo_balance_credit=0
-
-
-                debit_diff=float(xero_balance_debit)-float(qbo_balance_debit)
-                credit_diff=float(xero_balance_credit)-float(qbo_balance_credit)
-
-                queryset['bankname'] = qbo_bank_name
-                queryset['bankid'] = qbo_bank_id
-                queryset['debit_diff_amount']= abs(debit_diff)
-                queryset['credit_diff_amount']= abs(credit_diff)
-                queryset['debit_diff']= True if debit_diff!=0 else False
-                queryset['credit_diff']= True if credit_diff!=0 else False
-
-                if queryset['debit_diff']==False and queryset['credit_diff']== False:
-                    pass
-                else:
-                    unmatched_data.append(queryset)
-    
-            else:    
-                qbo_bank_record = dbname["QBO_COA"].find_one({"job_id": job_id, "Name": xero_bank_name})
-                qbo_bank_id = qbo_bank_record.get("Id") if qbo_bank_record else None
-                qbo_bank_name = qbo_bank_record.get("Name") if qbo_bank_record else None
-                
-                qbo_balance_record = dbname["QBO_Current_Trial_Balance_Before_Conversion"].find_one({"job_id": job_id, "bankid": qbo_bank_id})
-                qbo_balance_id = qbo_balance_record.get("bankid") if qbo_balance_record else None
-                qbo_balance_name = qbo_balance_record.get("bankname") if qbo_balance_record else None
-                qbo_balance_debit = qbo_balance_record.get("debit") if qbo_balance_record else None
-                qbo_balance_credit = qbo_balance_record.get("credit") if qbo_balance_record else None
-                
-                xero_balance_debit = xero_trial_balance1[i]['debit']
-                xero_balance_credit = xero_trial_balance1[i]['credit']
-
-                
-                if xero_balance_debit==None:
-                    xero_balance_debit=0
-                if xero_balance_credit==None:
-                    xero_balance_credit=0
-                if qbo_balance_debit==None:
-                    qbo_balance_debit=0
-                if qbo_balance_credit==None:
-                    qbo_balance_credit=0
-
-
-                debit_diff=float(xero_balance_debit)-float(qbo_balance_debit)
-                credit_diff=float(xero_balance_credit)-float(qbo_balance_credit)
-
-                queryset['bankname'] = qbo_bank_name
-                queryset['bankid'] = qbo_bank_id
-                queryset['debit_diff_amount']= abs(debit_diff)
-                queryset['credit_diff_amount']= abs(credit_diff)
-                queryset['debit_diff']= True if debit_diff!=0 else False
-                queryset['credit_diff']= True if credit_diff!=0 else False
-
-                if queryset['debit_diff']==False and queryset['credit_diff']== False:
-                    pass
-                else:
-                    unmatched_data.append(queryset)
-
-        for j in range(0,len(qbo_trial_balance1)):
-            queryset={}
-            queryset['job_id']=job_id
-
-            if qbo_trial_balance1[j]['bankname'] not in ["Accounts Receivable (A/R)","Accounts Payable (A/P)"]:
-                qbo_bank_record = dbname["QBO_COA"].find_one({"job_id": job_id, "Id":qbo_trial_balance1[j]['bankid'] })
-                qbo_bank_id = qbo_bank_record.get("Id") if qbo_bank_record else None
-                qbo_bank_name = qbo_bank_record.get("Name") if qbo_bank_record else None
-                
-                queryset['bankname'] = qbo_bank_name
-                queryset['bankid'] = qbo_bank_id
-                
-                xero_bank_record = dbname["xero_coa"].find_one({"job_id": job_id, "Name": qbo_bank_name})
-                xero_bank_name = xero_bank_record.get("Name") if xero_bank_record else None
-
-                if xero_bank_name == None:
-                    print(qbo_bank_name)
-                    debit_diff=float(qbo_trial_balance1[j]['credit'])
-                    credit_diff=float(qbo_trial_balance1[j]['debit'])
-                    queryset['debit_diff_amount']= abs(debit_diff)
-                    queryset['credit_diff_amount']= abs(credit_diff)
-                    queryset['debit_diff']= True if debit_diff!=0 else False
-                    queryset['credit_diff']= True if credit_diff!=0 else False
-
-                    if queryset['debit_diff']==False and queryset['credit_diff']== False:
-                        pass
-                    else:
-                        unmatched_data.append(queryset)
-
-                
-            print(qbo_balance_name,qbo_balance_debit,xero_balance_debit,qbo_balance_credit,xero_balance_credit,debit_diff,credit_diff,"qbo_bank_id=========")
-                
-                    
+            if queryset['debit_diff']==False and queryset['credit_diff']==False:
+                pass
+            else:
+                unmatched_data.append(queryset)
+        
         if len(unmatched_data)>0:
             unmatched_trial_balance.insert_many(unmatched_data)
 
+       
     except Exception as ex:
         step_name = "Something went wrong"
         logging.error(ex, exc_info=True)
