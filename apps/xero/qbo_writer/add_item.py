@@ -89,31 +89,21 @@ def add_xero_item(job_id,task_id):
                                 ]
                             
                             if "AccountCode" in QuerySet[i]["SalesDetails"][0]:
-                                if "AcctNum" in qbo_coa[q1]:
-                                    if QuerySet[i]["SalesDetails"][0]["AccountCode"] == qbo_coa[q1]["AcctNum"]:
-                                        print("Yes true")
-                                        QuerySet3["value"] = qbo_coa[q1]["Id"]
-                                        QuerySet3["name"] = qbo_coa[q1]["Name"]
-                                        break
+                                if "AccountCode" in QuerySet[i]["SalesDetails"][0]:
+                                    qbo_coa_record = dbname["QBO_COA"].find_one({"job_id": job_id, "AcctNum": QuerySet[i]["SalesDetails"][0]["AccountCode"]}) 
+                                    QuerySet3["value"] = qbo_coa_record.get("Id")
+                                    QuerySet3["name"] = qbo_coa_record.get("Name")
+                        
                                 else:
-                                    if QuerySet[i]["SalesDetails"][0]["AccountCode"] == xero_coa[q2]["Code"]:
-                                        if xero_coa[q2]["Name"] == qbo_coa[q1]["Name"]:
-                                            QuerySet3["value"] = qbo_coa[q1]["Id"]
-                                            QuerySet3["name"] = qbo_coa[q1]["Name"]
-                                            break
-
-                                    
-
-                            else:
-                                if qbo_coa[q1]["FullyQualifiedName"] == "Sales":
-                                    QuerySet3["value"] = qbo_coa[q1]["Id"]
-                                    QuerySet3["name"] = qbo_coa[q1]["Name"]
-                                    break
+                                    qbo_coa_record = dbname["QBO_COA"].find_one({"job_id": job_id, "Name": "Sales"}) 
+                                    QuerySet3["value"] = qbo_coa_record.get("Id")
+                                    QuerySet3["name"] = qbo_coa_record.get("Name")
+                        
                         else:
-                            if qbo_coa[q1]["FullyQualifiedName"] == "Sales":
-                                QuerySet3["value"] = qbo_coa[q1]["Id"]
-                                QuerySet3["name"] = qbo_coa[q1]["Name"]
-                                break
+                            qbo_coa_record = dbname["QBO_COA"].find_one({"job_id": job_id, "Name": "Sales"}) 
+                            QuerySet3["value"] = qbo_coa_record.get("Id")
+                            QuerySet3["name"] = qbo_coa_record.get("Name")
+                        
 
 
 
@@ -125,49 +115,27 @@ def add_xero_item(job_id,task_id):
                                 ]["UnitPrice"]
 
                             if "COGSAccountCode" in QuerySet[i]["PurchaseDetails"][0]:
-                                print("inside if")
-                                if "AcctNum" in qbo_coa[q1]:
-                                    if (
-                                        QuerySet[i]["PurchaseDetails"][0]["COGSAccountCode"]
-                                        == qbo_coa[q1]["AcctNum"]
-                                    ):
-                                        QuerySet4["value"] = qbo_coa[q1]["Id"]
-                                        QuerySet4["name"] = qbo_coa[q1]["Name"]
-                                        break
-                                else:
-                                    if QuerySet[i]["PurchaseDetails"][0]["COGSAccountCode"] == xero_coa[q2]["Code"]:
-                                        if xero_coa[q2]["Name"] == qbo_coa[q1]["Name"]:
-                                            QuerySet4["value"] = qbo_coa[q1]["Id"]
-                                            QuerySet4["name"] = qbo_coa[q1]["Name"]
-                                            break
-
+                                qbo_coa_record = dbname["QBO_COA"].find_one({"job_id": job_id, "AcctNum": QuerySet[i]["PurchaseDetails"][0]["COGSAccountCode"]}) 
+                                QuerySet4["value"] = qbo_coa_record.get("Id")
+                                QuerySet4["name"] = qbo_coa_record.get("Name")
+                                
 
                             elif "AccountCode" in QuerySet[i]["PurchaseDetails"][0]:
-                                if "AcctNum" in qbo_coa[q1]:
-                                    if (
-                                        QuerySet[i]["PurchaseDetails"][0]["AccountCode"]
-                                        == qbo_coa[q1]["AcctNum"]
-                                    ):
-                                        QuerySet4["value"] = qbo_coa[q1]["Id"]
-                                        QuerySet4["name"] = qbo_coa[q1]["Name"]
-                                        break
-                                else:
-                                    if QuerySet[i]["PurchaseDetails"][0]["AccountCode"] == xero_coa[q2]["Code"]:
-                                        if xero_coa[q2]["Name"] == qbo_coa[q1]["Name"]:
-                                            QuerySet4["value"] = qbo_coa[q1]["Id"]
-                                            QuerySet4["name"] = qbo_coa[q1]["Name"]
-                                            break
+                                qbo_coa_record = dbname["QBO_COA"].find_one({"job_id": job_id, "AcctNum": QuerySet[i]["PurchaseDetails"][0]["AccountCode"]}) 
+                                QuerySet4["value"] = qbo_coa_record.get("Id")
+                                QuerySet4["name"] = qbo_coa_record.get("Name")
+                                
+                                
                             else:
-                                if qbo_coa[q1]["FullyQualifiedName"] == "Purchases":
-                                    QuerySet4["value"] = qbo_coa[q1]["Id"]
-                                    QuerySet4["name"] = qbo_coa[q1]["Name"]
-                                    break
-
+                                qbo_coa_record = dbname["QBO_COA"].find_one({"job_id": job_id, "Name": "Purchases"}) 
+                                QuerySet4["value"] = qbo_coa_record.get("Id")
+                                QuerySet4["name"] = qbo_coa_record.get("Name")
+                                
                         else:
-                            if qbo_coa[q1]["FullyQualifiedName"] == "Purchases":
-                                QuerySet4["value"] = qbo_coa[q1]["Id"]
-                                QuerySet4["name"] = qbo_coa[q1]["Name"]
-                                break
+                            qbo_coa_record = dbname["QBO_COA"].find_one({"job_id": job_id, "Name": "Purchases"}) 
+                            QuerySet4["value"] = qbo_coa_record.get("Id")
+                            QuerySet4["name"] = qbo_coa_record.get("Name")
+                                
 
                     QuerySet1["IncomeAccountRef"] = QuerySet3
                     QuerySet1["ExpenseAccountRef"] = QuerySet4
