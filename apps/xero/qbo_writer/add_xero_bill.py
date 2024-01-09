@@ -255,85 +255,74 @@ def add_xero_bill(job_id,task_id):
                                             else:
                                                 pass
 
-                                        # for c1 in range(0, len(QBO_item)):
-                                            
-                                                
-                                        #     if 'AccountCode' in final_bill[i]['Line'][j]:
-                                        #         if final_bill[i]['Line'][j]['ItemCode'].replace(":","-")+"-"+final_bill[i]['Line'][j]['AccountCode'] == QBO_item[c1]["Name"]:
-                                        #             print("fst if")
-                                        #             ItemRef['value'] = QBO_item[c1]["Id"]
-                                        #             print(ItemRef)
-                                        #             break
-                                                
-                                                
                                         
                                         
-                                        # for p3 in range(0, len(QBO_item)):
-                                        #     if "ItemCode" in final_bill[i]["Line"][j] and "AccountCode" in final_bill[i]["Line"][j]:
+                                        for p3 in range(0, len(QBO_item)):
+                                            if "ItemCode" in final_bill[i]["Line"][j] and "AccountCode" in final_bill[i]["Line"][j]:
                                                 
-                                        #         if "Sku" in QBO_item[p3]:
-                                        #             if (
-                                        #                 final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
-                                        #                 + "-"
-                                        #                 + final_bill[i]["Line"][j]["AccountCode"]
-                                        #                 == QBO_item[p3]["Sku"]
-                                        #             ):
-                                        #                 ItemRef["name"] = QBO_item[p3]["Name"]
-                                        #                 ItemRef["value"] = QBO_item[p3]["Id"]
-                                        #                 break
+                                                if "Sku" in QBO_item[p3]:
+                                                    if (
+                                                        final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
+                                                        + "-"
+                                                        + final_bill[i]["Line"][j]["AccountCode"]
+                                                        == QBO_item[p3]["Sku"]
+                                                    ):
+                                                        ItemRef["name"] = QBO_item[p3]["Name"]
+                                                        ItemRef["value"] = QBO_item[p3]["Id"]
+                                                        break
 
-                                        #             elif (
-                                        #                 final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
-                                        #                 == QBO_item[p3]["Sku"]
-                                        #             ):
-                                        #                 ItemRef["name"] = QBO_item[p3]["Name"]
-                                        #                 ItemRef["value"] = QBO_item[p3]["Id"]
-                                        #                 break
+                                                    elif (
+                                                        final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
+                                                        == QBO_item[p3]["Sku"]
+                                                    ):
+                                                        ItemRef["name"] = QBO_item[p3]["Name"]
+                                                        ItemRef["value"] = QBO_item[p3]["Id"]
+                                                        break
 
                                                 
-                                        #         elif (
-                                        #                 final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
-                                        #                 + "-"
-                                        #                 + final_bill[i]["Line"][j]["AccountCode"]
-                                        #                 == QBO_item[p3]["FullyQualifiedName"]
-                                        #             ):
-                                        #             ItemRef["name"] = QBO_item[p3]["Name"]
-                                        #             ItemRef["value"] = QBO_item[p3]["Id"]
-                                        #             break
+                                                elif (
+                                                        final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
+                                                        + "-"
+                                                        + final_bill[i]["Line"][j]["AccountCode"]
+                                                        == QBO_item[p3]["FullyQualifiedName"]
+                                                    ):
+                                                    ItemRef["name"] = QBO_item[p3]["Name"]
+                                                    ItemRef["value"] = QBO_item[p3]["Id"]
+                                                    break
                                                 
-                                        #         elif (
-                                        #             final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
-                                        #             == QBO_item[p3]["FullyQualifiedName"]
-                                        #         ):
-                                        #             ItemRef["name"] = QBO_item[p3]["Name"]
-                                        #             ItemRef["value"] = QBO_item[p3]["Id"]
-                                        #             break
+                                                elif (
+                                                    final_bill[i]["Line"][j]["ItemCode"].replace(":","-")
+                                                    == QBO_item[p3]["FullyQualifiedName"]
+                                                ):
+                                                    ItemRef["name"] = QBO_item[p3]["Name"]
+                                                    ItemRef["value"] = QBO_item[p3]["Id"]
+                                                    break
 
-                                        #     elif "ItemCode" not in final_bill[i]["Line"][j] and "AccountCode" in final_bill[i]["Line"][j]:
-                                        #         if "Sku" in QBO_item[p3]:
-                                        #             if (
-                                        #                 final_bill[i]["Line"][j]["AccountCode"]
-                                        #                 == QBO_item[p3]["Sku"]
-                                        #             ):
-                                        #                 ItemRef["name"] = QBO_item[p3]["Name"]
-                                        #                 ItemRef["value"] = QBO_item[p3]["Id"]
-                                        #                 break
-                                        #         else:
-                                        #             for p5 in range(0, len(QBO_coa)):
-                                        #                 if "AcctNum" in QBO_coa[p5]:
-                                        #                     if (
-                                        #                         final_bill[i]["Line"][j][
-                                        #                             "AccountCode"
-                                        #                         ]
-                                        #                         == QBO_coa[p5]["AcctNum"]
-                                        #                     ):
-                                        #                         if (
-                                        #                             QBO_coa[p5]["Name"]
-                                        #                             == QBO_item[p3]["Name"]
-                                        #                         ):
-                                        #                             ItemRef["name"] = QBO_item[p3]["Name"]
-                                        #                             ItemRef["value"] = QBO_item[p3]["Id"]
-                                        #                             break
+                                            elif "ItemCode" not in final_bill[i]["Line"][j] and "AccountCode" in final_bill[i]["Line"][j]:
+                                                if "Sku" in QBO_item[p3]:
+                                                    if (
+                                                        final_bill[i]["Line"][j]["AccountCode"]
+                                                        == QBO_item[p3]["Sku"]
+                                                    ):
+                                                        ItemRef["name"] = QBO_item[p3]["Name"]
+                                                        ItemRef["value"] = QBO_item[p3]["Id"]
+                                                        break
+                                                else:
+                                                    for p5 in range(0, len(QBO_coa)):
+                                                        if "AcctNum" in QBO_coa[p5]:
+                                                            if (
+                                                                final_bill[i]["Line"][j][
+                                                                    "AccountCode"
+                                                                ]
+                                                                == QBO_coa[p5]["AcctNum"]
+                                                            ):
+                                                                if (
+                                                                    QBO_coa[p5]["Name"]
+                                                                    == QBO_item[p3]["Name"]
+                                                                ):
+                                                                    ItemRef["name"] = QBO_item[p3]["Name"]
+                                                                    ItemRef["value"] = QBO_item[p3]["Id"]
+                                                                    break
                                         ItemRef1={}
                                         for p4 in range(0, len(QBO_item)):
                                             if "ItemCode" in final_bill[i]["Line"][j] and "AccountCode" in final_bill[i]["Line"][j]:
